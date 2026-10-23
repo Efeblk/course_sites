@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kernel Structure Lab · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .diagram { display: flex; flex-direction: column; gap: 8px; }
+    .zone { border-radius: 12px; padding: 10px; border: 1px solid var(--line); }
+    .zone > .zname { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; font-weight: 700; }
+    .zone.user { background: color-mix(in srgb, var(--user) 9%, transparent); }
+    .zone.user > .zname { color: var(--user); }
+    .zone.kern { background: color-mix(in srgb, var(--kernel) 10%, transparent); }
+    .zone.kern > .zname { color: var(--kernel); }
+    .zone.flat { background: color-mix(in srgb, var(--warn) 10%, transparent); border-style: dashed; }
+    .zone.flat > .zname { color: var(--warn); }
+    .zone.hw { background: var(--panel-2); }
+    .comps { display: flex; flex-wrap: wrap; gap: 6px; }
+    .comp { padding: 7px 11px; border-radius: 9px; background: var(--panel); border: 1px solid var(--line); font-size: .9rem; transition: all .2s; }
+    .comp.mod { border-style: dashed; }
+    .comp.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 25%, var(--panel)); transform: scale(1.04); }
+    .comp.dead { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 30%, var(--panel)); text-decoration: line-through; }
+    .comp.new { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 22%, var(--panel)); }
+    .zone.dead { outline: 3px solid var(--bad); }
+    .sub { display: flex; gap: 8px; flex-wrap: wrap; }
+    .sub .zone { flex: 1; min-width: 160px; background: var(--panel-2); }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="2" data-title="Kernel Structure Lab" data-activity="ch2-structures">
+  <main>
+    <h1>Kernel Structure Lab</h1>
+    <p class="lead">Five ways to build an OS (Silberschatz §2.7). Pick a structure, then run the same four experiments on each and compare.</p>
+
+    <div class="row" id="tabs"></div>
+
+    <div class="cols" style="margin-top:12px">
+      <div class="panel">
+        <h2 style="margin-top:0" id="sname"></h2>
+        <p class="muted small" id="sdesc"></p>
+        <div class="diagram" id="diagram"></div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3 style="margin-top:0">Experiments</h3>
+          <div class="row">
+            <button data-x="crash">💥 A device driver crashes</button>
+            <button data-x="read">📄 App reads a file</button>
+            <button data-x="load">➕ Add a driver while running</button>
+            <button data-x="evil">😈 App writes kernel memory</button>
+          </div>
+          <div class="callout" id="out" style="margin-top:12px">Choose an experiment.</div>
+          <div class="stats" id="stats"></div>
+        </div>
+        <div class="panel">
+          <h3 style="margin-top:0">Your scorecard</h3>
+          <p class="muted small">Fills in as you run experiments on each structure.</p>
+          <table class="t" id="score"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Slide 59 — five structures compared</h3>
+      <table class="t">
+        <tr><th>Property</th><th>Simple</th><th>Layered</th><th>Microkernel</th><th>Modular</th><th>Hybrid</th></tr>
+        <tr><td>Example</td><td>MS-DOS</td><td>THE (1968)</td><td>seL4, Mach</td><td>Linux, Solaris</td><td>macOS, Windows</td></tr>
+        <tr><td>Mode separation</td><td>None</td><td>Some</td><td>Strict</td><td>Yes (modules in kernel)</td><td>Yes (mixed)</td></tr>
+        <tr><td>Performance</td><td>Fast</td><td>Slow (layer crossing)</td><td>Slower (IPC)</td><td>Fast (direct calls)</td><td>Mixed</td></tr>
+        <tr><td>Reliability</td><td>Low</td><td>Medium</td><td>High</td><td>Medium</td><td>High</td></tr>
+        <tr><td>Flexibility</td><td>Low</td><td>Medium</td><td>High</td><td>High</td><td>High</td></tr>
+        <tr><td>Modern use</td><td>None</td><td>Educational</td><td>Embedded, defense</td><td>Linux, BSD</td><td>macOS, Windows, Android</td></tr>
+      </table>
+      <div class="row" style="margin-top:12px">
+        <a class="btn" href="../game.html?id=structures-match">Game: structures &amp; examples →</a>
+        <a class="btn" href="../game.html?id=mech-policy">Game: mechanism or policy? →</a>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, sleep } = CS;
+
+    const S = {
+      simple: {
+        name: 'Simple — MS-DOS (1981)',
+        desc: 'Written for the 8088 CPU, which had no mode bit. BIOS, DOS and programs share one address space with no isolation.',
+        zones: [
+          { k: 'flat', name: 'One address space · no mode bit · no protection', comps: [['app', 'Application program'], ['sys', 'Resident system program'], ['dosdrv', 'MS-DOS device drivers'], ['bios', 'ROM BIOS device drivers']] },
+          { k: 'hw', name: 'Hardware', comps: [['disk', 'Disk']] },
+        ],
+        x: {
+          crash: { bad: true, dead: ['*'], text: 'The buggy driver scribbles over memory that DOS and every program share. <b>The whole machine hangs</b> — reboot.' },
+          read: { path: ['app', 'dosdrv', 'bios', 'disk'], switches: 0, hops: 'direct calls', text: 'The program can call DOS — or even the BIOS or the hardware — directly. <b>Very fast, zero mode switches</b>, but nothing is protected.' },
+          load: { bad: true, text: 'No module system: install the driver in CONFIG.SYS and <b>reboot</b>.' },
+          evil: { bad: true, dead: ['*'], text: 'Nothing stops it — there is no mode bit and no MMU protection. <b>The OS is overwritten and the machine crashes.</b>' },
+        },
+      },
+      layered: {
+        name: 'Layered — THE OS (Dijkstra, 1968)',
+        desc: 'Layer 0 is hardware, layer N is the user interface. Each layer may only use the layer directly below it.',
+        zones: [
+          { k: 'user', name: 'Layer 5 · user programs', comps: [['app', 'Application']] },
+          { k: 'kern', name: 'Layer 4 · buffering for I/O devices', comps: [['l4', 'I/O buffering']] },
+          { k: 'kern', name: 'Layer 3 · operator console device driver', comps: [['l3', 'Device drivers']] },
+          { k: 'kern', name: 'Layer 2 · memory management', comps: [['l2', 'Memory manager']] },
+          { k: 'kern', name: 'Layer 1 · CPU scheduling', comps: [['l1', 'Scheduler + interrupts']] },
+          { k: 'hw', name: 'Layer 0 · hardware', comps: [['disk', 'Disk']] },
+        ],
+        x: {
+          crash: { bad: true, dead: ['l3', 'l4', 'app'], text: 'The driver layer is in kernel space; every layer above depends on it. <b>Kernel down.</b> Debugging is easy though: you built and tested each layer separately.' },
+          read: { path: ['app', 'l4', 'l3', 'l2', 'l1', 'disk'], switches: 2, hops: '5 layer crossings', text: 'Strict layering means a file read passes through <b>every</b> layer in between. Clean — but <b>each crossing adds overhead</b>. That is why pure layering is too slow for production.' },
+          load: { bad: true, text: 'Change the driver layer, rebuild, <b>reboot</b>.' },
+          evil: { good: true, text: 'User programs run in user mode — the write to kernel memory <b>traps</b> and the program is killed.' },
+        },
+      },
+      micro: {
+        name: 'Microkernel — Mach (1985), seL4 (2009)',
+        desc: 'Only IPC, basic memory management and CPU scheduling run in kernel mode. File systems, drivers and networking are user-space server processes that talk via messages.',
+        zones: [
+          { k: 'user', name: 'User space', comps: [['app', 'Application'], ['fs', 'File-system server'], ['drv', 'Device-driver server'], ['net', 'Network server']] },
+          { k: 'kern', name: 'Microkernel (kernel mode)', comps: [['ipc', 'IPC (message passing)'], ['sched', 'CPU scheduling'], ['mem', 'Basic memory mgmt']] },
+          { k: 'hw', name: 'Hardware', comps: [['disk', 'Disk']] },
+        ],
+        x: {
+          crash: { good: true, dead: ['drv'], restart: 'drv', text: 'Only the driver <b>process</b> dies. The kernel is fine; it simply restarts the driver server. "If the file system crashes, the OS stays up."' },
+          read: { path: ['app', 'ipc', 'fs', 'ipc', 'drv', 'disk', 'drv', 'ipc', 'fs', 'ipc', 'app'], switches: 8, hops: '4 IPC messages', text: 'App → (kernel) → FS server → (kernel) → driver server → disk → and the replies come back the same way. <b>Every file operation is a cross-process message</b> — the IPC overhead is the big disadvantage.' },
+          load: { good: true, add: ['user', 'usb', 'USB driver server'], text: 'Just start another user-space server process. <b>No reboot, no kernel change.</b>' },
+          evil: { good: true, text: 'Traps — and even drivers are user processes, so the trusted kernel code is tiny (seL4 is mathematically proven correct).' },
+        },
+      },
+      modular: {
+        name: 'Modular — Linux, Solaris',
+        desc: 'Monolithic in that everything runs in kernel mode in ONE address space, but drivers, file systems and protocols are loadable kernel modules (LKMs).',
+        zones: [
+          { k: 'user', name: 'User space', comps: [['app', 'Application'], ['sh', 'bash']] },
+          { k: 'kern', name: 'Kernel (one address space)', comps: [['core', 'Core: scheduling, memory, IPC'], ['vfs', 'VFS']], sub: [
+            { name: 'Loadable modules', comps: [['ext4', 'ext4 (fs module)'], ['drv', 'disk driver module'], ['tcp', 'TCP/IP module']] },
+          ] },
+          { k: 'hw', name: 'Hardware', comps: [['disk', 'Disk']] },
+        ],
+        x: {
+          crash: { bad: true, dead: ['*kern'], text: 'Modules run <b>inside the kernel</b> with full privileges. A buggy driver can corrupt anything → <b>kernel panic</b>. Same reliability as monolithic.' },
+          read: { path: ['app', 'vfs', 'ext4', 'drv', 'disk', 'drv', 'ext4', 'vfs', 'app'], switches: 2, hops: 'direct function calls', text: 'One system call in, direct function calls between VFS, ext4 and the driver, one return out. <b>Fast like monolithic</b>, modular like a microkernel.' },
+          load: { good: true, add: ['mods', 'usb', 'usb-storage (insmod)'], text: '<code>sudo modprobe usb-storage</code> — the module is linked into the running kernel. <b>No reboot.</b> (<code>lsmod</code> lists loaded modules.) ~30M lines of Linux code, only ~10M loaded at boot.' },
+          evil: { good: true, text: 'The app is in user mode → MMU trap → killed. (A malicious <i>module</i>, however, could do anything — loading one needs root.)' },
+        },
+      },
+      hybrid: {
+        name: 'Hybrid — macOS / iOS (XNU)',
+        desc: 'XNU = Mach microkernel (IPC, scheduling) + BSD (file systems, networking, POSIX) + IOKit (C++ drivers) — all in one kernel address space for speed. Windows NT and Android are hybrids too.',
+        zones: [
+          { k: 'user', name: 'User space', comps: [['app', 'Application'], ['cocoa', 'Cocoa / Cocoa Touch'], ['found', 'Core frameworks']] },
+          { k: 'kern', name: 'Kernel environment — Darwin / XNU', comps: [], sub: [
+            { name: 'Mach', comps: [['mach', 'IPC, scheduling, memory']] },
+            { name: 'BSD', comps: [['bsd', 'POSIX syscalls, VFS, networking']] },
+            { name: 'IOKit', comps: [['iokit', 'C++ device drivers']] },
+          ] },
+          { k: 'hw', name: 'Hardware', comps: [['disk', 'Disk']] },
+        ],
+        x: {
+          crash: { bad: true, dead: ['*kern'], text: 'IOKit drivers live in the kernel address space → <b>kernel panic</b>. Hybrids trade some microkernel isolation for speed. (Apple is moving drivers to user space with DriverKit.)' },
+          read: { path: ['app', 'found', 'bsd', 'iokit', 'disk', 'iokit', 'bsd', 'found', 'app'], switches: 2, hops: 'direct calls inside XNU', text: 'BSD handles the system call and calls the IOKit driver directly — Mach and BSD share one address space. <b>Microkernel-like structure, monolithic-like performance.</b>' },
+          load: { good: true, add: ['iokit', 'kext', 'new driver (kext)'], text: 'Load a kernel extension (kext) or a DriverKit driver at runtime. <b>No reboot needed.</b>' },
+          evil: { good: true, text: 'User mode → trap → killed. Every app also runs in a sandbox.' },
+        },
+      },
+    };
+
+    let cur = 'simple';
+    const score = {};
+    const tabs = $('#tabs');
+    for (const [k, s] of Object.entries(S))
+      tabs.append(el('button', { class: 'chip', 'data-s': k, onclick: () => pick(k) }, s.name.split(' — ')[0]));
+
+    function draw(extra) {
+      const s = S[cur];
+      const comp = ([id, label], cls = '') => el('span', { class: `comp ${cls}`, 'data-c': id }, label);
+      const zoneNodes = s.zones.map((z) => el('div', { class: `zone ${z.k}`, 'data-z': z.k },
+        el('div', { class: 'zname' }, z.name),
+        el('div', { class: 'comps' }, z.comps.map((c) => comp(c)),
+          extra && extra[0] === z.k ? comp([extra[1], extra[2]], 'new') : null),
+        z.sub ? el('div', { class: 'sub', style: { marginTop: '8px' } }, z.sub.map((sz) => el('div', { class: 'zone', 'data-z': 'mods' },
+          el('div', { class: 'zname muted' }, sz.name),
+          el('div', { class: 'comps' }, sz.comps.map((c) => comp(c, cur === 'modular' ? 'mod' : '')),
+            extra && (extra[0] === 'mods' && sz.name.startsWith('Loadable') || extra[0] === 'iokit' && sz.name === 'IOKit') ? comp([extra[1], extra[2]], 'new') : null)))) : null));
+      $('#diagram').replaceChildren(...zoneNodes);
+    }
+    function pick(k) {
+      cur = k;
+      $$('#tabs button').forEach((b) => b.classList.toggle('active', b.dataset.s === k));
+      $('#sname').textContent = S[k].name;
+      $('#sdesc').textContent = S[k].desc;
+      $('#out').innerHTML = 'Choose an experiment.';
+      $('#stats').replaceChildren();
+      draw();
+    }
+
+    let running = false;
+    async function run(x) {
+      if (running) return;
+      running = true;
+      const r = S[cur].x[x];
+      draw(r.add);
+      $('#stats').replaceChildren();
+      $('#out').className = 'callout';
+      if (r.path) {
+        $('#out').innerHTML = 'Tracing the request…';
+        for (const id of r.path) {
+          $$('.comp').forEach((c) => c.classList.toggle('on', c.dataset.c === id));
+          await sleep(420);
+        }
+        $$('.comp').forEach((c) => c.classList.remove('on'));
+        CS.fill($('#stats'),
+          el('div', { class: 'stat' }, el('b', {}, r.switches), el('span', {}, 'user↔kernel mode switches')),
+          el('div', { class: 'stat' }, el('b', {}, r.path.length - 1), el('span', {}, 'hand-offs')),
+          el('div', { class: 'stat' }, el('b', { style: { fontSize: '1rem' } }, r.hops), el('span', {}, 'how components talk')));
+      }
+      if (r.dead) {
+        for (const d of r.dead) {
+          if (d === '*') $$('.zone').forEach((z) => z.classList.add('dead'));
+          else if (d === '*kern') $$('.zone.kern').forEach((z) => z.classList.add('dead'));
+          else $$(`.comp[data-c="${d}"]`).forEach((c) => c.classList.add('dead'));
+        }
+        if (r.restart) {
+          await sleep(1200);
+          $$(`.comp[data-c="${r.restart}"]`).forEach((c) => { c.classList.remove('dead'); c.classList.add('new'); });
+        }
+      }
+      $('#out').className = 'callout ' + (r.bad ? 'bad' : r.good ? 'ok' : '');
+      $('#out').innerHTML = r.text;
+      score[cur] = score[cur] || {};
+      score[cur][x] = r.path ? `${r.switches} switches` : r.bad ? '✗' : '✓';
+      drawScore();
+      running = false;
+    }
+    function drawScore() {
+      const cols = [['crash', 'Driver crash survives?'], ['read', 'File read cost'], ['load', 'Hot-add driver?'], ['evil', 'Kernel protected?']];
+      CS.fill($('#score'), 
+        el('tr', {}, el('th', {}, ''), cols.map(([, n]) => el('th', {}, n))),
+        Object.keys(S).map((k) => el('tr', {}, el('td', {}, S[k].name.split(' — ')[0]),
+          cols.map(([c]) => el('td', {}, (score[k] && score[k][c]) || '·')))));
+    }
+    $$('[data-x]').forEach((b) => (b.onclick = () => run(b.dataset.x)));
+    pick('simple');
+    drawScore();
+  </script>
+</body>
+</html>

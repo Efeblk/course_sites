@@ -1,0 +1,7 @@
+# Course materials (textbooks, lecture slides, project PDFs) are copyrighted
+# and large. They stay on the local machine only; the repo is public.
+materials/*
+!materials/README.md
+
+.DS_Store
+Thumbs.db

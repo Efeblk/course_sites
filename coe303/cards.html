@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flashcards · COE303</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root=".." data-course="coe303">
+  <main>
+    <h1 id="title">Flashcards</h1>
+    <p class="muted small">Click the card (or <kbd>Space</kbd>) to flip. <kbd>→</kbd> I knew it · <kbd>←</kbd> again later.</p>
+    <div class="row">
+      <span id="count" class="tag"></span>
+      <button class="chip" id="swap">Show definitions first</button>
+      <button class="chip" id="restart">Restart</button>
+    </div>
+    <div class="flash" id="card">
+      <div class="flash-inner">
+        <div class="flash-face front"><div class="front-term" id="front"></div></div>
+        <div class="flash-face back"><div id="back"></div></div>
+      </div>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="danger" id="again">← Again</button>
+      <button class="primary" id="know">I knew it →</button>
+    </div>
+    <div id="done" class="panel" style="display:none"></div>
+  </main>
+  <script src="data.js"></script>
+  <script>
+    const n = Number(new URLSearchParams(location.search).get('ch')) || 1;
+    document.body.dataset.chapter = n;
+    document.body.dataset.title = 'Flashcards';
+    document.body.dataset.activity = `cards-ch${n}`;
+  </script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { $, shuffle } = CS;
+    const ch = COE303.chapters.find((c) => c.n === n);
+    $('#title').textContent = `Chapter ${n} Flashcards — ${ch.title}`;
+
+    let deck, known, reversed = false;
+    const card = $('#card');
+
+    function restart() {
+      deck = shuffle(ch.cards);
+      known = 0;
+      $('#done').style.display = 'none';
+      card.style.display = '';
+      render();
+    }
+    function render() {
+      card.classList.remove('flipped');
+      $('#count').textContent = `${known} known · ${deck.length} left`;
+      if (!deck.length) {
+        card.style.display = 'none';
+        $('#done').style.display = '';
+        $('#done').innerHTML = `<h2 style="margin-top:0">Deck cleared 🎉</h2><p>You went through all ${ch.cards.length} cards.</p>
+          <a class="btn" href="quiz.html?ch=${n}">Take the quiz →</a>`;
+        return;
+      }
+      const [term, def] = deck[0];
+      $('#front').textContent = reversed ? def : term;
+      $('#back').textContent = reversed ? term : def;
+      $('#front').className = reversed ? '' : 'front-term';
+    }
+    function know() { if (!deck.length) return; deck.shift(); known++; render(); }
+    function again() {
+      if (!deck.length) return;
+      const c = deck.shift();
+      deck.splice(Math.min(deck.length, 3), 0, c); // comes back soon
+      render();
+    }
+
+    card.onclick = () => card.classList.toggle('flipped');
+    $('#know').onclick = know;
+    $('#again').onclick = again;
+    $('#restart').onclick = restart;
+    $('#swap').onclick = (e) => {
+      reversed = !reversed;
+      e.target.classList.toggle('active', reversed);
+      render();
+    };
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ') { e.preventDefault(); card.classList.toggle('flipped'); }
+      if (e.key === 'ArrowRight') know();
+      if (e.key === 'ArrowLeft') again();
+    });
+    restart();
+  </script>
+</body>
+</html>

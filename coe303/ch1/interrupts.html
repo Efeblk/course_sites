@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interrupt Lab · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .cpu { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; }
+    @media (max-width: 760px) { .cpu { grid-template-columns: 1fr; } }
+    .reg { display: flex; justify-content: space-between; font-family: var(--mono); padding: 4px 0; border-bottom: 1px dashed var(--line); }
+    .reg b { font-weight: 600; }
+    .steps { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+    .steps li { counter-increment: s; padding: 6px 10px; border-radius: 8px; margin: 3px 0; color: var(--muted); }
+    .steps li::before { content: counter(s) ". "; font-family: var(--mono); }
+    .steps li.on { background: color-mix(in srgb, var(--kernel) 20%, transparent); color: var(--text); font-weight: 600; }
+    .steps li.past { color: var(--text); }
+    .vec td.on { background: color-mix(in srgb, var(--warn) 25%, transparent); }
+    .dev { display: flex; gap: 8px; flex-wrap: wrap; }
+    .timeline { display: flex; flex-wrap: wrap; gap: 2px; margin: 10px 0; }
+    .timeline span { width: 14px; height: 22px; border-radius: 3px; background: var(--panel-2); }
+    .timeline .w { background: var(--ok); }
+    .timeline .p { background: var(--bad); }
+    .timeline .h { background: var(--warn); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; margin-right: 14px; font-size: .88rem; }
+    .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="1" data-title="Interrupt Lab" data-activity="ch1-interrupts">
+  <main>
+    <h1>Interrupt Lab</h1>
+    <p class="lead">"Interrupts are the only mechanism the CPU has for noticing the outside world." A user program is running. Press a device button to interrupt it, and watch each step of Silberschatz Fig 1.4.</p>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h2 style="margin:0">Part 1 — Handle an interrupt</h2>
+        <div class="row">
+          <button id="play" class="primary">⏸ Pause</button>
+          <button id="step">Step ▶</button>
+          <label>Speed <input id="speed" type="range" min="150" max="1500" value="700" style="width:120px"></label>
+        </div>
+      </div>
+      <p class="muted small">Tip: pause, press a device, then use <b>Step</b> to go through it one stage at a time.</p>
+
+      <div class="dev" style="margin:10px 0">
+        <button data-irq="33">⌨️ Key pressed (keyboard)</button>
+        <button data-irq="46">💽 Disk read finished</button>
+        <button data-irq="32">⏱ Timer fires</button>
+        <button data-irq="0">➗ Program divides by zero</button>
+      </div>
+
+      <div class="cpu">
+        <div class="box">
+          <div class="row" style="justify-content:space-between">
+            <h3 style="margin:0">CPU</h3>
+            <span id="mode" class="mode user">USER mode · bit 1</span>
+          </div>
+          <div class="reg"><span>Running</span><b id="running">game.exe</b></div>
+          <div class="reg"><span>PC (program counter)</span><b id="pc"></b></div>
+          <div class="reg"><span>Current instruction</span><b id="instr"></b></div>
+          <div class="reg"><span>Saved PC (on kernel stack)</span><b id="saved">—</b></div>
+          <div class="reg"><span>Pending interrupts</span><b id="pending">none</b></div>
+          <h3 style="margin-top:14px">Stages</h3>
+          <ol class="steps" id="steps">
+            <li>Device sends an interrupt signal on the bus</li>
+            <li>CPU finishes the current instruction</li>
+            <li>Save the PC of the interrupted instruction · switch to kernel mode</li>
+            <li>Look up the handler in the interrupt vector</li>
+            <li>Run the interrupt handler (service the device)</li>
+            <li>Return from interrupt: restore PC · back to user mode</li>
+          </ol>
+        </div>
+        <div>
+          <div class="box">
+            <h3 style="margin-top:0">Interrupt vector</h3>
+            <table class="t vec" id="vec"></table>
+            <p class="muted small" style="margin-bottom:0">Numbers follow the x86 convention for exceptions (0 = divide error); device numbers are illustrative.</p>
+          </div>
+          <h3>Event log</h3>
+          <div class="log" id="log"></div>
+        </div>
+      </div>
+      <div class="stats" style="margin-top:12px">
+        <div class="stat"><b id="sUser">0</b><span>user instructions run</span></div>
+        <div class="stat"><b id="sIrq">0</b><span>interrupts handled</span></div>
+        <div class="stat"><b id="sKern">0</b><span>steps spent in kernel</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Part 2 — Polling vs interrupt-driven vs DMA</h2>
+      <p>Transfer a block of data from a device. The device needs <b>4 time units per word</b>. Each square is one time unit of CPU time. What is the CPU doing?</p>
+      <div class="row">
+        <label>Words to transfer <input type="range" id="words" min="2" max="24" value="12"> <b id="wordsV"></b></label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="chip active" data-io="poll">Polling</button>
+        <button class="chip" data-io="int">Interrupt-driven</button>
+        <button class="chip" data-io="dma">DMA</button>
+      </div>
+      <div class="legend" style="margin-top:10px">
+        <span><i style="background:var(--ok)"></i>useful work for other programs</span>
+        <span><i style="background:var(--bad)"></i>busy-waiting / copying words</span>
+        <span><i style="background:var(--warn)"></i>interrupt handling / DMA setup</span>
+      </div>
+      <div class="timeline" id="tl"></div>
+      <div class="stats">
+        <div class="stat"><b id="ioInt">0</b><span>interrupts</span></div>
+        <div class="stat"><b id="ioFree">0%</b><span>CPU free for other work</span></div>
+      </div>
+      <div class="callout" id="ioText"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, logger } = CS;
+    const log = logger($('#log'));
+
+    /* ---------------- Part 1 ---------------- */
+    const VECTOR = {
+      0: { name: 'Divide error', handler: 0xffff8100, work: 'Kernel sends SIGFPE → the program is terminated', kill: true },
+      32: { name: 'Timer', handler: 0xffff8200, work: 'Scheduler runs: quantum used up, decide who runs next' },
+      33: { name: 'Keyboard', handler: 0xffff8300, work: 'Read scancode from keyboard controller, wake the waiting shell' },
+      46: { name: 'Disk', handler: 0xffff8400, work: 'Read disk controller status, mark the block ready, wake the waiting process' },
+    };
+    const vecT = $('#vec');
+    vecT.append(el('tr', {}, el('th', {}, '#'), el('th', {}, 'Source'), el('th', {}, 'Handler address')));
+    for (const [n, v] of Object.entries(VECTOR))
+      vecT.append(el('tr', { 'data-n': n }, el('td', {}, n), el('td', {}, v.name), el('td', { class: 'mono' }, '0x' + v.handler.toString(16))));
+
+    const PROGRAM = ['mov eax, [score]', 'add eax, 10', 'mov [score], eax', 'cmp eax, 100', 'jl draw_frame', 'call draw_sprite', 'inc ecx', 'jmp game_loop'];
+    let userPC = 0x401000, pc = userPC, stage = -1, cur = null, handlerSteps = 0;
+    const pending = [];
+    let stats = { user: 0, irq: 0, kern: 0 }, killed = false;
+    const hex = (n) => '0x' + n.toString(16);
+
+    function setMode(kernel) {
+      const m = $('#mode');
+      m.className = 'mode ' + (kernel ? 'kernel' : 'user');
+      m.textContent = kernel ? 'KERNEL mode · bit 0' : 'USER mode · bit 1';
+    }
+    function showStage() {
+      $$('#steps li').forEach((li, i) => { li.className = i === stage ? 'on' : i < stage ? 'past' : ''; });
+      $$('#vec tr').forEach((tr) => tr.querySelectorAll('td').forEach((td) => td.classList.toggle('on', cur && tr.dataset.n == cur && stage >= 3)));
+    }
+    function render() {
+      $('#pc').textContent = hex(pc);
+      $('#instr').textContent = stage === 4 && cur != null ? `handler: ${VECTOR[cur].name.toLowerCase()}…` : killed ? '—' : PROGRAM[((pc - 0x401000) / 4) % PROGRAM.length];
+      $('#pending').textContent = pending.length ? pending.map((n) => VECTOR[n].name).join(', ') : 'none';
+      $('#sUser').textContent = stats.user; $('#sIrq').textContent = stats.irq; $('#sKern').textContent = stats.kern;
+      showStage();
+    }
+
+    function tick() {
+      if (stage === -1) {
+        if (pending.length) {
+          cur = pending.shift(); stage = 0;
+          log(cur === 0 ? 'Trap #0: the CPU itself detected a divide by zero (a software-generated interrupt — no device involved)'
+                        : `IRQ ${cur} (${VECTOR[cur].name}) signalled on the bus`, 'i');
+        }
+        else if (!killed) { pc += 4; userPC = pc; stats.user++; }
+        else if (killed) {
+          killed = false; pc = userPC = 0x401000; $('#running').textContent = 'game.exe (restarted)';
+          log('A fresh copy of game.exe was started', 'u');
+        }
+        return render();
+      }
+      stats.kern++;
+      const v = VECTOR[cur];
+      switch (stage) {
+        case 0: stage = 1; log(`CPU finishes "${PROGRAM[((pc - 0x401000) / 4) % PROGRAM.length]}" before reacting`); break;
+        case 1: stage = 2; $('#saved').textContent = hex(userPC); setMode(true); log(`Save PC ${hex(userPC)} · mode bit 1 → 0 (kernel)`, 'k'); break;
+        case 2: stage = 3; log(`vector[${cur}] → handler at ${hex(v.handler)}`, 'k'); break;
+        case 3: stage = 4; pc = v.handler; handlerSteps = 0; log(v.work, 'k'); break;
+        case 4:
+          if (handlerSteps++ < 1) { pc += 4; break; }
+          stage = 5;
+          if (v.kill) {
+            log('Program killed — there is no PC to return to; kernel picks another process', 'e');
+            killed = true; $('#running').textContent = 'idle (game.exe was killed)';
+          } else {
+            pc = userPC; log(`iret: restore PC ${hex(userPC)} · mode bit 0 → 1 (user)`, 'u');
+          }
+          setMode(false); $('#saved').textContent = '—'; stats.irq++;
+          break;
+        case 5: stage = -1; cur = null; if (!killed) log('Program resumes as if nothing happened', 'u'); break;
+      }
+      render();
+    }
+
+    let timer = null;
+    const speed = () => Number($('#speed').max) + Number($('#speed').min) - Number($('#speed').value);
+    function play() { clearInterval(timer); timer = setInterval(tick, speed()); $('#play').textContent = '⏸ Pause'; }
+    function pause() { clearInterval(timer); timer = null; $('#play').textContent = '▶ Play'; }
+    $('#play').onclick = () => (timer ? pause() : play());
+    $('#step').onclick = () => { pause(); tick(); };
+    $('#speed').oninput = () => timer && play();
+    $$('[data-irq]').forEach((b) => (b.onclick = () => {
+      const n = Number(b.dataset.irq);
+      if (n === 0 && (stage !== -1 || killed)) return log('The program must be running to divide by zero', 'e');
+      pending.push(n); log(`${VECTOR[n].name} raised an interrupt (queued until the CPU checks)`, 'i'); render();
+    }));
+    render(); play();
+
+    /* ---------------- Part 2 ---------------- */
+    let ioMode = 'poll';
+    const PER_WORD = 4;
+    function drawIO() {
+      const words = Number($('#words').value);
+      $('#wordsV').textContent = words;
+      const cells = [];
+      let interrupts = 0;
+      if (ioMode === 'poll') {
+        for (let w = 0; w < words; w++) for (let t = 0; t < PER_WORD; t++) cells.push('p');
+      } else if (ioMode === 'int') {
+        for (let w = 0; w < words; w++) {
+          for (let t = 0; t < PER_WORD - 1; t++) cells.push('w');
+          cells.push('h'); interrupts++;
+        }
+      } else {
+        cells.push('h'); // program DMA controller
+        for (let t = 1; t < words * PER_WORD - 1; t++) cells.push('w');
+        cells.push('h'); interrupts = 1;
+      }
+      const tl = $('#tl');
+      tl.replaceChildren(...cells.map((c) => el('span', { class: c, title: { w: 'useful work', p: 'polling / copying', h: 'interrupt / setup' }[c] })));
+      const free = Math.round((cells.filter((c) => c === 'w').length / cells.length) * 100);
+      $('#ioInt').textContent = interrupts;
+      $('#ioFree').textContent = free + '%';
+      $('#ioText').innerHTML = {
+        poll: '<b>Polling:</b> the CPU keeps asking "are you done yet?" — it is stuck babysitting the device the whole time. With 100 devices this costs ~99% of the CPU.',
+        int: `<b>Interrupt-driven:</b> the CPU does other work and is interrupted once <b>per word</b> (${words} interrupts) to copy it. Fine for a keyboard; wasteful for a 1 GB disk read.`,
+        dma: '<b>DMA:</b> the CPU programs the DMA controller <b>once</b> (source, destination, count) and walks away. The controller copies the whole block into memory and raises <b>ONE</b> interrupt at the end.',
+      }[ioMode];
+    }
+    $$('[data-io]').forEach((b) => (b.onclick = () => {
+      ioMode = b.dataset.io;
+      $$('[data-io]').forEach((x) => x.classList.toggle('active', x === b));
+      drawIO();
+    }));
+    $('#words').oninput = drawIO;
+    drawIO();
+  </script>
+</body>
+</html>

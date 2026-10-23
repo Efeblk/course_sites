@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dual-Mode &amp; Timer · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 800px) { .lab { grid-template-columns: 1fr; } }
+    .actions { display: grid; gap: 8px; }
+    .actions button { text-align: left; }
+    .actions button small { display: block; color: var(--muted); font-size: .8rem; }
+    .mem { display: flex; flex-direction: column; gap: 4px; font-family: var(--mono); font-size: .85rem; }
+    .mem div { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); }
+    .mem .os { background: color-mix(in srgb, var(--kernel) 16%, transparent); }
+    .mem .me { background: color-mix(in srgb, var(--user) 16%, transparent); }
+    .mem .other { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+    .mem .broken { background: color-mix(in srgb, var(--bad) 30%, transparent); text-decoration: line-through; }
+    .frozen { position: fixed; inset: 0; background: rgba(0, 0, 0, .78); display: none; align-items: center; justify-content: center; z-index: 50; }
+    .frozen .inner { background: var(--panel); border: 2px solid var(--bad); border-radius: 16px; padding: 26px; max-width: 520px; text-align: center; }
+    .toggle { display: flex; gap: 8px; align-items: center; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="1" data-title="Dual-Mode & Timer" data-activity="ch1-dualmode">
+  <main>
+    <h1>Dual-Mode &amp; Timer</h1>
+    <p class="lead">You are <b>game.exe</b>, a user program. Try everything — including things you shouldn't do. Then switch off the hardware protection and see what breaks (the slide 42 discussion: <i>"Suppose the CPU had only one mode…"</i>).</p>
+
+    <div class="panel">
+      <div class="row">
+        <label class="toggle"><input type="checkbox" id="dual" checked> CPU has a <b>mode bit</b> (dual-mode + MMU protection)</label>
+        <label class="toggle"><input type="checkbox" id="timer" checked> Hardware <b>timer</b> enabled</label>
+        <span id="mode" class="mode user">USER · bit 1</span>
+      </div>
+    </div>
+
+    <div class="lab">
+      <div class="panel">
+        <h3 style="margin-top:0">Instructions game.exe can try</h3>
+        <div class="actions" id="actions"></div>
+        <div class="row" style="margin-top:12px">
+          <button id="restart">↻ Restart game.exe</button>
+          <span id="status" class="tag"></span>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3 style="margin-top:0">Physical memory</h3>
+          <div class="mem" id="mem"></div>
+          <p class="muted small" style="margin-bottom:0">With dual-mode, the MMU only lets game.exe touch its own region. Anything else traps to the OS.</p>
+        </div>
+        <div class="panel">
+          <h3 style="margin-top:0">What happened</h3>
+          <div class="log" id="log"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Remember:</b> user → kernel only through a controlled entry point (system call, interrupt, trap). Privileged instructions in user mode trap to the OS. The timer guarantees the OS gets the CPU back — Linux default tick: 1 ms.
+    </div>
+  </main>
+
+  <div class="frozen" id="frozen">
+    <div class="inner">
+      <h2 style="margin-top:0">💀 The whole machine is frozen</h2>
+      <p id="frozenWhy"></p>
+      <button class="primary" id="power">Hold the power button (reboot)</button>
+    </div>
+  </div>
+
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, logger, sleep } = CS;
+    const log = logger($('#log'));
+    let state;
+    function reset() {
+      state = { alive: true, busy: false, kernel: false, interruptsOff: false, osBroken: false, mmuHacked: false, fsBroken: false };
+      render();
+    }
+    function render() {
+      const m = $('#mode');
+      m.className = 'mode ' + (state.kernel ? 'kernel' : 'user');
+      m.textContent = state.kernel ? 'KERNEL · bit 0' : $('#dual').checked ? 'USER · bit 1' : 'NO MODE BIT — everything is "kernel"';
+      const s = $('#status');
+      s.textContent = state.alive ? 'game.exe: running' : 'game.exe: killed by the OS';
+      s.className = 'tag ' + (state.alive ? 'done' : '');
+      CS.fill($('#mem'), 
+        el('div', { class: 'os' + (state.osBroken ? ' broken' : '') }, '0x0000  OS kernel (code + data)'),
+        el('div', { class: 'me' }, '0x4000  game.exe  (you)'),
+        el('div', { class: 'other' }, '0x8000  browser.exe  — password = "hunter2"'),
+        el('div', { class: 'other' + (state.fsBroken ? ' broken' : '') }, 'disk   file system'));
+      document.querySelectorAll('#actions button').forEach((b) => (b.disabled = state.busy || !state.alive));
+    }
+    async function enterKernel(why) {
+      state.kernel = true; render();
+      log($('#dual').checked ? `trap → mode bit 1 → 0 · ${why}` : `jump into OS code · ${why}`, 'k');
+      await sleep(500);
+    }
+    async function leaveKernel() {
+      state.kernel = false; render();
+      log($('#dual').checked ? 'return → mode bit 0 → 1 · back in game.exe' : 'return to game.exe', 'u');
+    }
+    function freeze(why) {
+      $('#frozenWhy').textContent = why;
+      $('#frozen').style.display = 'flex';
+    }
+    async function kill(reason) {
+      await enterKernel(reason);
+      log('OS terminates game.exe (protection fault). The rest of the system is fine.', 'e');
+      state.alive = false; state.kernel = false; render();
+    }
+
+    const ACTIONS = [
+      {
+        label: 'add eax, 10; call draw()', sub: 'Normal computation',
+        async run(dual) { log('Runs at full speed in user mode — no OS involvement needed.', 'u'); },
+      },
+      {
+        label: 'read(fd, buf, 100)', sub: 'System call — ask the OS to read a file',
+        async run(dual) {
+          log('game.exe executes the syscall instruction', 'u');
+          await enterKernel('syscall handler for read()');
+          log('Kernel checks fd, talks to the disk driver, copies 100 bytes into buf', 'k');
+          await sleep(600);
+          await leaveKernel();
+          log('read() returned 100. Mode changed TWICE: user → kernel → user.', 'i');
+        },
+      },
+      {
+        label: 'cli', sub: 'Privileged: disable interrupts',
+        async run(dual) {
+          if (dual) return kill('privileged instruction "cli" in user mode');
+          state.interruptsOff = true;
+          log('Interrupts disabled by a user program! The timer can no longer reach the OS.', 'e');
+          log('Now try the infinite loop…', 'e');
+        },
+      },
+      {
+        label: 'mov cr3, eax', sub: 'Privileged: change the page-table (MMU) register',
+        async run(dual) {
+          if (dual) return kill('privileged instruction "mov cr3" in user mode');
+          state.mmuHacked = true;
+          log('game.exe remapped memory — it can now map ANY physical page, including the kernel\'s.', 'e');
+        },
+      },
+      {
+        label: 'out 0x1F7, al', sub: 'Privileged: program the disk controller directly',
+        async run(dual) {
+          if (dual) return kill('privileged I/O instruction in user mode');
+          state.fsBroken = true;
+          log('game.exe wrote raw sectors over the file system. Everyone\'s files are corrupted.', 'e');
+        },
+      },
+      {
+        label: 'mov eax, [0x8000]', sub: 'Read browser.exe\'s memory',
+        async run(dual) {
+          if (dual) return kill('MMU: address 0x8000 is outside game.exe → segmentation fault');
+          log('Read succeeded: password = "hunter2". Nothing stopped it.', 'e');
+        },
+      },
+      {
+        label: 'mov [0x0000], 0', sub: 'Overwrite OS memory',
+        async run(dual) {
+          if (dual) return kill('MMU: write to kernel memory → segmentation fault');
+          state.osBroken = true; render();
+          log('The kernel\'s code was overwritten…', 'e');
+          await sleep(700);
+          freeze('game.exe overwrote the operating system itself. With no mode bit there was nothing to stop it (MS-DOS on the 8088 worked exactly like this).');
+        },
+      },
+      {
+        label: 'while (1) { }', sub: 'Infinite loop — never gives the CPU back',
+        async run(dual) {
+          log('game.exe enters an infinite loop…', 'u');
+          for (let ms = 1; ms <= 3; ms++) { await sleep(400); log(`… ${ms} ms spinning`, 'u'); }
+          const timerOk = $('#timer').checked && !state.interruptsOff;
+          if (!timerOk) {
+            await sleep(500);
+            return freeze(state.interruptsOff
+              ? 'game.exe disabled interrupts earlier, so the timer interrupt never arrives. The OS never runs again.'
+              : 'There is no timer, so nothing ever interrupts the loop. The OS never gets the CPU back.');
+          }
+          await enterKernel('TIMER interrupt — quantum used up');
+          log('Scheduler: game.exe → Ready queue; dispatch browser.exe', 'k');
+          await sleep(500);
+          state.kernel = false; render();
+          log('browser.exe runs. The system stays responsive; game.exe gets another turn later.', 'i');
+        },
+      },
+    ];
+
+    $('#actions').append(...ACTIONS.map((a) => el('button', {
+      onclick: async () => {
+        if (state.busy || !state.alive) return;
+        state.busy = true; render();
+        log(`▶ ${a.label}`, 'i');
+        await a.run($('#dual').checked);
+        state.busy = false; render();
+      },
+    }, el('code', {}, a.label), el('small', {}, a.sub))));
+
+    $('#restart').onclick = () => { reset(); log('game.exe restarted', 'u'); };
+    $('#power').onclick = () => { $('#frozen').style.display = 'none'; reset(); log('— machine rebooted —', 'i'); };
+    $('#dual').onchange = () => { reset(); log($('#dual').checked ? 'Dual-mode ON: user programs are restricted.' : 'Dual-mode OFF: every program can do anything (like MS-DOS).', 'i'); };
+    $('#timer').onchange = () => log($('#timer').checked ? 'Timer ON' : 'Timer OFF — try the infinite loop', 'i');
+    reset();
+    log('Pick an instruction on the left.', 'i');
+  </script>
+</body>
+</html>

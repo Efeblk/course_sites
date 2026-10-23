@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bakery, Amdahl &amp; Parallelism · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lane { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+    .lane .who { width: 80px; font-weight: 600; }
+    .lane .track { flex: 1; position: relative; height: 32px; background: var(--bg-2); border-radius: 8px; border: 1px solid var(--line); }
+    .seg { position: absolute; top: 2px; bottom: 2px; border-radius: 6px; color: #fff; font-size: .78rem; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; }
+    .formula { font-family: var(--mono); font-size: 1.05rem; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+    .tbar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); }
+    .tbar div { display: flex; align-items: center; justify-content: center; font-size: .76rem; color: #fff; white-space: nowrap; overflow: hidden; }
+    .cg { display: grid; gap: 4px; }
+    .cg .rowc { display: flex; gap: 2px; align-items: center; }
+    .cg .rowc b { width: 70px; font-size: .84rem; }
+    .cg .rowc span { width: 26px; height: 24px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: .7rem; color: #fff; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="4" data-title="Bakery, Amdahl & Parallelism" data-activity="ch4-amdahl">
+  <main>
+    <h1>Bakery, Amdahl &amp; Parallelism</h1>
+
+    <!-- ============ Bakery ============ -->
+    <div class="panel">
+      <h2 style="margin-top:0">1 · The bakery story (slide 7)</h2>
+      <p>You have to <b>buy bread (20 min)</b>, <b>do homework (120 min)</b> and <b>prepare lunch (100 min)</b>. Alone that's 4 hours. Assign the tasks to people — how fast can you finish?</p>
+      <div class="row" id="assign"></div>
+      <div id="lanes" style="margin-top:12px"></div>
+      <div class="callout" id="bakeryNote"></div>
+    </div>
+
+    <!-- ============ concurrency vs parallelism ============ -->
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Concurrency vs parallelism (slide 14)</h2>
+      <p class="small">Four threads T1–T4, each needs 4 time units of CPU. The scheduler round-robins them over the available cores.</p>
+      <label>Cores <input type="range" id="cores" min="1" max="4" value="1" style="width:140px"> <b id="coresV"></b></label>
+      <div class="cg" id="cgrid" style="margin-top:10px"></div>
+      <div class="callout" id="cpNote"></div>
+    </div>
+
+    <!-- ============ Amdahl ============ -->
+    <div class="panel">
+      <h2 style="margin-top:0">3 · Amdahl's Law (slide 16)</h2>
+      <div class="formula" id="formula"></div>
+      <div class="row" style="margin-top:12px">
+        <label>Serial portion S <input type="range" id="S" min="0" max="100" value="25"> <b id="Sv"></b></label>
+        <label>Cores N <input type="range" id="N" min="0" max="10" value="1"> <b id="Nv"></b></label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="chip" data-pre="25,1">Slide example: S = 25%, N = 2</button>
+        <button class="chip" data-pre="25,10">1024 cores?</button>
+        <button class="chip" data-pre="5,3">S = 5%, N = 8</button>
+        <button class="chip" data-pre="0,4">Perfectly parallel</button>
+      </div>
+      <h4 style="margin:14px 0 4px">Running time (single core = 100%)</h4>
+      <div class="tbar" id="tbar"></div>
+      <div class="stats" style="margin-top:12px">
+        <div class="stat"><b id="speed"></b><span>speedup</span></div>
+        <div class="stat"><b id="limit"></b><span>limit as N → ∞ (1/S)</span></div>
+        <div class="stat"><b id="eff"></b><span>efficiency (speedup / N)</span></div>
+      </div>
+      <h4 style="margin:14px 0 4px">Speedup vs number of cores</h4>
+      <svg id="chart" viewBox="0 0 640 260" width="100%" style="max-width:720px"></svg>
+      <div class="callout" id="amNote"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el } = CS;
+
+    /* ---------- bakery ---------- */
+    const TASKS = [
+      { name: 'Buy bread', min: 20, color: '#e67e22' },
+      { name: 'Homework', min: 120, color: '#2f6fe0' },
+      { name: 'Prepare lunch', min: 100, color: '#16a085' },
+    ];
+    const PEOPLE = ['You', 'Brother', 'Sister'];
+    const who = [0, 0, 0];
+    TASKS.forEach((t, i) => {
+      const s = el('select', { onchange: (e) => { who[i] = Number(e.target.value); bakery(); } },
+        PEOPLE.map((p, k) => el('option', { value: k }, p)));
+      $('#assign').append(el('label', {}, `${t.name} (${t.min} min) → `, s));
+    });
+    function bakery() {
+      const total = Math.max(...PEOPLE.map((_, p) => TASKS.filter((_, i) => who[i] === p).reduce((s, t) => s + t.min, 0)));
+      const SCALE = 240;
+      $('#lanes').replaceChildren(...PEOPLE.map((p, k) => {
+        let t0 = 0;
+        const segs = TASKS.map((t, i) => {
+          if (who[i] !== k) return null;
+          const s = el('div', { class: 'seg', style: { left: `${(t0 / SCALE) * 100}%`, width: `${(t.min / SCALE) * 100}%`, background: t.color } }, `${t.name} ${t.min}`);
+          t0 += t.min;
+          return s;
+        });
+        return el('div', { class: 'lane' }, el('span', { class: 'who' }, p), el('div', { class: 'track' }, segs));
+      }), el('div', { class: 'stats', style: { marginTop: '8px' } },
+        el('div', { class: 'stat' }, el('b', {}, `${total} min`), el('span', {}, 'finish time')),
+        el('div', { class: 'stat' }, el('b', {}, `${(240 / total).toFixed(2)}×`), el('span', {}, 'speedup vs alone'))));
+      $('#bakeryNote').innerHTML = total === 240
+        ? 'Sequential: one person does everything, one after another — <b>4 hours</b>.'
+        : total === 120
+          ? '<b>2 hours — the best possible.</b> Even with infinite helpers you can\'t beat the <b>longest task</b>: homework can\'t be split. That is the idea behind Amdahl\'s Law (thinking question Q1).'
+          : `Better: ${total} min. Can you get it down further?`;
+    }
+    bakery();
+
+    /* ---------- concurrency vs parallelism ---------- */
+    const TC = ['#e67e22', '#2f6fe0', '#16a085', '#8e44ad'];
+    function cp() {
+      const cores = Number($('#cores').value);
+      $('#coresV').textContent = cores;
+      const left = [4, 4, 4, 4];
+      const rows = Array.from({ length: cores }, () => []);
+      let q = 0;
+      while (left.some((x) => x > 0)) {
+        const used = new Set(); // a thread can run on only one core at a time
+        for (let c = 0; c < cores; c++) {
+          let tries = 0;
+          while ((left[q % 4] === 0 || used.has(q % 4)) && tries++ < 4) q++;
+          const t = q % 4;
+          if (left[t] > 0 && !used.has(t)) { rows[c].push(t); left[t]--; used.add(t); q++; } else rows[c].push(null);
+        }
+      }
+      $('#cgrid').replaceChildren(...rows.map((r, c) => el('div', { class: 'rowc' }, el('b', {}, `Core ${c + 1}`),
+        r.map((t) => el('span', { style: { background: t == null ? 'var(--panel-2)' : TC[t] } }, t == null ? '' : `T${t + 1}`)))));
+      const len = rows[0].length;
+      $('#cpNote').innerHTML = cores === 1
+        ? `<b>Concurrency, not parallelism.</b> Only one thread runs at any instant, but all four make progress by taking turns. Done after ${len} units.`
+        : `<b>Parallelism:</b> ${cores} threads truly run at the same time. Done after ${len} units (${(16 / len).toFixed(1)}× faster).`;
+    }
+    $('#cores').oninput = cp;
+    cp();
+
+    /* ---------- Amdahl ---------- */
+    const Ns = () => 2 ** Number($('#N').value);
+    const speedup = (S, N) => 1 / (S + (1 - S) / N);
+    function amdahl() {
+      const S = Number($('#S').value) / 100, N = Ns();
+      $('#Sv').textContent = `${Math.round(S * 100)}%`;
+      $('#Nv').textContent = N;
+      const sp = speedup(S, N);
+      $('#formula').innerHTML = `speedup ≤ 1 / (S + (1 − S) / N) = 1 / (${S.toFixed(2)} + ${(1 - S).toFixed(2)} / ${N}) = <b>${sp.toFixed(2)}×</b>`;
+      $('#speed').textContent = `${sp.toFixed(2)}×`;
+      $('#limit').textContent = S === 0 ? '∞' : `${(1 / S).toFixed(2)}×`;
+      $('#eff').textContent = `${Math.round((sp / N) * 100)}%`;
+      const serialPct = S * 100, parPct = ((1 - S) / N) * 100;
+      CS.fill($('#tbar'), 
+        serialPct > 0 ? el('div', { style: { width: `${serialPct}%`, background: 'var(--bad)' } }, `serial ${serialPct.toFixed(0)}%`) : null,
+        el('div', { style: { width: `${parPct}%`, background: 'var(--ok)' } }, parPct > 6 ? `parallel ${parPct.toFixed(1)}%` : ''),
+        el('div', { style: { flex: 1, background: 'var(--panel-2)' } }, ''));
+      chart(S, N);
+      $('#amNote').innerHTML = S >= .2 && N >= 64
+        ? `With ${Math.round(S * 100)}% serial code, ${N} cores give only <b>${sp.toFixed(2)}×</b> — almost no better than the limit 1/S = ${(1 / S).toFixed(1)}×. Adding 1000 cores to a 4-core CPU will <b>not</b> make it 250× faster (thinking question Q2). The serial part has a disproportionate effect.`
+        : S === 0
+          ? 'With no serial part, speedup = N. Real programs always have some serial work (setup, combining partial sums, I/O).'
+          : 'Watch the red serial part: no number of cores can shrink it. Drag N to the right and see the curve flatten toward the dashed 1/S line.';
+    }
+    function chart(S, N) {
+      const W = 640, H = 260, L = 44, B = 30, T = 12, R = 14;
+      const maxN = 1024, maxY = S === 0 ? 1024 : Math.min(1024, Math.max(4, Math.ceil(1 / S + 1)));
+      const x = (n) => L + (Math.log2(n) / 10) * (W - L - R);
+      const y = (v) => H - B - (Math.min(v, maxY) / maxY) * (H - B - T);
+      let s = `<line x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}" stroke="var(--line)"/><line x1="${L}" y1="${T}" x2="${L}" y2="${H - B}" stroke="var(--line)"/>`;
+      for (let k = 0; k <= 10; k += 2) s += `<text x="${x(2 ** k)}" y="${H - 10}" font-size="11" text-anchor="middle" fill="var(--muted)">${2 ** k}</text>`;
+      for (let k = 0; k <= 4; k++) { const v = (maxY / 4) * k; s += `<text x="${L - 6}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="var(--muted)">${+v.toFixed(1)}</text>`; }
+      if (S > 0) s += `<line x1="${L}" y1="${y(1 / S)}" x2="${W - R}" y2="${y(1 / S)}" stroke="var(--bad)" stroke-dasharray="5 4"/><text x="${W - R}" y="${y(1 / S) - 5}" font-size="11" text-anchor="end" fill="var(--bad)">limit 1/S = ${(1 / S).toFixed(2)}</text>`;
+      let d = '';
+      for (let i = 0; i <= 100; i++) { const n = 2 ** (i / 10); d += `${i ? 'L' : 'M'}${x(n).toFixed(1)},${y(speedup(S, n)).toFixed(1)}`; }
+      s += `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`;
+      s += `<circle cx="${x(N)}" cy="${y(speedup(S, N))}" r="6" fill="var(--warn)"/>`;
+      s += `<text x="${(L + W) / 2}" y="${H}" font-size="11" text-anchor="middle" fill="var(--muted)">cores N (log scale)</text>`;
+      $('#chart').innerHTML = s;
+    }
+    $('#S').oninput = amdahl;
+    $('#N').oninput = amdahl;
+    $$('[data-pre]').forEach((b) => (b.onclick = () => {
+      const [s, n] = b.dataset.pre.split(',').map(Number);
+      $('#S').value = s; $('#N').value = n; amdahl();
+    }));
+    amdahl();
+  </script>
+</body>
+</html>

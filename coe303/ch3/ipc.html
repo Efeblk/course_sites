@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IPC Lab · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .ring { display: flex; gap: 6px; flex-wrap: wrap; margin: 26px 0 30px; }
+    .cell { position: relative; width: 58px; height: 58px; border-radius: 10px; border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--mono); background: var(--bg-2); }
+    .cell.full { background: color-mix(in srgb, var(--accent) 28%, var(--bg-2)); border-color: var(--accent); }
+    .cell .idx { position: absolute; top: 2px; left: 5px; font-size: .65rem; color: var(--muted); }
+    .cell .ptr { position: absolute; font-size: .72rem; font-weight: 700; font-family: var(--mono); left: 50%; transform: translateX(-50%); white-space: nowrap; }
+    .cell .ptr.in { top: -20px; color: var(--ok); }
+    .cell .ptr.out { bottom: -20px; color: var(--kernel); }
+    .who { display: flex; gap: 10px; flex-wrap: wrap; }
+    .actor { flex: 1; min-width: 220px; }
+    .actor.blocked { outline: 2px solid var(--warn); border-radius: 12px; }
+    .mq { display: flex; gap: 6px; min-height: 44px; align-items: center; flex-wrap: wrap; padding: 6px; border: 2px dashed var(--line); border-radius: 10px; }
+    .msg { padding: 6px 10px; border-radius: 8px; background: var(--accent); color: #fff; font-family: var(--mono); font-size: .85rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="3" data-title="IPC Lab" data-activity="ch3-ipc">
+  <main>
+    <h1>IPC Lab: Buffers &amp; Messages</h1>
+    <p class="lead">Cooperating processes need IPC. Two models: <b>shared memory</b> (fast, but you must synchronize) and <b>message passing</b> (the kernel does the work). The producer–consumer problem is the classic example.</p>
+
+    <!-- ===================== shared memory ===================== -->
+    <div class="panel">
+      <h2 style="margin-top:0">1 · Shared memory: the bounded buffer</h2>
+      <p class="small">Slides 58–60. <code>in</code> = next free slot, <code>out</code> = next full slot. Empty when <code>in == out</code>; full when <code>(in + 1) % BUFFER_SIZE == out</code>.</p>
+      <div class="row">
+        <button class="primary" id="prod">Producer: produce 1</button>
+        <button class="primary" id="cons">Consumer: consume 1</button>
+        <label><input type="checkbox" id="autoP"> auto-produce</label>
+        <label><input type="checkbox" id="autoC"> auto-consume</label>
+        <label>Producer speed <input type="range" id="sp" min="1" max="10" value="6" style="width:90px"></label>
+        <label>Consumer speed <input type="range" id="sc" min="1" max="10" value="3" style="width:90px"></label>
+        <label>BUFFER_SIZE <select id="bsize"><option>5</option><option>8</option><option selected>10</option></select></label>
+      </div>
+      <div class="ring" id="ring"></div>
+      <div class="stats">
+        <div class="stat"><b id="count">0</b><span>items in buffer</span></div>
+        <div class="stat"><b id="cap">9</b><span>max items (BUFFER_SIZE − 1)</span></div>
+        <div class="stat"><b id="pWait">0</b><span>producer busy-wait spins</span></div>
+        <div class="stat"><b id="cWait">0</b><span>consumer busy-wait spins</span></div>
+      </div>
+      <div class="cols" style="margin-top:12px">
+        <div><h4 style="margin:0 0 4px">producer.c</h4><div class="codeview" id="pcode"></div></div>
+        <div><h4 style="margin:0 0 4px">consumer.c</h4><div class="codeview" id="ccode"></div></div>
+      </div>
+      <div class="callout" id="bufNote">Fill the buffer completely and see how many items fit.</div>
+    </div>
+
+    <!-- ===================== race ===================== -->
+    <div class="panel">
+      <h2 style="margin-top:0">2 · What if we use all N slots with a counter?</h2>
+      <p class="small">Slides 61–62. The producer does <code>counter++</code> and the consumer <code>counter--</code>. Each is <b>three</b> machine instructions. Start: <code>counter = 5</code>. One item is produced and one consumed, so the answer must be 5. You are the CPU scheduler — choose who runs next.</p>
+      <div id="race"></div>
+    </div>
+
+    <!-- ===================== message passing ===================== -->
+    <div class="panel">
+      <h2 style="margin-top:0">3 · Message passing: blocking &amp; buffering</h2>
+      <p class="small">Slides 68–70. The kernel keeps a queue of messages on the link. Its <b>capacity</b> and whether send/receive <b>block</b> decide what happens.</p>
+      <div class="row">
+        <label>Capacity <select id="capMode">
+          <option value="zero">Zero (no queue — rendezvous)</option>
+          <option value="bounded" selected>Bounded (3 messages)</option>
+          <option value="unbounded">Unbounded</option>
+        </select></label>
+        <label><input type="checkbox" id="sendBlock" checked> blocking send</label>
+        <label><input type="checkbox" id="recvBlock" checked> blocking receive</label>
+        <button id="mpReset">Reset</button>
+      </div>
+      <div class="who" style="margin-top:12px">
+        <div class="box actor" id="sender">
+          <h4 style="margin:0 0 6px">Producer process</h4>
+          <button class="primary" id="send">send(message)</button>
+          <div class="small" id="sState" style="margin-top:6px"></div>
+        </div>
+        <div class="box" style="flex:1.3;min-width:240px">
+          <h4 style="margin:0 0 6px">Kernel: link queue</h4>
+          <div class="mq" id="mq"></div>
+        </div>
+        <div class="box actor" id="receiver">
+          <h4 style="margin:0 0 6px">Consumer process</h4>
+          <button class="primary" id="recv">receive(message)</button>
+          <div class="small" id="rState" style="margin-top:6px"></div>
+        </div>
+      </div>
+      <div class="callout" id="mpNote">Send a few messages.</div>
+      <div class="log" id="mplog"></div>
+      <div class="row" style="margin-top:12px">
+        <a class="btn" href="../game.html?id=ipc-models">Game: shared memory or message passing? →</a>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/race.js"></script>
+  <script>
+    const { $, el, logger } = CS;
+
+    /* ================= bounded buffer ================= */
+    const PCODE = ['while (1) {', '  /* produce an item in next_produced */', '  while (((in + 1) % BUFFER_SIZE) == out)', '    ; /* do nothing — buffer is full */', '  buffer[in] = next_produced;', '  in = (in + 1) % BUFFER_SIZE;', '}'];
+    const CCODE = ['while (1) {', '  while (in == out)', '    ; /* do nothing — buffer is empty */', '  next_consumed = buffer[out];', '  out = (out + 1) % BUFFER_SIZE;', '  /* consume the item in next_consumed */', '}'];
+    let N, buf, inP, outP, item, pSpin, cSpin, pOn = [], cOn = [];
+    function bReset() {
+      N = Number($('#bsize').value); buf = Array(N).fill(null); inP = 0; outP = 0; item = 1; pSpin = 0; cSpin = 0; pOn = []; cOn = [];
+      $('#cap').textContent = N - 1;
+      bDraw();
+    }
+    function bDraw() {
+      $('#ring').replaceChildren(...buf.map((v, i) => el('div', { class: `cell ${v != null ? 'full' : ''}` },
+        el('span', { class: 'idx' }, i), v != null ? `#${v}` : '',
+        i === inP ? el('span', { class: 'ptr in' }, '▼ in') : null,
+        i === outP ? el('span', { class: 'ptr out' }, '▲ out') : null)));
+      $('#count').textContent = (inP - outP + N) % N;
+      $('#pWait').textContent = pSpin; $('#cWait').textContent = cSpin;
+      $('#pcode').replaceChildren(...PCODE.map((l, i) => el('div', { class: pOn.includes(i) ? 'on' : '' }, l)));
+      $('#ccode').replaceChildren(...CCODE.map((l, i) => el('div', { class: cOn.includes(i) ? 'on' : '' }, l)));
+    }
+    function produce() {
+      if ((inP + 1) % N === outP) {
+        pSpin++; pOn = [2, 3];
+        $('#bufNote').className = 'callout warn';
+        $('#bufNote').innerHTML = `Buffer full with <b>${N - 1}</b> items, even though it has ${N} slots. If the producer filled the last slot, <code>in</code> would equal <code>out</code> — which already means <i>empty</i>. The producer busy-waits.`;
+      } else {
+        buf[inP] = item++; inP = (inP + 1) % N; pOn = [4, 5];
+        $('#bufNote').className = 'callout';
+        $('#bufNote').innerHTML = 'Producer wrote at <code>in</code>, then advanced it circularly.';
+      }
+      bDraw();
+    }
+    function consume() {
+      if (inP === outP) {
+        cSpin++; cOn = [1, 2];
+        $('#bufNote').className = 'callout warn';
+        $('#bufNote').innerHTML = 'Buffer empty (<code>in == out</code>) — the consumer busy-waits, burning CPU.';
+      } else {
+        buf[outP] = null; outP = (outP + 1) % N; cOn = [3, 4];
+        $('#bufNote').className = 'callout';
+        $('#bufNote').innerHTML = 'Consumer read at <code>out</code>, then advanced it. Note: producer and consumer never write the same variable — that is why this version has <b>no race</b>.';
+      }
+      bDraw();
+    }
+    $('#prod').onclick = produce;
+    $('#cons').onclick = consume;
+    $('#bsize').onchange = bReset;
+    let pT = null, cT = null;
+    const period = (v) => 1700 - Number(v) * 150;
+    function autos() {
+      clearInterval(pT); clearInterval(cT); pT = cT = null;
+      if ($('#autoP').checked) pT = setInterval(produce, period($('#sp').value));
+      if ($('#autoC').checked) cT = setInterval(consume, period($('#sc').value));
+    }
+    ['autoP', 'autoC', 'sp', 'sc'].forEach((id) => ($(`#${id}`).oninput = autos));
+    bReset();
+
+    /* ================= race ================= */
+    RaceStepper($('#race'), {
+      start: 5,
+      actors: [
+        { name: 'Producer', op: +1, reg: 'register1', color: 'var(--ok)' },
+        { name: 'Consumer', op: -1, reg: 'register2', color: 'var(--kernel)' },
+      ],
+      presets: { 'Slide 62 interleaving (→ 4)': [0, 0, 1, 1, 0, 1], 'Other bad order (→ 6)': [0, 1, 1, 1, 0, 0], 'Safe order': [0, 0, 0, 1, 1, 1] },
+    });
+
+    /* ================= message passing ================= */
+    const mplog = logger($('#mplog'));
+    let Q, seq, sBlocked, pending, rBlocked, got;
+    function mpReset() { Q = []; seq = 1; sBlocked = false; pending = null; rBlocked = false; got = []; mpDraw(); }
+    const capN = () => ({ zero: 0, bounded: 3, unbounded: Infinity })[$('#capMode').value];
+    function note(h, cls = '') { $('#mpNote').className = 'callout ' + cls; $('#mpNote').innerHTML = h; }
+    function mpDraw() {
+      $('#mq').replaceChildren(...(Q.length ? Q.map((m) => el('span', { class: 'msg' }, m)) : [el('span', { class: 'muted small' }, capN() === 0 ? 'no buffer — capacity 0' : 'empty')]));
+      $('#sender').classList.toggle('blocked', sBlocked);
+      $('#receiver').classList.toggle('blocked', rBlocked);
+      $('#sState').innerHTML = sBlocked ? `⏳ <b>blocked</b> in send(${pending})` : 'running';
+      $('#rState').innerHTML = (rBlocked ? '⏳ <b>blocked</b> in receive()' : 'running') + (got.length ? `<br>received: ${got.join(', ')}` : '');
+      $('#send').disabled = sBlocked;
+      $('#recv').disabled = rBlocked;
+    }
+    function deliver(m) { got.push(m); rBlocked = false; }
+    $('#send').onclick = () => {
+      const m = `m${seq++}`;
+      const cap = capN();
+      if (rBlocked) {
+        deliver(m); mplog(`send(${m}) → handed straight to the waiting receiver`, 'u');
+        note(cap === 0 ? '<b>Rendezvous:</b> the receiver was already waiting, so the message passed directly — no buffer needed.' : 'The receiver was blocked on an empty queue, so it gets the message immediately and wakes up.', 'ok');
+      } else if (Q.length < cap) {
+        Q.push(m); mplog(`send(${m}) → queued (${Q.length}/${cap === Infinity ? '∞' : cap})`, 'k');
+        note(cap === Infinity ? 'Unbounded capacity: the sender <b>never</b> waits. (Theoretical — no real system has infinite memory.)' : 'There is room in the queue, so send() returns right away even though nobody has received it yet.');
+      } else if ($('#sendBlock').checked) {
+        sBlocked = true; pending = m; mplog(`send(${m}) → BLOCKS (${cap === 0 ? 'no buffer' : 'queue full'})`, 'e');
+        note(cap === 0 ? 'Zero capacity + blocking send: the sender must wait until a receiver takes the message. Now press <b>receive</b>.' : 'The queue is full, so a <b>blocking send</b> waits until the consumer makes room (like a full POSIX pipe).', 'warn');
+      } else {
+        mplog(`send(${m}) → FAILED / dropped (non-blocking, ${cap === 0 ? 'no buffer' : 'queue full'})`, 'e');
+        note(cap === 0 ? 'Non-blocking send with no buffer and no waiting receiver: the message is <b>lost</b> — like a UDP datagram that nobody receives.' : 'Non-blocking send on a full queue returns an error immediately; the message is not sent.', 'bad');
+      }
+      mpDraw();
+    };
+    $('#recv').onclick = () => {
+      if (Q.length) {
+        const m = Q.shift(); got.push(m); mplog(`receive() → ${m}`, 'u');
+        note('Got the oldest message (FIFO).', 'ok');
+        if (sBlocked) { Q.push(pending); mplog(`blocked sender wakes: ${pending} enters the queue`, 'k'); sBlocked = false; pending = null; }
+      } else if (sBlocked) {
+        got.push(pending); mplog(`receive() → ${pending} (rendezvous with the blocked sender)`, 'u');
+        note('<b>Rendezvous:</b> both send and receive blocked, so they met and the message passed directly. Both continue.', 'ok');
+        sBlocked = false; pending = null;
+      } else if ($('#recvBlock').checked) {
+        rBlocked = true; mplog('receive() → BLOCKS (queue empty)', 'e');
+        note('Blocking receive on an empty queue: the consumer waits until a message arrives. Press <b>send</b>.', 'warn');
+      } else {
+        mplog('receive() → returns NULL immediately', 'e');
+        note('Non-blocking receive: you get either a valid message or a <b>null</b> — the process keeps running.', 'warn');
+      }
+      mpDraw();
+    };
+    ['capMode', 'sendBlock', 'recvBlock'].forEach((id) => ($(`#${id}`).onchange = () => { mpReset(); mplog('— settings changed, link reset —', 'i'); }));
+    $('#mpReset').onclick = mpReset;
+    mpReset();
+  </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Process State Scheduler · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    @media (max-width: 820px) { .board { grid-template-columns: repeat(2, 1fr); } }
+    .col { background: var(--bg-2); border: 2px dashed var(--line); border-radius: 12px; padding: 8px; min-height: 170px; cursor: pointer; }
+    .col h4 { margin: 0 0 6px; font-size: .86rem; letter-spacing: .05em; text-transform: uppercase; display: flex; justify-content: space-between; }
+    .col.target { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 8%, var(--bg-2)); }
+    .col.running { background: color-mix(in srgb, var(--accent) 10%, var(--bg-2)); }
+    .pcard { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 7px 9px; margin-bottom: 6px; cursor: pointer; font-size: .9rem; }
+    .pcard small { display: block; color: var(--muted); font-family: var(--mono); font-size: .75rem; }
+    .pcard.sel { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent); }
+    .pcard .acts { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
+    .pcard .acts button { padding: 2px 7px; font-size: .74rem; }
+    .gantt { display: flex; gap: 2px; overflow-x: auto; padding: 4px 0; }
+    .gantt div { min-width: 46px; text-align: center; font-size: .72rem; padding: 6px 2px; border-radius: 4px; color: #fff; white-space: nowrap; }
+    .gantt .idle { background: var(--panel-2); color: var(--muted); }
+    .scen { font-size: 1.05rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="3" data-title="Process State Scheduler" data-activity="ch3-states">
+  <main>
+    <h1>Process State Scheduler</h1>
+    <p class="lead">Five states, six transitions (Fig 3.2). Click a process, then click the state to move it to. The OS will refuse transitions that can't happen.</p>
+    <div class="row">
+      <button class="chip active" data-tab="scenario">🎯 Scenario challenge (Demo 1)</button>
+      <button class="chip" data-tab="sim">⏱ Round-robin simulator (Demo 2)</button>
+    </div>
+
+    <div class="panel" id="scenarioPanel">
+      <div class="row" style="justify-content:space-between">
+        <span class="tag" id="scStep"></span>
+        <span class="tag" id="scMist"></span>
+      </div>
+      <p class="scen" id="scText"></p>
+      <div class="callout" id="scFeedback">Click the process, then the state it should move to.</div>
+    </div>
+
+    <div class="panel" id="simPanel" style="display:none">
+      <div class="row">
+        <button class="primary" id="run">▶ Run scheduler</button>
+        <button id="tick">One tick (10 ms)</button>
+        <button id="launch">Launch ./a.out</button>
+        <label><input type="checkbox" id="autoio" checked> I/O completes automatically after 30 ms</label>
+        <label>Cores <select id="cores"><option>1</option><option>2</option></select></label>
+      </div>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><b id="clock">0 ms</b><span>clock</span></div>
+        <div class="stat"><b id="cs">0</b><span>context switches</span></div>
+        <div class="stat"><b id="q">10 ms</b><span>time quantum</span></div>
+      </div>
+      <h4 style="margin:12px 0 4px">CPU timeline (Gantt chart)</h4>
+      <div class="gantt" id="gantt"><div class="idle">—</div></div>
+    </div>
+
+    <div class="board" id="board"></div>
+    <h3>Log</h3>
+    <div class="log" id="log"></div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">The rules you just played</h3>
+      <table class="t">
+        <tr><th>Transition</th><th>Name</th><th>Caused by</th></tr>
+        <tr><td>New → Ready</td><td>admit</td><td>OS finished creating the PCB and memory</td></tr>
+        <tr><td>Ready → Running</td><td>dispatch</td><td>the scheduler picks it for a free core</td></tr>
+        <tr><td>Running → Ready</td><td>interrupt (preempt)</td><td>timer: time slice expired</td></tr>
+        <tr><td>Running → Waiting</td><td>I/O or event wait</td><td>read(), wait() for a child, keyboard input…</td></tr>
+        <tr><td>Waiting → Ready</td><td>I/O or event completion</td><td>the device interrupt — <b>not</b> straight to Running</td></tr>
+        <tr><td>Running → Terminated</td><td>exit</td><td>exit() or killed</td></tr>
+      </table>
+      <div class="row" style="margin-top:12px">
+        <a class="btn" href="../game.html?id=state-events">Game: events → transitions</a>
+        <a class="btn" href="../game.html?id=context-switch">Game: context switch steps</a>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, logger } = CS;
+    const log = logger($('#log'));
+    const STATES = ['New', 'Ready', 'Running', 'Waiting', 'Terminated'];
+    const COLORS = { 'vlc player': '#e67e22', Firefox: '#d35400', 'MS Word': '#2f6fe0', 'a.out': '#16a085', Vim: '#8e44ad', Bash: '#27ae60' };
+    const NAME = { 'New>Ready': 'admit', 'Ready>Running': 'dispatch', 'Running>Ready': 'interrupt (preempted)', 'Running>Waiting': 'I/O / event wait', 'Waiting>Ready': 'I/O / event completion', 'Running>Terminated': 'exit' };
+    const WHY_NOT = {
+      'Waiting>Running': 'A waiting process must go to <b>Ready</b> first — only the scheduler decides who runs next.',
+      'Ready>Waiting': 'Only a <b>running</b> process can request I/O — it has to execute an instruction to do that.',
+      'New>Running': 'A new process must be <b>admitted</b> to the ready queue first.',
+      'Ready>Terminated': 'In Fig 3.2 a process terminates by calling exit() — it must be <b>Running</b>.',
+      'Waiting>Terminated': 'In Fig 3.2 a process terminates by calling exit() — it must be <b>Running</b>.',
+      'New>Waiting': 'A new process has not run yet — it cannot be waiting for anything.',
+      'New>Terminated': 'It never ran. Admit it first.',
+    };
+
+    /* ---------- shared board ---------- */
+    let procs = [], selected = null, cores = 1, mode = 'scenario';
+    const running = () => procs.filter((p) => p.state === 'Running');
+    function validate(p, to) {
+      const key = `${p.state}>${to}`;
+      if (p.state === to) return { ok: false, msg: 'It is already there.' };
+      if (p.state === 'Terminated') return { ok: false, msg: 'A terminated process is gone — the OS is reclaiming its resources.' };
+      if (to === 'New') return { ok: false, msg: '<b>New</b> is only the state while a process is being created.' };
+      if (!NAME[key]) return { ok: false, msg: WHY_NOT[key] || 'That transition is not in the diagram.' };
+      if (to === 'Running' && running().length >= cores)
+        return { ok: false, msg: `Only ${cores === 1 ? 'ONE process' : cores + ' processes'} can be Running at once — one per CPU core. Move the running one out first.` };
+      return { ok: true, name: NAME[key] };
+    }
+    function move(p, to, quiet) {
+      const from = p.state;
+      p.state = to;
+      if (to === 'Ready') { p.order = ++orderSeq; }
+      if (to === 'Waiting') p.io = 3;
+      if (to === 'Running') p.used = 0;
+      if (!quiet) log(`${p.name}: ${from} → ${to}  (${NAME[`${from}>${to}`]})`, to === 'Running' ? 'u' : to === 'Terminated' ? 'e' : '');
+    }
+    let orderSeq = 0;
+
+    function render() {
+      const b = $('#board');
+      b.replaceChildren(...STATES.map((s) => {
+        let list = procs.filter((p) => p.state === s);
+        if (s === 'Ready') list.sort((x, y) => x.order - y.order);
+        const isTarget = selected && validate(selected, s).ok;
+        return el('div', {
+          class: `col ${isTarget ? 'target' : ''} ${s === 'Running' ? 'running' : ''}`,
+          onclick: () => tryMove(s),
+        },
+        el('h4', {}, el('span', {}, s), s === 'Ready' && list.length ? el('span', { class: 'muted' }, 'queue ↓') : null),
+        list.map((p, i) => el('div', {
+          class: `pcard ${selected === p ? 'sel' : ''}`,
+          style: { borderLeft: `4px solid ${COLORS[p.name] || 'var(--accent)'}` },
+          onclick: (e) => { e.stopPropagation(); selected = selected === p ? null : p; render(); },
+        },
+        s === 'Ready' ? `${i + 1}. ${p.name}` : p.name,
+        el('small', {}, `PID ${p.pid}${s === 'Waiting' && mode === 'sim' && $('#autoio').checked ? ` · I/O ${p.io * 10} ms left` : ''}${s === 'Running' && mode === 'sim' ? ` · ${p.used * 10}/10 ms` : ''}`),
+        mode === 'sim' && s === 'Running' ? el('div', { class: 'acts' },
+          el('button', { onclick: (e) => { e.stopPropagation(); move(p, 'Waiting'); selected = null; render(); } }, 'requests I/O'),
+          el('button', { onclick: (e) => { e.stopPropagation(); move(p, 'Terminated'); selected = null; render(); } }, 'exit()')) : null,
+        mode === 'sim' && s === 'Waiting' ? el('div', { class: 'acts' },
+          el('button', { onclick: (e) => { e.stopPropagation(); move(p, 'Ready'); selected = null; render(); } }, 'I/O done')) : null)));
+      }));
+    }
+    function tryMove(to) {
+      if (!selected) return;
+      const p = selected;
+      const v = validate(p, to);
+      if (mode === 'scenario') return scenarioMove(p, to, v);
+      if (!v.ok) { log(`✗ ${p.name}: ${p.state} → ${to} refused`, 'e'); flash(v.msg, 'bad'); return; }
+      if (to === 'Running') { log(`dispatch: load PCB(${p.name})`, 'k'); }
+      move(p, to); selected = null; render();
+    }
+    function flash(msg, cls) {
+      const box = mode === 'scenario' ? $('#scFeedback') : null;
+      if (box) { box.className = `callout ${cls}`; box.innerHTML = msg; }
+      else log(msg.replace(/<[^>]+>/g, ''), cls === 'bad' ? 'e' : 'i');
+    }
+
+    /* ---------- scenario ---------- */
+    const SCENARIO = [
+      { t: 'You type <code>./a.out</code>. The OS has created the process (PID 2093) and finished setting up its PCB. It is now <b>admitted</b>.', p: 'a.out', to: 'Ready' },
+      { t: 'Firefox asks to read a cached page from the <b>disk</b>.', p: 'Firefox', to: 'Waiting' },
+      { t: 'The CPU is free. The scheduler <b>dispatches</b> the process at the head of the ready queue.', p: 'vlc player', to: 'Running' },
+      { t: '<b>Timer interrupt</b> — vlc player used up its time slice.', p: 'vlc player', to: 'Ready' },
+      { t: 'The scheduler dispatches the next process in the ready queue.', p: 'MS Word', to: 'Running' },
+      { t: 'The <b>disk read for Firefox completes</b> (the disk controller raised an interrupt).', p: 'Firefox', to: 'Ready', trap: 'Waiting>Running' },
+      { t: 'MS Word waits for you to type something (keyboard input).', p: 'MS Word', to: 'Waiting' },
+      { t: 'The scheduler dispatches the head of the ready queue.', p: 'a.out', to: 'Running' },
+      { t: 'a.out finishes its work and calls <code>exit(0)</code>.', p: 'a.out', to: 'Terminated' },
+      { t: 'The scheduler dispatches the head of the ready queue.', p: 'vlc player', to: 'Running' },
+    ];
+    let sc = 0, mistakes = 0;
+    function startScenario() {
+      mode = 'scenario'; cores = 1; orderSeq = 0; sc = 0; mistakes = 0; selected = null;
+      procs = [
+        { name: 'Firefox', pid: 1876, state: 'Running' },
+        { name: 'vlc player', pid: 1431, state: 'Ready', order: ++orderSeq },
+        { name: 'MS Word', pid: 1702, state: 'Ready', order: ++orderSeq },
+        { name: 'a.out', pid: 2093, state: 'New' },
+      ];
+      $('#scFeedback').className = 'callout';
+      $('#scFeedback').innerHTML = 'Click the process, then the state it should move to.';
+      showScenario(); render();
+    }
+    function showScenario() {
+      $('#scStep').textContent = sc < SCENARIO.length ? `Step ${sc + 1} / ${SCENARIO.length}` : 'Finished';
+      $('#scMist').textContent = `mistakes: ${mistakes}`;
+      if (sc >= SCENARIO.length) {
+        $('#scText').innerHTML = mistakes === 0 ? '🎉 Perfect run — you never broke the state diagram.' : `Done with ${mistakes} mistake${mistakes > 1 ? 's' : ''}. Play again to get a clean run.`;
+        $('#scText').append(el('div', { style: { marginTop: '10px' } }, el('button', { class: 'primary', onclick: startScenario }, 'Play again')));
+        return;
+      }
+      $('#scText').innerHTML = SCENARIO[sc].t;
+    }
+    function scenarioMove(p, to, v) {
+      const want = SCENARIO[sc];
+      if (!want) return;
+      if (!v.ok) {
+        mistakes++;
+        flash(`✗ ${p.name}: ${p.state} → ${to} is impossible. ${v.msg}`, 'bad');
+      } else if (p.name !== want.p || to !== want.to) {
+        mistakes++;
+        flash(`That move is legal, but it is not what this event causes. Read the event again — which process does it affect?`, 'warn');
+      } else {
+        const from = p.state;
+        move(p, to); sc++;
+        flash(`✓ ${p.name}: ${from} → ${to} — <b>${NAME[`${from}>${to}`]}</b>.${want.trap ? ' Note it went to Ready, not straight to Running!' : ''}`, 'ok');
+      }
+      selected = null;
+      showScenario(); render();
+    }
+
+    /* ---------- round-robin simulator ---------- */
+    let clock = 0, switches = 0, timer = null, nextPid = 2093, gantt = [];
+    function startSim() {
+      mode = 'sim'; orderSeq = 0; clock = 0; switches = 0; gantt = []; selected = null; nextPid = 2093;
+      cores = Number($('#cores').value);
+      procs = [
+        { name: 'Firefox', pid: 1876, state: 'Running', used: 0 },
+        { name: 'Vim', pid: 1901, state: 'Ready', order: ++orderSeq },
+        { name: 'Bash', pid: 1544, state: 'Ready', order: ++orderSeq },
+      ];
+      log('Demo 2: Firefox, Vim and Bash share the CPU. Quantum = 10 ms.', 'i');
+      renderSim(); render();
+    }
+    function tick() {
+      clock += 10;
+      // waiting processes progress their I/O
+      if ($('#autoio').checked) for (const p of procs.filter((x) => x.state === 'Waiting')) {
+        if (--p.io <= 0) { log(`${p.name}: I/O complete (device interrupt)`, 'i'); move(p, 'Ready'); }
+      }
+      // new processes get admitted
+      for (const p of procs.filter((x) => x.state === 'New')) move(p, 'Ready');
+      // running processes use their quantum
+      const slot = [];
+      for (const p of running()) {
+        p.used++;
+        slot.push(p.name);
+        if (p.used >= 1) {
+          const nextReady = procs.filter((x) => x.state === 'Ready').sort((a, b) => a.order - b.order)[0];
+          if (nextReady) {
+            log(`⏱ timer at ${clock} ms: save PCB(${p.name}) → load PCB(${nextReady.name})`, 'k');
+            move(p, 'Ready', true); move(nextReady, 'Running', true); switches++;
+          } else p.used = 0; // nobody else ready: keeps running
+        }
+      }
+      // free cores pick up work
+      while (running().length < cores) {
+        const nextReady = procs.filter((x) => x.state === 'Ready').sort((a, b) => a.order - b.order)[0];
+        if (!nextReady) break;
+        log(`dispatch ${nextReady.name} onto a free core`, 'k');
+        move(nextReady, 'Running', true);
+      }
+      gantt.push(slot.length ? slot.join(' + ') : null);
+      renderSim(); render();
+    }
+    function renderSim() {
+      $('#clock').textContent = `${clock} ms`;
+      $('#cs').textContent = switches;
+      const g = $('#gantt');
+      g.replaceChildren(...(gantt.length ? gantt.slice(-40) : [null]).map((n, i) => el('div', {
+        class: n ? '' : 'idle',
+        style: n ? { background: COLORS[n.split(' + ')[0]] || 'var(--accent)' } : {},
+        title: n ? `${(gantt.length - Math.min(40, gantt.length) + i) * 10}–${(gantt.length - Math.min(40, gantt.length) + i + 1) * 10} ms` : '',
+      }, n || 'idle')));
+    }
+    $('#run').onclick = () => {
+      if (timer) { clearInterval(timer); timer = null; $('#run').textContent = '▶ Run scheduler'; return; }
+      timer = setInterval(tick, 1100); $('#run').textContent = '⏸ Pause';
+    };
+    $('#tick').onclick = tick;
+    $('#launch').onclick = () => {
+      const p = { name: 'a.out', pid: nextPid++, state: 'New' };
+      procs.push(p); log(`fork + exec: ./a.out created (PID ${p.pid}) — state New`, 'i'); render();
+    };
+    $('#cores').onchange = () => { cores = Number($('#cores').value); log(`${cores} core(s): up to ${cores} Running at once`, 'i'); render(); };
+
+    $$('[data-tab]').forEach((b) => (b.onclick = () => {
+      $$('[data-tab]').forEach((x) => x.classList.toggle('active', x === b));
+      if (timer) { clearInterval(timer); timer = null; $('#run').textContent = '▶ Run scheduler'; }
+      const sim = b.dataset.tab === 'sim';
+      $('#scenarioPanel').style.display = sim ? 'none' : '';
+      $('#simPanel').style.display = sim ? '' : 'none';
+      sim ? startSim() : startScenario();
+    }));
+    startScenario();
+  </script>
+</body>
+</html>

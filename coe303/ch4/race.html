@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Race Condition Stepper · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="4" data-title="Race Condition Stepper" data-activity="ch4-race">
+  <main>
+    <h1>Race Condition Stepper</h1>
+    <p class="lead">Misconception #4: <i>"counter++ is atomic."</i> It is three machine instructions — <b>load, add, store</b>. Two threads sharing <code>counter</code> can interleave them and lose updates.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · You are the scheduler</h2>
+      <p class="small">Thread A and thread B each run <code>counter++</code> once. Start: <code>counter = 0</code>. The right answer is 2. Pick who runs each instruction.</p>
+      <div id="race"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Now do it a million times (slide 55)</h2>
+<pre>int counter = 0;
+void *worker(void *arg) {
+    for (int i = 0; i &lt; N; i++)
+        counter++;          /* NOT atomic — lost updates! */
+    pthread_exit(NULL);
+}
+/* two threads run worker(): counter ends up &lt; 2 × N */</pre>
+      <div class="row" style="margin-top:12px">
+        <label>N per thread <select id="n"><option value="1000">1,000</option><option value="100000">100,000</option><option value="1000000" selected>1,000,000</option></select></label>
+        <label>Hardware <select id="hw"><option value="1">1 core — time slicing</option><option value="2" selected>2 cores — truly parallel</option></select></label>
+        <label><input type="checkbox" id="atomic"> use <code>__sync_fetch_and_add(&amp;counter, 1)</code> (atomic)</label>
+        <button class="primary" id="go">Run 5 times</button>
+      </div>
+      <table class="t" id="results" style="margin-top:12px"></table>
+      <div class="callout" id="note">Press Run.</div>
+      <p class="muted small">This is a simulation of instruction interleaving, not real threads — real loss rates depend on the CPU, but the effect is the same. Try it for real in your Ubuntu VM: <code>gcc -pthread race.c -o race</code>, or detect it with <code>-fsanitize=thread</code>.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">3 · Why the slide-29 array sum is safe</h2>
+      <p class="small">In the Pthreads sum example each thread writes only <code>partial[tid]</code> — its own slot — and <code>main</code> adds the partial sums after <code>pthread_join</code>. No two threads write the same variable, so there is no race. If every thread did <code>total += s</code> on one shared global instead, you would get exactly the lost updates above (end-of-session thinking question Q1). The real fix — mutexes — is Chapter 6.</p>
+      <a class="btn" href="../ch3/ipc.html">See the same race between processes (Chapter 3 IPC Lab) →</a>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/race.js"></script>
+  <script>
+    const { $, el } = CS;
+    RaceStepper($('#race'), {
+      start: 0,
+      actors: [
+        { name: 'Thread A', op: +1, reg: 'regA', color: 'var(--ok)' },
+        { name: 'Thread B', op: +1, reg: 'regB', color: 'var(--accent-2)' },
+      ],
+      presets: { 'Lost update': [0, 1, 0, 1, 0, 1], 'A first, then B': [0, 0, 0, 1, 1, 1] },
+    });
+
+    function simulate(N, cores, atomic) {
+      let counter = 0;
+      const T = [{ i: 0, pc: 0, reg: 0 }, { i: 0, pc: 0, reg: 0 }];
+      const stepT = (t) => {
+        if (t.i >= N) return false;
+        if (atomic) { counter++; t.i++; return true; }
+        if (t.pc === 0) t.reg = counter;
+        else if (t.pc === 1) t.reg++;
+        else { counter = t.reg; t.i++; }
+        t.pc = (t.pc + 1) % 3;
+        return true;
+      };
+      if (cores === 2) {
+        // truly parallel: at every instruction either core may be ahead
+        while (T[0].i < N || T[1].i < N) {
+          const a = Math.random() < 0.5 ? 0 : 1;
+          if (!stepT(T[a])) stepT(T[1 - a]);
+        }
+      } else {
+        // one core: each thread runs a time slice of many instructions, then is preempted
+        let cur = 0;
+        while (T[0].i < N || T[1].i < N) {
+          let q = 1000 + Math.floor(Math.random() * 30000);
+          while (q-- > 0 && stepT(T[cur]));
+          cur = 1 - cur;
+        }
+      }
+      return counter;
+    }
+
+    $('#go').onclick = () => {
+      const N = Number($('#n').value), cores = Number($('#hw').value), atomic = $('#atomic').checked;
+      const rows = [];
+      for (let r = 0; r < 5; r++) {
+        const c = simulate(N, cores, atomic);
+        rows.push(el('tr', {}, el('td', {}, `run ${r + 1}`), el('td', { class: 'mono' }, c.toLocaleString()),
+          el('td', { class: 'mono', style: { color: c === 2 * N ? 'var(--ok)' : 'var(--bad)' } }, c === 2 * N ? 'correct' : `${(2 * N - c).toLocaleString()} updates lost`)));
+      }
+      $('#results').replaceChildren(el('tr', {}, el('th', {}, ''), el('th', {}, `final counter (expected ${(2 * N).toLocaleString()})`), el('th', {}, 'result')), ...rows);
+      $('#note').className = 'callout ' + (atomic ? 'ok' : 'bad');
+      $('#note').innerHTML = atomic
+        ? 'With an <b>atomic</b> read-modify-write the increment can\'t be split, so no update is ever lost (end-of-chapter Q2).'
+        : cores === 2
+          ? 'On two cores the threads overlap constantly — a large fraction of increments are lost, and the result <b>changes every run</b>. That randomness is why race conditions are so hard to reproduce and debug.'
+          : 'Even on ONE core it breaks: when the timer preempts a thread between its load and its store, the other thread runs a whole time slice of increments — and then the first thread resumes and stores its stale value, <b>wiping out that entire slice</b>. Few preemptions, but each one can lose thousands of updates.';
+    };
+  </script>
+</body>
+</html>

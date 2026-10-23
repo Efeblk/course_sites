@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multithreading Models · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    svg text { font-family: var(--mono); }
+    .ut-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="4" data-title="Multithreading Models" data-activity="ch4-models">
+  <main>
+    <h1>Multithreading Models</h1>
+    <p class="lead">User threads are managed by a library; kernel threads are what the OS actually schedules on cores. The <b>model</b> is how the two are mapped (§4.3). Block a thread on I/O and see who can still run.</p>
+
+    <div class="panel">
+      <div class="row">
+        <button class="chip active" data-m="m2o">Many-to-one</button>
+        <button class="chip" data-m="o2o">One-to-one</button>
+        <button class="chip" data-m="m2m">Many-to-many</button>
+        <label>CPU cores <select id="cores"><option>1</option><option selected>2</option><option>4</option></select></label>
+        <button class="primary" id="play">⏸ Pause</button>
+      </div>
+      <div class="ut-btns" id="ubtns" style="margin-top:10px"></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <svg id="svg" viewBox="0 0 560 330" width="100%"></svg>
+        <p class="muted small" style="margin:0">● running on a core &nbsp; ● blocked in read() &nbsp; ● ready, waiting</p>
+      </div>
+      <div>
+        <div class="panel">
+          <h3 style="margin-top:0" id="mTitle"></h3>
+          <p class="small" id="mDesc"></p>
+          <div class="stats">
+            <div class="stat"><b id="sRun">0</b><span>threads running now</span></div>
+            <div class="stat"><b id="sKT">1</b><span>kernel threads</span></div>
+            <div class="stat"><b id="sWork">0</b><span>work done (thread-ticks)</span></div>
+          </div>
+          <div class="callout" id="note"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">How Linux does it</h3>
+      <p class="small">Linux is one-to-one. <code>pthread_create()</code> calls <code>clone(fn, stack, CLONE_VM | CLONE_FILES | CLONE_SIGHAND | CLONE_THREAD, …)</code>: a new <b>task</b> (task_struct) that shares the address space (<code>mm_struct</code>), files and signal handlers with its parent. Linux threads are not special "lightweight processes" — they are tasks that happen to share memory.</p>
+      <div class="row">
+        <a class="btn" href="../game.html?id=shared-private">Game: shared or per-thread? →</a>
+        <a class="btn" href="../game.html?id=thread-models">Game: models &amp; users →</a>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el } = CS;
+    const NU = 4;
+    const INFO = {
+      m2o: { t: 'Many-to-one', kt: 1, d: 'All user threads map to ONE kernel thread. Thread management is fast (no kernel involvement), but the kernel sees only one thread: it can never run two at once, and if any thread makes a blocking system call, the whole process blocks. Used by Solaris Green Threads, GNU Portable Threads — rare today.' },
+      o2o: { t: 'One-to-one', kt: NU, d: 'Each user thread gets its own kernel thread. True parallelism on multicore, and a blocking thread doesn\'t stop the others. Cost: creating a user thread creates a kernel thread, so the number of threads may be limited. Used by Linux and Windows — the modern default.' },
+      m2m: { t: 'Many-to-many', kt: 2, d: 'Many user threads are multiplexed onto a smaller or equal number of kernel threads (here 2). The library schedules user threads onto whichever kernel thread is free. Flexible, but complex — the kernel and library must coordinate (scheduler activations / LWPs). Rare (Windows ThreadFiber).' },
+    };
+    let model = 'm2o', tick = 0, work = 0, rr = 0;
+    let U = []; // {block: ticks remaining, kt: index or null, run: bool, done: n}
+    let K = []; // {blocked, run, ut}
+    function reset() {
+      U = Array.from({ length: NU }, () => ({ block: 0, kt: null, run: false, done: 0 }));
+      work = 0; tick = 0;
+      build();
+      step(true);
+    }
+    function build() {
+      K = Array.from({ length: INFO[model].kt }, () => ({ blocked: false, run: false, ut: null }));
+      $('#mTitle').textContent = INFO[model].t;
+      $('#mDesc').textContent = INFO[model].d;
+      $('#sKT').textContent = K.length;
+      $('#ubtns').replaceChildren(...U.map((u, i) => el('button', {
+        onclick: () => { u.block = u.block ? 0 : 5; step(true); },
+      }, u.block ? `U${i + 1}: I/O done` : `U${i + 1}: read() (block)`)));
+    }
+    function step(noAdvance) {
+      const cores = Number($('#cores').value);
+      if (!noAdvance) { tick++; U.forEach((u) => { if (u.block > 0) u.block--; }); }
+      U.forEach((u) => (u.run = false));
+      K.forEach((k) => { k.blocked = false; k.run = false; k.ut = null; });
+      const runnable = U.map((u, i) => i).filter((i) => !U[i].block);
+      const order = runnable.map((_, j) => runnable[(j + rr) % runnable.length]);
+      if (model === 'm2o') {
+        U.forEach((u) => (u.kt = 0));
+        if (U.some((u) => u.block)) { K[0].blocked = true; K[0].ut = U.findIndex((u) => u.block); }
+        else if (order.length) { K[0].ut = order[0]; }
+      } else if (model === 'o2o') {
+        U.forEach((u, i) => { u.kt = i; K[i].ut = i; K[i].blocked = !!u.block; });
+      } else {
+        U.forEach((u) => (u.kt = null));
+        let k = 0;
+        U.forEach((u, i) => { if (u.block && k < K.length) { K[k].blocked = true; K[k].ut = i; u.kt = k; k++; } });
+        for (const i of order) { if (k >= K.length) break; K[k].ut = i; U[i].kt = k; k++; }
+      }
+      // the kernel schedules non-blocked kernel threads onto cores
+      const ready = K.map((k, i) => i).filter((i) => !K[i].blocked && K[i].ut != null);
+      const rot = ready.map((_, j) => ready[(j + rr) % ready.length]);
+      rot.slice(0, cores).forEach((i) => { K[i].run = true; U[K[i].ut].run = true; if (!noAdvance) { U[K[i].ut].done++; work++; } });
+      if (!noAdvance) rr++;
+      draw(cores);
+      build();
+      const running = U.filter((u) => u.run).length;
+      $('#sRun').textContent = running;
+      $('#sWork').textContent = work;
+      const anyBlocked = U.some((u) => u.block);
+      let n;
+      if (model === 'm2o') n = anyBlocked ? '<b>Everything stopped.</b> One thread blocked in read(), which blocked the only kernel thread. The other three threads are ready but cannot run.' : `Only <b>1</b> thread runs at a time even with ${cores} cores — the kernel sees a single thread. No parallelism.`;
+      else if (model === 'o2o') n = anyBlocked ? `The blocked thread's kernel thread sleeps; the others keep running on the ${cores} core(s).` : `Up to ${Math.min(cores, NU)} threads run in parallel — one per core. Try blocking threads.`;
+      else n = anyBlocked ? (U.filter((u) => u.block).length >= K.length ? '<b>All kernel threads are blocked</b> — with only 2 kernel threads, two blocked user threads stop the process. (Scheduler activations would let the kernel hand the library a new LWP via an upcall.)' : 'One kernel thread is blocked with the waiting thread; the library moves the ready user threads onto the remaining kernel thread.') : `At most ${Math.min(cores, K.length)} threads run at once — limited by kernel threads AND cores.`;
+      $('#note').innerHTML = n;
+    }
+    function draw(cores) {
+      const W = 560;
+      const ux = (i) => 70 + i * ((W - 140) / (NU - 1));
+      const kx = (i) => K.length === 1 ? W / 2 : 110 + i * ((W - 220) / (K.length - 1));
+      const cx = (i) => cores === 1 ? W / 2 : 120 + i * ((W - 240) / (cores - 1));
+      const col = (u) => (u.block ? 'var(--warn)' : u.run ? 'var(--ok)' : 'var(--muted)');
+      let s = '';
+      s += `<text x="10" y="22" font-size="11" fill="var(--muted)">USER SPACE (thread library)</text>`;
+      s += `<line x1="0" y1="125" x2="${W}" y2="125" stroke="var(--kernel)" stroke-dasharray="6 4"/>`;
+      s += `<text x="10" y="143" font-size="11" fill="var(--kernel)">KERNEL</text>`;
+      s += `<text x="10" y="268" font-size="11" fill="var(--muted)">HARDWARE</text>`;
+      // user → kernel lines
+      U.forEach((u, i) => {
+        if (u.kt == null) return;
+        const active = K[u.kt] && K[u.kt].ut === i;
+        s += `<line x1="${ux(i)}" y1="78" x2="${kx(u.kt)}" y2="170" stroke="${active ? col(u) : 'var(--line)'}" stroke-width="${active ? 3 : 1.5}"/>`;
+      });
+      // kernel → core lines
+      let c = 0;
+      K.forEach((k, i) => { if (k.run) { s += `<line x1="${kx(i)}" y1="198" x2="${cx(c)}" y2="282" stroke="var(--ok)" stroke-width="3"/>`; k.core = c++; } });
+      U.forEach((u, i) => {
+        s += `<circle cx="${ux(i)}" cy="60" r="20" fill="var(--panel)" stroke="${col(u)}" stroke-width="3"/>`;
+        s += `<text x="${ux(i)}" y="65" text-anchor="middle" font-size="13" fill="var(--text)">U${i + 1}</text>`;
+        s += `<text x="${ux(i)}" y="100" text-anchor="middle" font-size="10" fill="var(--muted)">${u.block ? 'read()…' : u.run ? 'running' : 'ready'} · ${u.done}</text>`;
+      });
+      K.forEach((k, i) => {
+        const st = k.blocked ? 'var(--warn)' : k.run ? 'var(--ok)' : 'var(--line)';
+        s += `<rect x="${kx(i) - 30}" y="170" width="60" height="28" rx="6" fill="var(--panel)" stroke="${st}" stroke-width="2.5"/>`;
+        s += `<text x="${kx(i)}" y="189" text-anchor="middle" font-size="12" fill="var(--text)">K${i + 1}</text>`;
+      });
+      for (let j = 0; j < cores; j++) {
+        s += `<rect x="${cx(j) - 38}" y="282" width="76" height="32" rx="6" fill="var(--panel-2)" stroke="var(--line)"/>`;
+        s += `<text x="${cx(j)}" y="303" text-anchor="middle" font-size="12" fill="var(--text)">core ${j + 1}</text>`;
+      }
+      $('#svg').innerHTML = s;
+    }
+    $$('[data-m]').forEach((b) => (b.onclick = () => {
+      model = b.dataset.m;
+      $$('[data-m]').forEach((x) => x.classList.toggle('active', x === b));
+      reset();
+    }));
+    $('#cores').onchange = () => step(true);
+    let timer = setInterval(() => step(false), 1000);
+    $('#play').onclick = () => {
+      if (timer) { clearInterval(timer); timer = null; $('#play').textContent = '▶ Play'; }
+      else { timer = setInterval(() => step(false), 1000); $('#play').textContent = '⏸ Pause'; }
+    };
+    reset();
+  </script>
+</body>
+</html>

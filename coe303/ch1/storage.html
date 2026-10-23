@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Where Is Data A? · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .pyr { display: flex; flex-direction: column; gap: 6px; }
+    .lvl {
+      display: grid; grid-template-columns: 1.4fr .9fr .9fr 1.2fr 70px; gap: 10px; align-items: center;
+      border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; background: var(--panel-2);
+      transition: background .2s, border-color .2s;
+    }
+    .lvl .name { font-weight: 600; }
+    .lvl .slot { font-family: var(--mono); text-align: center; border-radius: 6px; padding: 2px 6px; }
+    .lvl .slot.has { background: var(--accent); color: #fff; }
+    .lvl .slot.stale { background: var(--warn); color: #111; }
+    .lvl.miss { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, var(--panel-2)); }
+    .lvl.hit { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 16%, var(--panel-2)); }
+    .lvl.copy { border-color: var(--accent); }
+    .hdr { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border: 0; background: none; padding-top: 0; padding-bottom: 0; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="1" data-title="Where Is Data A?" data-activity="ch1-storage">
+  <main>
+    <h1>Where Is Data "A"?</h1>
+    <p class="lead">Silberschatz Fig 1.10/1.14: when the CPU needs <b>A</b>, it checks registers, then caches, then RAM, then disk. Each layer caches the one below, so A <b>migrates up</b> on demand. Try it, then break things.</p>
+
+    <div class="panel">
+      <div class="row">
+        <button class="primary" id="load">CPU: load A</button>
+        <button id="modify">CPU: modify A</button>
+        <button id="save">Save A to disk</button>
+        <button id="ctx">Context switch (caches go cold)</button>
+        <button id="power" class="danger">Power off &amp; on</button>
+        <label>A starts on <select id="start"><option value="4">HDD</option><option value="3">SSD</option><option value="5">Tape</option><option value="2">RAM</option></select></label>
+      </div>
+      <div class="stats" style="margin-top:12px">
+        <div class="stat"><b id="last">—</b><span>last access time</span></div>
+        <div class="stat"><b id="human">—</b><span>if 1 ns were 1 second</span></div>
+        <div class="stat"><b id="hits">0 / 0</b><span>register+cache hits / loads</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="pyr" id="pyr"></div>
+      <p class="muted small" style="margin-bottom:0"><span class="slot has" style="padding:1px 6px;border-radius:5px;background:var(--accent);color:#fff">A v1</span> = has a copy of A (version) · <span style="padding:1px 6px;border-radius:5px;background:var(--warn);color:#111">A v1</span> = outdated copy</p>
+    </div>
+    <div class="callout" id="explain">Press <b>CPU: load A</b>.</div>
+    <div class="log" id="log"></div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, logger, sleep } = CS;
+    const log = logger($('#log'));
+    const LEVELS = [
+      { name: 'Registers', ns: 0.5, lat: '< 1 ns', vol: true, by: 'Hardware' },
+      { name: 'Cache (L1/L2/L3)', ns: 5, lat: '~1–10 ns', vol: true, by: 'Hardware' },
+      { name: 'Main memory (RAM)', ns: 100, lat: '~100 ns', vol: true, by: 'OS' },
+      { name: 'SSD', ns: 100e3, lat: '~100 µs', vol: false, by: 'OS' },
+      { name: 'Hard disk', ns: 10e6, lat: '~10 ms', vol: false, by: 'OS' },
+      { name: 'Magnetic tape', ns: 5e9, lat: 'seconds', vol: false, by: 'OS (backup)' },
+    ];
+    let copies, latest, busy = false, loads = 0, fastHits = 0;
+
+    function fmt(ns) {
+      if (ns < 1000) return `${+ns.toFixed(1)} ns`;
+      if (ns < 1e6) return `${+(ns / 1e3).toFixed(1)} µs`;
+      if (ns < 1e9) return `${+(ns / 1e6).toFixed(1)} ms`;
+      return `${+(ns / 1e9).toFixed(1)} s`;
+    }
+    function human(ns) {
+      const s = ns; // 1 ns → 1 s
+      if (s < 120) return `${+s.toFixed(1)} seconds`;
+      if (s < 7200) return `${Math.round(s / 60)} minutes`;
+      if (s < 172800) return `${Math.round(s / 3600)} hours`;
+      if (s < 3e7) return `${Math.round(s / 86400)} days`;
+      return `${+(s / 3.15e7).toFixed(0)} years`;
+    }
+    function reset() {
+      copies = Array(LEVELS.length).fill(0);
+      latest = 1;
+      copies[Number($('#start').value)] = 1;
+      render();
+    }
+    function render(marks = {}) {
+      const rows = [el('div', { class: 'lvl hdr' },
+        el('span', {}, 'Level'), el('span', {}, 'Access'), el('span', {}, 'Volatile?'), el('span', {}, 'Managed by'), el('span', {}, 'A'))];
+      LEVELS.forEach((L, i) => {
+        const v = copies[i];
+        rows.push(el('div', { class: `lvl ${marks[i] || ''}` },
+          el('span', { class: 'name' }, L.name),
+          el('span', { class: 'mono' }, L.lat),
+          el('span', {}, L.vol ? 'volatile' : 'non-volatile'),
+          el('span', { class: 'muted' }, L.by),
+          el('span', { class: `slot ${v ? (v === latest ? 'has' : 'stale') : ''}` }, v ? `A v${v}` : '·')));
+      });
+      $('#pyr').replaceChildren(...rows);
+      document.querySelectorAll('.panel button').forEach((b) => (b.disabled = busy));
+    }
+
+    async function load() {
+      busy = true; loads++;
+      const marks = {};
+      let total = 0, found = -1;
+      for (let i = 0; i < LEVELS.length; i++) {
+        total += LEVELS[i].ns;
+        if (copies[i] && copies[i] === latest) {
+          found = i; marks[i] = 'hit'; render(marks);
+          log(`${LEVELS[i].name}: HIT — A v${copies[i]} found`, 'u');
+          break;
+        }
+        marks[i] = 'miss'; render(marks);
+        log(`${LEVELS[i].name}: miss`, 'e');
+        await sleep(350);
+      }
+      if (found < 0) { log('A is nowhere! (it was lost)', 'e'); busy = false; render(); return; }
+      if (found >= 3) log('Not in RAM → page fault: the OS loads the page from storage into memory', 'k');
+      if (found <= 1) fastHits++;
+      const ver = copies[found];
+      latest = Math.max(latest, ver);
+      for (let i = found - 1; i >= 0; i--) {
+        await sleep(300);
+        copies[i] = ver; marks[i] = 'copy'; render(marks);
+        log(`copy A into ${LEVELS[i].name}`, 'i');
+      }
+      $('#last').textContent = fmt(total);
+      $('#human').textContent = human(total);
+      $('#hits').textContent = `${fastHits} / ${loads}`;
+      $('#explain').innerHTML = found === 0
+        ? 'Register hit — the fastest possible case. This is why the system <i>looks</i> fast: hit ratios are high.'
+        : found <= 2
+          ? `Found in <b>${LEVELS[found].name}</b>. The copy migrated up, so the next load hits in the registers.`
+          : `Found on <b>${LEVELS[found].name}</b> — ${fmt(total)}. On the human scale that's <b>${human(total)}</b> compared to ~0.5 s for a register. The OS's job is to hide this gap. Now A exists in up to ${found + 1} places at once.`;
+      busy = false; render(marks);
+    }
+
+    $('#load').onclick = load;
+    $('#modify').onclick = () => {
+      if (!copies[0]) return log('Load A into a register first', 'e');
+      latest++;
+      copies[0] = copies[1] = copies[2] = latest; // write through to RAM for simplicity
+      log(`A changed to v${latest} in register/cache/RAM — the disk still has an old copy`, 'i');
+      $('#explain').innerHTML = 'The new value lives only in <b>volatile</b> storage. Try <b>Power off &amp; on</b> before saving…';
+      render();
+    };
+    $('#save').onclick = () => {
+      const ram = copies[2];
+      if (!ram) return log('Nothing in RAM to save', 'e');
+      const disk = copies.findIndex((c, i) => i >= 3 && c);
+      copies[disk >= 0 ? disk : 4] = ram;
+      log(`Saved: A v${ram} written to ${LEVELS[disk >= 0 ? disk : 4].name}`, 'k');
+      $('#explain').innerHTML = '"Save your work" = moving data from volatile RAM to non-volatile storage.';
+      render();
+    };
+    $('#ctx').onclick = () => {
+      copies[0] = copies[1] = 0;
+      log('Another process ran: registers and caches now hold ITS data (A still in RAM)', 'k');
+      $('#explain').innerHTML = 'After a context switch the caches are cold — the next load of A misses until it reaches RAM. That is part of why context switches are expensive (Chapter 3).';
+      render();
+    };
+    $('#power').onclick = () => {
+      const unsaved = copies[2] && !copies.slice(3).includes(copies[2]);
+      copies[0] = copies[1] = copies[2] = 0;
+      latest = Math.max(...copies, 0);
+      log('Power cycled: all volatile levels are empty', 'e');
+      $('#explain').innerHTML = unsaved
+        ? `<b>Your unsaved change is gone.</b> Only the old copy (v${latest}) on non-volatile storage survived.`
+        : 'Registers, caches and RAM are volatile — they forgot everything. Only SSD/HDD/tape kept A.';
+      render();
+    };
+    $('#start').onchange = () => { reset(); log(`A now lives only on ${LEVELS[Number($('#start').value)].name}`, 'i'); };
+    reset();
+  </script>
+</body>
+</html>

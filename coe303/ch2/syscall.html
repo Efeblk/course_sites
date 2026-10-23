@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>System Call Journey · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .journey { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; }
+    @media (max-width: 860px) { .journey { grid-template-columns: 1fr; } }
+    .layer { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 6px 0; position: relative; transition: all .2s; }
+    .layer h4 { margin: 0 0 3px; font-size: .95rem; display: flex; justify-content: space-between; }
+    .layer .what { font-size: .86rem; color: var(--muted); font-family: var(--mono); }
+    .layer.user { background: color-mix(in srgb, var(--user) 8%, transparent); }
+    .layer.kern { background: color-mix(in srgb, var(--kernel) 8%, transparent); }
+    .layer.hw { background: var(--panel-2); }
+    .layer.on { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent); }
+    .boundary { text-align: center; font-size: .78rem; color: var(--kernel); font-family: var(--mono); letter-spacing: .05em; border-top: 2px dashed var(--kernel); padding-top: 2px; margin: 8px 0; }
+    .regs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .regs div { font-family: var(--mono); font-size: .86rem; background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+    .regs div.set { border-color: var(--accent); }
+    .stackmem { font-family: var(--mono); font-size: .86rem; }
+    .stackmem div { border: 1px solid var(--line); padding: 4px 8px; background: var(--bg-2); }
+    .stackmem div.set { border-color: var(--accent); }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="2" data-title="System Call Journey" data-activity="ch2-syscall">
+  <main>
+    <h1>System Call Journey</h1>
+    <p class="lead">Every line of code that touches a file, the network or another process ends up as a system call. Follow one from your C program into the kernel and back (Silberschatz Fig 2.2 / 2.6).</p>
+
+    <div class="panel">
+      <div class="row">
+        <label>System call <select id="call"></select></label>
+        <label>Parameter passing <select id="method">
+          <option value="reg">Registers (Linux/x86-64)</option>
+          <option value="block">Block in memory, address in a register</option>
+          <option value="stack">Stack</option>
+        </select></label>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="next">Next step ▶</button>
+        <button id="auto">Auto-play</button>
+        <button id="restart">Restart</button>
+        <span id="mode" class="mode user">USER · bit 1</span>
+        <span class="tag" id="switches">mode switches: 0</span>
+      </div>
+    </div>
+
+    <div class="journey">
+      <div class="panel">
+        <div class="layer user" data-l="app"><h4>① Your program <span class="tag">user mode</span></h4><div class="what" id="appCode"></div></div>
+        <div class="layer user" data-l="lib"><h4>② C library (libc) — the API <span class="tag">user mode</span></h4><div class="what" id="libText"></div></div>
+        <div class="boundary">USER / KERNEL BOUNDARY — only crossed via the syscall instruction</div>
+        <div class="layer kern" data-l="sci"><h4>③ System-call interface <span class="tag">kernel mode</span></h4><div class="what" id="sciText"></div></div>
+        <div class="layer kern" data-l="kern"><h4>④ Kernel implementation <span class="tag">kernel mode</span></h4><div class="what" id="kernText"></div></div>
+        <div class="layer hw" data-l="hw"><h4>⑤ Hardware</h4><div class="what" id="hwText"></div></div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3 style="margin-top:0">Step</h3>
+          <div class="callout" id="explain"></div>
+          <div class="progressbar"><div id="bar"></div></div>
+        </div>
+        <div class="panel">
+          <h3 style="margin-top:0" id="paramTitle">CPU registers</h3>
+          <div id="params"></div>
+          <p class="muted small" id="paramNote" style="margin-bottom:0"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Same idea, different OS</h3>
+      <p class="small">The <b>API</b> (POSIX <code>read()</code>) is the same on Linux, macOS, FreeBSD; the <b>implementation</b> differs (Linux <code>vfs_read</code>, macOS <code>vn_read</code>). Windows uses <code>ReadFile()</code>. Your program only cares about the API — "the interface is the contract; the implementation is the kernel's business."</p>
+      <a class="btn" href="../game.html?id=syscall-types">Game: six types of system calls →</a>
+      <a class="btn" href="../game.html?id=cp-syscalls">Game: system calls of cp →</a>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, sleep } = CS;
+
+    /* syscall numbers are the real Linux x86-64 ones */
+    const CALLS = {
+      read: {
+        code: 'char buf[100];\nn = read(fd, buf, 100);', num: 0, sym: 'sys_read', args: [['fd', '3'], ['buf', '0x7ffd1000'], ['count', '100']],
+        kernel: 'sys_read → vfs_read → ext4 file system → page cache / block layer → disk driver',
+        hw: 'Disk controller reads the block (DMA) — or it is already in the page cache',
+        back: 'Kernel copies 100 bytes into buf and puts the return value 100 in RAX',
+        ret: 'n = 100 (bytes read). 0 would mean end-of-file, −1 an error (errno set).',
+      },
+      write: {
+        code: 'write(1, "hello\\n", 6);', num: 1, sym: 'sys_write', args: [['fd', '1 (stdout)'], ['buf', '"hello\\n"'], ['count', '6']],
+        kernel: 'sys_write → vfs_write → tty driver for the terminal',
+        hw: 'Terminal / display shows "hello"',
+        back: 'Kernel returns 6 (bytes written) in RAX',
+        ret: 'Returns 6. Even printf() ends up here — printf is a library function, write() is the system call.',
+      },
+      open: {
+        code: 'int fd = open("notes.txt", O_RDONLY);', num: 2, sym: 'sys_open', args: [['path', '"notes.txt"'], ['flags', 'O_RDONLY'], ['mode', '0']],
+        kernel: 'sys_open → path lookup through directories → check permissions → allocate a file descriptor',
+        hw: 'Directory and inode blocks read from disk (if not cached)',
+        back: 'Kernel returns the new file descriptor 3 in RAX',
+        ret: 'fd = 3 (0, 1, 2 are stdin, stdout, stderr). −1 if the file does not exist or permission is denied.',
+      },
+      fork: {
+        code: 'pid_t pid = fork();', num: 57, sym: 'sys_fork', args: [],
+        kernel: 'sys_fork → copy the PCB (task_struct), duplicate the address space, give the child a new PID, put it on the ready queue',
+        hw: 'Memory pages for the child (copy-on-write)',
+        back: 'Kernel returns the child PID (e.g. 2094) to the parent — and 0 to the child',
+        ret: 'Returns TWICE: parent gets 2094, child gets 0 (Chapter 3).',
+      },
+      exit: {
+        code: 'exit(0);', num: 60, sym: 'sys_exit', args: [['status', '0']],
+        kernel: 'sys_exit → close files, free memory, keep exit status for the parent, wake a parent waiting in wait()',
+        hw: '—',
+        back: 'Nothing returns: the process is gone. The scheduler picks another process.',
+        ret: 'exit() never returns. The parent collects the status with wait().',
+      },
+    };
+    const REGS = ['rdi', 'rsi', 'rdx'];
+
+    let call, step, switches;
+    const sel = $('#call');
+    Object.keys(CALLS).forEach((k) => sel.append(el('option', { value: k }, `${k}()  (#${CALLS[k].num})`)));
+
+    function stepsFor(c, method) {
+      const where = { reg: 'registers', block: 'a memory block (address in RBX)', stack: 'the stack' }[method];
+      const s = [
+        { l: 'app', t: `Your code calls <code>${c.code.split('\n').pop()}</code>. This is a normal C function call into the library — still user mode.` },
+        { l: 'lib', t: `The libc wrapper puts the system-call number <b>${c.num}</b> in RAX and the parameters in <b>${where}</b>.`, params: true },
+        { l: 'lib', t: 'libc executes the <code>syscall</code> instruction. The CPU traps: <b>mode bit 1 → 0</b>. The user cannot jump anywhere else in the kernel — only to this one entry point.', mode: 'kernel' },
+        { l: 'sci', t: `The kernel indexes the system-call table with RAX = ${c.num} and finds <code>${c.sym}</code>.` },
+        { l: 'kern', t: c.kernel },
+        { l: 'hw', t: c.hw },
+      ];
+      if (c.num === 60) {
+        s.push({ l: 'kern', t: c.back, end: true });
+        return s;
+      }
+      s.push(
+        { l: 'kern', t: c.back, ret: true },
+        { l: 'sci', t: 'The kernel executes <code>sysret</code>: <b>mode bit 0 → 1</b>. Back in user mode.', mode: 'user' },
+        { l: 'lib', t: 'libc checks the result (sets errno on error) and returns it to your code.' },
+        { l: 'app', t: c.ret },
+      );
+      return s;
+    }
+
+    function renderParams(c, method, shown, ret) {
+      const p = $('#params');
+      const rax = ret ? (c.num === 57 ? '2094' : c.num === 2 ? '3' : c.num === 1 ? '6' : '100') : shown ? c.num : '—';
+      if (method === 'reg') {
+        $('#paramTitle').textContent = 'CPU registers';
+        p.replaceChildren(el('div', { class: 'regs' },
+          el('div', { class: shown ? 'set' : '' }, `rax = ${rax}`),
+          REGS.map((r, i) => el('div', { class: shown && c.args[i] ? 'set' : '' }, `${r} = ${shown && c.args[i] ? c.args[i][1] : '—'}`))));
+        $('#paramNote').textContent = 'Fastest: no memory access. Limited by the number of registers (~6 parameters on x86-64).';
+      } else if (method === 'block') {
+        $('#paramTitle').textContent = 'Registers + memory block';
+        p.replaceChildren(el('div', { class: 'regs' },
+          el('div', { class: shown ? 'set' : '' }, `rax = ${rax}`),
+          el('div', { class: shown ? 'set' : '' }, `rbx = ${shown ? '0x5000 (block address)' : '—'}`)),
+        el('div', { class: 'stackmem', style: { marginTop: '8px' } },
+          el('div', {}, 'memory @ 0x5000'),
+          c.args.length ? c.args.map(([n, v]) => el('div', { class: shown ? 'set' : '' }, `${n} = ${shown ? v : '—'}`)) : el('div', {}, '(no parameters)')));
+        $('#paramNote').textContent = 'Unlimited parameters: only the block\'s address goes in a register (used by Linux/Solaris when there are many).';
+      } else {
+        $('#paramTitle').textContent = 'User stack';
+        p.replaceChildren(el('div', { class: 'regs' }, el('div', { class: shown ? 'set' : '' }, `rax = ${rax}`)),
+          el('div', { class: 'stackmem', style: { marginTop: '8px' } },
+            el('div', {}, '↓ top of stack'),
+            c.args.length ? c.args.map(([n, v]) => el('div', { class: shown ? 'set' : '' }, `push ${n} = ${shown ? v : '—'}`)) : el('div', {}, '(no parameters)')));
+        $('#paramNote').textContent = 'The program pushes parameters; the kernel pops them. Used by some architectures, rare on modern systems.';
+      }
+    }
+
+    function show() {
+      const c = CALLS[call];
+      const method = $('#method').value;
+      const steps = stepsFor(c, method);
+      const s = steps[step];
+      $$('.layer').forEach((L) => L.classList.toggle('on', s && L.dataset.l === s.l));
+      $('#explain').innerHTML = s ? s.t : '';
+      $('#bar').style.width = `${((step + 1) / steps.length) * 100}%`;
+      const shown = step >= 1;
+      const ret = steps.slice(0, step + 1).some((x) => x.ret);
+      renderParams(c, method, shown, ret);
+      let kernel = false; let sw = 0;
+      steps.slice(0, step + 1).forEach((x) => { if (x.mode) { kernel = x.mode === 'kernel'; sw++; } });
+      const m = $('#mode');
+      m.className = 'mode ' + (kernel ? 'kernel' : 'user');
+      m.textContent = kernel ? 'KERNEL · bit 0' : 'USER · bit 1';
+      $('#switches').textContent = `mode switches: ${sw}`;
+      $('#next').disabled = step >= steps.length - 1;
+      if (step >= steps.length - 1 && !s.end) $('#explain').innerHTML += '<br><br><b>Done:</b> the mode bit changed exactly twice.';
+    }
+    function restart() {
+      call = sel.value; step = 0;
+      const c = CALLS[call];
+      $('#appCode').textContent = c.code;
+      $('#libText').textContent = `${call}() wrapper → syscall #${c.num}`;
+      $('#sciText').textContent = `syscall_table[${c.num}] → ${c.sym}`;
+      $('#kernText').textContent = c.kernel;
+      $('#hwText').textContent = c.hw;
+      show();
+    }
+    $('#next').onclick = () => { step++; show(); };
+    $('#restart').onclick = restart;
+    sel.onchange = restart;
+    $('#method').onchange = show;
+    $('#auto').onclick = async () => {
+      restart();
+      const total = stepsFor(CALLS[call], $('#method').value).length;
+      for (let i = 1; i < total; i++) { await sleep(1300); step = i; show(); }
+    };
+    restart();
+  </script>
+</body>
+</html>
