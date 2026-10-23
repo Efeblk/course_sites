@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logistic Regression Playground · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 860px) { .lab { grid-template-columns: 1fr; } }
+    .sl { display: grid; grid-template-columns: 120px 1fr 70px; gap: 8px; align-items: center; margin: 6px 0; }
+    .sl input[type=range] { width: 100%; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="2" data-title="Logistic Regression Playground" data-activity="w2-logreg">
+  <main>
+    <h1>Logistic Regression Playground</h1>
+    <p class="lead">Despite the name, it's a <b>classifier</b>: learn a weight per feature, take the weighted sum <code>z = w·x + b</code>, then squash it with the sigmoid <code>p = σ(z) = 1/(1+e<sup>−z</sup>)</code> to get P(positive).</p>
+
+    <div class="lab">
+      <div class="panel">
+        <h2 style="margin-top:0">1 · Score → probability</h2>
+        <div class="row">
+          <label>Review <input type="text" id="review" value="good good movie" style="width:220px"></label>
+          <button class="chip" id="slide">Slide example</button>
+        </div>
+        <p class="small" id="xline"></p>
+        <div class="sl"><span>w<sub>good</sub></span><input type="range" id="wg" min="-2" max="2" step="0.05"><code id="wgV"></code></div>
+        <div class="sl"><span>w<sub>bad</sub></span><input type="range" id="wb" min="-2" max="2" step="0.05"><code id="wbV"></code></div>
+        <div class="sl"><span>bias b</span><input type="range" id="b" min="-2" max="2" step="0.05"><code id="bV"></code></div>
+        <div class="sl"><span>threshold</span><input type="range" id="thr" min="0.05" max="0.95" step="0.05" value="0.5"><code id="thrV"></code></div>
+        <div id="calc" class="mono small" style="margin-top:8px"></div>
+        <div id="pred"></div>
+      </div>
+      <div class="panel">
+        <svg id="sig"></svg>
+        <p class="muted small" style="margin-bottom:0">The curve is the sigmoid; the dot is this review. At z = 0, p = 0.5 and the odds are 1. In general <code>ln(p/(1−p)) = z</code>: the linear score is the <b>log odds</b>.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Learn: loss and one gradient step</h2>
+      <div class="row">
+        <label>True label y
+          <select id="y"><option value="1">1 = positive</option><option value="0">0 = negative</option></select>
+        </label>
+        <label>Learning rate η <input type="number" class="n" id="eta" value="0.1" step="0.05"></label>
+        <label><input type="checkbox" id="upB"> also update the bias</label>
+        <button class="primary" id="step">Take one gradient step</button>
+        <button id="step10">×10</button>
+      </div>
+      <div id="loss" class="small" style="margin-top:10px"></div>
+      <table class="t" id="hist" style="margin-top:10px"></table>
+      <p class="muted small">Binary cross-entropy <code>L = −[y ln p + (1−y) ln(1−p)]</code>. By the chain rule the sigmoid's p(1−p) cancels and <code>∂L/∂wᵢ = (p − y)·xᵢ</code>, <code>∂L/∂b = p − y</code>. A feature with xᵢ = 0 gets no update — but the bias still learns.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">3 · Why "not good" fools a unigram model</h2>
+      <p class="small">True label: <b>negative</b>. Features in order [not, good, "not good"]. Weights are illustrative (week-3 slides 28–29): not = 0, good = 0.8, b = −0.4.</p>
+      <div class="row">
+        <label><input type="checkbox" id="bigram"> add the bigram feature "not good"</label>
+        <label>its weight <input type="range" id="wng" min="-2" max="1" step="0.1" value="-1.2"> <code id="wngV"></code></label>
+      </div>
+      <div id="neg" style="margin-top:10px"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const sig = (z) => 1 / (1 + Math.exp(-z));
+    const r3 = (v) => (Math.round(v * 1000) / 1000).toString();
+    let w = { good: 0.8, bad: -1 }, b = -0.4, hist = [];
+
+    function xs() {
+      const t = $('#review').value.toLowerCase().match(/[a-z]+/g) || [];
+      return { good: t.filter((v) => v === 'good').length, bad: t.filter((v) => v === 'bad').length };
+    }
+    function syncSliders() {
+      $('#wg').value = w.good; $('#wb').value = w.bad; $('#b').value = b;
+    }
+    function render() {
+      const x = xs(), thr = +$('#thr').value;
+      const z = w.good * x.good + w.bad * x.bad + b, p = sig(z);
+      $('#wgV').textContent = r3(w.good); $('#wbV').textContent = r3(w.bad); $('#bV').textContent = r3(b); $('#thrV').textContent = thr;
+      $('#xline').innerHTML = `Features x = [good, bad] = <b>[${x.good}, ${x.bad}]</b> (counts in the review)`;
+      fill($('#calc'),
+        el('div', {}, `z = ${r3(w.good)}×${x.good} + (${r3(w.bad)})×${x.bad} + (${r3(b)}) = ${r3(z)}`),
+        el('div', {}, `p = 1/(1 + e^−(${r3(z)})) = ${p.toFixed(4)}`),
+        el('div', {}, `odds = p/(1−p) = e^z = ${Math.exp(z).toFixed(3)}`));
+      fill($('#pred'), el('div', { class: 'callout ' + (p >= thr ? 'ok' : 'bad') },
+        el('b', {}, p >= thr ? 'POSITIVE' : 'NEGATIVE'), ` — p = ${p.toFixed(3)} ${p >= thr ? '≥' : '<'} threshold ${thr}`));
+
+      const P = Plot($('#sig'), { x: [-4, 4], y: [0, 1], w: 480, h: 260 });
+      P.axes({ xticks: [-4, -2, 0, 2, 4], yticks: [0, 0.5, 1], xlabel: 'z', ylabel: 'p' });
+      P.seg(-4, thr, 4, thr, { stroke: 'var(--warn)', 'stroke-dasharray': '5 4' });
+      P.fn(sig, { stroke: 'var(--accent)', 'stroke-width': 2.5 });
+      const zc = Math.max(-4, Math.min(4, z));
+      P.seg(zc, 0, zc, sig(zc), { stroke: 'var(--muted)', 'stroke-dasharray': '3 3' });
+      P.dot(zc, sig(zc), { r: 7, fill: p >= thr ? 'var(--ok)' : 'var(--bad)' });
+      P.text(zc, sig(zc), `(${r3(z)}, ${p.toFixed(3)})`, { dx: 10, dy: -8, style: 'fill:var(--text)' });
+      renderLoss(x, p);
+    }
+    function renderLoss(x, p) {
+      const y = +$('#y').value;
+      const L = -(y * Math.log(p) + (1 - y) * Math.log(1 - p));
+      const g = p - y;
+      fill($('#loss'),
+        el('div', { class: 'mono' }, `p = ${p.toFixed(4)}, y = ${y} → L = ${L.toFixed(4)}`),
+        el('div', { class: 'mono' }, `gradients: ∂L/∂w_good = (p−y)·${x.good} = ${(g * x.good).toFixed(4)},  ∂L/∂w_bad = (p−y)·${x.bad} = ${(g * x.bad).toFixed(4)},  ∂L/∂b = ${g.toFixed(4)}`),
+        el('div', { class: 'small muted' }, g < 0 ? 'p − y < 0: the model is under-confident in the true label, so the step RAISES the weights of present features.' : 'p − y > 0: the model leans too far toward positive, so the step LOWERS the weights of present features.'));
+      fill($('#hist'), hist.length ? [el('tr', {}, el('th', {}, 'step'), el('th', {}, 'w_good'), el('th', {}, 'w_bad'), el('th', {}, 'b'), el('th', {}, 'p'), el('th', {}, 'loss')),
+        hist.map((h, i) => el('tr', {}, el('td', {}, i), el('td', { class: 'num' }, h.wg.toFixed(4)), el('td', { class: 'num' }, h.wb.toFixed(4)), el('td', { class: 'num' }, h.b.toFixed(4)), el('td', { class: 'num' }, h.p.toFixed(4)), el('td', { class: 'num' }, h.L.toFixed(4))))] : []);
+    }
+    function step() {
+      const x = xs(), y = +$('#y').value, eta = +$('#eta').value;
+      const pBefore = sig(w.good * x.good + w.bad * x.bad + b);
+      if (!hist.length) hist.push({ wg: w.good, wb: w.bad, b, p: pBefore, L: -(y * Math.log(pBefore) + (1 - y) * Math.log(1 - pBefore)) });
+      const g = pBefore - y;
+      w.good -= eta * g * x.good; w.bad -= eta * g * x.bad;
+      if ($('#upB').checked) b -= eta * g;
+      const p = sig(w.good * x.good + w.bad * x.bad + b);
+      hist.push({ wg: w.good, wb: w.bad, b, p, L: -(y * Math.log(p) + (1 - y) * Math.log(1 - p)) });
+      if (hist.length > 12) hist.splice(1, 1);
+      syncSliders(); render();
+    }
+    $('#step').onclick = step;
+    $('#step10').onclick = () => { for (let i = 0; i < 10; i++) step(); };
+    $('#slide').onclick = () => { $('#review').value = 'good good movie'; w = { good: 0.8, bad: -1 }; b = -0.4; $('#y').value = '1'; $('#eta').value = 0.1; $('#upB').checked = false; hist = []; syncSliders(); render(); };
+    $('#wg').oninput = () => { w.good = +$('#wg').value; hist = []; render(); };
+    $('#wb').oninput = () => { w.bad = +$('#wb').value; hist = []; render(); };
+    $('#b').oninput = () => { b = +$('#b').value; hist = []; render(); };
+    ['thr', 'y'].forEach((id) => $('#' + id).addEventListener('input', render));
+    $('#review').addEventListener('input', () => { hist = []; render(); });
+
+    function neg() {
+      const on = $('#bigram').checked, wng = +$('#wng').value;
+      $('#wngV').textContent = wng;
+      const z = 1 * 0 + 1 * 0.8 + (on ? wng : 0) - 0.4, p = sig(z);
+      fill($('#neg'),
+        el('table', { class: 't' },
+          el('tr', {}, el('th', {}, 'feature'), el('th', {}, 'count'), el('th', {}, 'weight'), el('th', {}, 'contribution')),
+          el('tr', {}, el('td', { class: 'mono' }, 'not'), el('td', { class: 'num' }, 1), el('td', { class: 'num' }, '0.0'), el('td', { class: 'num' }, '0')),
+          el('tr', {}, el('td', { class: 'mono' }, 'good'), el('td', { class: 'num' }, 1), el('td', { class: 'num' }, '+0.8'), el('td', { class: 'num' }, '+0.8')),
+          on ? el('tr', {}, el('td', { class: 'mono' }, '"not good"'), el('td', { class: 'num' }, 1), el('td', { class: 'num' }, wng), el('td', { class: 'num' }, wng)) : null,
+          el('tr', {}, el('td', { class: 'mono' }, 'bias'), el('td'), el('td'), el('td', { class: 'num' }, '−0.4'))),
+        el('div', { class: 'mono small', style: { marginTop: '8px' } }, `z = ${r3(z)}  →  p = σ(${r3(z)}) = ${p.toFixed(6)}`),
+        el('div', { class: 'callout ' + (p < 0.5 ? 'ok' : 'bad') }, p < 0.5
+          ? el('span', {}, el('b', {}, 'NEGATIVE ✓ '), 'The bigram adds its own (learned) contribution. It does not replace the unigrams — and training needs examples of "not good" to give it this weight.')
+          : el('span', {}, el('b', {}, 'POSITIVE ✗ '), 'Unigrams can\'t see that "not" flips "good". Switching to NB or SVM wouldn\'t help either — the information isn\'t in the features. Add the bigram.')),
+        el('p', { class: 'muted small' }, 'Limits: "not very good" doesn\'t contain the bigram "not good", and n-grams grow the vocabulary (sparsity). Sequence models (RNNs, Transformers) compose context instead.'));
+    }
+    $('#bigram').onchange = neg; $('#wng').oninput = neg;
+
+    syncSliders(); render(); neg();
+  </script>
+</body>
+</html>

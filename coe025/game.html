@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="..">
+  <main>
+    <span class="tag game" id="kind"></span>
+    <h1 id="title" style="margin-top:8px"></h1>
+    <p class="lead" id="intro"></p>
+    <p class="muted small" id="how"></p>
+    <div id="stage"></div>
+    <div class="row" style="margin-top:16px">
+      <button class="primary" id="check">Check</button>
+      <button id="reveal">Show answer</button>
+      <button id="reset">Shuffle &amp; restart</button>
+      <span id="result"></span>
+    </div>
+    <div class="panel" id="more" style="display:none">
+      <h3 id="morehead">More games</h3>
+      <div class="row" id="morelist"></div>
+    </div>
+  </main>
+  <script src="data.js"></script>
+  <script>
+    const gid = new URLSearchParams(location.search).get('id');
+    const G = COURSE.games[gid];
+    document.body.dataset.course = COURSE.id;
+    if (G) {
+      document.body.dataset.chapter = G.ch;
+      document.body.dataset.title = G.title;
+      document.body.dataset.activity = `game-${gid}`;
+    }
+  </script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { el, $, shuffle } = CS;
+    const stage = $('#stage');
+    const result = $('#result');
+    if (!G) {
+      stage.textContent = 'Unknown game.';
+      throw new Error('unknown game ' + gid);
+    }
+    $('#title').textContent = G.title;
+    document.title = `${G.title} · ${COURSE.code}`;
+    $('#intro').textContent = G.intro;
+    $('#kind').textContent = { order: 'Put in order', bucket: 'Sort into groups', match: 'Match pairs' }[G.type];
+    $('#how').textContent = {
+      order: 'Drag items, or click one item and then another to swap them. ↑ / ↓ buttons also work.',
+      bucket: 'Click an item, then click the group it belongs to (or drag it). Click a placed item to pick it up again.',
+      match: 'Click an item on the left, then its partner on the right.',
+    }[G.type];
+
+    const others = Object.entries(COURSE.games).filter(([id, g]) => g.ch === G.ch && id !== gid);
+    if (others.length) {
+      $('#more').style.display = '';
+      $('#morehead').textContent = `More games in this ${CS.unit.toLowerCase()}`;
+      $('#morelist').append(...others.map(([id, g]) => el('a', { class: 'btn', href: `game.html?id=${id}` }, g.title)));
+    }
+
+    const setResult = (ok, total) => {
+      result.innerHTML = ok === total
+        ? `<b style="color:var(--ok)">Perfect — ${ok}/${total} 🎉</b>`
+        : `<b>${ok}/${total} correct</b> <span class="muted">— fix the red ones and check again</span>`;
+    };
+
+    /* ================= ORDER ================= */
+    function orderGame() {
+      let list;
+      let sel = null;
+      let dragFrom = null;
+      const reset = () => {
+        do { list = shuffle(G.items.map((text, i) => ({ text, i }))); }
+        while (list.length > 1 && list.every((x, k) => x.i === k));
+        sel = null; result.textContent = ''; render();
+      };
+      const swap = (a, b) => { [list[a], list[b]] = [list[b], list[a]]; sel = null; result.textContent = ''; render(); };
+      const render = (mark) => {
+        stage.replaceChildren(el('div', { class: 'items' }, list.map((it, k) => {
+          const cls = ['item'];
+          if (sel === k) cls.push('selected');
+          if (mark) cls.push(it.i === k ? 'right' : 'wrong');
+          const node = el('div', {
+            class: cls.join(' '), draggable: 'true',
+            onclick: () => { if (sel === null) { sel = k; render(); } else if (sel === k) { sel = null; render(); } else swap(sel, k); },
+            ondragstart: () => { dragFrom = k; node.classList.add('dragging'); },
+            ondragend: () => node.classList.remove('dragging'),
+            ondragover: (e) => e.preventDefault(),
+            ondrop: (e) => {
+              e.preventDefault();
+              if (dragFrom === null || dragFrom === k) return;
+              const [m] = list.splice(dragFrom, 1);
+              list.splice(k, 0, m);
+              dragFrom = null; sel = null; result.textContent = ''; render();
+            },
+          },
+          el('span', { class: 'num' }, `${k + 1}.`),
+          el('span', { class: 'grow' }, it.text, mark && it.i !== k ? el('span', { class: 'why' }, `belongs at position ${it.i + 1}`) : null),
+          el('button', { class: 'chip', onclick: (e) => { e.stopPropagation(); if (k > 0) swap(k, k - 1); } }, '↑'),
+          el('button', { class: 'chip', onclick: (e) => { e.stopPropagation(); if (k < list.length - 1) swap(k, k + 1); } }, '↓'));
+          return node;
+        })));
+      };
+      return {
+        reset,
+        check() { render(true); setResult(list.filter((x, k) => x.i === k).length, list.length); },
+        reveal() { list.sort((a, b) => a.i - b.i); render(true); setResult(list.length, list.length); },
+      };
+    }
+
+    /* ================= BUCKET ================= */
+    function bucketGame() {
+      let items; // {text, bucket, why, at: -1 = pool}
+      let sel = null;
+      const reset = () => {
+        items = shuffle(G.items.map(([text, bucket, why]) => ({ text, bucket, why, at: -1 })));
+        sel = null; result.textContent = ''; render();
+      };
+      const place = (it, b) => { it.at = b; sel = null; result.textContent = ''; render(); };
+      const itemNode = (it, mark) => {
+        const cls = ['item'];
+        if (sel === it) cls.push('selected');
+        if (mark && it.at >= 0) cls.push(it.at === it.bucket ? 'right' : 'wrong');
+        const n = el('div', {
+          class: cls.join(' '), draggable: 'true',
+          onclick: (e) => { e.stopPropagation(); sel = sel === it ? null : it; render(); },
+          ondragstart: (e) => { sel = it; e.dataTransfer.setData('text/plain', ''); },
+        }, el('span', { class: 'grow' }, it.text,
+          mark && it.at >= 0 && (it.at !== it.bucket || it.why)
+            ? el('span', { class: 'why' }, it.at !== it.bucket ? `→ ${G.buckets[it.bucket]}${it.why ? '. ' + it.why : ''}` : it.why)
+            : null));
+        return n;
+      };
+      const dropZone = (node, b) => {
+        node.addEventListener('dragover', (e) => { e.preventDefault(); node.classList.add('hot'); });
+        node.addEventListener('dragleave', () => node.classList.remove('hot'));
+        node.addEventListener('drop', (e) => { e.preventDefault(); node.classList.remove('hot'); if (sel) place(sel, b); });
+        node.addEventListener('click', () => { if (sel) place(sel, b); });
+        return node;
+      };
+      const render = (mark) => {
+        const pool = items.filter((x) => x.at === -1);
+        stage.replaceChildren(
+          dropZone(el('div', { class: 'bucket pool' },
+            el('h4', { class: 'muted' }, pool.length ? `To place (${pool.length})` : 'All placed — press Check'),
+            el('div', { class: 'items' }, pool.map((x) => itemNode(x, mark)))), -1),
+          el('div', { class: 'buckets' }, G.buckets.map((name, b) => dropZone(
+            el('div', { class: 'bucket' }, el('h4', {}, name),
+              el('div', { class: 'items' }, items.filter((x) => x.at === b).map((x) => itemNode(x, mark)))), b))));
+      };
+      return {
+        reset,
+        check() { render(true); setResult(items.filter((x) => x.at === x.bucket).length, items.length); },
+        reveal() { items.forEach((x) => (x.at = x.bucket)); sel = null; render(true); setResult(items.length, items.length); },
+      };
+    }
+
+    /* ================= MATCH ================= */
+    function matchGame() {
+      let rights, links, selL = null; // links[leftIndex] = rightIndex
+      const reset = () => {
+        rights = shuffle(G.pairs.map((p, i) => ({ text: p[1], i })));
+        links = {}; selL = null; result.textContent = ''; render();
+      };
+      const render = (mark) => {
+        const pairOfRight = (ri) => Object.keys(links).find((l) => links[l] === ri);
+        stage.replaceChildren(el('div', { class: 'match-cols' },
+          el('div', { class: 'items' }, G.pairs.map((p, li) => {
+            const cls = ['item'];
+            if (selL === li) cls.push('selected');
+            if (mark && links[li] != null) cls.push(links[li] === li ? 'right' : 'wrong');
+            return el('div', { class: cls.join(' '), onclick: () => { selL = selL === li ? null : li; render(); } },
+              el('span', { class: 'grow' }, p[0]),
+              links[li] != null ? el('span', { class: 'pair-badge' }, String.fromCharCode(65 + li)) : null);
+          })),
+          el('div', { class: 'items' }, rights.map((r) => {
+            const l = pairOfRight(r.i);
+            const cls = ['item'];
+            if (mark && l != null) cls.push(Number(l) === r.i ? 'right' : 'wrong');
+            return el('div', {
+              class: cls.join(' '),
+              onclick: () => {
+                if (selL === null) return;
+                if (l != null) delete links[l];
+                links[selL] = r.i; selL = null; result.textContent = ''; render();
+              },
+            }, l != null ? el('span', { class: 'pair-badge' }, String.fromCharCode(65 + Number(l))) : null,
+            el('span', { class: 'grow' }, r.text));
+          }))));
+      };
+      return {
+        reset,
+        check() { render(true); setResult(G.pairs.filter((p, i) => links[i] === i).length, G.pairs.length); },
+        reveal() { G.pairs.forEach((p, i) => (links[i] = i)); selL = null; render(true); setResult(G.pairs.length, G.pairs.length); },
+      };
+    }
+
+    const game = { order: orderGame, bucket: bucketGame, match: matchGame }[G.type]();
+    $('#check').onclick = () => game.check();
+    $('#reveal').onclick = () => game.reveal();
+    $('#reset').onclick = () => game.reset();
+    game.reset();
+  </script>
+</body>
+</html>

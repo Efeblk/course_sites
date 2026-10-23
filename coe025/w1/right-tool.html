@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bulldozer or Nutcracker? · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .bar { height: 26px; border-radius: 6px; display: flex; align-items: center; padding: 0 8px; font-family: var(--mono); font-size: .85rem; color: #fff; min-width: 4px; white-space: nowrap; }
+    .barrow { display: grid; grid-template-columns: 150px 1fr; gap: 10px; align-items: center; margin: 6px 0; }
+    .lat { position: relative; }
+    .lat .line { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--warn); }
+    .scen { display: grid; gap: 10px; }
+    .scen .box .row { margin-top: 6px; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="1" data-title="Bulldozer or Nutcracker?" data-activity="w1-righttool">
+  <main>
+    <h1>🚜🌰 Bulldozer or Nutcracker?</h1>
+    <p class="lead">"Don't use a bulldozer to crack a chestnut." The lecture's question: <b>when would I NOT use an LLM?</b> Plug in numbers and decide for yourself.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · Unit cost: spam filtering</h2>
+      <div class="row">
+        <label>Emails / day <input type="number" class="n" id="per" value="1000000" style="width:120px"></label>
+        <label>Tokens / email <input type="number" class="n" id="tok" value="33"></label>
+        <label>LLM price $ / 1K tokens <input type="number" class="n" id="price" value="0.03" step="0.005"></label>
+        <label>Classical server $ / month <input type="number" class="n" id="srv" value="10"></label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <label>LLM accuracy % <input type="number" class="n" id="accL" value="99.2" step="0.1"></label>
+        <label>Naive Bayes accuracy % <input type="number" class="n" id="accN" value="98.5" step="0.1"></label>
+      </div>
+      <div id="cost" style="margin-top:14px"></div>
+      <p class="muted small">The slide's numbers: GPT-4 API $0.03 per 1K tokens → $30,000/month vs Naive Bayes &lt; $10/month; 98.5% vs 99.2% accuracy. $30,000/month at 1M emails/day works out to about 33 tokens per email. Real emails are usually longer, so try 300 tokens and watch the gap grow.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Latency: response time matters</h2>
+      <div class="row">
+        <label>LLM inference <input type="range" id="llmMs" min="100" max="1000" value="400"> <span id="llmMsV" class="mono"></span></label>
+        <label>Simple classifier <input type="range" id="clsMs" min="1" max="10" value="5"> <span id="clsMsV" class="mono"></span></label>
+      </div>
+      <div id="lat" style="margin-top:10px"></div>
+      <div class="callout warn small">Real-time applications — autocomplete, live translation, chatbots: users drop off after about 100 ms (the orange line).</div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">3 · Which tool? (other factors)</h2>
+      <p class="small">For each case pick a tool, then see the deciding factor: <b>cost, latency, interpretability, privacy, customization (small labeled data), hallucinations</b>.</p>
+      <div class="scen" id="scen"></div>
+      <div class="row" style="margin-top:10px"><span id="scenScore" class="tag"></span></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const money = (v) => '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2));
+
+    function cost() {
+      const per = +$('#per').value, tok = +$('#tok').value, price = +$('#price').value, srv = +$('#srv').value;
+      const llm = per * 30 * (tok / 1000) * price;
+      const errL = per * (1 - $('#accL').value / 100), errN = per * (1 - $('#accN').value / 100);
+      const saved = (errN - errL) * 30;
+      const max = Math.max(llm, srv);
+      const row = (name, v, color) => el('div', { class: 'barrow' }, el('div', {}, name),
+        el('div', {}, el('div', { class: 'bar', style: { width: `${Math.max(0.6, (v / max) * 100)}%`, background: color } }, money(v) + ' / month')));
+      fill($('#cost'),
+        row('LLM API', llm, 'var(--bad)'), row('Naive Bayes', srv, 'var(--ok)'),
+        el('div', { class: 'stats', style: { marginTop: '10px' } },
+          el('div', { class: 'stat' }, el('b', {}, `${Math.round(llm / Math.max(srv, 0.01)).toLocaleString('en-US')}×`), el('span', {}, 'cost ratio')),
+          el('div', { class: 'stat' }, el('b', {}, Math.round(errN).toLocaleString('en-US')), el('span', {}, 'NB mistakes / day')),
+          el('div', { class: 'stat' }, el('b', {}, Math.round(errL).toLocaleString('en-US')), el('span', {}, 'LLM mistakes / day')),
+          el('div', { class: 'stat' }, el('b', {}, saved > 0 ? money((llm - srv) / saved) : '—'), el('span', {}, 'extra cost per avoided mistake'))),
+        el('div', { class: 'callout' }, saved > 0
+          ? `Is ${(+$('#accL').value - +$('#accN').value).toFixed(1)}% more accuracy worth ${money(llm - srv)} more per month? Each avoided mistake costs ${money((llm - srv) / saved)}. For spam, usually not.`
+          : 'The classical model is at least as accurate — no reason to pay for the LLM here.'));
+    }
+    ['per', 'tok', 'price', 'srv', 'accL', 'accN'].forEach((id) => $('#' + id).addEventListener('input', cost));
+
+    function lat() {
+      const l = +$('#llmMs').value, c = +$('#clsMs').value, max = 1000;
+      $('#llmMsV').textContent = l + ' ms'; $('#clsMsV').textContent = c + ' ms';
+      const row = (name, v, color) => el('div', { class: 'barrow' }, el('div', {}, name),
+        el('div', { class: 'lat' }, el('div', { class: 'bar', style: { width: `${Math.max(0.5, (v / max) * 100)}%`, background: color } }, v + ' ms'),
+          el('div', { class: 'line', style: { left: '10%' } })));
+      fill($('#lat'), row('LLM inference', l, 'var(--bad)'), row('Simple classifier', c, 'var(--ok)'),
+        el('p', { class: 'small' }, `In the time the LLM answers one request, the classifier answers about ${Math.floor(l / c)}.`));
+    }
+    ['llmMs', 'clsMs'].forEach((id) => $('#' + id).addEventListener('input', lat));
+
+    const SCEN = [
+      ['A bank must tell customers why a loan was rejected', 0, 'Interpretability — healthcare, finance and legal need explanations. Logistic regression weights can be read; an LLM\'s reasoning can\'t be audited the same way.'],
+      ['A military hospital classifies patient notes', 0, 'Privacy — medical/military data can\'t be sent to an external API. On-premise classical models (or small local models) fit.'],
+      ['You have 300 labeled support tickets for a niche product', 0, 'Customization — small labeled datasets (100–1000 examples) are easy to train and debug with traditional ML.'],
+      ['A drug-dosage lookup bot for nurses', 0, 'Hallucinations — LLMs can generate plausible but false information, critical in factual domains. Use retrieval / rules / classifiers with verified answers.'],
+      ['Keyboard next-word suggestions on a phone', 0, 'Latency (and cost) — autocomplete needs answers in milliseconds, on device.'],
+      ['Draft a creative ad campaign in three different tones', 1, 'Creative writing — open-ended generation is exactly what LLMs are for.'],
+      ['Answer multi-step questions that combine several documents', 1, 'Complex Q&A — the reasoning capability is valuable.'],
+    ];
+    const picks = {};
+    function scen() {
+      fill($('#scen'), SCEN.map(([text, ans, why], i) => {
+        const p = picks[i];
+        return el('div', { class: 'box' },
+          el('b', {}, text),
+          el('div', { class: 'row' },
+            el('button', { class: 'chip' + (p === 0 ? ' active' : ''), onclick: () => { picks[i] = 0; scen(); } }, 'Classical / small model'),
+            el('button', { class: 'chip' + (p === 1 ? ' active' : ''), onclick: () => { picks[i] = 1; scen(); } }, 'LLM'),
+            p != null ? el('span', { style: { color: p === ans ? 'var(--ok)' : 'var(--bad)', fontWeight: 700 } }, p === ans ? '✓' : '✗') : null),
+          p != null ? el('div', { class: 'small muted', style: { marginTop: '6px' } }, why) : null);
+      }));
+      const done = Object.keys(picks).length, ok = Object.entries(picks).filter(([i, p]) => SCEN[i][1] === p).length;
+      $('#scenScore').textContent = `${ok} / ${done} correct of ${SCEN.length}`;
+    }
+    cost(); lat(); scen();
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NER &amp; BIO Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .seq { overflow-x: auto; }
+    .seq table { border-collapse: collapse; }
+    .seq td, .seq th { border: 1px solid var(--line); padding: 4px 7px; font-family: var(--mono); font-size: .82rem; text-align: center; white-space: nowrap; }
+    .seq th { background: var(--panel-2); font-family: var(--sans); text-align: left; }
+    .seq td.word { cursor: pointer; font-size: .9rem; }
+    .seq td.word:hover { outline: 2px solid var(--accent); }
+    .seq td.anchor { outline: 2px dashed var(--warn); }
+    .PER { background: color-mix(in srgb, #6aa8ff 26%, transparent); }
+    .ORG { background: color-mix(in srgb, #ffb547 28%, transparent); }
+    .LOC { background: color-mix(in srgb, #3ecf8e 26%, transparent); }
+    .GPE { background: color-mix(in srgb, #9b7bff 28%, transparent); }
+    .bad-tag { color: var(--bad); font-weight: 700; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="4" data-title="NER & BIO Lab" data-activity="w4-bio">
+  <main>
+    <h1>NER &amp; BIO Lab</h1>
+    <p class="lead">NER must <b>find spans</b> and <b>type</b> them (PER, ORG, LOC, GPE). That's a segmentation problem POS tagging doesn't have. <b>BIO tagging</b> turns it back into one label per token: B = begins a span, I = inside, O = outside.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · Mark the entities</h2>
+      <p class="small">Click the <b>first</b> word of an entity, then its <b>last</b> word (same word twice for a one-word entity), then pick a type. Click a marked word to remove its span.</p>
+      <div class="row">
+        <label>Sentence <input type="text" id="text" style="width:520px"></label>
+        <button class="chip" id="slideS">Slide sentence</button>
+      </div>
+      <div class="row" style="margin-top:8px" id="types"></div>
+      <div class="seq" style="margin-top:10px"><table id="seq"></table></div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="check">Check against the slide</button>
+        <button id="reveal">Show slide answer</button>
+        <span id="checkOut"></span>
+      </div>
+      <div id="spans" class="small" style="margin-top:8px"></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">2 · How many tags?</h2>
+        <div class="row"><label>entity types n <input type="range" id="n" min="1" max="8" value="4"> <code id="nV"></code></label></div>
+        <div id="count" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">3 · Valid or invalid BIO?</h2>
+        <p class="small">Type a tag sequence (space separated). Spans are decoded and illegal transitions flagged.</p>
+        <input type="text" id="tags" style="width:100%">
+        <div class="row" style="margin-top:8px">
+          <button class="chip" data-t="B-PER I-PER O B-ORG">valid</button>
+          <button class="chip" data-t="O I-ORG I-ORG O">I after O</button>
+          <button class="chip" data-t="B-PER I-ORG O">type switch</button>
+          <button class="chip" data-t="B-PER B-PER O">two people</button>
+          <button class="chip" data-t="I-LOC O B-LOC">I at start</button>
+        </div>
+        <div id="val" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const SLIDE = 'Jane Villanueva of United , a unit of United Airlines Holding , said the fare applies to the Chicago route .';
+    const GOLD = [[0, 1, 'PER'], [3, 3, 'ORG'], [8, 10, 'ORG'], [18, 18, 'LOC']];
+    const TYPES = ['PER', 'ORG', 'LOC', 'GPE'];
+    let toks = [], spans = [], anchor = null, pending = null;
+
+    const key = (s) => s.join('|');
+    function tagsFor(sp) {
+      const bio = toks.map(() => 'O'), io = toks.map(() => 'O'), bioes = toks.map(() => 'O');
+      for (const [a, b, t] of sp) for (let i = a; i <= b; i++) {
+        bio[i] = (i === a ? 'B-' : 'I-') + t;
+        io[i] = 'I-' + t;
+        bioes[i] = (a === b ? 'S-' : i === a ? 'B-' : i === b ? 'E-' : 'I-') + t;
+      }
+      return { bio, io, bioes };
+    }
+    function typeOf(i) { const s = spans.find(([a, b]) => i >= a && i <= b); return s ? s[2] : null; }
+    function render() {
+      const { bio, io, bioes } = tagsFor(spans);
+      fill($('#seq'),
+        el('tr', {}, el('th', {}, 'token'), toks.map((w, i) => el('td', {
+          class: 'word ' + (typeOf(i) || '') + (anchor === i || (pending && i >= pending[0] && i <= pending[1]) ? ' anchor' : ''),
+          onclick: () => click(i),
+        }, w))),
+        el('tr', {}, el('th', {}, 'BIO'), bio.map((t, i) => el('td', { class: typeOf(i) || '' }, t))),
+        el('tr', {}, el('th', {}, 'IO'), io.map((t) => el('td', {}, t))),
+        el('tr', {}, el('th', {}, 'BIOES'), bioes.map((t) => el('td', {}, t))));
+      fill($('#types'), pending
+        ? [el('span', { class: 'small' }, `Type for "${toks.slice(pending[0], pending[1] + 1).join(' ')}":`),
+          TYPES.map((t) => el('button', { class: 'chip ' + t, onclick: () => { spans.push([...pending, t]); spans.sort((x, y) => x[0] - y[0]); pending = null; render(); } }, t)),
+          el('button', { class: 'chip', onclick: () => { pending = null; render(); } }, 'cancel')]
+        : el('span', { class: 'small muted' }, anchor != null ? `Start: "${toks[anchor]}" — now click the last word of the entity.` : 'Click a word to start a span.'));
+      fill($('#spans'), spans.length ? ['Spans: ', spans.map(([a, b, t]) => el('span', { class: 'tok ' + t, style: { marginRight: '6px' } }, `[${t} ${toks.slice(a, b + 1).join(' ')}]`))] : '');
+    }
+    function click(i) {
+      const s = spans.findIndex(([a, b]) => i >= a && i <= b);
+      if (s >= 0 && anchor == null && !pending) { spans.splice(s, 1); $('#checkOut').textContent = ''; return render(); }
+      if (pending) return;
+      if (anchor == null) { anchor = i; return render(); }
+      const a = Math.min(anchor, i), b = Math.max(anchor, i);
+      anchor = null;
+      if (spans.some(([x, y]) => !(b < x || a > y))) { $('#checkOut').textContent = 'Spans can\'t overlap.'; return render(); }
+      pending = [a, b]; render();
+    }
+    function load(text) { toks = text.trim().split(/\s+/).filter(Boolean); spans = []; anchor = null; pending = null; $('#checkOut').textContent = ''; render(); }
+    $('#text').addEventListener('change', () => load($('#text').value));
+    $('#slideS').onclick = () => { $('#text').value = SLIDE; load(SLIDE); };
+    $('#check').onclick = () => {
+      if ($('#text').value.trim() !== SLIDE) { $('#checkOut').textContent = 'Load the slide sentence first.'; return; }
+      const g = tagsFor(GOLD).bio, mine = tagsFor(spans).bio;
+      const tokOk = mine.filter((t, i) => t === g[i]).length;
+      const exact = spans.filter((s) => GOLD.some((x) => key(x) === key(s))).length;
+      $('#checkOut').innerHTML = `Tokens: <b>${tokOk}/${toks.length}</b> · exact spans: <b>${exact}/${GOLD.length}</b>` + (exact === GOLD.length && spans.length === GOLD.length ? ' <b style="color:var(--ok)">— perfect 🎉</b>' : '');
+    };
+    $('#reveal').onclick = () => { if ($('#text').value.trim() !== SLIDE) { $('#text').value = SLIDE; toks = SLIDE.split(' '); } spans = GOLD.map((s) => [...s]); anchor = null; pending = null; render(); $('#checkOut').textContent = 'Note: "United" alone is the airline (ORG); "Chicago" here is a route location (LOC).'; };
+
+    function count() {
+      const n = +$('#n').value; $('#nV').textContent = n;
+      const T = ['PER', 'ORG', 'LOC', 'GPE', 'DATE', 'TIME', 'MONEY', 'PCT'].slice(0, n);
+      fill($('#count'), el('table', { class: 't' },
+        el('tr', {}, el('th', {}, 'scheme'), el('th', {}, 'formula'), el('th', {}, '#'), el('th', {}, 'tags')),
+        el('tr', {}, el('td', {}, 'IO'), el('td', { class: 'mono' }, 'n + 1'), el('td', { class: 'num' }, n + 1), el('td', { class: 'mono small' }, ['O', ...T.map((t) => 'I-' + t)].join(' '))),
+        el('tr', {}, el('td', {}, 'BIO'), el('td', { class: 'mono' }, '2n + 1'), el('td', { class: 'num' }, 2 * n + 1), el('td', { class: 'mono small' }, ['O', ...T.flatMap((t) => ['B-' + t, 'I-' + t])].join(' '))),
+        el('tr', {}, el('td', {}, 'BIOES'), el('td', { class: 'mono' }, '4n + 1'), el('td', { class: 'num' }, 4 * n + 1), el('td', { class: 'mono small' }, ['O', ...T.flatMap((t) => ['B-' + t, 'I-' + t, 'E-' + t, 'S-' + t])].join(' ')))),
+        el('p', { class: 'small muted' }, 'Why not just IO? "Mary Jane" (one person) and "Jane Mary" listed as two people are both I-PER I-PER in IO. BIO writes B-PER I-PER vs B-PER B-PER. BIOES additionally marks End and Single-token spans.'));
+    }
+    $('#n').addEventListener('input', count);
+
+    function validate() {
+      const t = $('#tags').value.trim().split(/\s+/).filter(Boolean);
+      const issues = [], spansOut = [];
+      let cur = null;
+      t.forEach((tag, i) => {
+        const m = tag.match(/^([BIO])(?:-(\w+))?$/);
+        if (!m || (m[1] !== 'O' && !m[2])) { issues.push([i, `"${tag}" is not a BIO tag`]); cur = null; return; }
+        const [, p, ty] = m;
+        if (p === 'O') { cur = null; return; }
+        if (p === 'B') { cur = [i, i, ty]; spansOut.push(cur); return; }
+        if (!cur || cur[2] !== ty) {
+          issues.push([i, i === 0 ? `I-${ty} at the start: spans must begin with B-` : !cur ? `I-${ty} after O: nothing to continue` : `I-${ty} continues a ${cur[2]} span: types must match`]);
+          cur = [i, i, ty]; spansOut.push(cur); return; // lenient decoders treat it as a new span
+        }
+        cur[1] = i;
+      });
+      fill($('#val'),
+        el('div', { class: 'toks' }, t.map((tag, i) => el('span', { class: 'tok ' + (issues.some(([k]) => k === i) ? 'unk' : (tag.split('-')[1] || '')) }, tag))),
+        el('div', { class: 'callout ' + (issues.length ? 'bad' : 'ok') }, issues.length
+          ? issues.map(([i, msg]) => el('div', {}, `position ${i + 1}: ${msg}`))
+          : 'Valid BIO sequence.'),
+        el('div', { class: 'small' }, `Decoded spans${issues.length ? ' (a lenient decoder starts a new span at each invalid I)' : ''}: ${spansOut.map(([a, b, ty]) => `${ty} [${a + 1}–${b + 1}]`).join(', ') || 'none'}`));
+    }
+    $$('[data-t]').forEach((b) => (b.onclick = () => { $('#tags').value = b.dataset.t; validate(); }));
+    $('#tags').addEventListener('input', validate);
+
+    $('#text').value = SLIDE; load(SLIDE);
+    count();
+    $('#tags').value = 'O I-ORG I-ORG O'; validate();
+  </script>
+</body>
+</html>

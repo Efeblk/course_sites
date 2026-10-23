@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CNN Text Filter · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .vec { width: 56px; }
+    .win td.on { background: color-mix(in srgb, var(--warn) 22%, transparent); }
+    .bars { display: flex; gap: 10px; align-items: flex-end; height: 150px; padding: 8px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; }
+    .bars .b { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; font-family: var(--mono); font-size: .78rem; }
+    .bars .b div.bar { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; }
+    .bars .b.on div.bar { background: var(--warn); }
+    .bars .b.max div.bar { outline: 2px solid var(--ok); }
+    .shape { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .shape .box { font-family: var(--mono); font-size: .88rem; padding: 6px 10px; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="3" data-title="CNN Text Filter" data-activity="w3-cnn">
+  <main>
+    <h1>CNN Text Filter</h1>
+    <p class="lead">A text CNN slides a learned <b>filter</b> over windows of word vectors. Each window gives one response (multiply, sum, add bias, ReLU). <b>Pooling</b> then squeezes all positions into one number per filter.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · One filter, sliding</h2>
+      <div class="cols">
+        <div>
+          <h4 style="margin-top:0">Toy word vectors (2 features each)</h4>
+          <table class="t" id="vecs"></table>
+        </div>
+        <div>
+          <h4 style="margin-top:0">Width-2 filter (one row per window position)</h4>
+          <table class="t" id="filt"></table>
+          <div class="row" style="margin-top:8px"><label>bias <input type="number" class="n vec" id="bias" value="0" step="0.5"></label>
+            <button class="chip" id="slide">Slide-16 values</button></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="prev">◀</button>
+        <span id="winLabel" class="mono"></span>
+        <button class="primary" id="next">▶</button>
+      </div>
+      <div id="calc" class="mono small" style="margin-top:8px"></div>
+      <div class="bars" id="bars" style="margin-top:12px"></div>
+      <div class="row" style="margin-top:10px" id="pool"></div>
+      <p class="muted small">The same filter weights are reused at every position (weight sharing). Its response is a feature, not a probability: 2 doesn't mean "200% positive". Pooling discards <b>where</b> the strongest window was.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Follow the tensor shapes (PyTorch)</h2>
+      <div class="row">
+        <label>batch <input type="number" class="n" id="B" value="2" min="1"></label>
+        <label>tokens L <input type="number" class="n" id="L" value="7" min="1"></label>
+        <label>embedding E <input type="number" class="n" id="E" value="8" min="1"></label>
+        <label>filters <input type="number" class="n" id="F" value="16" min="1"></label>
+        <label>kernel k <input type="number" class="n" id="K" value="3" min="1"></label>
+        <label>padding <input type="number" class="n" id="Pd" value="0" min="0"></label>
+        <label>classes <input type="number" class="n" id="Cl" value="4" min="1"></label>
+      </div>
+      <pre id="code" style="margin-top:12px"></pre>
+      <div class="shape" id="shapes" style="margin-top:12px"></div>
+      <div id="shapeNote" class="small" style="margin-top:10px"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const WORDS = ['this', 'is', 'not', 'very', 'good'];
+    let V = { this: [0.2, 0.1], is: [0.1, 0], not: [1, 0], very: [0, 1], good: [0.3, 0.9] };
+    let Fw = [[1, -1], [1, 1]];
+    let pos = 2;
+    const num = (get, set, step = '0.5') => el('input', { type: 'number', step, class: 'vec', value: get(), oninput: (e) => { set(+e.target.value || 0); run(); } });
+
+    function tables() {
+      fill($('#vecs'), el('tr', {}, el('th', {}, 'word'), el('th', {}, 'f1'), el('th', {}, 'f2')),
+        WORDS.map((w, i) => el('tr', { class: 'win' }, el('td', { class: 'mono' + (i === pos || i === pos + 1 ? ' on' : '') }, w),
+          [0, 1].map((k) => el('td', { class: i === pos || i === pos + 1 ? 'on' : '' }, num(() => V[w][k], (v) => (V[w][k] = v), '0.1'))))));
+      fill($('#filt'), el('tr', {}, el('th', {}, ''), el('th', {}, 'f1'), el('th', {}, 'f2')),
+        [0, 1].map((r) => el('tr', {}, el('td', {}, `row ${r + 1}`), [0, 1].map((k) => el('td', {}, num(() => Fw[r][k], (v) => (Fw[r][k] = v)))))));
+    }
+    function responses() {
+      const b = +$('#bias').value || 0;
+      return WORDS.slice(0, -1).map((_, i) => {
+        const raw = Fw[0][0] * V[WORDS[i]][0] + Fw[0][1] * V[WORDS[i]][1] + Fw[1][0] * V[WORDS[i + 1]][0] + Fw[1][1] * V[WORDS[i + 1]][1] + b;
+        return { raw, relu: Math.max(0, raw) };
+      });
+    }
+    function run() {
+      const R = responses(), n = R.length;
+      pos = Math.min(Math.max(0, pos), n - 1);
+      const a = V[WORDS[pos]], c = V[WORDS[pos + 1]], b = +$('#bias').value || 0;
+      $('#winLabel').textContent = `window ${pos + 1} of ${n}: "${WORDS[pos]} ${WORDS[pos + 1]}"`;
+      fill($('#calc'),
+        el('div', {}, `${Fw[0][0]}×${a[0]} + ${Fw[0][1]}×${a[1]} + ${Fw[1][0]}×${c[0]} + ${Fw[1][1]}×${c[1]} + bias ${b} = ${R[pos].raw.toFixed(2)}`),
+        el('div', {}, `ReLU: max(0, ${R[pos].raw.toFixed(2)}) = ${R[pos].relu.toFixed(2)}`));
+      const mx = Math.max(...R.map((r) => r.relu)), top = Math.max(mx, 0.01);
+      const argmax = R.findIndex((r) => r.relu === mx);
+      fill($('#bars'), R.map((r, i) => el('div', { class: 'b' + (i === pos ? ' on' : '') + (i === argmax ? ' max' : ''), onclick: () => { pos = i; tables(); run(); }, style: { cursor: 'pointer' } },
+        el('span', {}, r.relu.toFixed(2)), el('div', { class: 'bar', style: { height: `${(r.relu / top) * 100}px` } }), el('span', { class: 'muted' }, `${WORDS[i]} ${WORDS[i + 1]}`))));
+      const mean = R.reduce((s, r) => s + r.relu, 0) / n;
+      fill($('#pool'),
+        el('div', { class: 'stat' }, el('b', {}, mx.toFixed(2)), el('span', {}, `max pooling (window ${argmax + 1})`)),
+        el('div', { class: 'stat' }, el('b', {}, mean.toFixed(2)), el('span', {}, `mean pooling = (${R.map((r) => r.relu.toFixed(2)).join(' + ')}) / ${n}`)));
+    }
+    $('#prev').onclick = () => { pos--; tables(); run(); };
+    $('#next').onclick = () => { pos++; tables(); run(); };
+    $('#bias').addEventListener('input', run);
+    $('#slide').onclick = () => { Fw = [[1, -1], [1, 1]]; V.not = [1, 0]; V.very = [0, 1]; $('#bias').value = 0; pos = 2; tables(); run(); };
+
+    function shapes() {
+      const g = (id) => Math.max(0, Math.floor(+$('#' + id).value || 0));
+      const B = g('B'), L = g('L'), E = g('E'), F = g('F'), K = Math.max(1, g('K')), P = g('Pd'), Cl = g('Cl');
+      const Lout = L + 2 * P - K + 1;
+      $('#code').textContent = `x = torch.randn(${B}, ${L}, ${E})          # [batch, tokens, embedding]
+conv = nn.Conv1d(${E}, ${F}, ${K}${P ? `, padding=${P}` : ''})
+head = nn.Linear(${F}, ${Cl})
+a = torch.relu(conv(x.transpose(1, 2)))   # Conv1d wants [batch, channels, length]
+z = a.amax(dim=2)                         # max pooling over positions
+logits = head(z)`;
+      const box = (label, shape) => el('div', { class: 'box' }, el('div', { class: 'muted small' }, label), shape);
+      const arrow = () => el('span', { class: 'muted' }, '→');
+      if (Lout < 1) {
+        fill($('#shapes'), box('input', `[${B}, ${L}, ${E}]`));
+        fill($('#shapeNote'), el('div', { class: 'callout bad' }, `Kernel ${K} is longer than the padded text (${L + 2 * P} positions): PyTorch raises an error. Add padding or shorten the kernel.`));
+        return;
+      }
+      fill($('#shapes'), box('input', `[${B}, ${L}, ${E}]`), arrow(), box('transpose(1,2)', `[${B}, ${E}, ${L}]`), arrow(),
+        box('Conv1d + ReLU', `[${B}, ${F}, ${Lout}]`), arrow(), box('amax(dim=2)', `[${B}, ${F}]`), arrow(), box('Linear → logits', `[${B}, ${Cl}]`));
+      fill($('#shapeNote'),
+        el('div', {}, `Positions after convolution: L + 2·padding − k + 1 = ${L} + ${2 * P} − ${K} + 1 = ${Lout}.`),
+        el('div', {}, `Parameters: conv ${F}×(${E}×${K}) + ${F} biases = ${F * E * K + F}; head ${F}×${Cl} + ${Cl} = ${F * Cl + Cl}.`),
+        el('div', { class: 'muted' }, 'Pooling removes the position axis, so texts of any length end up as the same [batch, filters] shape. Logits are not yet probabilities (apply softmax). This random model is untrained — training on labeled texts learns the filters and the head.'));
+    }
+    ['B', 'L', 'E', 'F', 'K', 'Pd', 'Cl'].forEach((id) => $('#' + id).addEventListener('input', shapes));
+    tables(); run(); shapes();
+  </script>
+</body>
+</html>

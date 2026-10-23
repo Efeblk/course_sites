@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RNN &amp; LSTM Stepper · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sl { display: grid; grid-template-columns: 170px 1fr 64px; gap: 8px; align-items: center; margin: 5px 0; }
+    .sl input[type=range] { width: 100%; }
+    textarea { width: 100%; min-height: 70px; font-family: var(--mono); font-size: .9rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .grid td { text-align: center; font-family: var(--mono); font-size: .85rem; }
+    .grid td.pad { color: var(--muted); background: color-mix(in srgb, var(--muted) 12%, transparent); }
+    .lstm { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 10px; }
+    .lstm .box { text-align: center; }
+    .lstm .box b { display: block; font-family: var(--mono); font-size: 1.15rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="3" data-title="RNN & LSTM Stepper" data-activity="w3-rnn">
+  <main>
+    <h1>RNN &amp; LSTM Stepper</h1>
+    <p class="lead">An RNN reads tokens <b>in order</b> and carries a running state: <code>h[t] = tanh(w<sub>x</sub>·x[t] + w<sub>h</sub>·h[t−1] + b)</code>. The same weights are reused at every step.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · A scalar RNN</h2>
+      <div class="row">
+        <label>inputs x <input type="text" id="xs" value="1, -1" style="width:200px"></label>
+        <button class="chip" id="rev">Reverse the input</button>
+      </div>
+      <div class="sl"><span>w<sub>x</sub> (input weight)</span><input type="range" id="wx" min="-2" max="2" step="0.1" value="1"><code id="wxV"></code></div>
+      <div class="sl"><span>w<sub>h</sub> (recurrent weight)</span><input type="range" id="wh" min="-2" max="2" step="0.1" value="0.5"><code id="whV"></code></div>
+      <table class="t" id="rnnT" style="margin-top:8px"></table>
+      <div id="rnnNote"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Why long sequences are hard: vanishing &amp; exploding gradients</h2>
+      <p class="small">Backpropagation through time multiplies one local derivative per step. Assume they're all equal:</p>
+      <div class="sl"><span>local factor</span><input type="range" id="fac" min="0.1" max="2" step="0.05" value="0.5"><code id="facV"></code></div>
+      <div class="sl"><span>steps back in time</span><input type="range" id="steps" min="1" max="60" value="20"><code id="stepsV"></code></div>
+      <div class="row"><button class="chip" data-g="0.5,20">0.5²⁰</button><button class="chip" data-g="1.5,20">1.5²⁰</button><button class="chip" data-g="1,20">1²⁰</button></div>
+      <div id="grad" style="margin-top:10px"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">3 · One LSTM memory update</h2>
+      <p class="small">Gates are sigmoid outputs in (0, 1) — learned from the input and the previous state, not hand-written rules. The cell <code>c</code> is a separate memory path.</p>
+      <div class="cols">
+        <div>
+          <div class="sl"><span>old cell c[t−1]</span><input type="range" id="c0" min="-1" max="1" step="0.05" value="0.5"><code id="c0V"></code></div>
+          <div class="sl"><span>forget/retain gate f</span><input type="range" id="fg" min="0" max="1" step="0.05" value="0.8"><code id="fgV"></code></div>
+          <div class="sl"><span>input/write gate i</span><input type="range" id="ig" min="0" max="1" step="0.05" value="0.25"><code id="igV"></code></div>
+          <div class="sl"><span>candidate g</span><input type="range" id="gg" min="-1" max="1" step="0.05" value="-0.4"><code id="ggV"></code></div>
+          <div class="sl"><span>output gate o</span><input type="range" id="og" min="0" max="1" step="0.05" value="0.5"><code id="ogV"></code></div>
+          <button class="chip" id="lstmSlide">Slide-21 values</button>
+        </div>
+        <div>
+          <div class="lstm" id="lstm"></div>
+          <div id="lstmNote" class="small" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">4 · BiLSTM width</h2>
+        <div class="row">
+          <label>tokens <input type="number" class="n" id="bt" value="4" min="1"></label>
+          <label>hidden per direction <input type="number" class="n" id="bh" value="256" min="1"></label>
+        </div>
+        <div id="bi" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">5 · Padding and masks</h2>
+        <p class="small">One sentence per line. Each real token has the toy feature value 1; PAD has 0.</p>
+        <textarea id="padIn">This movie was very good
+bad film indeed
+excellent</textarea>
+        <div style="overflow-x:auto"><table class="t grid" id="padT" style="margin-top:8px"></table></div>
+        <div id="padNote" class="small"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const sig = (z) => 1 / (1 + Math.exp(-z));
+
+    function rnn() {
+      const xs = $('#xs').value.split(/[,\s]+/).filter(Boolean).map(Number).filter((v) => !Number.isNaN(v));
+      const wx = +$('#wx').value, wh = +$('#wh').value;
+      $('#wxV').textContent = wx; $('#whV').textContent = wh;
+      const run = (seq) => { let h = 0; return seq.map((x) => { const pre = wx * x + wh * h, prev = h; h = Math.tanh(pre); return { x, prev, pre, h }; }); };
+      const fwd = run(xs), rev = run([...xs].reverse());
+      fill($('#rnnT'), el('tr', {}, el('th', {}, 't'), el('th', {}, 'x[t]'), el('th', {}, 'h[t−1]'), el('th', {}, 'pre = wₓx + wₕh[t−1]'), el('th', {}, 'h[t] = tanh(pre)')),
+        el('tr', {}, el('td', {}, 0), el('td'), el('td'), el('td'), el('td', { class: 'num' }, '0')),
+        fwd.map((s, i) => el('tr', {}, el('td', {}, i + 1), el('td', { class: 'num' }, s.x), el('td', { class: 'num' }, s.prev.toFixed(6)),
+          el('td', { class: 'num' }, `${wx}×${s.x} + ${wh}×${s.prev.toFixed(4)} = ${s.pre.toFixed(6)}`), el('td', { class: 'num' }, s.h.toFixed(6)))));
+      const mean = xs.reduce((a, b) => a + b, 0) / (xs.length || 1);
+      const hf = fwd.length ? fwd[fwd.length - 1].h : 0, hr = rev.length ? rev[rev.length - 1].h : 0;
+      fill($('#rnnNote'), el('div', { class: 'callout' },
+        el('div', {}, `Final state for [${xs.join(', ')}]: ${hf.toFixed(6)}  ·  for the reversed input [${[...xs].reverse().join(', ')}]: ${hr.toFixed(6)}`),
+        el('div', {}, `Mean of the inputs is ${mean.toFixed(3)} either way — mean pooling can't tell the orders apart, the RNN can.`),
+        el('div', { class: 'small muted' }, `A head with weight 1, bias 0 would give σ(h) = ${sig(hf).toFixed(3)} vs ${sig(hr).toFixed(3)}. Reversing means recomputing every step in the new order — not reversing the old list of states.`)));
+    }
+    $('#rev').onclick = () => { $('#xs').value = $('#xs').value.split(/[,\s]+/).filter(Boolean).reverse().join(', '); rnn(); };
+    ['xs', 'wx', 'wh'].forEach((id) => $('#' + id).addEventListener('input', rnn));
+
+    function grad() {
+      const f = +$('#fac').value, n = +$('#steps').value, p = Math.pow(f, n);
+      $('#facV').textContent = f; $('#stepsV').textContent = n;
+      const lg = Math.log10(p), pct = Math.max(2, Math.min(100, 50 + lg * 6));
+      fill($('#grad'),
+        el('div', { class: 'big' }, `${f}^${n} = ${p < 1e-4 || p > 1e6 ? p.toExponential(4) : p.toFixed(6)}`),
+        el('div', { style: { height: '18px', background: 'var(--bg-2)', borderRadius: '6px', marginTop: '8px', position: 'relative' } },
+          el('div', { style: { position: 'absolute', left: '50%', top: '-3px', bottom: '-3px', width: '2px', background: 'var(--muted)' } }),
+          el('div', { style: { width: `${pct}%`, height: '100%', borderRadius: '6px', background: p < 0.01 ? 'var(--accent-2)' : p > 100 ? 'var(--bad)' : 'var(--ok)' } })),
+        el('div', { class: 'small muted' }, 'log scale; the middle line is 1'),
+        el('div', { class: 'callout ' + (p < 0.01 || p > 100 ? 'bad' : 'ok') }, p < 0.01
+          ? 'VANISHING: the signal from early tokens is almost zero, so early inputs barely learn. Clipping can\'t restore a vanished signal — gated memory (LSTM/GRU) helps.'
+          : p > 100 ? 'EXPLODING: updates become huge and training is unstable. Gradient clipping caps them.'
+          : 'Stable range. In a real scalar RNN each factor is wₕ × (1 − h[t]²), and vector models multiply Jacobians.'));
+    }
+    $$('[data-g]').forEach((b) => (b.onclick = () => { const [f, n] = b.dataset.g.split(','); $('#fac').value = f; $('#steps').value = n; grad(); }));
+    ['fac', 'steps'].forEach((id) => $('#' + id).addEventListener('input', grad));
+
+    function lstm() {
+      const v = Object.fromEntries(['c0', 'fg', 'ig', 'gg', 'og'].map((k) => { const x = +$('#' + k).value; $('#' + k + 'V').textContent = x; return [k, x]; }));
+      const keep = v.fg * v.c0, write = v.ig * v.gg, c = keep + write, h = v.og * Math.tanh(c);
+      const b = (label, val, sub) => el('div', { class: 'box' }, el('span', { class: 'small muted' }, label), el('b', {}, val), el('span', { class: 'small muted' }, sub));
+      fill($('#lstm'),
+        b('retain old', keep.toFixed(3), `f × c = ${v.fg} × ${v.c0}`),
+        b('write new', write.toFixed(3), `i × g = ${v.ig} × ${v.gg}`),
+        b('new cell c[t]', c.toFixed(3), 'retain + write'),
+        b('hidden h[t]', h.toFixed(3), `o × tanh(c) = ${v.og} × ${Math.tanh(c).toFixed(3)}`));
+      const notes = [];
+      if (v.ig < 0.1) notes.push('Write gate ≈ 0: new content is suppressed.');
+      if (v.fg < 0.1) notes.push('Forget gate ≈ 0: the old memory is erased.');
+      if (v.fg > 0.9 && v.ig < 0.1) notes.push('f ≈ 1 and i ≈ 0: the memory passes through almost unchanged — this is how LSTMs carry information across many steps.');
+      if (v.og < 0.1) notes.push('Output gate ≈ 0: the memory is hidden from h[t] but NOT deleted — retention and exposure are separate controls.');
+      if (v.gg < 0 && v.ig > 0) notes.push('A negative candidate reduces the memory coordinate. Writing doesn\'t have to increase c.');
+      fill($('#lstmNote'), notes.map((n) => el('div', { class: 'callout' }, n)));
+    }
+    ['c0', 'fg', 'ig', 'gg', 'og'].forEach((id) => $('#' + id).addEventListener('input', lstm));
+    $('#lstmSlide').onclick = () => { Object.entries({ c0: 0.5, fg: 0.8, ig: 0.25, gg: -0.4, og: 0.5 }).forEach(([k, x]) => ($('#' + k).value = x)); lstm(); };
+
+    function bi() {
+      const t = Math.max(1, +$('#bt').value || 1), h = Math.max(1, +$('#bh').value || 1);
+      fill($('#bi'),
+        el('div', { class: 'mono' }, `forward  states: [${t}, ${h}]`),
+        el('div', { class: 'mono' }, `backward states: [${t}, ${h}]`),
+        el('div', { class: 'mono' }, `concatenate    : [${t}, ${h} + ${h}] = [${t}, ${2 * h}]`),
+        el('p', { class: 'small' }, `Still ${t} token positions — only the feature width doubles. The backward reader needs the whole sentence, so a live stream can't use it for tokens that haven't arrived. ("Backward" here means reading right-to-left, not the backward pass of training.)`));
+    }
+    ['bt', 'bh'].forEach((id) => $('#' + id).addEventListener('input', bi));
+
+    function pad() {
+      const rows = $('#padIn').value.split('\n').map((l) => l.trim().split(/\s+/).filter(Boolean)).filter((r) => r.length);
+      const L = Math.max(...rows.map((r) => r.length));
+      fill($('#padT'), el('tr', {}, el('th', {}, 'row'), [...Array(L)].map((_, j) => el('th', { class: 'c' }, j + 1)), el('th', {}, 'mask'), el('th', {}, 'mean (no mask)'), el('th', {}, 'mean (masked)')),
+        rows.map((r, i) => el('tr', {}, el('td', {}, i + 1),
+          [...Array(L)].map((_, j) => el('td', { class: j < r.length ? '' : 'pad' }, j < r.length ? r[j] : 'PAD')),
+          el('td', { class: 'mono' }, `[${[...Array(L)].map((_, j) => (j < r.length ? 1 : 0)).join(',')}]`),
+          el('td', { class: 'num', style: r.length < L ? { color: 'var(--bad)' } : null }, (r.length / L).toFixed(2)),
+          el('td', { class: 'num', style: { color: 'var(--ok)' } }, '1.00'))));
+      fill($('#padNote'), el('p', {}, `The batch is ${rows.length} × ${L} (the longest row). Without the mask, short rows average in their PAD zeros and look "weaker" — padding is storage, not evidence. The encoder, pooling and attention must each use the mask (or pack the sequences).`));
+    }
+    $('#padIn').addEventListener('input', pad);
+
+    rnn(); grad(); lstm(); bi(); pad();
+  </script>
+</body>
+</html>

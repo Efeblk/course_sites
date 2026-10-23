@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Game · COE303</title>
+  <title>Game</title>
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body data-root=".." data-course="coe303">
+<body data-root="..">
   <main>
     <span class="tag game" id="kind"></span>
     <h1 id="title" style="margin-top:8px"></h1>
@@ -20,14 +20,15 @@
       <span id="result"></span>
     </div>
     <div class="panel" id="more" style="display:none">
-      <h3>More games in this chapter</h3>
+      <h3 id="morehead">More games</h3>
       <div class="row" id="morelist"></div>
     </div>
   </main>
   <script src="data.js"></script>
   <script>
     const gid = new URLSearchParams(location.search).get('id');
-    const G = COE303.games[gid];
+    const G = COURSE.games[gid];
+    document.body.dataset.course = COURSE.id;
     if (G) {
       document.body.dataset.chapter = G.ch;
       document.body.dataset.title = G.title;
@@ -44,6 +45,7 @@
       throw new Error('unknown game ' + gid);
     }
     $('#title').textContent = G.title;
+    document.title = `${G.title} · ${COURSE.code}`;
     $('#intro').textContent = G.intro;
     $('#kind').textContent = { order: 'Put in order', bucket: 'Sort into groups', match: 'Match pairs' }[G.type];
     $('#how').textContent = {
@@ -52,9 +54,10 @@
       match: 'Click an item on the left, then its partner on the right.',
     }[G.type];
 
-    const others = Object.entries(COE303.games).filter(([id, g]) => g.ch === G.ch && id !== gid);
+    const others = Object.entries(COURSE.games).filter(([id, g]) => g.ch === G.ch && id !== gid);
     if (others.length) {
       $('#more').style.display = '';
+      $('#morehead').textContent = `More games in this ${CS.unit.toLowerCase()}`;
       $('#morelist').append(...others.map(([id, g]) => el('a', { class: 'btn', href: `game.html?id=${id}` }, g.title)));
     }
 

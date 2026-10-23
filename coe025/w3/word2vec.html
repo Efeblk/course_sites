@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Static Embeddings Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    textarea { width: 100%; min-height: 60px; font-family: var(--mono); font-size: .9rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .tok.click { cursor: pointer; }
+    .tok.ctx { outline: 2px dashed var(--ok); }
+    .vec { width: 54px; }
+    td.heat { text-align: center; font-family: var(--mono); }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="3" data-title="Static Embeddings Lab" data-activity="w3-word2vec">
+  <main>
+    <h1>Static Embeddings Lab</h1>
+    <p class="lead">An embedding table <code>E</code> stores one learned vector per vocabulary word; an ID just selects a row. How are those rows learned? <b>Word2Vec</b> predicts nearby words, <b>GloVe</b> fits global co-occurrence counts, <b>FastText</b> shares character fragments.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · Word2Vec: the text makes its own training examples</h2>
+      <div class="row">
+        <input type="text" id="sent" value="I love this movie" style="width:320px">
+        <label>window radius <input type="range" id="rad" min="1" max="3" value="1"> <code id="radV"></code></label>
+      </div>
+      <p class="small">Click a word to make it the <b>center</b>.</p>
+      <div class="toks" id="sentToks"></div>
+      <div class="cols" style="margin-top:10px">
+        <div class="box"><b>CBOW</b> — context → center<div id="cbow" class="mono small" style="margin-top:6px"></div></div>
+        <div class="box"><b>Skip-gram</b> — center → each context word<div id="sg" class="mono small" style="margin-top:6px"></div></div>
+      </div>
+      <p class="small" id="allPairs" style="margin-top:10px"></p>
+      <p class="muted small">No sentiment labels are needed: these targets come from the text itself. That's why Word2Vec can train on billions of words.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">2 · CBOW forward pass</h2>
+        <p class="small">Context "love movie" → predict the center. Toy vectors (week-3 slide 12); edit any number.</p>
+        <table class="t" id="cbowIn"></table>
+        <div id="cbowOut" class="small" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">3 · Negative sampling</h2>
+        <p class="small">Instead of a softmax over the whole vocabulary: one <b>observed</b> pair (target 1) and a <b>sampled</b> pair (target 0), each a binary sigmoid decision.</p>
+        <table class="t" id="nsIn"></table>
+        <div id="nsOut" class="small" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">4 · GloVe: count co-occurrences across the whole corpus</h2>
+      <div class="row"><label>window ± <input type="number" class="n" id="gWin" value="2" min="1" max="5"></label></div>
+      <textarea id="gCorpus" style="margin-top:8px">ice cream is cold . cold ice cream is sweet . steam is hot . the sun is hot . hot steam rises . cold ice melts in the hot sun . ice is cold</textarea>
+      <div style="overflow-x:auto;margin-top:10px"><table class="t" id="gTable"></table></div>
+      <p class="muted small">Rows: target words; columns: context words within the window. GloVe then fits vectors so that their dot products (plus biases) match the <b>log</b> of these counts, weighting frequent pairs. Compare: Word2Vec learns from one local window at a time.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">5 · FastText character n-grams</h2>
+        <div class="row">
+          <input type="text" id="ft1" value="evler" style="width:130px">
+          <input type="text" id="ft2" value="evlerde" style="width:130px">
+          <label>n <input type="number" class="n" id="ftN" value="3" min="2" max="6"></label>
+        </div>
+        <div id="ftOut" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">6 · Mean pooling loses order</h2>
+        <p class="small">Toy vectors dog = [1, 0], bites = [0, 1], man = [1, 1]. Average the words of each sentence:</p>
+        <div class="row"><input type="text" id="mp1" value="dog bites man"><input type="text" id="mp2" value="man bites dog"></div>
+        <div id="mpOut" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const sig = (z) => 1 / (1 + Math.exp(-z));
+
+    /* ---------- 1 ---------- */
+    let center = 2;
+    function windows() {
+      const t = $('#sent').value.trim().split(/\s+/).filter(Boolean), R = +$('#rad').value;
+      $('#radV').textContent = R;
+      if (center >= t.length) center = Math.max(0, t.length - 1);
+      const ctx = (i) => t.map((w, j) => [w, j]).filter(([, j]) => j !== i && Math.abs(j - i) <= R).map(([w]) => w);
+      fill($('#sentToks'), t.map((w, i) => el('span', {
+        class: 'tok click ' + (i === center ? 'c2 sel' : Math.abs(i - center) <= R ? 'c1 ctx' : ''),
+        onclick: () => { center = i; windows(); },
+      }, w)));
+      const c = ctx(center);
+      fill($('#cbow'), el('div', {}, `[${c.join(', ')}] → ${t[center]}`));
+      fill($('#sg'), c.map((w) => el('div', {}, `${t[center]} → ${w}`)));
+      const total = t.reduce((s, _, i) => s + ctx(i).length, 0);
+      $('#allPairs').textContent = `Sliding the window over all ${t.length} positions gives ${t.length} CBOW examples and ${total} skip-gram pairs from this one sentence.`;
+    }
+    $('#sent').addEventListener('input', windows);
+    $('#rad').addEventListener('input', windows);
+
+    /* ---------- 2 CBOW ---------- */
+    const cb = { love: [1, 0], movie: [0, 1], out: { this: [2, 2], awful: [1, 1], bank: [0, 0] } };
+    const numIn = (obj, k, i, cb2) => el('input', { type: 'number', step: '0.5', class: 'vec', value: obj[k][i], oninput: (e) => { obj[k][i] = +e.target.value || 0; cb2(); } });
+    function cbowTable() {
+      fill($('#cbowIn'),
+        el('tr', {}, el('th', {}, 'vector'), el('th', {}, 'dim 1'), el('th', {}, 'dim 2')),
+        ['love', 'movie'].map((k) => el('tr', {}, el('td', {}, `context: ${k}`), [0, 1].map((i) => el('td', {}, numIn(cb, k, i, cbow))))),
+        Object.keys(cb.out).map((k) => el('tr', {}, el('td', {}, `output row: ${k}`), [0, 1].map((i) => el('td', {}, numIn(cb.out, k, i, cbow))))));
+    }
+    function cbow() {
+      const mean = [0, 1].map((i) => (cb.love[i] + cb.movie[i]) / 2);
+      const scores = Object.entries(cb.out).map(([k, v]) => [k, v[0] * mean[0] + v[1] * mean[1]]);
+      const Z = scores.reduce((s, [, v]) => s + Math.exp(v), 0);
+      fill($('#cbowOut'),
+        el('div', { class: 'mono' }, `mean = ([${cb.love}] + [${cb.movie}]) / 2 = [${mean.map((v) => +v.toFixed(3))}]`),
+        el('table', { class: 't', style: { marginTop: '8px' } },
+          el('tr', {}, el('th', {}, 'candidate'), el('th', {}, 'score = row · mean'), el('th', {}, 'softmax p')),
+          scores.map(([k, v]) => el('tr', {}, el('td', {}, k), el('td', { class: 'num' }, v.toFixed(3)), el('td', { class: 'num' }, (Math.exp(v) / Z).toFixed(3))))),
+        el('div', { class: 'callout ok' }, `p(this) = e^${scores[0][1].toFixed(2)} / Σ = ${(Math.exp(scores[0][1]) / Z).toFixed(3)}. Training nudges the vectors so the true center gets more probability. These are probabilities over candidate WORDS, not sentiment classes.`));
+    }
+
+    /* ---------- 3 NS ---------- */
+    const ns = { v: [1, 1], u: [1, 1], n: [-1, 0] };
+    function nsTable() {
+      fill($('#nsIn'),
+        el('tr', {}, el('th', {}, 'vector'), el('th', {}, 'dim 1'), el('th', {}, 'dim 2')),
+        [['v', 'center word v'], ['u', 'observed context u'], ['n', 'sampled "noise" word n']].map(([k, label]) =>
+          el('tr', {}, el('td', {}, label), [0, 1].map((i) => el('td', {}, numIn(ns, k, i, nsCalc))))));
+    }
+    function nsCalc() {
+      const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+      const zp = dot(ns.u, ns.v), zn = dot(ns.n, ns.v);
+      const lp = -Math.log(sig(zp)), ln = -Math.log(1 - sig(zn));
+      fill($('#nsOut'),
+        el('div', { class: 'mono' }, `observed: z = u·v = ${zp}, σ(z) = ${sig(zp).toFixed(6)}, loss = −ln σ(z) = ${lp.toFixed(6)}`),
+        el('div', { class: 'mono' }, `sampled:  z = n·v = ${zn}, σ(z) = ${sig(zn).toFixed(6)}, loss = −ln(1 − σ(z)) = ${ln.toFixed(6)}`),
+        el('div', { class: 'mono' }, `total loss = ${(lp + ln).toFixed(6)}`),
+        el('div', { class: 'callout' }, `Gradients dL/dz = σ(z) − y: observed ${(sig(zp) - 1).toFixed(4)} (negative → its score goes UP), sampled ${sig(zn).toFixed(4)} (positive → its score goes DOWN). The two pair probabilities don't have to sum to 1.`));
+    }
+
+    /* ---------- 4 GloVe ---------- */
+    function glove() {
+      const toks = $('#gCorpus').value.toLowerCase().split(/\s+/).filter((w) => w && w !== '.');
+      const W = Math.max(1, +$('#gWin').value || 1);
+      const freq = {}; toks.forEach((w) => (freq[w] = (freq[w] || 0) + 1));
+      const stop = new Set(['is', 'the', 'in', 'a', 'of']);
+      const top = Object.keys(freq).filter((w) => !stop.has(w)).sort((a, b) => freq[b] - freq[a]).slice(0, 7);
+      const C = {}; top.forEach((a) => { C[a] = {}; top.forEach((b) => (C[a][b] = 0)); });
+      toks.forEach((w, i) => { if (!C[w]) return; for (let j = Math.max(0, i - W); j <= Math.min(toks.length - 1, i + W); j++) if (j !== i && C[w][toks[j]] != null) C[w][toks[j]]++; });
+      const max = Math.max(1, ...top.flatMap((a) => top.map((b) => C[a][b])));
+      fill($('#gTable'), el('tr', {}, el('th', {}, 'target ↓ / context →'), top.map((b) => el('th', { class: 'c' }, b))),
+        top.map((a) => el('tr', {}, el('th', {}, a), top.map((b) => el('td', { class: 'heat', style: { background: C[a][b] ? `color-mix(in srgb, var(--accent) ${Math.round((C[a][b] / max) * 70)}%, transparent)` : null } }, C[a][b])))));
+    }
+    $('#gCorpus').addEventListener('input', glove);
+    $('#gWin').addEventListener('input', glove);
+
+    /* ---------- 5 FastText ---------- */
+    const grams = (w, n) => { const s = `<${w}>`, out = []; for (let i = 0; i + n <= s.length; i++) out.push(s.slice(i, i + n)); return out; };
+    function ft() {
+      const n = Math.max(2, +$('#ftN').value || 3), a = $('#ft1').value.trim().toLowerCase(), b = $('#ft2').value.trim().toLowerCase();
+      const ga = grams(a, n), gb = grams(b, n), shared = ga.filter((g) => gb.includes(g));
+      const row = (w, g) => el('div', { style: { marginBottom: '8px' } },
+        el('div', { class: 'small' }, `<${w}> has ${w.length + 2} characters → ${w.length + 2} − ${n} + 1 = ${g.length} n-grams`),
+        el('div', { class: 'toks' }, g.map((x) => el('span', { class: 'tok ' + (shared.includes(x) ? 'c1' : '') }, x))));
+      fill($('#ftOut'), row(a, ga), row(b, gb),
+        el('div', { class: 'callout ok small' }, `${new Set(shared).size} shared fragments (green). A FastText vector is built from its fragment vectors, so a rare form like "${b}" reuses evidence learned from "${a}". Note "evl" or "vle" are not morphemes — the fragments are just spelling.`));
+    }
+    ['ft1', 'ft2', 'ftN'].forEach((id) => $('#' + id).addEventListener('input', ft));
+
+    /* ---------- 6 mean pooling ---------- */
+    const MP = { dog: [1, 0], bites: [0, 1], man: [1, 1] };
+    function mp() {
+      const mean = (s) => { const w = s.toLowerCase().split(/\s+/).filter((x) => MP[x]); return w.length ? [0, 1].map((i) => w.reduce((t, x) => t + MP[x][i], 0) / w.length) : [0, 0]; };
+      const a = mean($('#mp1').value), b = mean($('#mp2').value), same = a[0] === b[0] && a[1] === b[1];
+      fill($('#mpOut'),
+        el('div', { class: 'mono small' }, `mean A = [${a.map((v) => v.toFixed(3))}]`),
+        el('div', { class: 'mono small' }, `mean B = [${b.map((v) => v.toFixed(3))}]`),
+        el('div', { class: 'callout ' + (same ? 'bad' : 'ok') }, same
+          ? 'Identical: addition is commutative, so any classifier fed only the mean sees the same input. Fine-tuning the word rows can\'t fix this — you need an order-sensitive encoder (CNN, RNN, Transformer).'
+          : 'Different words → different means. Try the same words in a different order.'));
+    }
+    $('#mp1').addEventListener('input', mp); $('#mp2').addEventListener('input', mp);
+
+    windows(); cbowTable(); cbow(); nsTable(); nsCalc(); glove(); ft(); mp();
+  </script>
+</body>
+</html>

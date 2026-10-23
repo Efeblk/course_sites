@@ -193,3 +193,23 @@ table.t th, table.t td { border: 1px solid var(--line); padding: 6px 9px; text-a
 table.t th { background: var(--panel-2); }
 .footer-nav { margin-top: 40px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 kbd { font-family: var(--mono); font-size: .82em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 5px; }
+
+/* ---------- tokens, heatmaps, plots (COE025) ---------- */
+.toks { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.tok { font-family: var(--mono); font-size: .88rem; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-2); white-space: pre; }
+.tok.c0 { background: color-mix(in srgb, #6aa8ff 24%, transparent); }
+.tok.c1 { background: color-mix(in srgb, #3ecf8e 24%, transparent); }
+.tok.c2 { background: color-mix(in srgb, #ffb547 26%, transparent); }
+.tok.c3 { background: color-mix(in srgb, #9b7bff 26%, transparent); }
+.tok.c4 { background: color-mix(in srgb, #ff8a5c 24%, transparent); }
+.tok.c5 { background: color-mix(in srgb, #4fd1e0 24%, transparent); }
+.tok.unk { background: color-mix(in srgb, var(--bad) 28%, transparent); border-color: var(--bad); }
+.tok.sel { outline: 2px solid var(--accent); }
+table.t td.c, table.t th.c { text-align: center; }
+table.t td.num { text-align: right; font-family: var(--mono); }
+input.n { width: 72px; }
+.plot { width: 100%; height: auto; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; display: block; }
+.plot text { fill: var(--muted); font-size: 11px; font-family: var(--sans); }
+.plot .axis { stroke: var(--line); stroke-width: 1; }
+.plot .grid { stroke: var(--line); stroke-width: .5; stroke-dasharray: 2 3; }
+.big { font-size: 1.25rem; font-family: var(--mono); }

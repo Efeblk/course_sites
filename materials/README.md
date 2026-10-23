@@ -11,6 +11,9 @@ materials/
     projects/    project / assignment PDFs
     textbooks/   Silberschatz 10e, Stallings 9e
     text/        plain-text extracts of slides (pdftotext), used to build pages
+  COE025/
+    slides/      lecture decks (.pptx)
+    text/        slide text + speaker notes extracted with python-pptx
 ```
 
 ## Adding new files
@@ -18,6 +21,9 @@ materials/
 1. Drop the new PDF into the matching folder (e.g. `COE303/slides/chapter5.pdf`).
 2. Extract text: `pdftotext -enc UTF-8 -layout slides/chapter5.pdf text/chapter5.txt`
 3. Ask Claude to add the new chapter to the site (`coe303/data.js` + activity pages).
+
+For `.pptx` decks, extract text and speaker notes with python-pptx. Some decks are
+mostly images (COE025 weeks 1–2); export them to PNG with PowerPoint to read them.
 
 ## COE303 inventory (as of 2026-10-23)
 
@@ -30,3 +36,13 @@ materials/
 | projects/project1_phase1.pdf | 13 | Project 1 Phase 1: VirtualBox + Ubuntu + GCC setup |
 | textbooks/silberschatz-os-concepts-10e.pdf | 1259 | Primary textbook |
 | textbooks/stallings-os-internals-9e.pdf | 1128 | Secondary textbook |
+
+## COE025 inventory (as of 2026-10-24)
+
+| File | Slides | Content |
+|---|---|---|
+| slides/week1-presentation.pptx | 37 | Week 1 NLP Fundamentals (image-based slides) |
+| slides/week2-COE025-W02.pptx | 32 | Week 2 Text Classification (image-based slides) |
+| slides/week3-pro-standalone-lecture.pptx | 36 | Week 3 lecture: counts → NB/LR/SVM → embeddings → CNN/RNN/LSTM → attention/BERT → metrics (detailed notes) |
+| slides/week3-pro-standalone.pptx | 110 | Week 3 extended version with derivations and worked checks |
+| slides/8_POSNER_intro_May_6_2021.pptx | 26 | Jurafsky & Martin: Sequence labeling for POS and NER (placed as Week 4) |

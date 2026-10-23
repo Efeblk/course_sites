@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feature Engineering Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    textarea { width: 100%; min-height: 70px; font-family: var(--mono); font-size: .95rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .fam { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .fam .box h4 { margin: 0 0 6px; }
+    .kv { display: flex; justify-content: space-between; gap: 8px; font-size: .9rem; padding: 2px 0; border-bottom: 1px dashed var(--line); }
+    .kv b { font-family: var(--mono); }
+    .contrib { display: grid; grid-template-columns: 170px 1fr 60px; gap: 8px; align-items: center; margin: 4px 0; font-size: .88rem; }
+    .track { position: relative; height: 16px; background: var(--bg-2); border-radius: 4px; }
+    .track .mid { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--muted); }
+    .track .fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="2" data-title="Feature Engineering Lab" data-activity="w2-features">
+  <main>
+    <h1>Feature Engineering Lab</h1>
+    <p class="lead">"Good features = good performance." Classical ML only sees the numbers you give it. Type a message and watch four feature families fill in.</p>
+
+    <div class="panel">
+      <div class="row">
+        <span class="small muted">Slide examples:</span>
+        <button class="chip" data-m="CONGRATULATIONS! You've WON $1000000!!!">WON $1000000!!!</button>
+        <button class="chip" data-m="Click HERE for FREE iPhone">FREE iPhone</button>
+        <button class="chip" data-m="Meeting tomorrow at 3pm">Meeting 3pm</button>
+        <button class="chip" data-m="Your Amazon order has shipped">Amazon order</button>
+        <button class="chip" data-m="I love this product :) but delivery was not good">mixed review</button>
+      </div>
+      <textarea id="msg" style="margin-top:10px"></textarea>
+    </div>
+
+    <div class="fam" id="fam"></div>
+
+    <div class="panel" style="margin-top:14px">
+      <h2 style="margin-top:0">A toy spam scorer built from these features</h2>
+      <p class="small">Hand-set logistic-regression weights, for illustration only — Project 1 must <b>learn</b> them from data. Bars show each feature's contribution to z.</p>
+      <div id="contrib"></div>
+      <div id="score"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Side by side</h2>
+      <div style="overflow-x:auto"><table class="t" id="cmp"></table></div>
+      <div class="callout small"><b>Pro tip (lecture):</b> combining several feature types often works best. Statistical features alone can't read meaning, and lexical features alone miss "!!!" and ALL CAPS.</div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const SPAMW = ['free', 'win', 'won', 'winner', 'click', 'prize', 'money', 'cash', 'urgent', 'now', 'offer', 'congratulations', 'claim', 'iphone'];
+    const POSW = ['love', 'great', 'good', 'amazing', 'excellent', 'happy'], NEGW = ['bad', 'terrible', 'awful', 'hate', 'poor', 'worst'];
+
+    function extract(m) {
+      const words = m.match(/[\p{L}\p{N}']+/gu) || [];
+      const letters = (m.match(/\p{L}/gu) || []).length, caps = (m.match(/\p{Lu}/gu) || []).length;
+      const low = words.map((w) => w.toLowerCase());
+      const bigrams = low.slice(1).map((w, i) => low[i] + ' ' + w);
+      const chars = m.toLowerCase().replace(/\s+/g, '_');
+      return {
+        stat: {
+          'characters': m.length,
+          'words': words.length,
+          'avg word length': words.length ? +(words.reduce((s, w) => s + w.length, 0) / words.length).toFixed(2) : 0,
+          'exclamation marks': (m.match(/!/g) || []).length,
+          'capital letter ratio': letters ? +(caps / letters).toFixed(2) : 0,
+          'digits': (m.match(/\d/g) || []).length,
+        },
+        lex: {
+          'BoW (non-zero words)': [...new Set(low)].join(', ') || '—',
+          'bigrams': bigrams.join(', ') || '—',
+          'char trigrams': Math.max(0, chars.length - 2),
+        },
+        ling: {
+          'capitalized words (PROPN guess)': words.filter((w, i) => i > 0 && /^\p{Lu}\p{Ll}/u.test(w)).length,
+          'positive lexicon hits': low.filter((w) => POSW.includes(w)).length,
+          'negative lexicon hits': low.filter((w) => NEGW.includes(w)).length,
+          'negation ("not", "n\'t")': low.filter((w) => w === 'not' || w.endsWith("n't")).length,
+        },
+        dom: {
+          'spam words': low.filter((w) => SPAMW.includes(w)).join(', ') || '—',
+          'spam word count': low.filter((w) => SPAMW.includes(w)).length,
+          'currency ($ € £ ₺)': (m.match(/[$€£₺]/g) || []).length,
+          '"!!!" runs': (m.match(/!{3,}/g) || []).length,
+          'emoticons': (m.match(/[:;]-?[)(DP]/g) || []).length,
+          'URL': /https?:\/\/|www\./i.test(m) ? 1 : 0,
+        },
+      };
+    }
+    const FAMS = [['stat', 'Statistical', 'var(--accent)'], ['lex', 'Lexical', 'var(--ok)'], ['ling', 'Linguistic (simplified)', 'var(--accent-2)'], ['dom', 'Domain-specific (spam)', 'var(--warn)']];
+    const WEIGHTS = [
+      ['capital letter ratio', (F) => F.stat['capital letter ratio'], 4],
+      ['exclamation marks', (F) => Math.min(F.stat['exclamation marks'], 5), 0.6],
+      ['spam word count', (F) => F.dom['spam word count'], 1.3],
+      ['currency symbols', (F) => F.dom['currency ($ € £ ₺)'], 1.5],
+      ['URL', (F) => F.dom.URL, 1.5],
+      ['digits (capped at 6)', (F) => Math.min(F.stat.digits, 6), 0.25],
+      ['bias', () => 1, -3.5],
+    ];
+
+    function render() {
+      const m = $('#msg').value, F = extract(m);
+      fill($('#fam'), FAMS.map(([k, name, col]) => el('div', { class: 'box', style: { borderTop: `3px solid ${col}` } },
+        el('h4', {}, name), Object.entries(F[k]).map(([a, v]) => el('div', { class: 'kv' }, el('span', {}, a), el('b', {}, String(v)))))));
+      let z = 0;
+      const rows = WEIGHTS.map(([name, get, w]) => { const x = get(F), c = w * x; z += c; return [name, x, w, c]; });
+      fill($('#contrib'), rows.map(([name, x, w, c]) => el('div', { class: 'contrib' },
+        el('span', {}, `${name} (${+x.toFixed(2)} × ${w})`),
+        el('div', { class: 'track' }, el('div', { class: 'mid' }), el('div', { class: 'fill', style: c >= 0
+          ? { left: '50%', width: `${Math.min(50, c * 8)}%`, background: 'var(--bad)' }
+          : { right: '50%', width: `${Math.min(50, -c * 8)}%`, background: 'var(--ok)' } })),
+        el('code', {}, (c >= 0 ? '+' : '') + c.toFixed(2)))));
+      const p = 1 / (1 + Math.exp(-z));
+      fill($('#score'), el('div', { class: 'callout ' + (p >= 0.5 ? 'bad' : 'ok') },
+        el('b', {}, p >= 0.5 ? 'SPAM' : 'HAM'), ` — z = ${z.toFixed(2)}, P(spam) = σ(z) = ${p.toFixed(3)}`));
+    }
+    function compare() {
+      const msgs = $$('[data-m]').map((b) => b.dataset.m).slice(0, 4);
+      const Fs = msgs.map(extract);
+      const keys = [['stat', 'words'], ['stat', 'exclamation marks'], ['stat', 'capital letter ratio'], ['stat', 'digits'], ['dom', 'spam word count'], ['dom', 'currency ($ € £ ₺)']];
+      fill($('#cmp'), el('tr', {}, el('th', {}, 'feature'), msgs.map((m, i) => el('th', { class: 'small' }, `${i < 2 ? 'SPAM' : 'HAM'}: ${m}`))),
+        keys.map(([fam, k]) => el('tr', {}, el('td', {}, k), Fs.map((F) => el('td', { class: 'num' }, F[fam][k])))));
+    }
+    $$('[data-m]').forEach((b) => (b.onclick = () => { $('#msg').value = b.dataset.m; render(); }));
+    $('#msg').addEventListener('input', render);
+    $('#msg').value = 'CONGRATULATIONS! You\'ve WON $1000000!!!';
+    render(); compare();
+  </script>
+</body>
+</html>

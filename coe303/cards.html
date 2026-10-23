@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flashcards · COE303</title>
+  <title>Flashcards</title>
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body data-root=".." data-course="coe303">
+<body data-root="..">
   <main>
     <h1 id="title">Flashcards</h1>
     <p class="muted small">Click the card (or <kbd>Space</kbd>) to flip. <kbd>→</kbd> I knew it · <kbd>←</kbd> again later.</p>
@@ -30,6 +30,7 @@
   <script src="data.js"></script>
   <script>
     const n = Number(new URLSearchParams(location.search).get('ch')) || 1;
+    document.body.dataset.course = COURSE.id;
     document.body.dataset.chapter = n;
     document.body.dataset.title = 'Flashcards';
     document.body.dataset.activity = `cards-ch${n}`;
@@ -37,8 +38,9 @@
   <script src="../assets/js/common.js"></script>
   <script>
     const { $, shuffle } = CS;
-    const ch = COE303.chapters.find((c) => c.n === n);
-    $('#title').textContent = `Chapter ${n} Flashcards — ${ch.title}`;
+    const ch = COURSE.chapters.find((c) => c.n === n);
+    $('#title').textContent = `${CS.unit} ${n} Flashcards — ${ch.title}`;
+    document.title = `${CS.unit} ${n} Flashcards · ${COURSE.code}`;
 
     let deck, known, reversed = false;
     const card = $('#card');

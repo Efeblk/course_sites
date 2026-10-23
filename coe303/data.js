@@ -5,7 +5,8 @@
  * To add a chapter: append to `chapters`, add its games to `games`, and create
  * any custom simulation pages under coe303/chN/.
  */
-window.COE303 = {
+window.COURSE = window.COE303 = {
+  id: 'coe303',
   code: 'COE303',
   name: 'Operating Systems',
   term: 'Fall 2026',

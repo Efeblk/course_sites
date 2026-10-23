@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attention &amp; BERT Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .vec { width: 58px; }
+    td.heat { text-align: center; font-family: var(--mono); min-width: 64px; }
+    tr.qrow { cursor: pointer; }
+    tr.qrow.on th { outline: 2px solid var(--accent); }
+    .tokcol { display: inline-flex; flex-direction: column; align-items: stretch; gap: 3px; margin: 2px; font-family: var(--mono); font-size: .82rem; text-align: center; }
+    .tokcol span { padding: 2px 6px; border-radius: 5px; border: 1px solid var(--line); background: var(--panel-2); }
+    .tokcol.cut span { opacity: .45; text-decoration: line-through; border-color: var(--bad); }
+    .tokcol.mask span:first-child { background: color-mix(in srgb, var(--warn) 30%, transparent); }
+    .sl { display: grid; grid-template-columns: 140px 1fr 70px; gap: 8px; align-items: center; margin: 5px 0; }
+    .sl input[type=range] { width: 100%; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="3" data-title="Attention & BERT Lab" data-activity="w3-attention">
+  <main>
+    <h1>Attention &amp; BERT Lab</h1>
+    <p class="lead"><code>Attention(Q, K, V) = softmax(QKᵀ / √dₖ) V</code> — <b>match</b> queries against keys, <b>normalize</b> each row into weights that sum to 1, <b>mix</b> the value vectors. Queries and keys choose; values carry content.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · Self-attention over three tokens</h2>
+      <div class="row">
+        <label>Scores from
+          <select id="mode"><option value="qk">Q · Kᵀ (edit the vectors)</option><option value="raw">typed directly</option></select>
+        </label>
+        <label><input type="checkbox" id="scale" checked> divide by √dₖ (dₖ = 2)</label>
+        <label>Mask
+          <select id="mask">
+            <option value="bi">bidirectional (BERT encoder)</option>
+            <option value="causal">causal (GPT decoder)</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="pad"> token 3 is PAD</label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <span class="small muted">Slide presets:</span>
+        <button class="chip" id="p25">Slide 25: weights [.25, .50, .25] mix values</button>
+        <button class="chip" id="p84">Slide 84: padding mask</button>
+        <button class="chip" id="p0">Q/K/V example</button>
+      </div>
+      <div class="cols" style="margin-top:12px">
+        <div><h4 style="margin-top:0" id="inHead"></h4><table class="t" id="inputs"></table></div>
+        <div>
+          <h4 style="margin-top:0">Attention weights (rows = queries) — click a row</h4>
+          <table class="t" id="weights"></table>
+        </div>
+      </div>
+      <div id="detail" style="margin-top:12px"></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">2 · Why √dₖ?</h2>
+        <p class="small">Random q and k with independent mean-0, variance-1 components: q·k has variance dₖ, so softmax gets sharper and sharper as dₖ grows. Dividing by √dₖ brings the variance back to 1.</p>
+        <div class="sl"><span>dₖ</span><input type="range" id="dk" min="0" max="9" value="6"><code id="dkV"></code></div>
+        <button class="chip" id="resample">Resample</button>
+        <div id="dkOut" style="margin-top:8px"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">3 · Masks are not [MASK]</h2>
+        <table class="t" id="maskGrid"></table>
+        <p class="small" style="margin-top:8px">A 1 means the query may attend to that key. A <b>causal</b> decoder blocks future keys so training can't peek at the text it must predict. <b>BERT</b> sees both sides (except padding). BERT's <code>[MASK]</code> token is input corruption — the masked position is still attended to.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">4 · Build a BERT input — and watch truncation bite</h2>
+      <div class="row">
+        <label>Segment A <input type="text" id="sa" style="width:420px"></label>
+        <label>Segment B <input type="text" id="sb" style="width:200px" placeholder="(optional)"></label>
+      </div>
+      <div class="sl"><span>max_length</span><input type="range" id="ml" min="4" max="40" value="16"><code id="mlV"></code></div>
+      <div class="row">
+        <button class="chip" id="bShort">Slide 29: "great" / "bad"</button>
+        <button class="chip" id="bLong">Slide 32: long review</button>
+        <span class="small muted">Click a word to replace it with [MASK] (pretraining view).</span>
+      </div>
+      <div id="bert" style="margin-top:10px"></div>
+      <div id="bertNote"></div>
+      <p class="muted small">Input vector at each position = token embedding + segment embedding + position embedding — <b>added</b>, so the width stays the same. Real BERT uses WordPiece, so one word can become several tokens; this demo splits on words.</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const n = 3;
+    let Q = [[1, 0], [0, 1], [1, 1]], K = [[1, 0], [0, 1], [1, 1]], Vv = [[2, 0], [0, 4], [2, 2]];
+    let S = [[0.6, 0, 0], [0, Math.log(2), 0], [0, 0, 1.2]];
+    let qsel = 1;
+    const f3 = (v) => (v === -Infinity ? '−∞' : Math.abs(v) < 5e-4 ? '0' : (+v.toFixed(3)).toString());
+    const num = (arr, i, j, cb) => el('input', { type: 'number', step: '0.5', class: 'vec', value: +arr[i][j].toFixed(4), oninput: (e) => { arr[i][j] = +e.target.value || 0; cb(); } });
+
+    function inputs() {
+      const raw = $('#mode').value === 'raw';
+      $('#inHead').textContent = raw ? 'Scores (row = query, column = key) and values' : 'Query, key and value vectors per token';
+      fill($('#inputs'), raw
+        ? [el('tr', {}, el('th', {}, ''), [0, 1, 2].map((j) => el('th', { class: 'c' }, `key ${j + 1}`)), el('th', { class: 'c' }, 'value v')),
+          [0, 1, 2].map((i) => el('tr', {}, el('th', {}, `query ${i + 1}`), [0, 1, 2].map((j) => el('td', {}, num(S, i, j, compute))),
+            el('td', {}, num(Vv, i, 0, compute), num(Vv, i, 1, compute))))]
+        : [el('tr', {}, el('th', {}, 'token'), el('th', { class: 'c' }, 'q'), el('th', { class: 'c' }, 'k'), el('th', { class: 'c' }, 'v')),
+          [0, 1, 2].map((i) => el('tr', {}, el('th', {}, `token ${i + 1}`),
+            el('td', {}, num(Q, i, 0, compute), num(Q, i, 1, compute)), el('td', {}, num(K, i, 0, compute), num(K, i, 1, compute)), el('td', {}, num(Vv, i, 0, compute), num(Vv, i, 1, compute))))]);
+    }
+    function allowed(i, j) {
+      if ($('#pad').checked && j === 2) return false;
+      if ($('#mask').value === 'causal' && j > i) return false;
+      return true;
+    }
+    function compute() {
+      const raw = $('#mode').value === 'raw', sc = $('#scale').checked && !raw ? Math.SQRT2 : 1;
+      const scores = [0, 1, 2].map((i) => [0, 1, 2].map((j) => (raw ? S[i][j] : (Q[i][0] * K[j][0] + Q[i][1] * K[j][1]) / sc)));
+      const masked = scores.map((r, i) => r.map((v, j) => (allowed(i, j) ? v : -Infinity)));
+      const A = masked.map((r) => { const m = Math.max(...r); const e = r.map((v) => (v === -Infinity ? 0 : Math.exp(v - m))); const z = e.reduce((a, b) => a + b, 0); return e.map((v) => v / z); });
+      const out = A.map((r) => [0, 1].map((d) => r.reduce((s, w, j) => s + w * Vv[j][d], 0)));
+      const isPadRow = (i) => $('#pad').checked && i === 2;
+      fill($('#weights'), el('tr', {}, el('th', {}, ''), [0, 1, 2].map((j) => el('th', { class: 'c' }, `key ${j + 1}${$('#pad').checked && j === 2 ? ' (PAD)' : ''}`)), el('th', { class: 'c' }, 'Σ'), el('th', { class: 'c' }, 'output')),
+        A.map((r, i) => el('tr', { class: 'qrow' + (i === qsel ? ' on' : ''), onclick: () => { qsel = i; compute(); } },
+          el('th', {}, `query ${i + 1}`),
+          r.map((w, j) => el('td', { class: 'heat', style: { background: `color-mix(in srgb, var(--accent) ${Math.round(w * 80)}%, transparent)`, color: allowed(i, j) ? null : 'var(--muted)' } }, allowed(i, j) ? w.toFixed(3) : 'blocked')),
+          el('td', { class: 'num' }, r.reduce((a, b) => a + b, 0).toFixed(2)),
+          el('td', { class: 'num' }, isPadRow(i) ? '(ignored)' : `[${out[i].map(f3).join(', ')}]`))));
+      const i = qsel, r = A[i];
+      fill($('#detail'), el('div', { class: 'callout' },
+        el('div', {}, el('b', {}, `Query ${i + 1}: `), `scores ${raw ? '' : `q·k${sc !== 1 ? ' / √2' : ''} `}= [${scores[i].map(f3).join(', ')}]` + (masked[i].some((v) => v === -Infinity) ? ` → after mask [${masked[i].map(f3).join(', ')}]` : '')),
+        el('div', {}, `softmax → weights [${r.map((w) => w.toFixed(3)).join(', ')}] (sum = 1)`),
+        el('div', { class: 'mono small' }, `output = ${r.map((w, j) => `${w.toFixed(3)}×[${Vv[j]}]`).join(' + ')} = [${out[i].map(f3).join(', ')}]`),
+        el('div', { class: 'small muted', style: { marginTop: '6px' } }, 'The output has the same width as one value vector: it is a weighted mix of token features, not a class probability. High weight is not a causal explanation of the final prediction.')));
+      maskGrid();
+    }
+    function maskGrid() {
+      fill($('#maskGrid'), el('tr', {}, el('th', {}, 'query \\ key'), [1, 2, 3].map((j) => el('th', { class: 'c' }, j))),
+        [0, 1, 2].map((i) => el('tr', {}, el('th', {}, i + 1), [0, 1, 2].map((j) => el('td', { class: 'heat', style: { color: allowed(i, j) ? 'var(--ok)' : 'var(--bad)' } }, allowed(i, j) ? 1 : 0)))));
+    }
+    $('#mode').onchange = () => { inputs(); compute(); };
+    ['scale', 'mask', 'pad'].forEach((id) => ($('#' + id).onchange = compute));
+    $('#p25').onclick = () => { $('#mode').value = 'raw'; $('#mask').value = 'bi'; $('#pad').checked = false; S = [[0.6, 0, 0], [0, Math.log(2), 0], [0, 0, 1.2]]; Vv = [[2, 0], [0, 4], [2, 2]]; qsel = 1; inputs(); compute(); };
+    $('#p84').onclick = () => { $('#mode').value = 'raw'; $('#mask').value = 'bi'; $('#pad').checked = true; S = [[0, Math.log(2), 0], [0, Math.log(2), 0], [0, 0, 0]]; Vv = [[2, 0], [0, 4], [2, 2]]; qsel = 0; inputs(); compute(); };
+    $('#p0').onclick = () => { $('#mode').value = 'qk'; $('#mask').value = 'bi'; $('#pad').checked = false; Q = [[1, 0], [0, 1], [1, 1]]; K = [[1, 0], [0, 1], [1, 1]]; Vv = [[2, 0], [0, 4], [2, 2]]; inputs(); compute(); };
+
+    /* ---------- √dk ---------- */
+    const randn = () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    function dk() {
+      const d = Math.pow(2, +$('#dk').value); $('#dkV').textContent = d;
+      const dots = []; for (let t = 0; t < 1500; t++) { let s = 0; for (let k = 0; k < d; k++) s += randn() * randn(); dots.push(s); }
+      const variance = (a) => { const m = a.reduce((x, y) => x + y, 0) / a.length; return a.reduce((x, y) => x + (y - m) ** 2, 0) / a.length; };
+      const five = dots.slice(0, 5), soft = (a) => { const m = Math.max(...a), e = a.map((v) => Math.exp(v - m)), z = e.reduce((x, y) => x + y, 0); return e.map((v) => v / z); };
+      const raw = soft(five), scaled = soft(five.map((v) => v / Math.sqrt(d)));
+      fill($('#dkOut'),
+        el('div', { class: 'mono small' }, `Var(q·k) ≈ ${variance(dots).toFixed(1)} (theory: ${d})   Var(q·k/√dₖ) ≈ ${variance(dots.map((v) => v / Math.sqrt(d))).toFixed(2)} (theory: 1)`),
+        el('table', { class: 't', style: { marginTop: '8px' } },
+          el('tr', {}, el('th', {}, 'softmax of 5 scores'), el('th', {}, 'weights'), el('th', {}, 'largest')),
+          el('tr', {}, el('td', {}, 'unscaled'), el('td', { class: 'mono small' }, raw.map((w) => w.toFixed(2)).join(' ')), el('td', { class: 'num' }, Math.max(...raw).toFixed(3))),
+          el('tr', {}, el('td', {}, '÷ √dₖ'), el('td', { class: 'mono small' }, scaled.map((w) => w.toFixed(2)).join(' ')), el('td', { class: 'num' }, Math.max(...scaled).toFixed(3)))),
+        el('p', { class: 'small muted' }, d === 64 ? 'BERT-base: 768 features / 12 heads = 64 per head, √64 = 8.' : 'BERT-base uses dₖ = 64 per head (768 / 12), so it divides by 8.'));
+    }
+    $('#dk').addEventListener('input', dk); $('#resample').onclick = dk;
+
+    /* ---------- BERT input ---------- */
+    const LONG = 'The first hour was brilliant , the acting was superb and the music was wonderful , the story kept surprising me … but the ending ruined it .';
+    let masked = new Set();
+    const POS = ['brilliant', 'superb', 'wonderful', 'great', 'excellent', 'good'], NEG = ['ruined', 'bad', 'terrible', 'awful', 'boring'];
+    function bert() {
+      const ml = +$('#ml').value; $('#mlV').textContent = ml;
+      const wa = $('#sa').value.trim().split(/\s+/).filter(Boolean), wb = $('#sb').value.trim().split(/\s+/).filter(Boolean);
+      const toks = [['[CLS]', 'A']], push = (w, s, src) => toks.push([w, s, src]);
+      wa.forEach((w, i) => push(w, 'A', 'a' + i)); push('[SEP]', 'A');
+      if (wb.length) { wb.forEach((w, i) => push(w, 'B', 'b' + i)); push('[SEP]', 'B'); }
+      // truncation keeps special tokens: cut words from the end of the longer segment
+      const budget = ml - (wb.length ? 3 : 2);
+      let ka = wa.length, kb = wb.length;
+      while (ka + kb > budget) { if (ka >= kb) ka--; else kb--; }
+      const kept = (src) => !src || (src[0] === 'a' ? +src.slice(1) < ka : +src.slice(1) < kb);
+      let p = 0;
+      fill($('#bert'), el('div', { style: { display: 'flex', flexWrap: 'wrap' } },
+        el('div', { class: 'tokcol' }, el('span', { class: 'muted' }, 'token'), el('span', { class: 'muted' }, 'segment'), el('span', { class: 'muted' }, 'position')),
+        toks.map(([w, s, src]) => {
+          const k = kept(src), isMask = src && masked.has(src);
+          return el('div', { class: 'tokcol' + (k ? '' : ' cut') + (isMask ? ' mask' : ''), style: src ? { cursor: 'pointer' } : null,
+            onclick: src ? () => { masked.has(src) ? masked.delete(src) : masked.add(src); bert(); } : null },
+          el('span', {}, isMask ? '[MASK]' : w), el('span', {}, s), el('span', {}, k ? p++ : '—'));
+        })));
+      const cutWords = [...wa.slice(ka), ...wb.slice(kb)];
+      const keptWords = [...wa.slice(0, ka), ...wb.slice(0, kb)].map((w) => w.toLowerCase());
+      const notes = [el('div', { class: 'small' }, `${Math.min(toks.length, ml)} of ${toks.length} positions kept (max_length counts [CLS] and [SEP] too).`)];
+      if (masked.size) notes.push(el('div', { class: 'callout' }, el('b', {}, 'Pretraining (masked LM): '), `the targets are the hidden words themselves (${[...masked].map((s) => (s[0] === 'a' ? wa : wb)[+s.slice(1)]).join(', ')}). The text supplies the labels — no human annotation. Fine-tuning instead trains a head on labels like POSITIVE/NEGATIVE.`));
+      if (cutWords.length) {
+        const pos = keptWords.filter((w) => POS.includes(w)).length, neg = keptWords.filter((w) => NEG.includes(w)).length;
+        notes.push(el('div', { class: 'callout bad' }, el('b', {}, 'Truncated: '), `"${cutWords.join(' ')}" never reaches the model. ` +
+          (pos > neg && $('#sa').value === LONG ? 'The retained prefix is all praise, so even a perfect model would say POSITIVE — while the gold label for the full review is NEGATIVE. More attention heads can\'t restore removed text: inspect the retained tokens, use a longer max_length or split into chunks (and validate the choice).' : 'Check whether the removed part carried the decisive evidence.')));
+      }
+      fill($('#bertNote'), notes);
+    }
+    $('#ml').addEventListener('input', bert);
+    $('#sa').addEventListener('input', () => { masked.clear(); bert(); });
+    $('#sb').addEventListener('input', () => { masked.clear(); bert(); });
+    $('#bShort').onclick = () => { $('#sa').value = 'great'; $('#sb').value = 'bad'; $('#ml').value = 16; masked.clear(); bert(); };
+    $('#bLong').onclick = () => { $('#sa').value = LONG; $('#sb').value = ''; $('#ml').value = 16; masked.clear(); bert(); };
+
+    inputs(); compute(); dk();
+    $('#sa').value = 'great'; $('#sb').value = 'bad'; bert();
+  </script>
+</body>
+</html>

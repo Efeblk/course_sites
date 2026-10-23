@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SVM Margin Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+    @media (max-width: 900px) { .lab { grid-template-columns: 1fr; } }
+    .sl { display: grid; grid-template-columns: 110px 1fr 64px; gap: 8px; align-items: center; margin: 6px 0; }
+    .sl input[type=range] { width: 100%; }
+    #plane { cursor: crosshair; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="2" data-title="SVM Margin Lab" data-activity="w2-svm">
+  <main>
+    <h1>SVM Margin Lab</h1>
+    <p class="lead">Each dot is a review with two features (a good-word score →, a bad-word score ↑). A linear SVM picks the boundary <code>f(x) = w·x + b = 0</code> with the <b>widest street</b> between the classes. The dashed lines are <code>f = ±1</code>.</p>
+
+    <div class="lab">
+      <div class="panel">
+        <svg id="plane"></svg>
+        <div class="row" style="margin-top:8px">
+          <label>Click on the plot to
+            <select id="clickMode">
+              <option value="1">add a positive (green)</option>
+              <option value="-1">add a negative (red)</option>
+              <option value="0">remove the nearest point</option>
+              <option value="i">inspect the nearest point</option>
+            </select>
+          </label>
+          <button class="chip" id="reset">Slide points</button>
+          <button class="chip" id="outlier">+ outlier</button>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3 style="margin-top:0">Move the boundary yourself</h3>
+          <div class="sl"><span>angle of w</span><input type="range" id="th" min="-180" max="180" step="0.5"><code id="thV"></code></div>
+          <div class="sl"><span>offset</span><input type="range" id="c" min="-1" max="5" step="0.01"><code id="cV"></code></div>
+          <div class="sl"><span>scale ||w||</span><input type="range" id="s" min="0.1" max="4" step="0.01"><code id="sV"></code></div>
+          <p class="muted small">Scale changes every f(x) — and so the hinge losses — but <b>not</b> the boundary line. That's why "functional margin 1" isn't "distance 1".</p>
+          <div class="row">
+            <button class="primary" id="hard">Find maximum margin</button>
+          </div>
+          <div class="sl" style="margin-top:10px"><span>C</span><input type="range" id="C" min="-2" max="2" step="0.05" value="0"><code id="CV"></code></div>
+          <button id="soft">Fit soft margin with this C</button>
+        </div>
+        <div class="panel">
+          <div class="stats" id="stats"></div>
+          <div id="msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Every point: margin and hinge loss</h2>
+      <table class="t" id="tbl"></table>
+      <p class="muted small">Signed margin m = y·f(x). Hinge loss = max(0, 1 − m): 0 when m ≥ 1, positive inside the street, above 1 on the wrong side. Objective J = ½||w||² + C·Σ hinge. Raw f(x) is a decision score, not a probability.</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const SLIDE = [[3, 1, 1], [3.6, 1.5, 1], [2, 1, 1], [1, 3, -1], [1.2, 3.5, -1], [1, 2, -1]];
+    let pts = SLIDE.map((p) => [...p]);
+    let th = -45, c = 0, s = Math.SQRT2, inspect = null; // w = s·(cos th, sin th), b = −s·c
+    const rad = (d) => (d * Math.PI) / 180;
+    const W = () => [s * Math.cos(rad(th)), s * Math.sin(rad(th))];
+    const B = () => -s * c;
+    const f = (x, y) => { const [w1, w2] = W(); return w1 * x + w2 * y + B(); };
+    const C = () => Math.pow(10, +$('#C').value);
+    const f3 = (v) => (Math.abs(v) < 5e-4 ? '0' : v.toFixed(3));
+
+    function draw() {
+      const P = Plot($('#plane'), { x: [0, 4.5], y: [0, 4.5], w: 520, h: 460, pad: [10, 10, 28, 34] });
+      P.axes({ xticks: [0, 1, 2, 3, 4], yticks: [0, 1, 2, 3, 4], xlabel: 'good feature →', ylabel: 'bad ↑' });
+      const [w1, w2] = W(), b = B();
+      // line w1 x + w2 y + b = k  → draw by clipping a long segment
+      const line = (k, attrs) => {
+        const n = Math.hypot(w1, w2), ux = w1 / n, uy = w2 / n;
+        const d = (k - b) / n; // distance from origin along u
+        const px = ux * d, py = uy * d, L = 20;
+        P.seg(px - uy * L, py + ux * L, px + uy * L, py - ux * L, attrs);
+      };
+      const clip = P.el('clipPath', { id: 'cp' });
+      clip.append(Object.assign(document.createElementNS('http://www.w3.org/2000/svg', 'rect'), {}));
+      clip.firstChild.setAttribute('x', P.sx(0)); clip.firstChild.setAttribute('y', P.sy(4.5));
+      clip.firstChild.setAttribute('width', P.sx(4.5) - P.sx(0)); clip.firstChild.setAttribute('height', P.sy(0) - P.sy(4.5));
+      const g = P.el('g', { 'clip-path': 'url(#cp)' });
+      const before = P.svg.childNodes.length;
+      line(0, { stroke: 'var(--text)', 'stroke-width': 2.5 });
+      line(1, { stroke: 'var(--ok)', 'stroke-dasharray': '6 5', 'stroke-width': 1.5 });
+      line(-1, { stroke: 'var(--bad)', 'stroke-dasharray': '6 5', 'stroke-width': 1.5 });
+      [...P.svg.childNodes].slice(before).forEach((n) => g.append(n));
+      for (const [i, [x, y, lab]] of pts.entries()) {
+        const m = lab * f(x, y);
+        const sv = Math.abs(m - 1) < 0.02 || m < 1;
+        P.dot(x, y, { r: 8, fill: lab > 0 ? 'var(--ok)' : 'var(--bad)', stroke: sv ? 'var(--text)' : 'none', 'stroke-width': sv ? 2.5 : 0 });
+        if (inspect === i) P.dot(x, y, { r: 13, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2.5 });
+      }
+    }
+
+    function render() {
+      $('#th').value = th; $('#c').value = c; $('#s').value = s;
+      $('#thV').textContent = th.toFixed(1) + '°'; $('#cV').textContent = c.toFixed(2); $('#sV').textContent = s.toFixed(2);
+      $('#CV').textContent = C() < 1 ? C().toFixed(2) : C().toFixed(1);
+      draw();
+      const ms = pts.map(([x, y, lab]) => lab * f(x, y));
+      const hinge = ms.map((m) => Math.max(0, 1 - m));
+      const wrong = ms.filter((m) => m < 0).length;
+      const geo = Math.min(...ms) / s;
+      const J = 0.5 * s * s + C() * hinge.reduce((a, v) => a + v, 0);
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, (2 / s).toFixed(3)), el('span', {}, 'street width 2/||w||')),
+        el('div', { class: 'stat' }, el('b', {}, geo > 0 ? geo.toFixed(3) : '—'), el('span', {}, 'closest point distance')),
+        el('div', { class: 'stat' }, el('b', { style: { color: wrong ? 'var(--bad)' : 'var(--ok)' } }, wrong), el('span', {}, 'misclassified')),
+        el('div', { class: 'stat' }, el('b', {}, J.toFixed(3)), el('span', {}, 'J = ½||w||² + CΣhinge')));
+      const [w1, w2] = W();
+      fill($('#tbl'), el('tr', {}, ['#', 'point (good, bad)', 'label y', 'f(x) = w·x + b', 'm = y·f(x)', 'distance |f|/||w||', 'hinge max(0, 1−m)'].map((h) => el('th', {}, h))),
+        pts.map(([x, y, lab], i) => el('tr', { style: inspect === i ? { background: 'color-mix(in srgb, var(--accent) 16%, transparent)' } : null },
+          el('td', {}, i + 1), el('td', { class: 'mono' }, `(${x}, ${y})`), el('td', { class: 'num' }, lab > 0 ? '+1' : '−1'),
+          el('td', { class: 'num' }, `${f3(w1)}×${x} + ${f3(w2)}×${y} + ${f3(B())} = ${f3(f(x, y))}`),
+          el('td', { class: 'num', style: { color: ms[i] < 0 ? 'var(--bad)' : ms[i] < 1 - 1e-3 ? 'var(--warn)' : 'var(--ok)' } }, f3(ms[i])),
+          el('td', { class: 'num' }, f3(Math.abs(f(x, y)) / s)),
+          el('td', { class: 'num' }, f3(hinge[i])))));
+    }
+
+    function hardMargin() {
+      const pos = pts.filter((p) => p[2] > 0), neg = pts.filter((p) => p[2] < 0);
+      let best = null;
+      const scan = (lo, hi, step) => {
+        for (let t = lo; t <= hi; t += step) {
+          const ux = Math.cos(rad(t)), uy = Math.sin(rad(t));
+          const minP = Math.min(...pos.map(([x, y]) => ux * x + uy * y));
+          const maxN = Math.max(...neg.map(([x, y]) => ux * x + uy * y));
+          const m = (minP - maxN) / 2;
+          if (m > 0 && (!best || m > best.m)) best = { t, m, c: (minP + maxN) / 2 };
+        }
+      };
+      scan(-180, 180, 0.5);
+      if (best) scan(best.t - 0.5, best.t + 0.5, 0.01);
+      if (!best) return fill($('#msg'), el('div', { class: 'callout bad' }, 'No straight line separates these points — a hard margin is impossible. Use the soft margin (C) instead.'));
+      th = Math.round(best.t * 100) / 100; c = best.c; s = 1 / best.m;
+      fill($('#msg'), el('div', { class: 'callout ok' }, `Maximum margin found: closest points are ${best.m.toFixed(3)} from the boundary (street width ${(2 * best.m).toFixed(3)}). Outlined dots are the support vectors — move any other point and nothing changes.`));
+      render();
+    }
+
+    function softMargin() {
+      // exact in c for each (angle, scale): optimum sits at a hinge breakpoint
+      const Cv = C();
+      let best = null;
+      const scales = []; for (let k = 0; k <= 90; k++) scales.push(0.05 * Math.pow(1.06, k));
+      const evalAt = (t) => {
+        const ux = Math.cos(rad(t)), uy = Math.sin(rad(t));
+        const p = pts.map(([x, y, lab]) => [ux * x + uy * y, lab]);
+        for (const sc of scales) for (const [pi, yi] of p) {
+          const cc = pi - yi / sc;
+          let J = 0.5 * sc * sc;
+          for (const [pj, yj] of p) J += Cv * Math.max(0, 1 - yj * sc * (pj - cc));
+          if (!best || J < best.J - 1e-12) best = { J, t, s: sc, c: cc };
+        }
+      };
+      for (let t = -180; t < 180; t += 1) evalAt(t);
+      const t0 = best.t; for (let t = t0 - 1; t <= t0 + 1; t += 0.05) evalAt(t);
+      th = Math.round(best.t * 100) / 100; s = best.s; c = best.c;
+      fill($('#msg'), el('div', { class: 'callout' }, `Soft margin with C = ${Cv.toFixed(2)}: J = ${best.J.toFixed(3)}. ` +
+        (Cv < 0.5 ? 'Small C: a wide street is cheap, violations are tolerated.' : Cv > 5 ? 'Large C: violations are expensive, so the street narrows to fit the points.' : 'Try very small and very large C with the outlier on.')));
+      render();
+    }
+
+    $('#th').oninput = () => { th = +$('#th').value; render(); };
+    $('#c').oninput = () => { c = +$('#c').value; render(); };
+    $('#s').oninput = () => { s = +$('#s').value; render(); };
+    $('#C').oninput = render;
+    $('#hard').onclick = hardMargin;
+    $('#soft').onclick = softMargin;
+    $('#reset').onclick = () => { pts = SLIDE.map((p) => [...p]); inspect = null; th = -45; c = 0; s = Math.SQRT2; fill($('#msg')); render(); };
+    $('#outlier').onclick = () => { pts.push([1.05, 2.5, 1]); fill($('#msg'), el('div', { class: 'callout warn' }, 'A positive review with a high bad-word score. Now no line separates the classes: try "Find maximum margin", then the soft margin with small and large C.')); render(); };
+    $('#plane').addEventListener('click', (e) => {
+      const svg = $('#plane'), r = svg.getBoundingClientRect();
+      const vb = svg.viewBox.baseVal, px = ((e.clientX - r.left) / r.width) * vb.width, py = ((e.clientY - r.top) / r.height) * vb.height;
+      const P = Plot(document.createElementNS('http://www.w3.org/2000/svg', 'svg'), { x: [0, 4.5], y: [0, 4.5], w: 520, h: 460, pad: [10, 10, 28, 34] });
+      const [x, y] = P.inv(px, py);
+      const mode = $('#clickMode').value;
+      const near = pts.map((p, i) => [Math.hypot(p[0] - x, p[1] - y), i]).sort((a, b) => a[0] - b[0])[0];
+      if (mode === '0') { if (near && near[0] < 0.4) pts.splice(near[1], 1); inspect = null; }
+      else if (mode === 'i') inspect = near && near[0] < 0.4 ? near[1] : null;
+      else if (x >= 0 && y >= 0) pts.push([Math.round(x * 10) / 10, Math.round(y * 10) / 10, +mode]);
+      render();
+    });
+    render();
+  </script>
+</body>
+</html>

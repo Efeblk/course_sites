@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embedding Space · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+    @media (max-width: 860px) { .lab { grid-template-columns: 1fr; } }
+    .plot circle.w { cursor: pointer; }
+    .plot text.lbl { fill: var(--text); font-size: 12px; pointer-events: none; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="1" data-title="Embedding Space" data-activity="w1-embeddings">
+  <main>
+    <h1>Embedding Space</h1>
+    <p class="lead">Dense embeddings put words with similar meaning close together, and directions can carry meaning: <code>vec("king") − vec("man") + vec("woman") ≈ vec("queen")</code>. Real models use 50–300 dimensions; this toy map uses 2 so you can see it.</p>
+
+    <div class="lab">
+      <div class="panel">
+        <svg id="map"></svg>
+        <p class="muted small" style="margin-bottom:0">Toy coordinates chosen by hand: left↔right ≈ male↔female, down↔up ≈ young↔royal. Click a word to fill the next empty slot of the analogy.</p>
+      </div>
+      <div>
+        <div class="panel">
+          <h3 style="margin-top:0">Analogy: A − B + C = ?</h3>
+          <div class="row">
+            <select id="a"></select> − <select id="b"></select> + <select id="c"></select>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button class="chip" data-an="king,man,woman">king − man + woman</button>
+            <button class="chip" data-an="boy,man,woman">boy − man + woman</button>
+            <button class="chip" data-an="puppy,dog,cat">puppy − dog + cat</button>
+            <button class="chip" data-an="queen,woman,man">queen − woman + man</button>
+          </div>
+          <div id="anOut" style="margin-top:10px"></div>
+        </div>
+        <div class="panel">
+          <h3 style="margin-top:0">Nearest neighbours</h3>
+          <div class="row"><select id="nn"></select></div>
+          <div id="nnOut" class="small" style="margin-top:8px"></div>
+          <p class="muted small">One-hot vectors can't do this: every one-hot vector is the same distance from every other.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Static vs contextual: which "bank"?</h2>
+      <p class="small">Word2Vec/GloVe store <b>one</b> vector for "bank". A contextual model (ELMo, BERT, GPT) builds the vector <b>from the sentence</b>. Toy rule here: contextual bank = ½·static bank + ½·average of the other known words in the sentence.</p>
+      <div class="row">
+        <button class="chip" data-s="we sat on the river bank and watched the water">river sentence</button>
+        <button class="chip" data-s="the bank approved my loan and sent the money">finance sentence</button>
+        <button class="chip" data-s="the bank">no context</button>
+        <input type="text" id="sent" style="flex:1;min-width:260px">
+      </div>
+      <div class="lab" style="margin-top:12px">
+        <svg id="bankMap"></svg>
+        <div id="bankOut"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const V = {
+      king: [-2, 4], queen: [2, 4], prince: [-2, 2.2], princess: [2, 2.2],
+      man: [-2, 0], woman: [2, 0], boy: [-2, -2], girl: [2, -2],
+      dog: [7, 2.4], cat: [9, 2.4], puppy: [7, 0.6], kitten: [9, 0.6],
+      apple: [7.2, -2.4], mango: [8.4, -2], banana: [7.8, -3.1],
+    };
+    const W = Object.keys(V);
+    const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
+    const COL = (w) => (['dog', 'cat', 'puppy', 'kitten'].includes(w) ? 'var(--accent-2)' : ['apple', 'mango', 'banana'].includes(w) ? 'var(--warn)' : 'var(--accent)');
+
+    for (const id of ['a', 'b', 'c', 'nn']) fill($('#' + id), W.map((w) => el('option', { value: w }, w)));
+    $('#a').value = 'king'; $('#b').value = 'man'; $('#c').value = 'woman'; $('#nn').value = 'cat';
+    let fillSlot = 0;
+
+    function draw() {
+      const P = Plot($('#map'), { x: [-4, 11], y: [-4, 5.5], w: 560, h: 380, pad: [10, 10, 24, 30] });
+      P.axes({ xticks: [-4, 0, 4, 8], yticks: [-4, 0, 4] });
+      const A = V[$('#a').value], B = V[$('#b').value], C = V[$('#c').value];
+      const R = [A[0] - B[0] + C[0], A[1] - B[1] + C[1]];
+      const marker = P.el('defs', {});
+      marker.innerHTML = '<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ok)"/></marker>';
+      P.seg(B[0], B[1], A[0], A[1], { stroke: 'var(--ok)', 'stroke-width': 2.5, 'marker-end': 'url(#ar)' });
+      P.seg(C[0], C[1], R[0], R[1], { stroke: 'var(--ok)', 'stroke-width': 2.5, 'stroke-dasharray': '6 4', 'marker-end': 'url(#ar)' });
+      for (const w of W) {
+        const [x, y] = V[w];
+        const c = P.dot(x, y, { r: 6, fill: COL(w), class: 'w' });
+        c.addEventListener('click', () => { $(['#a', '#b', '#c'][fillSlot]).value = w; fillSlot = (fillSlot + 1) % 3; update(); });
+        P.text(x, y, w, { class: 'lbl', dx: 9, dy: 4 });
+      }
+      P.dot(R[0], R[1], { r: 9, fill: 'none', stroke: 'var(--ok)', 'stroke-width': 2.5 });
+      return R;
+    }
+
+    function update() {
+      const R = draw();
+      const used = new Set([$('#a').value, $('#b').value, $('#c').value]);
+      const ranked = W.filter((w) => !used.has(w)).map((w) => [w, dist(V[w], R)]).sort((p, q) => p[1] - q[1]);
+      fill($('#anOut'),
+        el('div', { class: 'mono small' }, `${$('#a').value} [${V[$('#a').value]}] − ${$('#b').value} [${V[$('#b').value]}] + ${$('#c').value} [${V[$('#c').value]}] = [${R.map((v) => +v.toFixed(2))}]`),
+        el('div', { class: 'callout ok' }, el('b', {}, `Nearest word: ${ranked[0][0]}`), ` (distance ${ranked[0][1].toFixed(2)}; the input words are excluded, as in real analogy tests).`),
+        el('div', { class: 'small muted' }, 'The solid arrow is the "B → A" direction; the dashed arrow applies the same direction starting at C.'));
+      const q = $('#nn').value;
+      fill($('#nnOut'), W.filter((w) => w !== q).map((w) => [w, dist(V[w], V[q])]).sort((p, r) => p[1] - r[1]).slice(0, 4)
+        .map(([w, d], i) => el('div', {}, `${i + 1}. ${w} — distance ${d.toFixed(2)}`)));
+    }
+    $$('[data-an]').forEach((b) => (b.onclick = () => { const [a, bb, c] = b.dataset.an.split(','); $('#a').value = a; $('#b').value = bb; $('#c').value = c; update(); }));
+    ['a', 'b', 'c', 'nn'].forEach((id) => $('#' + id).addEventListener('change', update));
+    update();
+
+    /* ---------- bank ---------- */
+    const B = {
+      river: [1, 4.2], water: [1.8, 4.6], shore: [0.6, 3.4], sat: [2.2, 3.4], watched: [2.6, 3.9],
+      money: [5.2, 1], loan: [5.8, 1.7], cash: [4.8, 0.4], approved: [4.4, 1.6], sent: [5.4, 2.3],
+      bank: [3.2, 2.6],
+    };
+    const cos = (p, q) => (p[0] * q[0] + p[1] * q[1]) / (Math.hypot(...p) * Math.hypot(...q));
+    function bank() {
+      const words = $('#sent').value.toLowerCase().match(/[a-z]+/g) || [];
+      const ctx = words.filter((w) => w !== 'bank' && B[w]);
+      const mean = ctx.length ? [0, 1].map((k) => ctx.reduce((s, w) => s + B[w][k], 0) / ctx.length) : null;
+      const contextual = mean ? [0, 1].map((k) => 0.5 * B.bank[k] + 0.5 * mean[k]) : B.bank;
+      const P = Plot($('#bankMap'), { x: [0, 7], y: [0, 5.2], w: 420, h: 300, pad: [10, 10, 24, 30] });
+      P.axes({ xticks: [0, 2, 4, 6], yticks: [0, 2, 4] });
+      for (const [w, [x, y]] of Object.entries(B)) {
+        if (w === 'bank') continue;
+        P.dot(x, y, { r: 5, fill: x < 3 ? 'var(--ok)' : 'var(--warn)', opacity: ctx.includes(w) ? 1 : 0.35 });
+        P.text(x, y, w, { class: 'lbl', dx: 8, dy: 4 });
+      }
+      P.dot(...B.bank, { r: 7, fill: 'var(--muted)' }); P.text(...B.bank, 'bank (static)', { class: 'lbl', dx: 9, dy: 14 });
+      if (mean) {
+        P.seg(...B.bank, ...contextual, { stroke: 'var(--accent)', 'stroke-width': 2.5 });
+        P.dot(...contextual, { r: 8, fill: 'var(--accent)' }); P.text(...contextual, 'bank (in context)', { class: 'lbl', dx: 10, dy: -6 });
+      }
+      const near = (v) => ({ river: cos(v, B.river), money: cos(v, B.money) });
+      const s = near(B.bank), c = near(contextual);
+      fill($('#bankOut'),
+        el('table', { class: 't' },
+          el('tr', {}, el('th', {}, ''), el('th', {}, 'cos(·, river)'), el('th', {}, 'cos(·, money)')),
+          el('tr', {}, el('td', {}, 'static bank'), el('td', { class: 'num' }, s.river.toFixed(3)), el('td', { class: 'num' }, s.money.toFixed(3))),
+          el('tr', {}, el('td', {}, 'contextual bank'), el('td', { class: 'num' }, c.river.toFixed(3)), el('td', { class: 'num' }, c.money.toFixed(3)))),
+        el('p', { class: 'small' }, ctx.length ? `Context words used: ${ctx.join(', ')}.` : 'No known context words — the contextual vector equals the static one.'),
+        el('div', { class: 'callout ' + (mean ? 'ok' : '') }, mean
+          ? (c.river > c.money ? 'In this sentence "bank" moved toward the river meaning.' : 'In this sentence "bank" moved toward the financial meaning.')
+          : 'A static embedding gives "bank" the same vector in every sentence.'),
+        el('p', { class: 'muted small' }, 'Real contextual models learn how to mix context (attention, LSTMs) instead of a fixed ½/½ average. Cosine similarity = cos of the angle between vectors — the standard similarity for embeddings.'));
+    }
+    $$('[data-s]').forEach((b) => (b.onclick = () => { $('#sent').value = b.dataset.s; bank(); }));
+    $('#sent').addEventListener('input', bank);
+    $('#sent').value = 'we sat on the river bank and watched the water';
+    bank();
+  </script>
+</body>
+</html>

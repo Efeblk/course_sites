@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Confusion Matrix &amp; F1 · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .cm { border-collapse: collapse; font-size: .95rem; }
+    .cm th, .cm td { border: 1px solid var(--line); padding: 10px 14px; text-align: center; }
+    .cm td.tp, .cm td.tn { background: color-mix(in srgb, var(--ok) 18%, transparent); }
+    .cm td.fp, .cm td.fn { background: color-mix(in srgb, var(--bad) 16%, transparent); }
+    .cm input { width: 70px; text-align: center; }
+    .cm td b { font-size: 1.3rem; font-family: var(--mono); display: block; }
+    .reviews { display: grid; gap: 4px; }
+    .rv { display: grid; grid-template-columns: 54px 1fr 70px 90px; gap: 8px; align-items: center; font-size: .88rem; padding: 4px 8px; border-radius: 8px; background: var(--panel-2); }
+    .rv .score { height: 10px; border-radius: 4px; background: var(--accent); }
+    .thr-line { border-top: 2px dashed var(--warn); margin: 4px 0; position: relative; }
+    .thr-line span { position: absolute; right: 0; top: -10px; background: var(--panel); padding: 0 6px; color: var(--warn); font-size: .8rem; font-family: var(--mono); }
+    .mtab td:first-child { font-weight: 600; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="3" data-title="Confusion Matrix & F1" data-activity="w3-metrics">
+  <main>
+    <h1>Confusion Matrix &amp; F1</h1>
+    <p class="lead">Accuracy counts correct decisions. But a <b>miss</b> (FN) and a <b>false alarm</b> (FP) are different mistakes — precision and recall keep them apart. Rows are the <b>actual</b> labels, columns the <b>predictions</b>.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · Type the counts</h2>
+      <div class="row">
+        <button class="chip" id="slide">Slide 33 example (30 / 10 / 5 / 55)</button>
+        <button class="chip" id="always">"Always negative" baseline</button>
+        <label>Target class
+          <select id="target"><option value="pos">POSITIVE</option><option value="neg">NEGATIVE</option></select>
+        </label>
+      </div>
+      <div class="cols" style="margin-top:12px">
+        <table class="cm" id="cm1"></table>
+        <div id="m1"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Move the decision threshold</h2>
+      <p class="small">A toy classifier gave each review a score p(POSITIVE). Predict POSITIVE when p ≥ threshold. The threshold changes the decisions, <b>not</b> the model's weights — choose it on validation data.</p>
+      <div class="row">
+        <label>threshold <input type="range" id="thr" min="0.05" max="0.95" step="0.01" value="0.5"> <code id="thrV"></code></label>
+      </div>
+      <div class="cols" style="margin-top:12px">
+        <div class="reviews" id="reviews"></div>
+        <div>
+          <table class="cm" id="cm2"></table>
+          <div id="m2" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    let C = { tp: 30, fn: 10, fp: 5, tn: 55 }; // positive-as-target view of the matrix
+    const R = [
+      ['Loved every minute', 1, 0.95], ['Brilliant acting', 1, 0.91], ['A great family film', 1, 0.88], ['The cast is wonderful', 1, 0.86],
+      ['Funny and warm', 1, 0.82], ['I\'d watch it again', 1, 0.77], ['Better than expected', 1, 0.71], ['Slow start, great finale', 1, 0.58],
+      ['Quiet but beautiful', 1, 0.52], ['Not bad at all', 1, 0.46],
+      ['Could have been great', 0, 0.66], ['Not good', 0, 0.62], ['Great actors, awful plot', 0, 0.55], ['The ending ruined it', 0, 0.35],
+      ['Predictable', 0, 0.3], ['I want my money back', 0, 0.15], ['Boring and long', 0, 0.12], ['Fell asleep', 0, 0.1],
+      ['Terrible script', 0, 0.08], ['Waste of time', 0, 0.04],
+    ];
+    const r3 = (v) => (Number.isFinite(v) ? v.toFixed(3) : '—');
+
+    function metrics({ tp, fn, fp, tn }) {
+      const tot = tp + fn + fp + tn;
+      const P = tp / (tp + fp), Rc = tp / (tp + fn), F = (2 * tp) / (2 * tp + fp + fn);
+      const Pn = tn / (tn + fn), Rn = tn / (tn + fp), Fn = (2 * tn) / (2 * tn + fn + fp);
+      const posN = tp + fn, negN = fp + tn;
+      return { tot, acc: (tp + tn) / tot, P, R: Rc, F, Pn, Rn, Fn, macro: (F + Fn) / 2, weighted: (posN * F + negN * Fn) / tot, base: Math.max(posN, negN) / tot, baseLab: posN >= negN ? 'POSITIVE' : 'NEGATIVE', posN, negN };
+    }
+    function cmTable(node, c, editable) {
+      const cell = (k, cls, label) => el('td', { class: cls },
+        editable ? el('input', { type: 'number', min: 0, value: c[k], oninput: (e) => { C[k] = Math.max(0, +e.target.value || 0); metricTable($('#m1'), C); } }) : el('b', {}, c[k]),
+        el('span', { class: 'small muted' }, label));
+      fill(node,
+        el('tr', {}, el('th', {}, 'actual ↓ / predicted →'), el('th', {}, 'POSITIVE'), el('th', {}, 'NEGATIVE')),
+        el('tr', {}, el('th', {}, 'POSITIVE'), cell('tp', 'tp', 'correct (TP)'), cell('fn', 'fn', 'missed (FN)')),
+        el('tr', {}, el('th', {}, 'NEGATIVE'), cell('fp', 'fp', 'false alarm (FP)'), cell('tn', 'tn', 'correct (TN)')));
+    }
+    function metricTable(node, c) {
+      const m = metrics(c), negT = $('#target').value === 'neg';
+      const T = negT
+        ? { name: 'NEGATIVE', tp: c.tn, fp: c.fn, fn: c.fp, P: m.Pn, R: m.Rn, F: m.Fn }
+        : { name: 'POSITIVE', tp: c.tp, fp: c.fp, fn: c.fn, P: m.P, R: m.R, F: m.F };
+      fill(node, el('table', { class: 't mtab' },
+        el('tr', {}, el('th', {}, 'metric'), el('th', {}, 'calculation'), el('th', {}, 'value')),
+        el('tr', {}, el('td', {}, 'Accuracy'), el('td', { class: 'mono small' }, `(${c.tp} + ${c.tn}) / ${m.tot}`), el('td', { class: 'num' }, r3(m.acc))),
+        el('tr', {}, el('td', {}, `Precision (${T.name})`), el('td', { class: 'mono small' }, `TP/(TP+FP) = ${T.tp}/(${T.tp}+${T.fp})`), el('td', { class: 'num' }, r3(T.P))),
+        el('tr', {}, el('td', {}, `Recall (${T.name})`), el('td', { class: 'mono small' }, `TP/(TP+FN) = ${T.tp}/(${T.tp}+${T.fn})`), el('td', { class: 'num' }, r3(T.R))),
+        el('tr', {}, el('td', {}, `F1 (${T.name})`), el('td', { class: 'mono small' }, `2TP/(2TP+FP+FN) = ${2 * T.tp}/(${2 * T.tp}+${T.fp}+${T.fn})`), el('td', { class: 'num' }, r3(T.F))),
+        el('tr', {}, el('td', {}, 'F1 (other class)'), el('td', { class: 'mono small' }, 'swap which class is the target'), el('td', { class: 'num' }, r3(negT ? m.F : m.Fn))),
+        el('tr', {}, el('td', {}, 'Macro-F1'), el('td', { class: 'mono small' }, `(${r3(m.F)} + ${r3(m.Fn)}) / 2`), el('td', { class: 'num' }, r3(m.macro))),
+        el('tr', {}, el('td', {}, 'Weighted F1'), el('td', { class: 'mono small' }, `(${m.posN}×${r3(m.F)} + ${m.negN}×${r3(m.Fn)}) / ${m.tot}`), el('td', { class: 'num' }, r3(m.weighted))),
+        el('tr', {}, el('td', {}, 'Majority baseline'), el('td', { class: 'mono small' }, `always ${m.baseLab}: ${Math.max(m.posN, m.negN)}/${m.tot}`), el('td', { class: 'num' }, r3(m.base)))),
+        el('p', { class: 'small muted' }, `Arithmetic mean of P and R would be ${r3((T.P + T.R) / 2)} — F1 is the harmonic mean 2PR/(P+R) = ${r3(T.F)}, which punishes a low component. True negatives don't enter P, R or F1 for the target class.`),
+        m.acc <= m.base + 1e-9 ? el('div', { class: 'callout bad' }, 'This classifier is no better than always predicting the majority class. Accuracy alone would hide that.') : null);
+    }
+    function show1() { cmTable($('#cm1'), C, true); metricTable($('#m1'), C); }
+    $('#slide').onclick = () => { C = { tp: 30, fn: 10, fp: 5, tn: 55 }; show1(); };
+    $('#always').onclick = () => { C = { tp: 0, fn: 40, fp: 0, tn: 60 }; show1(); };
+    $('#target').onchange = () => { show1(); show2(); };
+
+    function show2() {
+      const t = +$('#thr').value; $('#thrV').textContent = t.toFixed(2);
+      const c = { tp: 0, fn: 0, fp: 0, tn: 0 };
+      R.forEach(([, y, p]) => { const pr = p >= t ? 1 : 0; c[y ? (pr ? 'tp' : 'fn') : (pr ? 'fp' : 'tn')]++; });
+      const sorted = [...R].sort((a, b) => b[2] - a[2]);
+      const rows = [];
+      let lineDone = false;
+      sorted.forEach(([text, y, p]) => {
+        if (!lineDone && p < t) { rows.push(el('div', { class: 'thr-line' }, el('span', {}, `threshold ${t.toFixed(2)}`))); lineDone = true; }
+        const pr = p >= t ? 1 : 0, kind = y ? (pr ? 'TP' : 'FN') : (pr ? 'FP' : 'TN');
+        rows.push(el('div', { class: 'rv' },
+          el('span', { class: 'tag', style: { color: y ? 'var(--ok)' : 'var(--bad)' } }, y ? 'POS' : 'NEG'),
+          el('span', {}, text),
+          el('div', {}, el('div', { class: 'score', style: { width: `${p * 100}%` } }), el('span', { class: 'mono small' }, p.toFixed(2))),
+          el('span', { class: 'mono small', style: { color: kind === 'TP' || kind === 'TN' ? 'var(--ok)' : 'var(--bad)' } }, kind)));
+      });
+      if (!lineDone) rows.push(el('div', { class: 'thr-line' }, el('span', {}, `threshold ${t.toFixed(2)}`)));
+      fill($('#reviews'), rows);
+      cmTable($('#cm2'), c, false);
+      metricTable($('#m2'), c);
+    }
+    $('#thr').addEventListener('input', show2);
+    show1(); show2();
+  </script>
+</body>
+</html>

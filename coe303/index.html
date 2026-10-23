@@ -3,28 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>COE303 — Operating Systems · Course Sites</title>
+  <title>Course Sites</title>
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body data-root=".." data-course="coe303">
+<body data-root="..">
   <main>
-    <h1>COE303 — Operating Systems</h1>
+    <h1 id="h"></h1>
     <p class="lead" id="meta"></p>
     <div class="row" id="toc"></div>
     <div id="chapters"></div>
   </main>
   <script src="data.js"></script>
+  <script>document.body.dataset.course = COURSE.id;</script>
   <script src="../assets/js/common.js"></script>
   <script>
     const { el, progress } = CS;
-    const C = window.COE303;
+    const C = window.COURSE;
+    const U = CS.unit;
 
+    document.getElementById('h').textContent = `${C.code} — ${C.name}`;
+    document.title = `${C.code} — ${C.name} · Course Sites`;
     document.getElementById('meta').textContent =
-      `${C.term} · ${C.lecturer} · ${C.examFormat}`;
+      [C.term, C.lecturer, C.examFormat].filter(Boolean).join(' · ');
 
     const toc = document.getElementById('toc');
     for (const ch of C.chapters)
-      toc.append(el('a', { class: 'btn', href: `#ch${ch.n}` }, `Ch.${ch.n} ${ch.title}`));
+      toc.append(el('a', { class: 'btn', href: `#ch${ch.n}` }, `${U === 'Week' ? 'W' : 'Ch.'}${ch.n} ${ch.title}`));
 
     function actCard({ href, title, desc, kind, id, extra }) {
       const done = id && progress.visited(id);
@@ -42,7 +46,7 @@
 
       const sec = el('section', { class: 'chapter', id: `ch${ch.n}` },
         el('div', { class: 'chapter-head' },
-          el('span', { class: 'chnum' }, `CHAPTER ${ch.n}`),
+          el('span', { class: 'chnum' }, `${U.toUpperCase()} ${ch.n}`),
           el('h2', { style: { margin: 0 } }, ch.title)),
         el('p', { class: 'muted' }, ch.summary),
 
@@ -59,7 +63,7 @@
 
         el('h3', { style: { marginTop: '18px' } }, 'Check yourself'),
         el('div', { class: 'act-list' },
-          actCard({ href: `quiz.html?ch=${ch.n}`, title: `Chapter ${ch.n} Quiz`, kind: 'quiz', id: `quiz-ch${ch.n}`,
+          actCard({ href: `quiz.html?ch=${ch.n}`, title: `${U} ${ch.n} Quiz`, kind: 'quiz', id: `quiz-ch${ch.n}`,
             desc: `${ch.quiz.length} questions with explanations.` + (best ? ` Best: ${best.score}/${best.total}.` : '') }),
           actCard({ href: `cards.html?ch=${ch.n}`, title: 'Flashcards', kind: 'quiz', id: `cards-ch${ch.n}`,
             desc: `${ch.cards.length} key terms — flip, then mark known or again.` })),
@@ -75,9 +79,9 @@
     }
 
     wrap.append(el('section', { class: 'chapter' },
-      el('h2', {}, 'Textbooks'),
-      el('ul', {}, C.textbooks.map((t) => el('li', {}, t))),
-      el('p', { class: 'muted small' }, 'Local copies of the slides, project spec and textbooks are in materials/COE303/ (not published).')));
+      C.textbooks && C.textbooks.length ? [el('h2', {}, 'Textbooks'), el('ul', {}, C.textbooks.map((t) => el('li', {}, t)))] : null,
+      C.projects ? [el('h2', {}, 'Projects'), el('ul', {}, C.projects.map((t) => el('li', {}, t)))] : null,
+      el('p', { class: 'muted small' }, `Local copies of the course files are in materials/${C.code}/ (not published).`)));
 
     if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
   </script>

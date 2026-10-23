@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="..">
+  <main>
+    <h1 id="h"></h1>
+    <p class="lead" id="meta"></p>
+    <div class="row" id="toc"></div>
+    <div id="chapters"></div>
+  </main>
+  <script src="data.js"></script>
+  <script>document.body.dataset.course = COURSE.id;</script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { el, progress } = CS;
+    const C = window.COURSE;
+    const U = CS.unit;
+
+    document.getElementById('h').textContent = `${C.code} — ${C.name}`;
+    document.title = `${C.code} — ${C.name} · Course Sites`;
+    document.getElementById('meta').textContent =
+      [C.term, C.lecturer, C.examFormat].filter(Boolean).join(' · ');
+
+    const toc = document.getElementById('toc');
+    for (const ch of C.chapters)
+      toc.append(el('a', { class: 'btn', href: `#ch${ch.n}` }, `${U === 'Week' ? 'W' : 'Ch.'}${ch.n} ${ch.title}`));
+
+    function actCard({ href, title, desc, kind, id, extra }) {
+      const done = id && progress.visited(id);
+      return el('a', { class: 'card', href },
+        el('h3', {}, el('span', {}, title),
+          el('span', { class: `tag ${done ? 'done' : kind}` }, done ? '✓ ' + kind : kind)),
+        el('p', {}, desc),
+        extra || null);
+    }
+
+    const wrap = document.getElementById('chapters');
+    for (const ch of C.chapters) {
+      const games = Object.entries(C.games).filter(([, g]) => g.ch === ch.n);
+      const best = progress.best(`quiz-ch${ch.n}`);
+
+      const sec = el('section', { class: 'chapter', id: `ch${ch.n}` },
+        el('div', { class: 'chapter-head' },
+          el('span', { class: 'chnum' }, `${U.toUpperCase()} ${ch.n}`),
+          el('h2', { style: { margin: 0 } }, ch.title)),
+        el('p', { class: 'muted' }, ch.summary),
+
+        el('h3', {}, 'Simulations'),
+        el('div', { class: 'act-list' },
+          ch.activities.map((a) => actCard({ ...a, kind: 'sim' }))),
+
+        el('h3', { style: { marginTop: '18px' } }, 'Quick games'),
+        el('div', { class: 'act-list' },
+          games.map(([id, g]) => actCard({
+            id: `game-${id}`, href: `game.html?id=${id}`, title: g.title, kind: 'game',
+            desc: { order: 'Put in order', bucket: 'Sort into groups', match: 'Match pairs' }[g.type] + ' — ' + g.intro,
+          }))),
+
+        el('h3', { style: { marginTop: '18px' } }, 'Check yourself'),
+        el('div', { class: 'act-list' },
+          actCard({ href: `quiz.html?ch=${ch.n}`, title: `${U} ${ch.n} Quiz`, kind: 'quiz', id: `quiz-ch${ch.n}`,
+            desc: `${ch.quiz.length} questions with explanations.` + (best ? ` Best: ${best.score}/${best.total}.` : '') }),
+          actCard({ href: `cards.html?ch=${ch.n}`, title: 'Flashcards', kind: 'quiz', id: `cards-ch${ch.n}`,
+            desc: `${ch.cards.length} key terms — flip, then mark known or again.` })),
+
+        el('details', { class: 'takeaways' },
+          el('summary', {}, 'Key takeaways & exam traps'),
+          el('ul', {}, ch.takeaways.map((t) => el('li', {}, t))),
+          el('table', { class: 't' },
+            el('tr', {}, el('th', {}, 'Students often say…'), el('th', {}, 'Correct version')),
+            ch.traps.map(([a, b]) => el('tr', {}, el('td', {}, a), el('td', {}, b))))),
+      );
+      wrap.append(sec);
+    }
+
+    wrap.append(el('section', { class: 'chapter' },
+      C.textbooks && C.textbooks.length ? [el('h2', {}, 'Textbooks'), el('ul', {}, C.textbooks.map((t) => el('li', {}, t)))] : null,
+      C.projects ? [el('h2', {}, 'Projects'), el('ul', {}, C.projects.map((t) => el('li', {}, t)))] : null,
+      el('p', { class: 'muted small' }, `Local copies of the course files are in materials/${C.code}/ (not published).`)));
+
+    if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  </script>
+</body>
+</html>

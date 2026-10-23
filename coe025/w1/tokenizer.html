@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tokenizer Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    textarea { width: 100%; min-height: 64px; font-family: var(--mono); font-size: .9rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .merges { display: flex; flex-wrap: wrap; gap: 6px; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="1" data-title="Tokenizer Lab" data-activity="w1-tokenizer">
+  <main>
+    <h1>Tokenizer Lab</h1>
+    <p class="lead">A model never sees letters — it sees <b>tokens</b>. Here you build three tokenizers and watch the <b>out-of-vocabulary</b> problem appear and disappear (lecture slides "Terminology", "Vocabulary &amp; Subwords", "BPE", "WordPiece").</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · Word-level tokens and the OOV problem</h2>
+      <p class="small">The vocabulary is learned from the training text. Every test token not in it becomes <span class="tok unk">[UNK]</span>, and the model loses that word.</p>
+      <div class="cols">
+        <label class="small">Training text<textarea id="train">I don't like this movie. The happiness of the ending was fake. I like happy endings.</textarea></label>
+        <label class="small">Test text<textarea id="test">Unhappiness everywhere! I don't like unhappy endings.</textarea></label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <label>Split rule
+          <select id="rule">
+            <option value="space">split on spaces only</option>
+            <option value="punct" selected>split off punctuation, "don't" → "do" + "n't"</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="lower" checked> lowercase</label>
+      </div>
+      <h4>Test tokens</h4>
+      <div class="toks" id="wordToks"></div>
+      <div class="stats" style="margin-top:10px" id="wordStats"></div>
+      <div class="callout warn small">Splitting on spaces keeps <code>movie.</code> and <code>movie</code> as two different "words" — and <code>don't</code> as one. Try both rules.</div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Train BPE yourself (used by GPT)</h2>
+      <p class="small">Start from characters (<code>_</code> marks the end of a word). Each step finds the <b>most frequent adjacent pair</b> across the corpus and merges it into one new symbol. Format: <code>word ×count</code>.</p>
+      <textarea id="bpeCorpus">low ×5
+lower ×2
+newest ×6
+widest ×3</textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="primary" id="bpeStep">Merge once</button>
+        <button id="bpe5">Merge ×5</button>
+        <button id="bpeReset">Reset</button>
+        <span class="tag" id="bpeInfo"></span>
+      </div>
+      <div class="cols" style="margin-top:12px">
+        <div>
+          <h4 style="margin-top:0">Corpus right now</h4>
+          <table class="t" id="bpeWords"></table>
+        </div>
+        <div>
+          <h4 style="margin-top:0">Pair counts (next merge highlighted)</h4>
+          <table class="t" id="bpePairs"></table>
+        </div>
+      </div>
+      <h4>Learned merges, in order</h4>
+      <div class="merges" id="bpeMerges"><span class="muted small">none yet</span></div>
+      <h4>Tokenize a new word with the learned merges</h4>
+      <div class="row"><input type="text" id="bpeTry" value="lowest"><div class="toks" id="bpeOut"></div></div>
+      <p class="muted small">"lowest" never appeared in the corpus, yet after a few merges it becomes <code>low</code> + <code>est_</code> — known pieces, no [UNK]. Real GPT tokenizers do the same on bytes with ~50–200K merges.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">3 · WordPiece (used by BERT)</h2>
+      <p class="small">Greedy <b>longest match first</b>: take the longest vocabulary entry that starts the word, then continue with pieces prefixed by <code>##</code>. If nothing matches, the whole word becomes [UNK]. Edit the vocabulary and see what changes.</p>
+      <div class="cols">
+        <label class="small">Vocabulary (space separated)<textarea id="wpVocab">un ##happi ##happy ##ness happy play ##ing ##ed ##s token ##ization the cat sat yarın gel ##di ##ğin ##de beni bura ##da bula ##ma ##ya ##bilir ##sin ##iz ev ##ler sen mi on ##lar gibi</textarea></label>
+        <label class="small">Text<textarea id="wpText">unhappiness playing tokenization geldiğinde evlerde zebra</textarea></label>
+      </div>
+      <h4>WordPiece tokens</h4>
+      <div class="toks" id="wpOut"></div>
+      <div id="wpTrace" class="small muted" style="margin-top:8px"></div>
+      <div class="callout small">The lecture's Turkish example: <code>Yarın gel ##di ##ğin ##de beni bura ##da bula ##ma ##ya ##bilir ##sin ##iz</code>. Agglutinative languages like Turkish are exactly where subwords shine: one stem, many suffixes.</div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+
+    /* ---------- 1. word-level ---------- */
+    function wordTokens(text) {
+      if ($('#lower').checked) text = text.toLowerCase();
+      if ($('#rule').value === 'space') return text.split(/\s+/).filter(Boolean);
+      return text.replace(/(\w)n't\b/g, '$1 n\'t').match(/n't|[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu) || [];
+    }
+    function renderWords() {
+      const vocab = new Set(wordTokens($('#train').value));
+      const toks = wordTokens($('#test').value);
+      const unk = toks.filter((t) => !vocab.has(t));
+      fill($('#wordToks'), toks.map((t) => el('span', { class: 'tok ' + (vocab.has(t) ? 'c1' : 'unk'), title: vocab.has(t) ? 'in vocabulary' : 'OOV → [UNK]' }, vocab.has(t) ? t : `[UNK] ${t}`)));
+      fill($('#wordStats'),
+        el('div', { class: 'stat' }, el('b', {}, vocab.size), el('span', {}, 'vocabulary size')),
+        el('div', { class: 'stat' }, el('b', {}, toks.length), el('span', {}, 'test tokens')),
+        el('div', { class: 'stat' }, el('b', { style: { color: unk.length ? 'var(--bad)' : 'var(--ok)' } }, unk.length), el('span', {}, 'unknown (OOV)')));
+    }
+    ['train', 'test', 'rule', 'lower'].forEach((id) => $('#' + id).addEventListener('input', renderWords));
+
+    /* ---------- 2. BPE ---------- */
+    let words, merges;
+    function bpeReset() {
+      words = $('#bpeCorpus').value.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
+        const m = l.match(/^(\S+)\s*(?:[×x*]\s*(\d+))?$/);
+        return m ? { syms: [...m[1].toLowerCase(), '_'], n: Number(m[2] || 1) } : null;
+      }).filter(Boolean);
+      merges = [];
+      bpeRender();
+    }
+    function pairCounts() {
+      const counts = new Map();
+      for (const w of words) for (let i = 0; i + 1 < w.syms.length; i++) {
+        const k = w.syms[i] + '\u0000' + w.syms[i + 1];
+        counts.set(k, (counts.get(k) || 0) + w.n);
+      }
+      return [...counts.entries()].sort((a, b) => b[1] - a[1]); // stable: ties keep first-seen order
+    }
+    function applyMerge(syms, a, b) {
+      const out = [];
+      for (let i = 0; i < syms.length; i++) {
+        if (i + 1 < syms.length && syms[i] === a && syms[i + 1] === b) { out.push(a + b); i++; } else out.push(syms[i]);
+      }
+      return out;
+    }
+    function bpeStep() {
+      const top = pairCounts()[0];
+      if (!top) return false;
+      const [a, b] = top[0].split('\u0000');
+      merges.push([a, b, top[1]]);
+      words.forEach((w) => (w.syms = applyMerge(w.syms, a, b)));
+      return true;
+    }
+    function bpeRender() {
+      const pairs = pairCounts();
+      fill($('#bpeWords'), el('tr', {}, el('th', {}, 'word'), el('th', {}, 'count'), el('th', {}, 'current symbols')),
+        words.map((w, i) => el('tr', {}, el('td', { class: 'mono' }, w.syms.join('').replace(/_$/, '')), el('td', { class: 'num' }, w.n),
+          el('td', {}, el('div', { class: 'toks' }, w.syms.map((s, k) => el('span', { class: `tok c${k % 6}` }, s)))))));
+      fill($('#bpePairs'), el('tr', {}, el('th', {}, 'pair'), el('th', {}, 'frequency')),
+        pairs.slice(0, 8).map(([k, n], i) => el('tr', { style: i === 0 ? { background: 'color-mix(in srgb, var(--warn) 18%, transparent)' } : null },
+          el('td', { class: 'mono' }, k.split('\u0000').join(' + ')), el('td', { class: 'num' }, n))));
+      fill($('#bpeMerges'), merges.length ? merges.map(([a, b, n], i) => el('span', { class: 'tok c' + (i % 6) }, `${i + 1}. ${a} + ${b} → ${a + b}  (${n})`)) : el('span', { class: 'muted small' }, 'none yet'));
+      const symbols = new Set(words.flatMap((w) => w.syms));
+      $('#bpeInfo').textContent = `${merges.length} merges · ${symbols.size} distinct symbols in use`;
+      bpeTry();
+    }
+    function bpeTry() {
+      let syms = [...$('#bpeTry').value.trim().toLowerCase(), '_'];
+      for (const [a, b] of merges) syms = applyMerge(syms, a, b);
+      fill($('#bpeOut'), syms.map((s, k) => el('span', { class: `tok c${k % 6}` }, s)));
+    }
+    $('#bpeStep').onclick = () => { bpeStep(); bpeRender(); };
+    $('#bpe5').onclick = () => { for (let i = 0; i < 5; i++) if (!bpeStep()) break; bpeRender(); };
+    $('#bpeReset').onclick = bpeReset;
+    $('#bpeCorpus').addEventListener('change', bpeReset);
+    $('#bpeTry').addEventListener('input', bpeTry);
+
+    /* ---------- 3. WordPiece ---------- */
+    function wordpiece(word, vocab) {
+      const pieces = [], trace = [];
+      let start = 0;
+      while (start < word.length) {
+        let end = word.length, found = null;
+        while (end > start) {
+          const sub = (start > 0 ? '##' : '') + word.slice(start, end);
+          if (vocab.has(sub)) { found = sub; break; }
+          end--;
+        }
+        if (!found) { trace.push(`no piece matches "${start ? '##' : ''}${word.slice(start)}" → whole word is [UNK]`); return { pieces: ['[UNK]'], trace }; }
+        trace.push(`longest match at position ${start}: ${found}`);
+        pieces.push(found); start = end;
+      }
+      return { pieces, trace };
+    }
+    function renderWP() {
+      const vocab = new Set($('#wpVocab').value.split(/\s+/).filter(Boolean));
+      const words = $('#wpText').value.toLowerCase().split(/\s+/).filter(Boolean);
+      const out = [], traces = [];
+      words.forEach((w, i) => {
+        const r = wordpiece(w, vocab);
+        r.pieces.forEach((p) => out.push(el('span', { class: 'tok ' + (p === '[UNK]' ? 'unk' : 'c' + (i % 6)) }, p)));
+        traces.push(el('div', {}, el('b', {}, w + ': '), r.trace.join(' · ')));
+      });
+      fill($('#wpOut'), out);
+      fill($('#wpTrace'), traces);
+    }
+    ['wpVocab', 'wpText'].forEach((id) => $('#' + id).addEventListener('input', renderWP));
+
+    renderWords(); bpeReset(); renderWP();
+  </script>
+</body>
+</html>

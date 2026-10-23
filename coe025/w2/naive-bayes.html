@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Naive Bayes Spam Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    textarea { width: 100%; min-height: 110px; font-family: var(--mono); font-size: .9rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .scroll { overflow-x: auto; }
+    .post { height: 30px; border-radius: 8px; overflow: hidden; display: flex; font-family: var(--mono); font-size: .85rem; color: #fff; }
+    .post div { display: flex; align-items: center; padding: 0 8px; white-space: nowrap; overflow: hidden; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="2" data-title="Naive Bayes Spam Lab" data-activity="w2-nb">
+  <main>
+    <h1>Naive Bayes Spam Lab</h1>
+    <p class="lead"><code>P(class | text) ∝ P(class) × ∏ P(word | class)</code> — count words per class, multiply the evidence, pick the bigger score. "Naive" = every word is treated as independent of the others.</p>
+
+    <div class="panel">
+      <div class="row">
+        <span class="small muted">Training data:</span>
+        <button class="chip" data-preset="spam">W2 spam slide</button>
+        <button class="chip" data-preset="sent">W3 toy sentiment</button>
+        <button class="chip" data-preset="topic">3-class topics</button>
+      </div>
+      <p class="small">One example per line as <code>LABEL: text</code>. Any number of classes works.</p>
+      <textarea id="train"></textarea>
+      <div class="row" style="margin-top:8px">
+        <label>Smoothing
+          <select id="alpha">
+            <option value="1" selected>add-one (Laplace), α = 1</option>
+            <option value="0.5">add-½, α = 0.5</option>
+            <option value="0">none, α = 0</option>
+          </select>
+        </label>
+        <label>New text <input type="text" id="test" style="width:280px"></label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Prediction</h2>
+      <div id="verdict"></div>
+      <div class="scroll"><table class="t" id="calc" style="margin-top:10px"></table></div>
+      <div id="notes"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">What the model learned</h2>
+      <p class="small" id="learnInfo"></p>
+      <div class="scroll"><table class="t" id="lik"></table></div>
+      <p class="muted small">Each likelihood is <code>(count(word, class) + α) / (tokens in class + α·|V|)</code>. Click a word to add it to the new text.</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const PRESETS = {
+      spam: ['SPAM: Win free money now!', 'SPAM: Click here for prize', 'HAM: Meeting tomorrow at 3pm', 'HAM: Dinner with family tonight'].join('\n'),
+      sent: ['+: good good movie', '+: good movie', '-: bad bad movie', '-: bad movie'].join('\n'),
+      topic: ['SPORTS: The Lakers won the game in overtime', 'SPORTS: The team won the final game', 'TECH: Apple announced a new iPhone', 'TECH: The new phone has a faster chip', 'POLITICS: Congress passed the new bill', 'POLITICS: The senate voted on the bill'].join('\n'),
+    };
+    const TESTS = { spam: 'Win free tickets', sent: 'good movie', topic: 'the new team won' };
+    const tok = (s) => s.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+    const f = (v) => (v === 0 ? '0' : v < 0.001 ? v.toExponential(3) : v.toFixed(4).replace(/0+$/, '').replace(/\.$/, ''));
+
+    let M;
+    function train() {
+      const rows = $('#train').value.split('\n').map((l) => l.match(/^\s*([^:]+?)\s*:\s*(.*)$/)).filter(Boolean);
+      const classes = [...new Set(rows.map((r) => r[1]))];
+      const vocab = [...new Set(rows.flatMap((r) => tok(r[2])))];
+      const docs = Object.fromEntries(classes.map((c) => [c, rows.filter((r) => r[1] === c).length]));
+      const counts = Object.fromEntries(classes.map((c) => [c, Object.fromEntries(vocab.map((w) => [w, 0]))]));
+      const total = Object.fromEntries(classes.map((c) => [c, 0]));
+      for (const r of rows) for (const w of tok(r[2])) { counts[r[1]][w]++; total[r[1]]++; }
+      const a = Number($('#alpha').value);
+      const like = (w, c) => (counts[c][w] + a) / (total[c] + a * vocab.length);
+      M = { rows, classes, vocab, docs, counts, total, a, like, N: rows.length };
+      renderLearned();
+      predict();
+    }
+
+    function renderLearned() {
+      const { classes, vocab, counts, total, like, docs, N, a } = M;
+      $('#learnInfo').textContent = `${N} training examples · |V| = ${vocab.length} word types · ` +
+        classes.map((c) => `${c}: ${docs[c]} docs, ${total[c]} tokens, prior ${docs[c]}/${N}`).join(' · ') +
+        ` · denominator = tokens + ${a}×${vocab.length}`;
+      fill($('#lik'),
+        el('tr', {}, el('th', {}, 'word'), classes.map((c) => [el('th', { class: 'c' }, `count in ${c}`), el('th', { class: 'c' }, `P(w | ${c})`)])),
+        vocab.map((w) => el('tr', { style: { cursor: 'pointer' }, onclick: () => { $('#test').value = ($('#test').value + ' ' + w).trim(); predict(); } },
+          el('td', { class: 'mono' }, w),
+          classes.map((c) => [el('td', { class: 'num' }, counts[c][w]),
+            el('td', { class: 'num', style: like(w, c) === 0 ? { color: 'var(--bad)', fontWeight: 700 } : null }, `${counts[c][w] + a}/${total[c] + a * vocab.length} = ${f(like(w, c))}`)]))));
+    }
+
+    function predict() {
+      const { classes, vocab, docs, N, like } = M;
+      const words = tok($('#test').value);
+      const known = words.filter((w) => vocab.includes(w));
+      const unknown = words.filter((w) => !vocab.includes(w));
+      const res = classes.map((c) => {
+        const prior = docs[c] / N;
+        const ls = known.map((w) => like(w, c));
+        const score = ls.reduce((p, v) => p * v, prior);
+        const logScore = ls.some((v) => v === 0) ? -Infinity : ls.reduce((s, v) => s + Math.log(v), Math.log(prior));
+        return { c, prior, ls, score, logScore };
+      });
+      const sum = res.reduce((s, r) => s + r.score, 0);
+      const best = sum > 0 ? res.reduce((p, r) => (r.score > p.score ? r : p)) : null;
+      const colors = ['var(--bad)', 'var(--ok)', 'var(--accent)', 'var(--warn)', 'var(--accent-2)'];
+
+      fill($('#calc'),
+        el('tr', {}, el('th', {}, 'class'), el('th', { class: 'c' }, 'prior'), known.map((w) => el('th', { class: 'c mono' }, `P(${w} | c)`)),
+          el('th', { class: 'c' }, 'product'), el('th', { class: 'c' }, 'log score')),
+        res.map((r) => el('tr', { style: best && r.c === best.c ? { background: 'color-mix(in srgb, var(--ok) 14%, transparent)' } : null },
+          el('td', {}, el('b', {}, r.c)), el('td', { class: 'num' }, f(r.prior)),
+          r.ls.map((v) => el('td', { class: 'num', style: v === 0 ? { color: 'var(--bad)', fontWeight: 700 } : null }, f(v))),
+          el('td', { class: 'num' }, f(r.score)), el('td', { class: 'num' }, r.logScore === -Infinity ? '−∞' : r.logScore.toFixed(3)))));
+
+      fill($('#verdict'), sum > 0
+        ? [el('div', { class: 'post' }, res.map((r, i) => el('div', { style: { width: `${(r.score / sum) * 100}%`, background: colors[i % colors.length] } }, `${r.c} ${((r.score / sum) * 100).toFixed(1)}%`))),
+          el('p', {}, 'Prediction: ', el('b', { class: 'big' }, best.c), `  — normalized posterior P(${best.c} | text) = ${f(best.score)} / ${f(sum)} = ${(best.score / sum).toFixed(3)}`)]
+        : el('div', { class: 'callout bad' }, el('b', {}, 'Every class scored exactly 0. '), 'Each class has at least one word it never saw, so a zero factor wiped out the whole product. The classifier can\'t decide. Turn add-one smoothing back on.'));
+
+      const notes = [];
+      if (unknown.length) notes.push(el('div', { class: 'callout warn small' }, `Ignored (not in the training vocabulary): ${unknown.join(', ')}. Standard Naive Bayes skips unknown words because they have no estimate in any class.`));
+      if (M.a === 0 && res.some((r) => r.ls.some((v) => v === 0)) && sum > 0) notes.push(el('div', { class: 'callout bad small' }, 'Without smoothing, one unseen word makes a class\'s probability exactly 0 — no matter how much other evidence there is.'));
+      notes.push(el('p', { class: 'muted small' }, 'Log score = ln P(c) + Σ ln P(w | c). Same winner as the product (ln is increasing), but sums of logs don\'t underflow on long documents. The normalized posterior is the toy model\'s belief, not its accuracy.'));
+      fill($('#notes'), notes);
+    }
+
+    $$('[data-preset]').forEach((b) => (b.onclick = () => { $('#train').value = PRESETS[b.dataset.preset]; $('#test').value = TESTS[b.dataset.preset]; train(); }));
+    $('#train').addEventListener('input', train);
+    $('#alpha').addEventListener('change', train);
+    $('#test').addEventListener('input', predict);
+    $('#train').value = PRESETS.spam; $('#test').value = TESTS.spam;
+    train();
+  </script>
+</body>
+</html>

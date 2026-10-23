@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Words → Numbers · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    textarea { width: 100%; min-height: 84px; font-family: var(--mono); font-size: .9rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .scroll { overflow-x: auto; }
+    td.cell { cursor: pointer; text-align: center; font-family: var(--mono); }
+    td.cell:hover { outline: 2px solid var(--accent); }
+    td.zero { color: var(--muted); }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="1" data-title="Words → Numbers" data-activity="w1-vectors">
+  <main>
+    <h1>Words → Numbers</h1>
+    <p class="lead">Classifiers need numbers. Type a tiny corpus (one document per line) and watch it become a <b>vocabulary</b>, <b>one-hot</b> vectors, a <b>bag-of-words</b> matrix and a <b>TF-IDF</b> matrix. Click any cell to see its arithmetic.</p>
+
+    <div class="panel">
+      <div class="row">
+        <span class="small muted">Lecture examples:</span>
+        <button class="chip" data-preset="tfidf">W1 TF-IDF slide (3 docs)</button>
+        <button class="chip" data-preset="bow">W1 BoW slide (cat / dog)</button>
+        <button class="chip" data-preset="w3">W3 toy reviews</button>
+        <button class="chip" data-preset="ny">"New York" n-grams</button>
+      </div>
+      <textarea id="docs" style="margin-top:10px"></textarea>
+      <div class="row" style="margin-top:8px">
+        <label>Features
+          <select id="ngram">
+            <option value="1">unigrams</option>
+            <option value="12">unigrams + bigrams</option>
+            <option value="2">bigrams only</option>
+          </select>
+        </label>
+        <label>TF-IDF convention
+          <select id="conv">
+            <option value="w1">Week 1: (count / doc length) × ln(N / df)</option>
+            <option value="w3">Week 3: count × ln(N / df)</option>
+            <option value="sk">scikit-learn default: count × (ln((1+N)/(1+df)) + 1), L2-normalized</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Step 1 · Vocabulary <span class="tag" id="vsize"></span></h2>
+      <div class="toks" id="vocab"></div>
+      <div class="row" style="margin-top:10px">
+        <label>One-hot vector of <select id="ohWord"></select></label>
+        <code id="oh"></code>
+      </div>
+      <p class="muted small">A one-hot vector is as long as the vocabulary and has a single 1. Every pair of different words is equally far apart — "cat" is no closer to "dog" than to "mat".</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Step 2 · Bag of words (counts)</h2>
+      <div class="scroll"><table class="t" id="bow"></table></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Step 3 · TF-IDF</h2>
+      <div class="scroll"><table class="t" id="tfidf"></table></div>
+      <div class="callout" id="explain">Click a TF-IDF cell to see how it was computed.</div>
+      <p class="muted small">Notice how words that appear in <b>every</b> document ("the", "movie") get a weight of 0 under the lecture conventions: they can't tell documents apart. scikit-learn adds +1 to IDF and smooths, so its numbers differ (week-3 slide "Why library TF-IDF numbers can differ").</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Order check: does BoW notice word order?</h2>
+      <div class="row">
+        <input type="text" id="o1" value="dog bites man" style="width:220px">
+        <input type="text" id="o2" value="man bites dog" style="width:220px">
+      </div>
+      <div id="orderOut" style="margin-top:10px"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const PRESETS = {
+      tfidf: 'the cat sat on the mat\nthe dog played in the park\nthe bird flew over the tree',
+      bow: 'The cat sat on the mat\nThe dog sat on the log',
+      w3: 'good good movie\ngood movie\nbad bad movie\nbad movie',
+      ny: 'New York is great\nYork is a city in England\nNew ideas are great',
+    };
+    const words = (s) => s.toLowerCase().match(/[\p{L}\p{N}']+/gu) || [];
+    function features(doc, mode) {
+      const w = words(doc), out = [];
+      if (mode !== '2') out.push(...w);
+      if (mode !== '1') for (let i = 0; i + 1 < w.length; i++) out.push(w[i] + ' ' + w[i + 1]);
+      return out;
+    }
+    const fmt = (v) => (v === 0 ? '0' : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(3).replace(/\.?0+$/, ''));
+
+    let model;
+    function build() {
+      const docs = $('#docs').value.split('\n').map((d) => d.trim()).filter(Boolean);
+      const mode = $('#ngram').value, conv = $('#conv').value;
+      const feats = docs.map((d) => features(d, mode));
+      const vocab = [];
+      feats.flat().forEach((t) => { if (!vocab.includes(t)) vocab.push(t); });
+      const counts = feats.map((f) => vocab.map((t) => f.filter((x) => x === t).length));
+      const N = docs.length;
+      const df = vocab.map((t, j) => counts.filter((row) => row[j] > 0).length);
+      const idf = df.map((d) => (conv === 'sk' ? Math.log((1 + N) / (1 + d)) + 1 : Math.log(N / d)));
+      let tfidf = counts.map((row, i) => row.map((c, j) => (conv === 'w1' ? c / feats[i].length : c) * idf[j]));
+      const norms = tfidf.map((row) => Math.sqrt(row.reduce((s, v) => s + v * v, 0)) || 1);
+      if (conv === 'sk') tfidf = tfidf.map((row, i) => row.map((v) => v / norms[i]));
+      model = { docs, feats, vocab, counts, N, df, idf, tfidf, conv, norms };
+      render();
+    }
+
+    function render() {
+      const { docs, feats, vocab, counts, df, idf, tfidf } = model;
+      $('#vsize').textContent = `${vocab.length} features`;
+      fill($('#vocab'), vocab.map((t, j) => el('span', { class: `tok c${j % 6}` }, `${j}: ${t}`)));
+      const sel = $('#ohWord'), prev = sel.value;
+      fill(sel, vocab.map((t) => el('option', { value: t }, t)));
+      if (vocab.includes(prev)) sel.value = prev;
+      showOneHot();
+
+      const head = (extra) => el('tr', {}, el('th', {}, 'doc'), vocab.map((t) => el('th', { class: 'c mono' }, t)), extra);
+      fill($('#bow'), head(el('th', { class: 'c' }, 'length')),
+        counts.map((row, i) => el('tr', {}, el('td', { class: 'small', title: docs[i] }, `Doc ${i + 1}`),
+          row.map((c) => el('td', { class: 'cell' + (c ? '' : ' zero') }, c)), el('td', { class: 'num' }, feats[i].length))),
+        el('tr', {}, el('td', { class: 'small muted' }, 'df'), df.map((d) => el('td', { class: 'c mono muted' }, d)), el('td')));
+
+      fill($('#tfidf'), head(),
+        tfidf.map((row, i) => el('tr', {}, el('td', { class: 'small', title: docs[i] }, `Doc ${i + 1}`),
+          row.map((v, j) => el('td', { class: 'cell' + (v ? '' : ' zero'), style: v ? { background: `color-mix(in srgb, var(--accent) ${Math.min(60, Math.round((v / Math.max(...tfidf.flat())) * 60))}%, transparent)` } : null, onclick: () => explain(i, j) }, fmt(v))))),
+        el('tr', {}, el('td', { class: 'small muted' }, 'idf'), idf.map((v) => el('td', { class: 'c mono muted' }, fmt(v)))));
+    }
+
+    function showOneHot() {
+      const t = $('#ohWord').value;
+      $('#oh').textContent = `"${t}" = [${model.vocab.map((v) => (v === t ? 1 : 0)).join(', ')}]`;
+    }
+
+    function explain(i, j) {
+      const { vocab, counts, feats, N, df, idf, tfidf, conv, norms } = model;
+      const t = vocab[j], c = counts[i][j], len = feats[i].length;
+      const idfTxt = conv === 'sk'
+        ? `IDF = ln((1+N)/(1+df)) + 1 = ln(${1 + N}/${1 + df[j]}) + 1 = ${idf[j].toFixed(3)}`
+        : `IDF = ln(N/df) = ln(${N}/${df[j]}) = ${idf[j].toFixed(3)}`;
+      const tfTxt = conv === 'w1' ? `TF = count/length = ${c}/${len} = ${(c / len).toFixed(3)}` : `TF = raw count = ${c}`;
+      const raw = (conv === 'w1' ? c / len : c) * idf[j];
+      $('#explain').className = 'callout ok';
+      fill($('#explain'), el('b', {}, `"${t}" in Doc ${i + 1}: `),
+        `${tfTxt} · ${idfTxt} (it appears in ${df[j]} of ${N} documents) · TF × IDF = ${raw.toFixed(3)}`,
+        conv === 'sk' ? ` · divide by the row's L2 norm ${norms[i].toFixed(3)} → ${tfidf[i][j].toFixed(3)}` : '',
+        df[j] === N && conv !== 'sk' ? el('div', { class: 'small', style: { marginTop: '6px' } }, 'It appears in every document, so ln(N/df) = ln(1) = 0: it carries no distinguishing information.') : null);
+    }
+
+    function orderCheck() {
+      const mode = $('#ngram').value;
+      const a = features($('#o1').value, mode), b = features($('#o2').value, mode);
+      const vocab = [...new Set([...a, ...b])];
+      const va = vocab.map((t) => a.filter((x) => x === t).length), vb = vocab.map((t) => b.filter((x) => x === t).length);
+      const same = va.every((v, k) => v === vb[k]);
+      fill($('#orderOut'),
+        el('div', { class: 'mono small' }, `features: [${vocab.join(', ')}]`),
+        el('div', { class: 'mono small' }, `A = [${va.join(', ')}]`),
+        el('div', { class: 'mono small' }, `B = [${vb.join(', ')}]`),
+        el('div', { class: 'callout ' + (same ? 'bad' : 'ok') }, same
+          ? 'Identical vectors — a bag-of-words classifier cannot tell these sentences apart. Switch "Features" to unigrams + bigrams above.'
+          : 'Different vectors — the bigrams ("dog bites" vs "man bites") capture local word order.'));
+    }
+
+    $$('[data-preset]').forEach((b) => (b.onclick = () => { $('#docs').value = PRESETS[b.dataset.preset]; if (b.dataset.preset === 'ny') $('#ngram').value = '12'; build(); orderCheck(); }));
+    $('#docs').addEventListener('input', build);
+    $('#ngram').addEventListener('change', () => { build(); orderCheck(); });
+    $('#conv').addEventListener('change', build);
+    $('#ohWord').addEventListener('change', showOneHot);
+    $('#o1').addEventListener('input', orderCheck);
+    $('#o2').addEventListener('input', orderCheck);
+    $('#docs').value = PRESETS.tfidf;
+    build(); orderCheck();
+    explain(0, model.vocab.indexOf('cat'));
+  </script>
+</body>
+</html>

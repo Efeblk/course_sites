@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>POS Tagging Workbench · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sent { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .w { display: flex; flex-direction: column; gap: 4px; align-items: stretch; }
+    .w .word { font-family: var(--mono); text-align: center; padding: 4px 8px; border-radius: 6px; background: var(--panel-2); border: 1px solid var(--line); }
+    .w select { font-size: .82rem; padding: 3px 4px; }
+    .w.right select { border-color: var(--ok); box-shadow: 0 0 0 2px color-mix(in srgb, var(--ok) 35%, transparent); }
+    .w.wrong select { border-color: var(--bad); box-shadow: 0 0 0 2px color-mix(in srgb, var(--bad) 35%, transparent); }
+    .w .gold { font-size: .75rem; text-align: center; color: var(--bad); font-family: var(--mono); }
+    .cmp td { font-family: var(--mono); font-size: .85rem; text-align: center; }
+    .cmp td.ok { color: var(--ok); } .cmp td.no { color: var(--bad); font-weight: 700; }
+    .back td { vertical-align: middle; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="4" data-title="POS Tagging Workbench" data-activity="w4-pos">
+  <main>
+    <h1>POS Tagging Workbench</h1>
+    <p class="lead">Map words <code>x₁…xₙ</code> to tags <code>y₁…yₙ</code> — exactly one tag per word. It's a <b>disambiguation</b> task: "book" is a VERB in "Book that flight" and a NOUN in "Hand me that book".</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · You are the tagger</h2>
+      <div class="row">
+        <label>Sentence <select id="sentSel"></select></label>
+        <button class="primary" id="check">Check</button>
+        <button id="reveal">Show answer</button>
+        <span id="score"></span>
+      </div>
+      <div class="sent" id="sent"></div>
+      <div id="sentNote" class="small muted"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Five faces of "back"</h2>
+      <p class="small">Only ~15% of English word <b>types</b> are ambiguous — but they're the common ones, so ~60% of word <b>tokens</b> in running text are ambiguous.</p>
+      <table class="t back" id="back"></table>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">3 · Race the most-frequent-tag baseline</h2>
+      <p class="small">The "stupidest possible method": tag every word with its most frequent tag in the training data (unknown words → NOUN). On real English it already gets <b>~92%</b>; good taggers (HMM, CRF, BERT) and humans get ~97%. Below: illustrative tag counts and the baseline on the section-1 sentences.</p>
+      <div class="row">
+        <label><input type="checkbox" id="ctx"> add neighbor-word rules (after AUX → VERB; after DET → not VERB; sentence-initial word before DET/PRON → imperative VERB; "that" before a noun → DET)</label>
+      </div>
+      <div style="overflow-x:auto"><table class="t cmp" id="base" style="margin-top:10px"></table></div>
+      <div id="baseNote"></div>
+      <details style="margin-top:8px"><summary class="small">Illustrative tag counts ("training data")</summary><table class="t" id="lex" style="margin-top:8px"></table></details>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">4 · Morphology &amp; word shape</h2>
+        <div class="row"><input type="text" id="shape" value="importantly"></div>
+        <div id="shapeOut" style="margin-top:10px"></div>
+        <p class="muted small">Prefixes (un- → ADJ), suffixes (-ly → ADV), capitalization (→ PROPN). These clues matter most for unknown words.</p>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">Universal Dependencies tagset</h2>
+        <table class="t" id="ud"></table>
+        <p class="muted small">Nivre et al. 2016. The slide's sample sentences write PRO and PUNC; UD names them PRON and PUNCT.</p>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const UD = [
+      ['ADJ', 'adjective', 'old, green, tasty', 'open'], ['ADV', 'adverb', 'slowly, yesterday', 'open'], ['INTJ', 'interjection', 'ow, hello', 'open'],
+      ['NOUN', 'common noun', 'cat, mango', 'open'], ['PROPN', 'proper noun', 'Janet, Italy', 'open'], ['VERB', 'main verb', 'eat, went', 'open'],
+      ['ADP', 'adposition (preposition)', 'to, with, of', 'closed'], ['AUX', 'auxiliary verb', 'can, will, had', 'closed'], ['CCONJ', 'coordinating conj.', 'and, or, but', 'closed'],
+      ['DET', 'determiner', 'the, some, that', 'closed'], ['NUM', 'numeral', '70, one, 122,312', 'closed'], ['PART', 'particle', '\'s, up, not', 'closed'],
+      ['PRON', 'pronoun', 'they, its, there', 'closed'], ['SCONJ', 'subordinating conj.', 'that (I thought that…)', 'closed'],
+      ['PUNCT', 'punctuation', '. , !', 'other'], ['SYM', 'symbol', '$, %, :)', 'other'], ['X', 'other', 'foreign words, typos', 'other'],
+    ];
+    const TAGS = UD.map((t) => t[0]);
+    const SENTS = [
+      ['Janet will back the bill', 'PROPN AUX VERB DET NOUN', '"will" is usually AUX; after AUX "back" is a VERB; after "the", "bill" is a NOUN.'],
+      ['Book that flight', 'VERB DET NOUN', 'Imperative: the sentence starts with a verb.'],
+      ['Hand me that book', 'VERB PRON DET NOUN', 'Same word "book", now a NOUN after the determiner "that".'],
+      ['There were 70 children there .', 'PRON VERB NUM NOUN ADV PUNCT', 'Existential "There" is a pronoun; the final "there" is an adverb of place.'],
+      ['Preliminary findings were reported in today \'s New England Journal of Medicine', 'ADJ NOUN AUX VERB ADP NOUN PART PROPN PROPN PROPN ADP PROPN', '"\'s" is segmented off as a particle; "were" is AUX here because "reported" is the main verb.'],
+      ['I thought that you might like some milk', 'PRON VERB SCONJ PRON AUX VERB DET NOUN', '"that" links the verb "thought" with a clause → subordinating conjunction.'],
+    ];
+    let cur = 0, picks = [];
+    fill($('#sentSel'), SENTS.map((s, i) => el('option', { value: i }, s[0])));
+
+    function renderSent(mark) {
+      const [text, gold, note] = SENTS[cur], w = text.split(' '), g = gold.split(' ');
+      fill($('#sent'), w.map((word, i) => {
+        const ok = picks[i] === g[i];
+        return el('div', { class: 'w' + (mark ? (ok ? ' right' : ' wrong') : '') },
+          el('div', { class: 'word' }, word),
+          el('select', { onchange: (e) => { picks[i] = e.target.value; $('#score').textContent = ''; renderSent(false); } },
+            el('option', { value: '' }, '—'), TAGS.map((t) => { const o = el('option', { value: t }, t); if (picks[i] === t) o.selected = true; return o; })),
+          mark && !ok ? el('div', { class: 'gold' }, g[i]) : null);
+      }));
+      fill($('#sentNote'), mark ? note : '');
+      if (mark) {
+        const n = w.filter((_, i) => picks[i] === g[i]).length;
+        $('#score').innerHTML = n === w.length ? `<b style="color:var(--ok)">${n}/${w.length} — perfect</b>` : `<b>${n}/${w.length}</b> correct`;
+      }
+    }
+    $('#sentSel').onchange = () => { cur = +$('#sentSel').value; picks = []; $('#score').textContent = ''; renderSent(false); };
+    $('#check').onclick = () => renderSent(true);
+    $('#reveal').onclick = () => { picks = SENTS[cur][1].split(' '); renderSent(true); };
+
+    /* ---------- back ---------- */
+    const BACK = [['earnings growth took a', 'seat', 'ADJ', 'modifies the noun "seat"'], ['a small building in the', '', 'NOUN', 'after the determiner "the"'], ['a clear majority of senators', 'the bill', 'VERB', 'the senators support (back) the bill'], ['enable the country to buy', 'debt', 'PART', 'phrasal verb "buy back"'], ['I was twenty-one', 'then', 'ADV', 'modifies time: "back then"']];
+    const bp = {};
+    function renderBack() {
+      fill($('#back'), el('tr', {}, el('th', {}, 'sentence'), el('th', {}, 'tag of "back"'), el('th', {}, '')),
+        BACK.map(([a, b, gold, why], i) => el('tr', {},
+          el('td', {}, `${a} `, el('b', {}, 'back'), ` ${b}`),
+          el('td', {}, el('select', { onchange: (e) => { bp[i] = e.target.value; renderBack(); } }, el('option', { value: '' }, '—'),
+            ['ADJ', 'NOUN', 'VERB', 'PART', 'ADV'].map((t) => { const o = el('option', { value: t }, t); if (bp[i] === t) o.selected = true; return o; }))),
+          el('td', { class: 'small' }, bp[i] ? (bp[i] === gold ? el('span', { style: { color: 'var(--ok)' } }, `✓ ${why}`) : el('span', { style: { color: 'var(--bad)' } }, '✗ try again')) : ''))));
+    }
+
+    /* ---------- baseline ---------- */
+    const LEX = {
+      janet: { PROPN: 12 }, will: { AUX: 95, NOUN: 4, VERB: 1 }, back: { ADV: 40, NOUN: 25, VERB: 20, ADJ: 10, PART: 5 }, the: { DET: 600 }, bill: { NOUN: 30, VERB: 3 },
+      book: { NOUN: 80, VERB: 20 }, that: { SCONJ: 50, DET: 45, PRON: 40 }, flight: { NOUN: 25 }, hand: { NOUN: 60, VERB: 15 }, me: { PRON: 90 },
+      there: { PRON: 55, ADV: 45 }, were: { AUX: 60, VERB: 40 }, children: { NOUN: 20 }, '.': { PUNCT: 900 }, findings: { NOUN: 8 }, reported: { VERB: 18 },
+      in: { ADP: 400 }, today: { NOUN: 12, ADV: 10 }, "'s": { PART: 70, AUX: 30 }, new: { ADJ: 80, PROPN: 20 }, england: { PROPN: 10 }, journal: { NOUN: 6, PROPN: 4 },
+      of: { ADP: 500 }, medicine: { NOUN: 7 }, i: { PRON: 300 }, thought: { VERB: 30, NOUN: 12 }, you: { PRON: 200 }, might: { AUX: 40, NOUN: 2 },
+      like: { VERB: 50, ADP: 45, SCONJ: 5 }, some: { DET: 90 }, milk: { NOUN: 10 },
+    };
+    const best = (w) => { const e = LEX[w.toLowerCase()]; if (!e) return null; return Object.entries(e).sort((a, b) => b[1] - a[1])[0][0]; };
+    const can = (w, t) => !!(LEX[w.toLowerCase()] || {})[t];
+    function tagBaseline(words, useCtx) {
+      const out = words.map((w) => best(w) || (/\d/.test(w) ? 'NUM' : /^[A-Z]/.test(w) ? 'PROPN' : 'NOUN'));
+      if (!useCtx) return out;
+      for (let i = 0; i < words.length; i++) {
+        if (i > 0 && out[i - 1] === 'AUX' && can(words[i], 'VERB')) out[i] = 'VERB';
+        if (i > 0 && out[i - 1] === 'DET' && out[i] === 'VERB' && can(words[i], 'NOUN')) out[i] = 'NOUN';
+        if (i === 0 && can(words[0], 'VERB') && words.length > 1 && (best(words[1]) === 'DET' || can(words[1], 'DET') || best(words[1]) === 'PRON')) out[0] = 'VERB';
+        if (i > 0 && (out[i] === 'SCONJ' || out[i] === 'PRON') && can(words[i], 'DET') && i + 1 < words.length && best(words[i + 1]) === 'NOUN') out[i] = 'DET';
+      }
+      return out;
+    }
+    function renderBase() {
+      const useCtx = $('#ctx').checked;
+      let right = 0, total = 0;
+      const rows = SENTS.map(([text, gold]) => {
+        const w = text.split(' '), g = gold.split(' '), b = tagBaseline(w, useCtx);
+        w.forEach((_, i) => { total++; if (b[i] === g[i]) right++; });
+        return [el('tr', {}, w.map((x) => el('td', {}, x))), el('tr', {}, b.map((t, i) => el('td', { class: b[i] === g[i] ? 'ok' : 'no', title: `gold: ${g[i]}` }, t))),
+          el('tr', {}, el('td', { colspan: w.length, style: { border: 'none', height: '6px' } }))];
+      });
+      fill($('#base'), rows);
+      fill($('#baseNote'), el('div', { class: 'callout ' + (useCtx ? 'ok' : 'warn') },
+        el('b', {}, `${right}/${total} = ${((right / total) * 100).toFixed(0)}% correct. `),
+        useCtx ? 'Neighbor information fixes most ambiguous words — exactly what HMMs and CRFs learn statistically from tagged data, instead of hand-written rules.'
+          : 'The baseline gets all unambiguous words right but fails on "back the bill", "Book that flight" and other context-dependent words (red; hover for the gold tag). These sentences are packed with ambiguity, so it scores lower than its ~92% on normal text.'));
+      fill($('#lex'), el('tr', {}, el('th', {}, 'word'), el('th', {}, 'tag counts'), el('th', {}, 'most frequent')),
+        Object.entries(LEX).map(([w, e]) => el('tr', {}, el('td', { class: 'mono' }, w), el('td', { class: 'small' }, Object.entries(e).map(([t, n]) => `${t} ${n}`).join(' · ')), el('td', { class: 'mono' }, best(w)))));
+    }
+    $('#ctx').onchange = renderBase;
+
+    /* ---------- word shape ---------- */
+    function shape() {
+      const w = $('#shape').value.trim();
+      const clues = [];
+      if (/^un[a-z]{3,}/.test(w)) clues.push(['prefix un-', 'ADJ', 'unable, unhappy']);
+      if (/ly$/.test(w)) clues.push(['suffix -ly', 'ADV', 'importantly, slowly']);
+      if (/ing$/.test(w)) clues.push(['suffix -ing', 'VERB', 'running (or NOUN: "His pacing…")']);
+      if (/ed$/.test(w)) clues.push(['suffix -ed', 'VERB', 'reported, walked']);
+      if (/(tion|ness|ment|ity)$/.test(w)) clues.push(['suffix -tion/-ness/-ment/-ity', 'NOUN', 'happiness, government']);
+      if (/(ous|ful|able|ible|al|ive)$/.test(w) && !/ly$/.test(w)) clues.push(['suffix -ous/-ful/-able/-al/-ive', 'ADJ', 'famous, careful']);
+      if (/^\p{Lu}/u.test(w)) clues.push(['Capitalized', 'PROPN', 'Janet (unless sentence-initial)']);
+      if (/\d/.test(w)) clues.push(['contains a digit', 'NUM', '70, 3pm']);
+      if (/-/.test(w)) clues.push(['hyphen', 'ADJ', 'twenty-one, state-of-the-art']);
+      fill($('#shapeOut'), clues.length
+        ? el('table', { class: 't' }, el('tr', {}, el('th', {}, 'clue'), el('th', {}, 'suggests'), el('th', {}, 'e.g.')), clues.map(([c, t, e]) => el('tr', {}, el('td', {}, c), el('td', { class: 'mono' }, t), el('td', { class: 'small' }, e))))
+        : el('div', { class: 'callout' }, 'No shape clue — for an unknown word the baseline falls back to NOUN (the most common open class).'));
+    }
+    $('#shape').addEventListener('input', shape);
+
+    fill($('#ud'), el('tr', {}, el('th', {}, 'tag'), el('th', {}, 'meaning'), el('th', {}, 'examples'), el('th', {}, 'class')),
+      UD.map(([t, m, e, c]) => el('tr', {}, el('td', { class: 'mono' }, t), el('td', {}, m), el('td', { class: 'small' }, e), el('td', { class: 'small', style: { color: c === 'open' ? 'var(--ok)' : c === 'closed' ? 'var(--accent)' : 'var(--muted)' } }, c))));
+    renderSent(false); renderBack(); renderBase(); shape();
+  </script>
+</body>
+</html>
