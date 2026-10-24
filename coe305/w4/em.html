@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EM: Soft Clustering · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .phase { font-family: var(--mono); font-weight: 700; padding: 4px 10px; border-radius: 8px; display: inline-block; background: var(--panel-2); }
+    #plot { cursor: pointer; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="4" data-title="EM: Soft Clustering" data-activity="w4-em">
+  <main>
+    <h1>EM: Soft Clustering</h1>
+    <p class="lead">Like k-means, <b>but soft</b>: each element belongs to <i>every</i> cluster with some probability. Clusters are Gaussians (μᵢ, σᵢ²). The <b>E-step</b> computes those probabilities; the <b>M-step</b> re-fits each Gaussian to the elements, weighted by them.</p>
+
+    <div class="panel">
+      <div class="row">
+        <span class="small muted">Data:</span>
+        <button class="chip" data-p="sep">Two clear groups</button>
+        <button class="chip" data-p="overlap">Overlapping groups</button>
+        <button class="chip" data-p="three">Three groups</button>
+        <label>k <select id="k"><option>2</option><option>3</option></select></label>
+        <button id="init">Random Gaussians</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="E">E-step</button>
+        <button id="M">M-step</button>
+        <button class="primary" id="run">Run to convergence</button>
+        <label><input type="checkbox" id="hard"> show k-means-style hard assignment</label>
+        <span id="phase"></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <svg id="plot"></svg>
+      <p class="small muted">Curves: πᵢ·N(x | μᵢ, σᵢ²) for each cluster; dashed = their sum. Each bar under the axis is one element, split by its probabilities. Click near an element to inspect it.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">Parameters</h3>
+        <table class="t" id="params"></table>
+        <div class="stats" id="stats" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0" id="inspH">Inspect an element</h3>
+        <div id="insp"><p class="muted small">Click an element on the plot.</p></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">The two steps</h3>
+      <table class="t">
+        <tr><th>Step</th><th>What it does</th><th>Formula (1-D)</th></tr>
+        <tr><td>E (expectation)</td><td>For each cluster, how much does each element seem to belong to it?</td><td class="mono small">γᵢᵗ = πᵢ N(xᵗ | μᵢ, σᵢ²) / Σⱼ πⱼ N(xᵗ | μⱼ, σⱼ²)</td></tr>
+        <tr><td>M (maximization)</td><td>Adjust each (μᵢ, σᵢ²) to fit the elements, weighted by γ</td><td class="mono small">μᵢ = Σₜ γᵢᵗxᵗ / Σₜ γᵢᵗ, σᵢ² = Σₜ γᵢᵗ(xᵗ − μᵢ)² / Σₜ γᵢᵗ, πᵢ = Σₜ γᵢᵗ / N</td></tr>
+      </table>
+      <p class="muted small">Replace γ by 0/1 (nearest center wins) and drop σ, and the M-step becomes exactly k-means' update mᵢ = Σₜ bᵢᵗxᵗ / Σₜ bᵢᵗ.</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const GEN = {
+      sep: (r) => [...Array.from({ length: 30 }, () => 2.5 + 0.8 * ML.gauss(r)), ...Array.from({ length: 30 }, () => 7 + 0.9 * ML.gauss(r))],
+      overlap: (r) => [...Array.from({ length: 35 }, () => 4 + 1.1 * ML.gauss(r)), ...Array.from({ length: 25 }, () => 6.2 + 0.8 * ML.gauss(r))],
+      three: (r) => [...Array.from({ length: 22 }, () => 1.8 + 0.6 * ML.gauss(r)), ...Array.from({ length: 22 }, () => 5 + 0.7 * ML.gauss(r)), ...Array.from({ length: 22 }, () => 8.3 + 0.6 * ML.gauss(r))],
+    };
+    let X = [], G = [], gam = [], phase = '', iter = 0, sel = null, initSeed = 3, lastLL = null;
+    const N = (x, m, v) => Math.exp(-((x - m) ** 2) / (2 * v)) / Math.sqrt(2 * Math.PI * v);
+    function init() {
+      const k = +$('#k').value, r = ML.rng(initSeed++);
+      G = Array.from({ length: k }, () => ({ mu: 1 + r() * 8, v: 1.5 + r() * 2, pi: 1 / k }));
+      gam = []; phase = 'start'; iter = 0; lastLL = null; draw();
+    }
+    const ll = () => ML.sum(X.map((x) => Math.log(ML.sum(G.map((g) => g.pi * N(x, g.mu, g.v))) || 1e-300)));
+    function Estep() {
+      gam = X.map((x) => { const p = G.map((g) => g.pi * N(x, g.mu, g.v)), s = ML.sum(p) || 1; return p.map((v) => v / s); });
+      phase = 'E';
+    }
+    function Mstep() {
+      if (!gam.length) Estep();
+      G = G.map((g, i) => {
+        const w = gam.map((q) => q[i]), sw = ML.sum(w) || 1e-9;
+        const mu = ML.sum(X.map((x, t) => w[t] * x)) / sw;
+        const v = Math.max(0.05, ML.sum(X.map((x, t) => w[t] * (x - mu) ** 2)) / sw);
+        return { mu, v, pi: sw / X.length };
+      });
+      phase = 'M'; iter++;
+    }
+    function draw() {
+      const P = Plot($('#plot'), { x: [-1, 11], y: [-0.17, 0.45], w: 900, h: 330, pad: [14, 14, 26, 40] });
+      P.axes({ xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 0.2, 0.4], xlabel: 'x', ylabel: 'density' });
+      G.forEach((g, i) => P.fn((x) => g.pi * N(x, g.mu, g.v), { stroke: ML.COLORS[i], 'stroke-width': 2.5 }, 300));
+      P.fn((x) => ML.sum(G.map((g) => g.pi * N(x, g.mu, g.v))), { stroke: 'var(--muted)', 'stroke-dasharray': '5 4' }, 300);
+      G.forEach((g, i) => { P.seg(g.mu, 0, g.mu, g.pi * N(g.mu, g.mu, g.v), { stroke: ML.COLORS[i], 'stroke-dasharray': '2 3' }); P.text(g.mu, g.pi * N(g.mu, g.mu, g.v) + 0.015, `μ${i + 1}`, { 'text-anchor': 'middle', fill: ML.COLORS[i] }); });
+      const hard = $('#hard').checked;
+      X.forEach((x, t) => {
+        const y0 = -0.025 - (t % 4) * 0.033, hgt = 0.028, px = P.sx(x) - 2.5;
+        let acc = 0;
+        const g = gam[t] || G.map(() => 1 / G.length);
+        const parts = hard && gam[t] ? g.map((_, i) => (i === g.indexOf(Math.max(...g)) ? 1 : 0)) : g;
+        parts.forEach((p, i) => {
+          if (p <= 0) return;
+          P.el('rect', { x: px, y: P.sy(y0 + hgt * (acc + p)), width: 5, height: Math.max(0.5, P.sy(y0) - P.sy(y0 + hgt * p)), fill: gam[t] ? ML.COLORS[i] : 'var(--muted)' });
+          acc += p;
+        });
+        if (sel === t) P.el('rect', { x: px - 2, y: P.sy(y0 + hgt) - 2, width: 9, height: P.sy(y0) - P.sy(y0 + hgt) + 4, fill: 'none', stroke: 'var(--text)', 'stroke-width': 1.5 });
+      });
+      fill($('#phase'), phase === 'E' ? el('span', { class: 'phase' }, 'after E-step: probabilities updated') : phase === 'M' ? el('span', { class: 'phase' }, `after M-step ${iter}: Gaussians re-fitted`) : el('span', { class: 'phase' }, 'random start — run the E-step'));
+      fill($('#params'), el('tr', {}, el('th', {}, 'cluster'), el('th', {}, 'μ'), el('th', {}, 'σ²'), el('th', {}, 'π (weight)'), el('th', {}, 'Σₜ γ (soft count)')),
+        G.map((g, i) => el('tr', {}, el('td', {}, el('span', { class: 'tok', style: { background: ML.COLORS[i], color: '#fff' } }, `G${i + 1}`)), el('td', { class: 'num' }, ML.fmt(g.mu, 3)), el('td', { class: 'num' }, ML.fmt(g.v, 3)), el('td', { class: 'num' }, ML.fmt(g.pi, 3)), el('td', { class: 'num' }, gam.length ? ML.fmt(ML.sum(gam.map((q) => q[i])), 2) : '—'))));
+      const L = ll();
+      const unsure = gam.length ? gam.filter((q) => Math.max(...q) < 0.8).length : 0;
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, iter), el('span', {}, 'EM iterations')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(L, 2)), el('span', {}, 'log-likelihood (↑ every round)')),
+        el('div', { class: 'stat' }, el('b', {}, gam.length ? unsure : '—'), el('span', {}, 'elements with max γ < 0.8')));
+      if (sel != null) inspect();
+    }
+    function inspect() {
+      const x = X[sel], p = G.map((g) => g.pi * N(x, g.mu, g.v)), s = ML.sum(p);
+      $('#inspH').textContent = `Element x = ${ML.fmt(x, 2)}`;
+      fill($('#insp'), el('table', { class: 't' }, el('tr', {}, el('th', {}, 'cluster'), el('th', {}, 'πᵢ·N(x | μᵢ, σᵢ²)'), el('th', {}, 'γ = share')),
+        G.map((g, i) => el('tr', {}, el('td', {}, `G${i + 1}`), el('td', { class: 'num' }, p[i].toExponential(3)), el('td', { class: 'num' }, ML.fmt(p[i] / s, 3))))),
+        el('p', { class: 'small' }, `Soft: this element counts ${G.map((_, i) => `${ML.fmt((100 * p[i]) / s, 1)}% toward G${i + 1}`).join(', ')}. k-means would give it 100% to G${p.indexOf(Math.max(...p)) + 1}.`));
+    }
+    $('#plot').addEventListener('click', (e) => {
+      const svg = $('#plot'), pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+      const q = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const P = { sx: (v) => 40 + ((v + 1) / 12) * (900 - 54) };
+      sel = X.reduce((b, x, t) => (Math.abs(P.sx(x) - q.x) < Math.abs(P.sx(X[b]) - q.x) ? t : b), 0); draw();
+    });
+    $('#E').onclick = () => { Estep(); draw(); };
+    $('#M').onclick = () => { Mstep(); draw(); };
+    $('#run').onclick = async () => {
+      for (let i = 0; i < 80; i++) {
+        Estep(); draw(); await CS.sleep(140); Mstep(); draw(); await CS.sleep(140);
+        const L = ll(); if (lastLL != null && Math.abs(L - lastLL) < 1e-6) break; lastLL = L;
+      }
+      Estep(); draw();
+    };
+    $('#hard').onchange = draw;
+    $('#k').onchange = init;
+    $('#init').onclick = init;
+    $$('[data-p]').forEach((b) => (b.onclick = () => { X = GEN[b.dataset.p](ML.rng(8)); $('#k').value = b.dataset.p === 'three' ? 3 : 2; sel = null; init(); }));
+    X = GEN.sep(ML.rng(8)); init();
+  </script>
+</body>
+</html>

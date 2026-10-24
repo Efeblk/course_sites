@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PCA Lab · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 900px) { .lab { grid-template-columns: 1fr; } }
+    .sl { display: grid; grid-template-columns: 110px 1fr 70px; gap: 8px; align-items: center; margin: 6px 0; }
+    .sl input[type=range] { width: 100%; }
+    .evbar { display: flex; height: 26px; border-radius: 7px; overflow: hidden; font-family: var(--mono); font-size: .8rem; color: #fff; margin: 6px 0; }
+    .evbar div { display: flex; align-items: center; padding: 0 8px; white-space: nowrap; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="3" data-title="PCA Lab" data-activity="w3-pca">
+  <main>
+    <h1>PCA Lab</h1>
+    <p class="lead">PCA asks: <i>along which direction does the data vary the most?</i> Project each (centered) point onto a unit direction w: <code>z = wᵀx</code>. PCA chooses the w that <b>maximizes Var(z)</b>. That direction is PC1; PC2 is perpendicular to it.</p>
+
+    <div class="panel">
+      <div class="row">
+        <span class="small muted">Dataset:</span>
+        <button class="chip" data-p="hw">Height &amp; weight</button>
+        <button class="chip" data-p="units">Unscaled units</button>
+        <button class="chip" data-p="classes">Classes in a low-variance direction</button>
+        <button class="chip" data-p="round">Round blob</button>
+        <label><input type="checkbox" id="std"> standardize each feature first</label>
+      </div>
+      <p class="small muted" id="desc"></p>
+    </div>
+
+    <div class="lab">
+      <div class="panel">
+        <svg id="plane"></svg>
+        <div class="sl"><span>direction of w</span><input type="range" id="th" min="0" max="180" step="0.5" value="20"><code id="thV"></code></div>
+        <div class="row">
+          <button class="primary" id="pc1">Snap to PC1</button>
+          <button id="pc2">Snap to PC2</button>
+          <button class="chip" id="slide7">w = (0.6, 0.8) — slide 7</button>
+        </div>
+        <p class="small muted">The data is already centered at the origin (PCA's first step). Thin lines show each point dropped onto the w axis; the dots on the line are the z values.</p>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Var(z) as w rotates</h3>
+        <svg id="curve"></svg>
+        <div class="stats" id="stats" style="margin-top:10px"></div>
+        <h3>Explained variance ratio</h3>
+        <div class="evbar" id="ev"></div>
+        <p class="small muted" id="evTxt"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1-D view: what survives if we keep only z?</h2>
+      <div id="strips"></div>
+      <div id="msg"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const PRESETS = {
+      hw: { names: ['height (z-scored)', 'weight (z-scored)'], desc: 'Height and weight move together. Slide 7 builds z₁ = 0.6·x₁ + 0.8·x₂ — one "body size" feature instead of two.', gen(r) { return Array.from({ length: 60 }, () => { const s = ML.gauss(r); return { x: [0.8 * s + 0.35 * ML.gauss(r), 0.9 * s + 0.35 * ML.gauss(r)] }; }); } },
+      units: { names: ['income (×1000 TL)', 'GPA'], desc: 'Income spreads over tens of units, GPA over about one. Without scaling, PC1 is simply "income" — PCA is variance-based, so units decide. Tick "standardize" to fix it (Project Task 3: scale before PCA).', gen(r) { return Array.from({ length: 60 }, () => { const s = ML.gauss(r); return { x: [12 + 6 * s + 3 * ML.gauss(r), 2.9 + 0.35 * ML.gauss(r) + 0.1 * s] }; }); } },
+      classes: { names: ['x₁', 'x₂'], desc: 'Two classes (colors) are long and parallel. They differ along the short direction. PCA never looks at labels, so PC1 runs along the classes and mixes them.', gen(r) { return Array.from({ length: 70 }, (_, i) => { const y = i % 2, t = ML.gauss(r) * 1.6; return { y, x: [0.8 * t - (y ? 0.32 : -0.32) * 0.6 + 0.12 * ML.gauss(r), 0.6 * t + (y ? 0.32 : -0.32) * 0.8 + 0.12 * ML.gauss(r)] }; }); } },
+      round: { names: ['x₁', 'x₂'], desc: 'No direction is special: every w keeps about half the variance. PCA can\'t compress this data without losing information.', gen(r) { return Array.from({ length: 60 }, () => ({ x: [ML.gauss(r) * 0.8, ML.gauss(r) * 0.8] })); } },
+    };
+    let preset = 'hw', X = [];
+    function load() {
+      const p = PRESETS[preset], raw = p.gen(ML.rng(9));
+      const m = [0, 1].map((j) => ML.mean(raw.map((d) => d.x[j])));
+      const s = [0, 1].map((j) => ML.std(raw.map((d) => d.x[j])));
+      X = raw.map((d) => ({ ...d, x: d.x.map((v, j) => (v - m[j]) / ($('#std').checked ? s[j] : 1)) }));
+      $('#desc').textContent = p.desc + ($('#std').checked ? ' (standardized: every feature now has variance 1.)' : '');
+    }
+    function cov() {
+      const a = ML.mean(X.map((d) => d.x[0] ** 2)), c = ML.mean(X.map((d) => d.x[1] ** 2)), b = ML.mean(X.map((d) => d.x[0] * d.x[1]));
+      const tr = a + c, disc = Math.sqrt(((a - c) / 2) ** 2 + b * b);
+      return { a, b, c, l1: tr / 2 + disc, l2: tr / 2 - disc, ang: (0.5 * Math.atan2(2 * b, a - c) * 180) / Math.PI };
+    }
+    const varAt = (C, deg) => { const t = (deg * Math.PI) / 180, u = Math.cos(t), v = Math.sin(t); return C.a * u * u + 2 * C.b * u * v + C.c * v * v; };
+    const pc1Deg = (C) => ((C.ang % 180) + 180) % 180;
+
+    function render() {
+      const th = +$('#th').value; $('#thV').textContent = th.toFixed(1) + '°';
+      const t = (th * Math.PI) / 180, w = [Math.cos(t), Math.sin(t)];
+      const C = cov(), total = C.a + C.c, v = varAt(C, th);
+      const R = 1.15 * Math.max(...X.flatMap((d) => d.x.map(Math.abs)));
+      const names = PRESETS[preset].names;
+      const P = Plot($('#plane'), { x: [-R, R], y: [-R, R], w: 440, h: 440, pad: [12, 12, 24, 24] });
+      P.axes({ xticks: [], yticks: [], grid: false });
+      P.seg(-R, 0, R, 0, { stroke: 'var(--line)' }); P.seg(0, -R, 0, R, { stroke: 'var(--line)' });
+      P.text(R * 0.98, R * 0.04, names[0], { 'text-anchor': 'end' }); P.text(R * 0.03, R * 0.93, names[1]);
+      const p1 = (pc1Deg(C) * Math.PI) / 180;
+      P.seg(-R * Math.cos(p1), -R * Math.sin(p1), R * Math.cos(p1), R * Math.sin(p1), { stroke: 'var(--accent-2)', 'stroke-dasharray': '4 4', opacity: 0.6 });
+      P.seg(-R * w[0], -R * w[1], R * w[0], R * w[1], { stroke: 'var(--warn)', 'stroke-width': 2 });
+      for (const d of X) {
+        const z = d.x[0] * w[0] + d.x[1] * w[1];
+        P.seg(d.x[0], d.x[1], z * w[0], z * w[1], { stroke: 'var(--muted)', 'stroke-width': 0.6, opacity: 0.5 });
+      }
+      for (const d of X) {
+        const z = d.x[0] * w[0] + d.x[1] * w[1], col = d.y == null ? 'var(--accent)' : d.y ? 'var(--ok)' : 'var(--bad)';
+        P.dot(d.x[0], d.x[1], { r: 3.5, fill: col });
+        P.dot(z * w[0], z * w[1], { r: 2.5, fill: 'var(--warn)' });
+      }
+      P.el('line', { x1: P.sx(0), y1: P.sy(0), x2: P.sx(w[0] * R * 0.35), y2: P.sy(w[1] * R * 0.35), stroke: 'var(--warn)', 'stroke-width': 4 });
+      P.text(w[0] * R * 0.4, w[1] * R * 0.4, 'w', { fill: 'var(--warn)', style: 'font-size:14px;font-weight:700' });
+
+      const vmax = C.l1 * 1.1;
+      const Q = Plot($('#curve'), { x: [0, 180], y: [0, vmax], w: 460, h: 220 });
+      Q.axes({ xticks: [0, 45, 90, 135, 180], yticks: [0, +(C.l1 / 2).toPrecision(2), +C.l1.toPrecision(2)], xlabel: 'angle of w (°)', ylabel: 'Var(z)' });
+      Q.fn((d) => varAt(C, d), { stroke: 'var(--accent)' });
+      Q.seg(pc1Deg(C), 0, pc1Deg(C), C.l1, { stroke: 'var(--accent-2)', 'stroke-dasharray': '4 4' });
+      Q.text(pc1Deg(C) + 2, C.l1 * 1.03, 'PC1', { fill: 'var(--accent-2)' });
+      Q.dot(th, v, { r: 6, fill: 'var(--warn)' });
+
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, `(${ML.fmt(w[0], 2)}, ${ML.fmt(w[1], 2)})`), el('span', {}, 'w (unit length)')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(v, 3)), el('span', {}, 'Var(z) kept')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt((100 * v) / total, 1) + '%'), el('span', {}, 'of total variance')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(total - v, 3)), el('span', {}, 'lost (perpendicular)')));
+      const r1 = C.l1 / total;
+      fill($('#ev'), el('div', { style: { flex: r1, background: 'var(--accent-2)' } }, `PC1 ${ML.fmt(100 * r1, 1)}%`), el('div', { style: { flex: 1 - r1, background: 'var(--accent)' } }, `PC2 ${ML.fmt(100 * (1 - r1), 1)}%`));
+      $('#evTxt').textContent = `This is sklearn's explained_variance_ratio_ = [${ML.fmt(r1, 3)}, ${ML.fmt(1 - r1, 3)}]. Keeping only PC1 reduces d = 2 → k = 1 and keeps ${ML.fmt(100 * r1, 1)}% of the variance.`;
+
+      /* 1-D strips: the current w and its perpendicular */
+      const strip = (dir, label) => {
+        const zs = X.map((d) => d.x[0] * dir[0] + d.x[1] * dir[1]);
+        const S = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const Pz = Plot(S, { x: [-R, R], y: [0, 1], w: 900, h: 54, pad: [6, 10, 18, 10] });
+        Pz.seg(-R, 0.3, R, 0.3, { stroke: 'var(--line)' });
+        X.forEach((d, i) => Pz.dot(zs[i], 0.3 + (d.y == null ? 0.25 : d.y ? 0.45 : 0.1), { r: 3.5, fill: d.y == null ? 'var(--accent)' : d.y ? 'var(--ok)' : 'var(--bad)', opacity: 0.8 }));
+        let acc = null;
+        if (X[0].y != null) {
+          const m1 = ML.mean(zs.filter((_, i) => X[i].y)), m0 = ML.mean(zs.filter((_, i) => !X[i].y));
+          acc = ML.mean(zs.map((z, i) => ((Math.abs(z - m1) < Math.abs(z - m0) ? 1 : 0) === X[i].y ? 1 : 0)));
+        }
+        return el('div', {}, el('div', { class: 'small' }, label, ` — Var = ${ML.fmt(ML.variance(zs), 3)}`, acc != null ? `, nearest-class-mean accuracy on this 1 feature = ${ML.fmt(100 * acc, 0)}%` : ''), S);
+      };
+      fill($('#strips'), strip(w, 'z along w (orange)'), strip([-w[1], w[0]], 'along the perpendicular direction'));
+      fill($('#msg'), preset === 'classes'
+        ? el('div', { class: 'callout warn' }, 'Snap to PC1 and look at the accuracy: the max-variance direction mixes the classes, while the low-variance PC2 separates them. "Does retaining high variance guarantee better classification?" — no. LDA, which uses the labels, would pick the separating direction.')
+        : preset === 'units' && !$('#std').checked
+          ? el('div', { class: 'callout warn' }, `PC1 ≈ the income axis (angle ${ML.fmt(pc1Deg(C), 1)}°) only because income has bigger numbers. Standardize and the answer changes.`)
+          : null);
+    }
+    $$('[data-p]').forEach((b) => (b.onclick = () => { preset = b.dataset.p; $('#std').checked = preset === 'hw'; load(); render(); }));
+    $('#std').onchange = () => { load(); render(); };
+    $('#th').addEventListener('input', render);
+    $('#pc1').onclick = () => { $('#th').value = pc1Deg(cov()); render(); };
+    $('#pc2').onclick = () => { $('#th').value = (pc1Deg(cov()) + 90) % 180; render(); };
+    $('#slide7').onclick = () => { $('#th').value = (Math.atan2(0.8, 0.6) * 180) / Math.PI; render(); };
+    $('#std').checked = true; load(); render();
+  </script>
+</body>
+</html>

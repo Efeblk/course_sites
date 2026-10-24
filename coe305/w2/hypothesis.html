@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Family Car Hypothesis Lab · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+    @media (max-width: 900px) { .lab { grid-template-columns: 1fr; } }
+    #plane { cursor: crosshair; touch-action: none; }
+    .ok { color: var(--ok); } .bad { color: var(--bad); }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="2" data-title="Family Car Hypothesis Lab" data-activity="w2-hypothesis">
+  <main>
+    <h1>Family Car Hypothesis Lab</h1>
+    <p class="lead">Is car x a family car? Inputs x₁ = price, x₂ = engine power. Our hypothesis class H is <b>axis-aligned rectangles</b>: <code>h(x) = 1</code> inside, 0 outside. The error <code>E(h | X) = Σₜ 1(h(xᵗ) ≠ rᵗ)</code> counts mistakes.</p>
+
+    <div class="lab">
+      <div class="panel">
+        <svg id="plane"></svg>
+        <p class="small muted"><b>Drag</b> on the plot to draw your rectangle h. ⊕ = family car (r = 1), ⊖ = not (r = 0). Mistakes are circled.</p>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="row">
+            <span class="small muted">Data:</span>
+            <button class="chip" id="dSlide">Slide cars A–E</button>
+            <button class="chip" id="dBig">Bigger training set</button>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <label><input type="checkbox" id="showS"> S</label>
+            <label><input type="checkbox" id="showG"> G</label>
+            <label><input type="checkbox" id="showC"> true class C</label>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button id="useS">h = S</button>
+            <button id="useG">h = G</button>
+            <button class="primary" id="useM">h = largest margin</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="stats" id="stats"></div>
+          <div id="msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Error table</h2>
+      <div style="overflow-x:auto"><table class="t" id="tbl"></table></div>
+      <div id="note"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const BOX = { x: [60, 240], y: [500, 3500] };
+    const TRUE_C = [105, 1050, 178, 2050];
+    const SLIDE = [['A', 100, 1000, 0], ['B', 120, 1400, 1], ['C', 200, 3000, 0], ['D', 130, 1200, 1], ['E', 140, 2400, 0]];
+    function bigSet() {
+      const r = ML.rng(11), out = [...SLIDE];
+      let k = 0;
+      while (out.length < 34) {
+        const p = 70 + r() * 160, e = 600 + r() * 2800;
+        const inC = p > TRUE_C[0] && p < TRUE_C[2] && e > TRUE_C[1] && e < TRUE_C[3];
+        const nearEdge = Math.min(Math.abs(p - TRUE_C[0]), Math.abs(p - TRUE_C[2])) < 4 || Math.min(Math.abs(e - TRUE_C[1]), Math.abs(e - TRUE_C[3])) < 40;
+        if (nearEdge) continue;
+        if (inC || r() < 0.55) out.push(['#' + (6 + k++), Math.round(p), Math.round(e / 10) * 10, inC ? 1 : 0]);
+      }
+      return out;
+    }
+    let D = SLIDE, h = [110, 1100, 150, 2000], mode = 'slide';
+
+    const inside = (R, p, e) => p >= R[0] && p <= R[2] && e >= R[1] && e <= R[3];
+    const strictly = (R, p, e) => p > R[0] && p < R[2] && e > R[1] && e < R[3];
+    function S() {
+      const P = D.filter((d) => d[3]);
+      return [Math.min(...P.map((d) => d[1])), Math.min(...P.map((d) => d[2])), Math.max(...P.map((d) => d[1])), Math.max(...P.map((d) => d[2]))];
+    }
+    function G() {
+      /* the largest rectangle that contains S and no negative strictly inside it (G need not be unique) */
+      const s = S(), N = D.filter((d) => !d[3]);
+      const L = [BOX.x[0], ...N.map((d) => d[1]).filter((v) => v < s[0])], R = [BOX.x[1], ...N.map((d) => d[1]).filter((v) => v > s[2])];
+      const B = [BOX.y[0], ...N.map((d) => d[2]).filter((v) => v < s[1])], T = [BOX.y[1], ...N.map((d) => d[2]).filter((v) => v > s[3])];
+      let best = s, area = -1;
+      for (const l of L) for (const r of R) for (const b of B) for (const t of T) {
+        const c = [l, b, r, t];
+        if (N.some((d) => strictly(c, d[1], d[2]))) continue;
+        const a = ((r - l) / (BOX.x[1] - BOX.x[0])) * ((t - b) / (BOX.y[1] - BOX.y[0]));
+        if (a > area) { area = a; best = c; }
+      }
+      return best;
+    }
+    /* margin in normalized units: smallest distance from any instance to the boundary of h */
+    function margin(R) {
+      const nx = (v) => (v - BOX.x[0]) / (BOX.x[1] - BOX.x[0]), ny = (v) => (v - BOX.y[0]) / (BOX.y[1] - BOX.y[0]);
+      return Math.min(...D.map(([, p, e]) => {
+        const x = nx(p), y = ny(e), x0 = nx(R[0]), x1 = nx(R[2]), y0 = ny(R[1]), y1 = ny(R[3]);
+        if (x >= x0 && x <= x1 && y >= y0 && y <= y1) return Math.min(x - x0, x1 - x, y - y0, y1 - y);
+        const dx = Math.max(x0 - x, 0, x - x1), dy = Math.max(y0 - y, 0, y - y1);
+        return Math.hypot(dx, dy);
+      }));
+    }
+
+    let P;
+    function draw() {
+      P = Plot($('#plane'), { x: BOX.x, y: BOX.y, w: 560, h: 380, pad: [16, 16, 30, 48] });
+      const s = S(), g = G();
+      if ($('#showG').checked) P.rect(g[0], g[1], g[2], g[3], { fill: '#4fd1e0', opacity: 0.18, stroke: '#4fd1e0' });
+      if ($('#showS').checked) P.rect(s[0], s[1], s[2], s[3], { fill: '#4fd1e0', opacity: 0.35, stroke: '#4fd1e0' });
+      if ($('#showC').checked && mode === 'big') P.rect(TRUE_C[0], TRUE_C[1], TRUE_C[2], TRUE_C[3], { fill: 'none', stroke: 'var(--accent-2)', 'stroke-width': 2, 'stroke-dasharray': '6 4' });
+      P.rect(h[0], h[1], h[2], h[3], { fill: 'var(--warn)', opacity: 0.16, stroke: 'var(--warn)', 'stroke-width': 2 });
+      P.axes({ xticks: [60, 100, 140, 180, 220], yticks: [1000, 2000, 3000], xlabel: 'x₁ price (k)', ylabel: 'x₂ engine power' });
+      if ($('#showS').checked) P.text(s[0] + 1, s[3] - 60, 'S', { fill: '#4fd1e0' });
+      if ($('#showG').checked) P.text(g[0] + 1, g[3] - 60, 'G', { fill: '#4fd1e0' });
+      P.text(h[2] - 1, h[3] - 60, 'h', { fill: 'var(--warn)', 'text-anchor': 'end' });
+      let fp = 0, fn = 0;
+      for (const [name, p, e, r] of D) {
+        const pred = inside(h, p, e) ? 1 : 0, wrong = pred !== r;
+        if (wrong) { pred ? fp++ : fn++; P.dot(p, e, { r: 11, fill: 'none', stroke: 'var(--bad)', 'stroke-width': 2 }); }
+        P.dot(p, e, { r: 7, fill: 'var(--bg)', stroke: r ? 'var(--ok)' : 'var(--bad)', 'stroke-width': 2 });
+        P.text(p, e, r ? '+' : '−', { 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: r ? 'var(--ok)' : 'var(--bad)', style: 'font-size:13px;font-weight:700' });
+        if ('ABCDE'.includes(name)) P.text(p + 3, e + 120, name, { style: 'font-size:11px' });
+      }
+      const m = margin(h);
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, fp + fn), el('span', {}, 'E(h | X)')),
+        el('div', { class: 'stat' }, el('b', {}, fp), el('span', {}, 'false positives')),
+        el('div', { class: 'stat' }, el('b', {}, fn), el('span', {}, 'false negatives')),
+        el('div', { class: 'stat' }, el('b', {}, fp + fn ? '—' : ML.fmt(m, 3)), el('span', {}, 'margin (normalized)')));
+      const consistent = fp + fn === 0, inVS = consistent && h[0] <= s[0] && h[1] <= s[1] && h[2] >= s[2] && h[3] >= s[3];
+      fill($('#msg'), el('div', { class: 'callout ' + (consistent ? 'ok' : 'warn') }, consistent
+        ? (inVS ? 'Consistent: zero training errors, so h is in the version space (between S and G). Now push the margin up — the largest-margin h sits halfway between S and G.' : 'Zero errors.')
+        : 'Not consistent. Grow h to catch the missed ⊕ (false negatives) or shrink it to drop the ⊖ inside (false positives).'));
+      fill($('#tbl'),
+        el('tr', {}, ['Car', 'Price', 'E. power', 'Actual r', 'h(x)', 'Correct?'].map((t) => el('th', {}, t))),
+        D.map(([n, p, e, r]) => { const pr = inside(h, p, e) ? 1 : 0; return el('tr', {}, el('td', {}, n), el('td', { class: 'num' }, p + 'k'), el('td', { class: 'num' }, e), el('td', { class: 'c' }, r), el('td', { class: 'c' }, pr), el('td', { class: 'c ' + (pr === r ? 'ok' : 'bad') }, pr === r ? '✓' : '✗')); }));
+      fill($('#note'), mode === 'slide' ? el('div', { class: 'callout' }, 'Slide 6 shows predictions A = 1, B = 1, C = 1, D = 1, E = 0 and counts E = 2 mistakes (A and C). Try to reproduce that with one rectangle — you can\'t: a rectangle that contains A (100k, 1000) and C (200k, 3000) also contains E (140k, 2400). The slide is only a counting exercise. With rectangles, the best you can do is S = the box around B and D.') : null);
+    }
+
+    /* drag to draw h */
+    let start = null;
+    const toData = (e) => {
+      const svg = $('#plane'), pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+      const q = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const [x, y] = P.inv(q.x, q.y);
+      return [Math.min(BOX.x[1], Math.max(BOX.x[0], x)), Math.min(BOX.y[1], Math.max(BOX.y[0], y))];
+    };
+    $('#plane').addEventListener('pointerdown', (e) => { start = toData(e); $('#plane').setPointerCapture(e.pointerId); });
+    $('#plane').addEventListener('pointermove', (e) => {
+      if (!start) return;
+      const [x, y] = toData(e);
+      h = [Math.min(start[0], x), Math.min(start[1], y), Math.max(start[0], x), Math.max(start[1], y)].map(Math.round);
+      draw();
+    });
+    $('#plane').addEventListener('pointerup', () => { start = null; });
+
+    $('#useS').onclick = () => { h = S(); $('#showS').checked = true; draw(); };
+    $('#useG').onclick = () => { h = G(); $('#showG').checked = true; draw(); };
+    $('#useM').onclick = () => { const s = S(), g = G(); h = s.map((v, i) => (v + g[i]) / 2); $('#showS').checked = $('#showG').checked = true; draw(); };
+    ['showS', 'showG', 'showC'].forEach((id) => ($('#' + id).onchange = draw));
+    $('#dSlide').onclick = () => { D = SLIDE; mode = 'slide'; h = [110, 1100, 150, 2000]; draw(); };
+    $('#dBig').onclick = () => { D = bigSet(); mode = 'big'; h = [90, 900, 200, 2600]; draw(); };
+    draw();
+  </script>
+</body>
+</html>

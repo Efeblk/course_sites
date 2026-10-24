@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>K-Fold Cross-Validation · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .strip { display: flex; flex-wrap: wrap; gap: 3px; margin: 8px 0; }
+    .strip span { width: 16px; height: 22px; border-radius: 4px; display: inline-block; opacity: .45; }
+    .strip span.val { opacity: 1; outline: 2px solid var(--text); }
+    .split { display: flex; height: 34px; border-radius: 8px; overflow: hidden; font-size: .85rem; font-weight: 600; color: #fff; }
+    .split div { display: flex; align-items: center; justify-content: center; }
+    .bars { display: flex; align-items: flex-end; gap: 6px; height: 140px; border-bottom: 1px solid var(--line); padding: 0 4px; }
+    .bars div { flex: 1; background: var(--accent); border-radius: 4px 4px 0 0; position: relative; min-width: 10px; }
+    .bars div.cur { background: var(--warn); }
+    .bars div small { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: .7rem; color: var(--muted); white-space: nowrap; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="2" data-title="K-Fold Cross-Validation" data-activity="w2-crossval">
+  <main>
+    <h1>K-Fold Cross-Validation</h1>
+    <p class="lead">To estimate generalization error we need data the model has not seen. With plenty of data: training 50%, validation 25%, test 25%. With little data we <b>resample</b>: split into K folds, train on K − 1, validate on the one left out, rotate, and <b>average</b>.</p>
+
+    <div class="panel">
+      <h3 style="margin-top:0">The slide's split</h3>
+      <div class="split"><div style="flex:2;background:var(--accent)">Training 50% — fit θ</div><div style="flex:1;background:var(--warn)">Validation 25% — choose model</div><div style="flex:1;background:var(--bad)">Test 25% — report once</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="row">
+        <label>K <select id="K"><option>2</option><option>3</option><option selected>5</option><option>10</option><option value="0">N (leave-one-out)</option></select></label>
+        <label>data size N <input type="number" id="N" min="20" max="200" value="60" class="n"></label>
+        <label>model: k-NN with k = <select id="knn"><option>1</option><option>3</option><option selected>5</option><option>15</option></select></label>
+        <button id="step">Next fold ▶</button>
+        <button class="primary" id="all">Run all folds</button>
+        <button class="chip" id="shuffle">Reshuffle</button>
+      </div>
+      <p class="small muted">Each square is one example in shuffled order, colored by fold. The outlined fold is the validation set right now.</p>
+      <div class="strip" id="strip"></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0" id="foldH"></h3>
+        <svg id="plot"></svg>
+        <p class="small muted">Faded = training folds. Bold = validation fold; ✗ = misclassified by k-NN trained on the other folds.</p>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Fold accuracies</h3>
+        <div class="bars" id="bars"></div>
+        <div class="stats" id="stats" style="margin-top:14px"></div>
+        <div id="msg"></div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">Project Task 1: compare K</h3>
+        <p class="small">Same data, same model, K = 3, 5, 10, each repeated with 10 different shuffles.</p>
+        <table class="t" id="cmp"></table>
+        <p class="muted small">Larger K → each model trains on more data (K − 1 of K folds), so the estimate is less pessimistic, but you train K models and each validation fold is smaller (its score is noisier).</p>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">One hold-out split is a gamble</h3>
+        <p class="small">A single 70/30 train/test split, repeated with 40 random seeds. Each dot is the accuracy you would have reported.</p>
+        <svg id="hold"></svg>
+        <div id="holdMsg"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill, shuffle } = CS;
+    let data = [], order = [], fold = 0, done = [], shufSeed = 1;
+    function makeData(N) {
+      const r = ML.rng(21);
+      data = Array.from({ length: N }, (_, i) => {
+        const y = i % 2, cx = y ? 0.6 : -0.6;
+        return { x: [cx + ML.gauss(r) * 0.75, (y ? 0.3 : -0.3) + ML.gauss(r) * 0.75], y };
+      });
+    }
+    function permute(seed) { const r = ML.rng(seed); const idx = data.map((_, i) => i); for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; } return idx; }
+    const Kval = () => (+$('#K').value || data.length);
+    function predict(trainIdx, x) {
+      const k = +$('#knn').value;
+      const nn = trainIdx.map((i) => [ML.dist(data[i].x, x), data[i].y]).sort((a, b) => a[0] - b[0]).slice(0, k);
+      return ML.sum(nn.map((n) => n[1])) * 2 > nn.length ? 1 : 0;
+    }
+    const foldOf = (pos, K, N) => Math.floor((pos * K) / N);
+    function runFold(ord, K, f) {
+      const N = ord.length, val = ord.filter((_, p) => foldOf(p, K, N) === f), tr = ord.filter((_, p) => foldOf(p, K, N) !== f);
+      const pred = val.map((i) => predict(tr, data[i].x));
+      return { val, tr, pred, acc: ML.mean(pred.map((p, j) => (p === data[val[j]].y ? 1 : 0))) };
+    }
+    function cv(K, seed) { const ord = permute(seed); return Array.from({ length: K }, (_, f) => runFold(ord, K, f).acc); }
+
+    function render() {
+      const K = Kval(), N = data.length, cur = runFold(order, K, fold);
+      fill($('#strip'), order.map((i, p) => el('span', { class: foldOf(p, K, N) === fold ? 'val' : '', style: { background: ML.COLORS[foldOf(p, K, N) % ML.COLORS.length] }, title: `example ${i}, fold ${foldOf(p, K, N) + 1}` })));
+      $('#foldH').textContent = `Fold ${fold + 1} of ${K} is the validation set (${cur.val.length} examples; trained on ${cur.tr.length})`;
+      const P = Plot($('#plot'), { x: [-3, 3], y: [-3, 3], w: 460, h: 330 });
+      P.axes({ xticks: [-2, 0, 2], yticks: [-2, 0, 2] });
+      for (const i of cur.tr) P.dot(data[i].x[0], data[i].x[1], { r: 3.5, fill: data[i].y ? 'var(--ok)' : 'var(--bad)', opacity: 0.25 });
+      cur.val.forEach((i, j) => {
+        const d = data[i], wrong = cur.pred[j] !== d.y;
+        P.dot(d.x[0], d.x[1], { r: 5.5, fill: d.y ? 'var(--ok)' : 'var(--bad)', stroke: 'var(--text)', 'stroke-width': 1.5 });
+        if (wrong) P.text(d.x[0], d.x[1] + 0.18, '✗', { 'text-anchor': 'middle', fill: 'var(--text)', style: 'font-size:14px;font-weight:700' });
+      });
+      done[fold] = cur.acc;
+      const accs = done.filter((v) => v != null);
+      fill($('#bars'), Array.from({ length: K }, (_, f) => done[f] == null
+        ? el('div', { style: { height: '2px', background: 'var(--line)' } })
+        : el('div', { class: f === fold ? 'cur' : '', style: { height: `${done[f] * 100}%` } }, K <= 20 ? el('small', {}, ML.fmt(done[f], 2)) : null)));
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, `${accs.length}/${K}`), el('span', {}, 'folds run')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(ML.mean(accs), 3)), el('span', {}, 'mean accuracy')),
+        el('div', { class: 'stat' }, el('b', {}, accs.length > 1 ? ML.fmt(ML.std(accs), 3) : '—'), el('span', {}, 'std over folds')));
+      fill($('#msg'), accs.length === K
+        ? el('div', { class: 'callout ok' }, `Report: accuracy = ${ML.fmt(ML.mean(accs), 3)} ± ${ML.fmt(ML.std(accs), 3)} (${K}-fold CV). Every example was validated exactly once, and ${K} models were trained.`)
+        : el('div', { class: 'callout' }, 'Keep going until every fold has been the validation set once.'));
+    }
+    function reset() { makeData(Math.max(20, Math.min(200, +$('#N').value || 60))); order = permute(shufSeed); fold = 0; done = []; render(); compare(); holdout(); }
+    $('#step').onclick = () => { fold = (fold + 1) % Kval(); render(); };
+    $('#all').onclick = () => { const K = Kval(); for (let f = 0; f < K; f++) done[f] = runFold(order, K, f).acc; render(); };
+    $('#K').onchange = () => { fold = 0; done = []; render(); };
+    $('#knn').onchange = () => { fold = 0; done = []; render(); compare(); holdout(); };
+    $('#N').onchange = reset;
+    $('#shuffle').onclick = () => { shufSeed++; order = permute(shufSeed); fold = 0; done = []; render(); };
+
+    function compare() {
+      fill($('#cmp'), el('tr', {}, ['K', 'models trained', 'train size each', 'mean accuracy', 'std over folds', 'spread of the mean over 10 shuffles'].map((t) => el('th', {}, t))),
+        [3, 5, 10].map((K) => {
+          const runs = Array.from({ length: 10 }, (_, s) => cv(K, 100 + s));
+          const means = runs.map(ML.mean), stds = runs.map(ML.std);
+          return el('tr', {}, el('td', {}, K), el('td', { class: 'num' }, K), el('td', { class: 'num' }, Math.round((data.length * (K - 1)) / K)),
+            el('td', { class: 'num' }, ML.fmt(ML.mean(means), 3)), el('td', { class: 'num' }, ML.fmt(ML.mean(stds), 3)), el('td', { class: 'num' }, `${ML.fmt(Math.min(...means), 3)} – ${ML.fmt(Math.max(...means), 3)}`));
+        }));
+    }
+    function holdout() {
+      const accs = Array.from({ length: 40 }, (_, s) => {
+        const ord = permute(500 + s), cut = Math.round(data.length * 0.7), tr = ord.slice(0, cut), te = ord.slice(cut);
+        return ML.mean(te.map((i) => (predict(tr, data[i].x) === data[i].y ? 1 : 0)));
+      });
+      const P = Plot($('#hold'), { x: [0.4, 1], y: [0, 1], w: 460, h: 140, pad: [10, 16, 30, 16] });
+      P.axes({ xticks: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], yticks: [], xlabel: 'test accuracy' });
+      const seen = {};
+      accs.forEach((a) => { const k = a.toFixed(2); seen[k] = (seen[k] || 0) + 1; P.dot(a, 0.1 + seen[k] * 0.12, { r: 4, fill: 'var(--accent)' }); });
+      fill($('#holdMsg'), el('p', { class: 'small' }, `Lowest ${ML.fmt(Math.min(...accs), 3)}, highest ${ML.fmt(Math.max(...accs), 3)}. Same model, same data — only the split changed. Averaging over folds (and reporting the std) removes most of this luck.`));
+    }
+    reset();
+  </script>
+</body>
+</html>

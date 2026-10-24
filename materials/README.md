@@ -14,6 +14,12 @@ materials/
   COE025/
     slides/      lecture decks (.pptx)
     text/        slide text + speaker notes extracted with python-pptx
+  COE305/
+    slides/      lecture decks 01–05 (.pptx; 04 came as a .rar with two k-means videos)
+    syllabus/    course syllabus PDF
+    projects/    ML_Project_COE305.pdf
+    text/        slide text (zip/XML extraction) + PDF text (PyMuPDF)
+    png/         every slide exported to PNG with PowerPoint (equations are images)
 ```
 
 ## Adding new files
@@ -46,3 +52,15 @@ mostly images (COE025 weeks 1–2); export them to PNG with PowerPoint to read t
 | slides/week3-pro-standalone-lecture.pptx | 36 | Week 3 lecture: counts → NB/LR/SVM → embeddings → CNN/RNN/LSTM → attention/BERT → metrics (detailed notes) |
 | slides/week3-pro-standalone.pptx | 110 | Week 3 extended version with derivations and worked checks |
 | slides/8_POSNER_intro_May_6_2021.pptx | 26 | Jurafsky & Martin: Sequence labeling for POS and NER (placed as Week 4) |
+
+## COE305 inventory (as of 2026-10-24)
+
+| File | Slides | Content |
+|---|---|---|
+| slides/01.pptx | 16 | Week 1 Introduction (Alpaydın ch. 1) |
+| slides/02.pptx | 16 | Week 2 Supervised learning (ch. 2) |
+| slides/03.pptx | 13 | Week 3 Dimensionality reduction: selection vs extraction, PCA |
+| slides/04/04.pptx | 16 | Week 4 Clustering: k-means, EM, hierarchical (+ 2 videos) |
+| slides/05.pptx | 17 | Week 5 Decision trees: entropy on Play Tennis, regression trees, pruning, rules |
+| syllabus/COE305 - Machine Learning.pdf | 4 | Syllabus: 12 weeks, projects 30 / midterm 30 / final 40 |
+| projects/ML_Project_COE305.pdf | 3 | Practical project, 5 tasks, due 2026-11-20 17:00 |

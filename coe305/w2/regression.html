@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Regression &amp; Overfitting · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sl { display: grid; grid-template-columns: 130px 1fr 60px; gap: 8px; align-items: center; margin: 6px 0; }
+    .sl input[type=range] { width: 100%; }
+    #tab input { width: 64px; text-align: right; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="2" data-title="Regression & Overfitting" data-activity="w2-regression">
+  <main>
+    <h1>Regression &amp; Overfitting</h1>
+    <p class="lead">Data comes from <code>rᵗ = f(xᵗ) + ε</code>. We pick a model g from H — here polynomials of degree k — and minimize <code>E(g | X) = (1/N) Σ [rᵗ − g(xᵗ)]²</code> on the training set. The question is how well g does on data it has <b>not</b> seen.</p>
+
+    <div class="panel">
+      <div class="sl"><span>degree k of g</span><input type="range" id="deg" min="0" max="9" value="1"><code id="degV"></code></div>
+      <div class="sl"><span>training size N</span><input type="range" id="N" min="6" max="80" value="10"><code id="NV"></code></div>
+      <div class="sl"><span>noise σ of ε</span><input type="range" id="sig" min="0" max="0.6" step="0.02" value="0.25"><code id="sigV"></code></div>
+      <div class="row">
+        <label><input type="checkbox" id="showF" checked> show true f</label>
+        <label><input type="checkbox" id="showV" checked> show validation points</label>
+        <button class="chip" id="resample">New sample</button>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0" id="fitH"></h3>
+        <svg id="fit"></svg>
+        <p class="small muted">● training (used to fit) · ○ validation (never used to fit) · dashed = the true f.</p>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Error vs complexity c(H)</h3>
+        <svg id="curve"></svg>
+        <div class="stats" id="stats" style="margin-top:10px"></div>
+        <div id="msg"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Slide 12: measure the error yourself</h2>
+      <p class="small">Students' exam scores predicted from study hours and attendance. Edit the predictions and watch MAE and MSE.</p>
+      <div style="overflow-x:auto"><table class="t" id="tab"></table></div>
+      <div class="stats" id="tstats" style="margin-top:10px"></div>
+      <p class="muted small">The signed residuals sum to 0 here, which is why we take |r − ŷ| (MAE) or (r − ŷ)² (MSE). MSE is the loss on slide 11; it punishes one big miss more than several small ones — try changing one prediction to be off by 20.</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const f = (x) => Math.sin(2.6 * x) + 0.3 * x;
+    let seed = 5;
+    function sample(n, s, sig) {
+      const r = ML.rng(s);
+      return Array.from({ length: n }, () => { const x = -1 + 2 * r(); return [x, f(x) + sig * ML.gauss(r)]; });
+    }
+    const fitPoly = (pts, k) => ML.lstsq(pts.map(([x]) => Array.from({ length: k + 1 }, (_, j) => x ** j)), pts.map(([, y]) => y), 1e-10);
+    const evalPoly = (w, x) => w.reduce((s, c, j) => s + c * x ** j, 0);
+    const mse = (w, pts) => ML.mean(pts.map(([x, y]) => (y - evalPoly(w, x)) ** 2));
+
+    function render() {
+      const k = +$('#deg').value, N = +$('#N').value, sig = +$('#sig').value;
+      $('#degV').textContent = k; $('#NV').textContent = N; $('#sigV').textContent = sig.toFixed(2);
+      const train = sample(N, seed, sig), val = sample(60, seed + 1000, sig);
+      const w = fitPoly(train, k);
+      $('#fitH').textContent = k === 0 ? 'g(x) = w₀ (a constant)' : k === 1 ? 'g(x) = w₁x + w₀' : k === 2 ? 'g(x) = w₂x² + w₁x + w₀' : `g(x) = w${k}x^${k} + … + w₁x + w₀`;
+
+      const P = Plot($('#fit'), { x: [-1, 1], y: [-2.2, 2.2], w: 520, h: 300 });
+      P.axes({ xticks: [-1, -0.5, 0, 0.5, 1], yticks: [-2, -1, 0, 1, 2], xlabel: 'x', ylabel: 'r' });
+      if ($('#showF').checked) P.fn(f, { stroke: 'var(--muted)', 'stroke-dasharray': '5 4' });
+      if (w) P.fn((x) => Math.max(-2.2, Math.min(2.2, evalPoly(w, x))), { stroke: 'var(--accent)', 'stroke-width': 2.5 }, 400);
+      if ($('#showV').checked) for (const [x, y] of val) P.dot(x, y, { r: 3.5, fill: 'none', stroke: 'var(--warn)', 'stroke-width': 1.5 });
+      for (const [x, y] of train) P.dot(x, y, { r: 4.5, fill: 'var(--accent-2)' });
+
+      const rows = Array.from({ length: 10 }, (_, d) => { const wd = fitPoly(train, d); return wd ? [d, mse(wd, train), mse(wd, val)] : [d, NaN, NaN]; });
+      const cap = 1.5;
+      const C = Plot($('#curve'), { x: [0, 9], y: [0, cap], w: 520, h: 260 });
+      C.axes({ xticks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], yticks: [0, 0.5, 1, 1.5], xlabel: 'degree k', ylabel: 'MSE' });
+      C.seg(k, 0, k, cap, { stroke: 'var(--muted)', 'stroke-dasharray': '3 3' });
+      const ok = rows.filter((r) => Number.isFinite(r[1]));
+      C.path(ok.map(([d, tr]) => [d, Math.min(cap, tr)]), { stroke: 'var(--accent-2)' });
+      C.path(ok.map(([d, , va]) => [d, Math.min(cap, va)]), { stroke: 'var(--warn)' });
+      ok.forEach(([d, tr, va]) => { C.dot(d, Math.min(cap, tr), { r: 3.5, fill: 'var(--accent-2)' }); C.dot(d, Math.min(cap, va), { r: 3.5, fill: 'var(--warn)' }); });
+      C.text(8.9, Math.min(cap, ok[ok.length - 1][2]) + 0.06, 'validation', { fill: 'var(--warn)', 'text-anchor': 'end' });
+      C.text(8.9, Math.min(cap, ok[ok.length - 1][1]) + 0.06, 'training', { fill: 'var(--accent-2)', 'text-anchor': 'end' });
+
+      const best = ok.reduce((a, b) => (b[2] < a[2] ? b : a));
+      const [, tr, va] = rows[k];
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(tr, 3)), el('span', {}, 'training MSE')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(va, 3)), el('span', {}, 'validation MSE')),
+        el('div', { class: 'stat' }, el('b', {}, best[0]), el('span', {}, 'best degree on validation')),
+        el('div', { class: 'stat' }, el('b', {}, k + 1), el('span', {}, 'parameters')));
+      const verdict = k < best[0] - 1 ? ['warn', `Underfitting: degree ${k} is less complex than f. Both errors are high.`]
+        : k > best[0] + 1 ? ['bad', `Overfitting: training error ${ML.fmt(tr, 3)} keeps falling, but validation error is ${ML.fmt(va, 3)}. The curve is chasing the noise ε.`]
+        : ['ok', 'About right: validation error is near its minimum. This is the model you would choose (on validation data, never the test set).'];
+      fill($('#msg'), el('div', { class: 'callout ' + verdict[0] }, verdict[1]),
+        el('p', { class: 'small muted' }, k + 1 >= N ? `With ${k + 1} parameters and only ${N} points the polynomial can pass through every training point: training error ≈ 0, but that says nothing about new data.` : 'Triple trade-off: raise N and watch the validation curve flatten — more data lets a complex model generalize.'));
+    }
+    ['deg', 'N', 'sig'].forEach((id) => $('#' + id).addEventListener('input', render));
+    ['showF', 'showV'].forEach((id) => ($('#' + id).onchange = render));
+    $('#resample').onclick = () => { seed += 7; render(); };
+
+    /* ---- slide 12 table ---- */
+    const ST = [['A', 2, 40, 50, 55], ['B', 5, 70, 70, 68], ['C', 7, 90, 90, 85], ['D', 3, 55, 60, 65], ['E', 6, 80, 80, 77]];
+    function table() {
+      const res = ST.map(([, , , r, p]) => r - p);
+      fill($('#tab'),
+        el('tr', {}, ['Student', 'Study hours x₁', 'Attendance x₂', 'Actual r', 'Predicted ŷ', 'r − ŷ', '|r − ŷ|', '(r − ŷ)²'].map((t) => el('th', {}, t))),
+        ST.map((row, i) => el('tr', {},
+          el('td', {}, row[0]), el('td', { class: 'num' }, row[1]), el('td', { class: 'num' }, row[2]), el('td', { class: 'num' }, row[3]),
+          el('td', {}, el('input', { type: 'number', value: row[4], onchange: (e) => { ST[i][4] = +e.target.value || 0; table(); } })),
+          el('td', { class: 'num' }, res[i]), el('td', { class: 'num' }, Math.abs(res[i])), el('td', { class: 'num' }, res[i] ** 2))),
+        el('tr', {}, el('th', { colspan: 5 }, 'Sum'), el('td', { class: 'num' }, ML.sum(res)), el('td', { class: 'num' }, ML.sum(res.map(Math.abs))), el('td', { class: 'num' }, ML.sum(res.map((v) => v * v)))));
+      const mae = ML.mean(res.map(Math.abs)), m = ML.mean(res.map((v) => v * v));
+      fill($('#tstats'),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(mae, 2)), el('span', {}, 'MAE = Σ|r − ŷ| / N')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(m, 2)), el('span', {}, 'MSE = Σ(r − ŷ)² / N')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(Math.sqrt(m), 2)), el('span', {}, 'RMSE = √MSE')));
+    }
+    render(); table();
+  </script>
+</body>
+</html>

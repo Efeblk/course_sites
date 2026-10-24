@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Basket Analysis · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    textarea { width: 100%; min-height: 230px; font-family: var(--mono); font-size: .88rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .scroll { overflow-x: auto; }
+    #mat td.cell { cursor: pointer; text-align: center; font-family: var(--mono); }
+    #mat td.cell:hover { outline: 2px solid var(--accent); }
+    #mat td.sel { outline: 2px solid var(--warn); }
+    #mat td.diag { color: var(--muted); }
+    .bk { font-family: var(--mono); font-size: .85rem; padding: 2px 0; }
+    .bk.x { color: var(--accent); } .bk.xy { color: var(--ok); font-weight: 600; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="1" data-title="Basket Analysis" data-activity="w1-basket">
+  <main>
+    <h1>Basket Analysis</h1>
+    <p class="lead">Learning associations (slide 8): <code>P(Y | X)</code> = the probability that somebody who buys X also buys Y. Estimate it from past baskets: <code>P(Y | X) = #baskets with X and Y / #baskets with X</code>.</p>
+
+    <div class="cols">
+      <div class="panel">
+        <div class="row">
+          <span class="small muted">Baskets (one per line, items separated by commas):</span>
+          <button class="chip" id="p1">Computer shop</button>
+          <button class="chip" id="p2">Supermarket</button>
+        </div>
+        <textarea id="txt"></textarea>
+        <p class="small muted" id="info"></p>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">P(Y | X) for every pair</h3>
+        <p class="small">Row = X (already in the basket), column = Y (also bought). Click a cell.</p>
+        <div class="scroll"><table class="t" id="mat"></table></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0" id="ruleH">Rule</h2>
+      <div id="rule"></div>
+      <div class="cols" style="margin-top:10px">
+        <div id="list"></div>
+        <div id="sym"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const PRESETS = {
+      p1: [
+        'computer, mouse, keyboard', 'computer, mouse', 'computer, mouse, monitor', 'computer, mouse, bag', 'computer, mouse, keyboard, monitor',
+        'computer, mouse', 'computer, mouse, headphones', 'computer, bag', 'computer, monitor', 'computer, keyboard',
+        'mouse', 'mouse, mousepad', 'mouse, keyboard', 'mouse, mousepad', 'mouse',
+        'headphones', 'monitor, cable', 'keyboard', 'bag', 'headphones, cable',
+      ].join('\n'),
+      p2: [
+        'bread, milk', 'bread, butter, milk', 'beer, chips', 'beer, chips, diapers', 'diapers, milk, bread',
+        'beer, diapers', 'bread, butter', 'milk, cereal', 'milk, cereal, bread', 'beer, diapers, chips', 'butter, bread, jam', 'milk',
+      ].join('\n'),
+    };
+    let sel = ['computer', 'mouse'];
+    const pct = (v) => (Number.isFinite(v) ? ML.fmt(v, 2) : '—');
+    function parse() {
+      return $('#txt').value.split('\n').map((l) => [...new Set(l.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean))]).filter((b) => b.length);
+    }
+    function render() {
+      const B = parse();
+      const items = [...new Set(B.flat())].sort((a, b) => B.filter((x) => x.includes(b)).length - B.filter((x) => x.includes(a)).length);
+      const n = (...it) => B.filter((b) => it.every((i) => b.includes(i))).length;
+      $('#info').textContent = `${B.length} baskets, ${items.length} products.`;
+      if (!items.includes(sel[0]) || !items.includes(sel[1]) || sel[0] === sel[1]) sel = [items[0], items[1]];
+      fill($('#mat'),
+        el('tr', {}, el('th', {}, 'X ↓  Y →'), items.map((y) => el('th', { class: 'c' }, y))),
+        items.map((x) => el('tr', {}, el('th', {}, `${x} (${n(x)})`), items.map((y) => {
+          if (x === y) return el('td', { class: 'cell diag' }, '·');
+          const p = n(x, y) / n(x);
+          return el('td', { class: 'cell' + (sel[0] === x && sel[1] === y ? ' sel' : ''), style: { background: `color-mix(in srgb, var(--accent) ${Math.round(p * 55)}%, transparent)` }, onclick: () => { sel = [x, y]; render(); } }, pct(p));
+        }))));
+      const [X, Y] = sel, nx = n(X), ny = n(Y), nxy = n(X, Y);
+      $('#ruleH').textContent = `Rule: ${X} → ${Y}`;
+      fill($('#rule'),
+        el('p', { class: 'big' }, `P(${Y} | ${X}) = ${nxy} / ${nx} = ${pct(nxy / nx)}`),
+        el('p', { class: 'small muted' }, `"${Math.round((100 * nxy) / nx)}% of customers who buy ${X} also buy ${Y}." Support of {${X}, ${Y}} = ${nxy}/${B.length} = ${pct(nxy / B.length)} of all baskets.`));
+      fill($('#list'), el('h3', { style: { marginTop: 0 } }, `Baskets with ${X}`),
+        B.filter((b) => b.includes(X)).map((b) => el('div', { class: 'bk ' + (b.includes(Y) ? 'xy' : 'x') }, (b.includes(Y) ? '✓ ' : '· ') + b.join(', '))));
+      fill($('#sym'), el('h3', { style: { marginTop: 0 } }, 'Is it symmetric?'),
+        el('p', {}, `P(${Y} | ${X}) = ${nxy}/${nx} = `, el('b', {}, pct(nxy / nx))),
+        el('p', {}, `P(${X} | ${Y}) = ${nxy}/${ny} = `, el('b', {}, pct(nxy / ny))),
+        el('div', { class: 'callout' + (nx === ny ? '' : ' warn') }, nx === ny
+          ? 'Equal here only because both products appear in the same number of baskets.'
+          : `Different! Both share the numerator ${nxy}, but we divide by how often the condition occurs: ${X} in ${nx} baskets, ${Y} in ${ny}.`),
+        el('button', { class: 'chip', onclick: () => { sel = [Y, X]; render(); } }, 'Swap X and Y'));
+    }
+    $('#txt').addEventListener('input', render);
+    $('#p1').onclick = () => { $('#txt').value = PRESETS.p1; sel = ['computer', 'mouse']; render(); };
+    $('#p2').onclick = () => { $('#txt').value = PRESETS.p2; sel = ['beer', 'diapers']; render(); };
+    $('#txt').value = PRESETS.p1; render();
+  </script>
+</body>
+</html>

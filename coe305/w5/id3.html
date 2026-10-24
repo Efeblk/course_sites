@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ID3 Tree Builder · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 1000px) { .lab { grid-template-columns: 1fr; } }
+    #data td, #data th { padding: 4px 8px; }
+    #data tr.in td { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    #data tr.out td { opacity: .35; }
+    .yes { color: var(--ok); font-weight: 600; } .no { color: var(--bad); font-weight: 600; }
+    .tree ul { list-style: none; padding-left: 22px; margin: 0; border-left: 1px dashed var(--line); }
+    .tree > ul { border-left: 0; padding-left: 0; }
+    .tree li { margin: 6px 0; }
+    .node { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 5px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); cursor: pointer; }
+    .node.focus { outline: 2px solid var(--warn); }
+    .node.leaf { border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+    .node .lbl { font-family: var(--mono); font-size: .85rem; color: var(--muted); }
+    .node.path { outline: 2px solid var(--accent); }
+    tr.pick td { cursor: pointer; }
+    tr.pick:hover td { background: var(--panel-2); }
+    tr.lowest td { background: color-mix(in srgb, var(--ok) 15%, transparent); }
+    .sl { display: grid; grid-template-columns: 70px 1fr 70px; gap: 8px; align-items: center; }
+    .sl input[type=range] { width: 100%; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="5" data-title="ID3 Tree Builder" data-activity="w5-id3">
+  <main>
+    <h1>ID3 Tree Builder</h1>
+    <p class="lead">Greedy tree learning on the slides' Play Tennis data. At each node: if it is <b>pure</b>, make a leaf; otherwise compute, for every attribute, the weighted entropy after the split <code>𝓘′ₘ = Σⱼ (Nₘⱼ / Nₘ) · 𝓘(branch j)</code> and split on the <b>lowest</b> one.</p>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">Entropy 𝓘 = −Σ p log₂ p</h3>
+        <svg id="ent"></svg>
+        <div class="sl"><span>p(yes)</span><input type="range" id="p" min="0" max="1" step="0.01" value="0.64"><code id="pV"></code></div>
+        <p class="small" id="entTxt"></p>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Training examples (slide 6)</h3>
+        <div style="overflow-x:auto"><table class="t" id="data"></table></div>
+        <p class="small muted">Highlighted rows reach the focused node.</p>
+      </div>
+    </div>
+
+    <div class="lab">
+      <div class="panel">
+        <h2 style="margin-top:0">The tree</h2>
+        <div class="row">
+          <button class="primary" id="auto">Auto-build (ID3)</button>
+          <button id="reset">Start over</button>
+          <label><input type="checkbox" id="hint"> show 𝓘′ for every attribute (hints)</label>
+        </div>
+        <div class="tree" id="tree" style="margin-top:12px"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0" id="focusH">Focused node</h2>
+        <div id="focus"></div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">Rules (C4.5Rules style)</h2>
+        <div id="rules"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">Classify a new day</h2>
+        <div class="row" id="newDay"></div>
+        <div id="pred" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const ATTR = ['Outlook', 'Temp.', 'Humidity', 'Wind'];
+    const VALS = [['Sunny', 'Overcast', 'Rain'], ['Hot', 'Mild', 'Cool'], ['High', 'Normal'], ['Weak', 'Strong']];
+    const D = [
+      ['Sunny', 'Hot', 'High', 'Weak', 'No'], ['Sunny', 'Hot', 'High', 'Strong', 'No'], ['Overcast', 'Hot', 'High', 'Weak', 'Yes'], ['Rain', 'Mild', 'High', 'Weak', 'Yes'],
+      ['Rain', 'Cool', 'Normal', 'Weak', 'Yes'], ['Rain', 'Cool', 'Normal', 'Strong', 'No'], ['Overcast', 'Cool', 'Normal', 'Weak', 'Yes'], ['Sunny', 'Mild', 'High', 'Weak', 'No'],
+      ['Sunny', 'Cool', 'Normal', 'Weak', 'Yes'], ['Rain', 'Mild', 'Normal', 'Strong', 'Yes'], ['Sunny', 'Mild', 'Normal', 'Strong', 'Yes'], ['Overcast', 'Mild', 'High', 'Strong', 'Yes'],
+      ['Overcast', 'Hot', 'Normal', 'Weak', 'Yes'], ['Rain', 'Mild', 'High', 'Strong', 'No'],
+    ];
+    const f3 = (v) => v.toFixed(3);
+    const yn = (rows) => [rows.filter((i) => D[i][4] === 'Yes').length, rows.filter((i) => D[i][4] === 'No').length];
+    const H = (rows) => ML.entropy(yn(rows));
+    function splitInfo(rows, a) {
+      const br = VALS[a].map((v) => rows.filter((i) => D[i][a] === v)).filter((b) => b.length);
+      const Ip = ML.sum(br.map((b) => (b.length / rows.length) * H(b)));
+      return { br, Ip, gain: H(rows) - Ip };
+    }
+
+    let root, focus, nextId;
+    function mk(rows, attrs, cond) { return { id: nextId++, rows, attrs, cond, split: null, kids: [] }; }
+    function reset() { nextId = 0; root = mk(D.map((_, i) => i), [0, 1, 2, 3], []); focus = root; render(); }
+    function doSplit(n, a) {
+      n.split = a;
+      n.kids = VALS[a].map((v) => [v, n.rows.filter((i) => D[i][a] === v)]).filter(([, r]) => r.length)
+        .map(([v, r]) => mk(r, n.attrs.filter((x) => x !== a), [...n.cond, [a, v]]));
+    }
+    const isLeaf = (n) => n.split == null;
+    const pure = (n) => H(n.rows) === 0;
+    function bestAttr(n) { return n.attrs.map((a) => [a, splitInfo(n.rows, a).Ip]).reduce((x, y) => (y[1] < x[1] - 1e-12 ? y : x)); }
+    function auto(n) {
+      if (pure(n) || !n.attrs.length) return;
+      const [a, Ip] = bestAttr(n);
+      if (Ip >= H(n.rows) - 1e-12) return; /* no attribute lowers the entropy: stop */
+      doSplit(n, a); n.kids.forEach(auto);
+    }
+    const all = (n) => [n, ...n.kids.flatMap(all)];
+    const majority = (n) => { const [y, no] = yn(n.rows); return y >= no ? 'Yes' : 'No'; };
+
+    function nodeView(n) {
+      const [y, no] = yn(n.rows);
+      const label = n.cond.length ? `${ATTR[n.cond[n.cond.length - 1][0]]} = ${n.cond[n.cond.length - 1][1]}` : 'root';
+      const leaf = isLeaf(n) && (pure(n) || !n.attrs.length);
+      const box = el('div', { class: 'node' + (n === focus ? ' focus' : '') + (leaf ? ' leaf' : '') + (pathIds.has(n.id) ? ' path' : ''), onclick: (e) => { e.stopPropagation(); focus = n; render(); } },
+        el('span', { class: 'lbl' }, label),
+        el('span', {}, el('span', { class: 'yes' }, `${y} yes`), ' / ', el('span', { class: 'no' }, `${no} no`)),
+        el('span', { class: 'small muted' }, `𝓘 = ${f3(H(n.rows))}`),
+        n.split != null ? el('b', {}, `split on ${ATTR[n.split]}`) : leaf ? el('b', { class: majority(n) === 'Yes' ? 'yes' : 'no' }, `→ leaf: ${majority(n)}`) : el('span', { class: 'tag' }, 'not split yet'));
+      return el('li', {}, box, n.kids.length ? el('ul', {}, n.kids.map(nodeView)) : null);
+    }
+
+    let pathIds = new Set();
+    function render() {
+      fill($('#data'), el('tr', {}, ['Day', ...ATTR, 'Play'].map((t) => el('th', {}, t))),
+        D.map((r, i) => el('tr', { class: focus.rows.includes(i) ? 'in' : 'out' }, el('td', {}, 'D' + (i + 1)), r.slice(0, 4).map((v) => el('td', {}, v)), el('td', { class: r[4] === 'Yes' ? 'yes' : 'no' }, r[4]))));
+      fill($('#tree'), el('ul', {}, nodeView(root)));
+      renderFocus(); renderRules(); classify();
+    }
+    function renderFocus() {
+      const n = focus, [y, no] = yn(n.rows), Hn = H(n.rows);
+      $('#focusH').textContent = n.cond.length ? 'Node: ' + n.cond.map(([a, v]) => `${ATTR[a]} = ${v}`).join(' ∧ ') : 'Root node';
+      const head = [
+        el('p', {}, `Nₘ = ${n.rows.length} (${n.rows.map((i) => 'D' + (i + 1)).join(', ')})`),
+        el('p', { class: 'mono small' }, `𝓘ₘ = −(${y}/${n.rows.length})log₂(${y}/${n.rows.length}) − (${no}/${n.rows.length})log₂(${no}/${n.rows.length}) = ${f3(Hn)}`),
+      ];
+      if (Hn === 0) return fill($('#focus'), head, el('div', { class: 'callout ok' }, `Pure node (all ${majority(n)}): generate a leaf and stop.`));
+      if (n.split != null) {
+        const s = splitInfo(n.rows, n.split);
+        return fill($('#focus'), head, el('div', { class: 'callout' }, `Split on ${ATTR[n.split]}: `,
+          el('div', { class: 'mono small', style: { marginTop: '6px' } }, '𝓘′ = ' + s.br.map((b) => { const [a, c] = yn(b); return `(${b.length}/${n.rows.length})·𝓘(${a}+,${c}−)`; }).join(' + ') + ` = ${f3(s.Ip)}`),
+          el('div', { class: 'small' }, `information gain = ${f3(Hn)} − ${f3(s.Ip)} = ${f3(s.gain)}`)),
+          el('button', { onclick: () => { n.split = null; n.kids = []; render(); } }, 'Undo this split'));
+      }
+      if (!n.attrs.length) return fill($('#focus'), head, el('div', { class: 'callout warn' }, `No attributes left but the node is impure: make a leaf with the majority class (${majority(n)}).`));
+      const info = n.attrs.map((a) => [a, splitInfo(n.rows, a)]);
+      const low = Math.min(...info.map(([, s]) => s.Ip));
+      const show = $('#hint').checked;
+      fill($('#focus'), head,
+        el('p', { class: 'small' }, show ? 'Click the attribute to split on. Branch counts are yes/no.' : 'Which attribute gives the purest children? Click one — or tick "hints" to see 𝓘′.'),
+        el('table', { class: 't' }, el('tr', {}, el('th', {}, 'attribute'), el('th', {}, 'branches (yes/no)'), el('th', {}, '𝓘′ after split'), el('th', {}, 'gain')),
+          info.map(([a, s]) => el('tr', { class: 'pick' + (show && Math.abs(s.Ip - low) < 1e-12 ? ' lowest' : ''), onclick: () => choose(n, a, s, low) },
+            el('td', {}, ATTR[a]),
+            el('td', { class: 'small' }, s.br.map((b) => { const [p, q] = yn(b); return `${D[b[0]][a]} ${p}/${q}`; }).join(' · ')),
+            el('td', { class: 'num' }, show ? f3(s.Ip) : '?'), el('td', { class: 'num' }, show ? f3(s.gain) : '?')))),
+        n === root && show ? el('p', { class: 'small muted' }, 'Slide 11 lists Humidity as 0.789 and the gain of Outlook is often quoted as 0.246; both come from rounding the parts first. Unrounded: 0.7885 and 0.9403 − 0.6935 = 0.247.') : null);
+    }
+    function choose(n, a, s, low) {
+      const ok = Math.abs(s.Ip - low) < 1e-12;
+      doSplit(n, a); focus = n.kids.find((k) => !pure(k)) || n; render();
+      $('#focus').prepend(el('div', { class: 'callout ' + (ok ? 'ok' : 'warn') }, ok
+        ? `✓ ${ATTR[a]} has the lowest 𝓘′ (${f3(s.Ip)}). Focus moved to the next impure child.`
+        : `${ATTR[a]} works but isn't the greedy choice: its 𝓘′ = ${f3(s.Ip)}, the lowest was ${f3(low)}. Click the parent and "Undo" to try again.`));
+    }
+    function renderRules() {
+      const leaves = all(root).filter((n) => isLeaf(n));
+      fill($('#rules'), el('table', { class: 't' }, leaves.map((n, k) => {
+        const [y, no] = yn(n.rows);
+        return el('tr', {}, el('td', {}, `R${k + 1}`), el('td', { class: 'mono small' }, `IF ${n.cond.length ? n.cond.map(([a, v]) => `(${ATTR[a]} = ${v})`).join(' AND ') : 'true'} THEN Play = `, el('b', { class: majority(n) === 'Yes' ? 'yes' : 'no' }, majority(n))),
+          el('td', { class: 'small muted' }, `${y + no} day${y + no > 1 ? 's' : ''}${y && no ? ', impure' : ''}`));
+      })), el('p', { class: 'small muted' }, 'One rule per root-to-leaf path. Unsplit impure nodes predict their majority class.'));
+    }
+    const day = ['Sunny', 'Cool', 'High', 'Strong'];
+    function classify() {
+      fill($('#newDay'), ATTR.map((a, j) => el('label', {}, a + ' ', el('select', { onchange: (e) => { day[j] = e.target.value; render(); } }, VALS[j].map((v) => el('option', { selected: v === day[j] }, v))))));
+      let n = root; const path = [n];
+      while (n.split != null) { const k = n.kids.find((c) => c.cond[c.cond.length - 1][1] === day[n.split]); if (!k) break; n = k; path.push(n); }
+      const ids = new Set(path.map((p) => p.id));
+      if ([...ids].join() !== [...pathIds].join()) { pathIds = ids; fill($('#tree'), el('ul', {}, nodeView(root))); }
+      fill($('#pred'), el('p', {}, 'Path: ', path.map((p) => (p.cond.length ? `${ATTR[p.cond[p.cond.length - 1][0]]} = ${p.cond[p.cond.length - 1][1]}` : 'root')).join(' → ')),
+        el('p', { class: 'big' }, 'Prediction: ', el('span', { class: majority(n) === 'Yes' ? 'yes' : 'no' }, majority(n))));
+    }
+
+    function entropyPlot() {
+      const p = +$('#p').value; $('#pV').textContent = p.toFixed(2);
+      const P = Plot($('#ent'), { x: [0, 1], y: [0, 1.05], w: 460, h: 220 });
+      P.axes({ xticks: [0, 0.25, 0.5, 0.75, 1], yticks: [0, 0.5, 1], xlabel: 'p', ylabel: '𝓘 (bits)' });
+      P.fn((q) => ML.entropy([q, 1 - q]), { stroke: 'var(--accent)' });
+      P.dot(9 / 14, ML.entropy([9, 5]), { r: 4, fill: 'var(--accent-2)' }); P.text(9 / 14 + 0.02, ML.entropy([9, 5]) - 0.07, '9/14 → 0.940', { fill: 'var(--accent-2)' });
+      P.dot(p, ML.entropy([p, 1 - p]), { r: 6, fill: 'var(--warn)' });
+      $('#entTxt').textContent = `𝓘 = −${p.toFixed(2)}·log₂ ${p.toFixed(2)} − ${(1 - p).toFixed(2)}·log₂ ${(1 - p).toFixed(2)} = ${f3(ML.entropy([p, 1 - p]))} bits. 0 when pure (p = 0 or 1), maximum 1 at p = 0.5.`;
+    }
+    $('#p').addEventListener('input', entropyPlot);
+    $('#auto').onclick = () => { reset(); auto(root); focus = root; render(); };
+    $('#reset').onclick = reset;
+    $('#hint').onchange = render;
+    entropyPlot(); reset();
+  </script>
+</body>
+</html>

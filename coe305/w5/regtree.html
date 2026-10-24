@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Regression Tree &amp; Pruning · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sl { display: grid; grid-template-columns: 70px 1fr 70px; gap: 8px; align-items: center; margin: 6px 0; }
+    .sl input[type=range] { width: 100%; }
+    .tree ul { list-style: none; padding-left: 22px; margin: 0; border-left: 1px dashed var(--line); }
+    .tree > ul { border-left: 0; padding-left: 0; }
+    .tree li { margin: 5px 0; }
+    .tn { display: inline-block; font-family: var(--mono); font-size: .85rem; padding: 3px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); }
+    .tn.leaf { background: color-mix(in srgb, var(--accent-2) 25%, transparent); border-color: var(--accent-2); }
+    .tn .e { color: var(--muted); font-size: .78rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="5" data-title="Regression Tree & Pruning" data-activity="w5-regtree">
+  <main>
+    <h1>Regression Tree &amp; Pruning</h1>
+    <p class="lead">A regression leaf predicts <code>gₘ</code> = the <b>average r</b> of the instances that reach it. Node error <code>Eₘ = (1/Nₘ) Σₜ (rᵗ − gₘ)²</code>. Split where the error after splitting is smallest, and <b>stop (prepruning) when Eₘ &lt; θᵣ</b>.</p>
+
+    <div class="panel">
+      <div class="row">
+        <span class="small muted">Data:</span>
+        <button class="chip" id="dSlide">Slide 15 points</button>
+        <button class="chip" id="dSine">Noisy curve + test set</button>
+        <span class="small muted">θᵣ presets:</span>
+        <button class="chip" data-t="0.5">0.5</button><button class="chip" data-t="0.2">0.2</button><button class="chip" data-t="0.05">0.05</button><button class="chip" data-t="0.001">≈ 0 (no pruning)</button>
+      </div>
+      <div class="sl"><span>θᵣ</span><input type="range" id="th" min="-3" max="0.3" step="0.01" value="-0.301"><code id="thV"></code></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <svg id="fit"></svg>
+        <div class="stats" id="stats" style="margin-top:10px"></div>
+        <div id="msg"></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">The tree</h3>
+        <div class="tree" id="tree"></div>
+        <h3>Rules</h3>
+        <div id="rules"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="sweepP">
+      <h3 style="margin-top:0">Model selection in trees: error vs θᵣ</h3>
+      <svg id="sweep"></svg>
+      <p class="small muted">Small θᵣ → big tree → training error falls toward 0 but test error rises (variance). Large θᵣ → tiny tree → both errors high (bias). Pick θᵣ on validation data. Postpruning instead grows the full tree and cuts back subtrees that do worse on a separate pruning set (scikit-learn: <code>ccp_alpha</code>, Project Task 5).</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const SLIDE = [[0.4, 1.0], [0.7, 1.3], [0.8, 1.8], [1.9, -1.2], [2.4, -1.5], [3.9, 2.45], [4.1, 1.95], [5.6, 2.1], [5.8, 2.3], [6.1, 1.2], [6.5, 0.6], [7.3, 2.4]];
+    const truth = (x) => 1.4 * Math.sin(1.1 * x) + 0.25 * x;
+    function sine(seed, n) { const r = ML.rng(seed); return Array.from({ length: n }, () => { const x = r() * 8; return [x, truth(x) + 0.45 * ML.gauss(r)]; }).sort((a, b) => a[0] - b[0]); }
+    let train = SLIDE, test = null;
+
+    const err = (pts) => { const g = ML.mean(pts.map((p) => p[1])); return ML.mean(pts.map((p) => (p[1] - g) ** 2)); };
+    function grow(pts, th, depth = 0) {
+      const g = ML.mean(pts.map((p) => p[1])), E = err(pts);
+      const node = { g, E, n: pts.length };
+      if (E < th || pts.length < 2 || depth > 12) return node;
+      const s = [...pts].sort((a, b) => a[0] - b[0]);
+      let best = null;
+      for (let i = 1; i < s.length; i++) {
+        if (s[i][0] === s[i - 1][0]) continue;
+        const L = s.slice(0, i), R = s.slice(i);
+        const Ep = (L.length * err(L) + R.length * err(R)) / s.length;
+        if (!best || Ep < best.Ep) best = { Ep, w: (s[i][0] + s[i - 1][0]) / 2, L, R };
+      }
+      if (!best) return node;
+      return { ...node, w: best.w, Ep: best.Ep, yes: grow(best.L, th, depth + 1), no: grow(best.R, th, depth + 1) };
+    }
+    const predict = (t, x) => (t.w == null ? t.g : predict(x < t.w ? t.yes : t.no, x));
+    const leaves = (t) => (t.w == null ? 1 : leaves(t.yes) + leaves(t.no));
+    const depth = (t) => (t.w == null ? 0 : 1 + Math.max(depth(t.yes), depth(t.no)));
+    const mse = (t, pts) => ML.mean(pts.map(([x, y]) => (y - predict(t, x)) ** 2));
+
+    function view(t) {
+      if (t.w == null) return el('li', {}, el('span', { class: 'tn leaf' }, ML.fmt(t.g, 2), el('span', { class: 'e' }, `  N=${t.n}, E=${ML.fmt(t.E, 3)}`)));
+      return el('li', {}, el('span', { class: 'tn' }, `x < ${t.w.toFixed(2)}`, el('span', { class: 'e' }, `  N=${t.n}, E=${ML.fmt(t.E, 3)} ≥ θᵣ → split`)),
+        el('ul', {}, el('li', { class: 'small muted' }, 'Yes:'), view(t.yes), el('li', { class: 'small muted' }, 'No:'), view(t.no)));
+    }
+    function rules(t, cond = [], out = []) {
+      if (t.w == null) out.push([cond, t.g]);
+      else { rules(t.yes, [...cond, `x < ${t.w.toFixed(2)}`], out); rules(t.no, [...cond, `x ≥ ${t.w.toFixed(2)}`], out); }
+      return out;
+    }
+
+    function render() {
+      const th = 10 ** +$('#th').value; $('#thV').textContent = th < 0.01 ? th.toExponential(1) : th.toFixed(3);
+      const T = grow(train, th);
+      const P = Plot($('#fit'), { x: [0, 8], y: [-2.5, 3.5], w: 520, h: 300 });
+      P.axes({ xticks: [0, 1, 2, 3, 4, 5, 6, 7, 8], yticks: [-2, 0, 2], xlabel: 'x', ylabel: 'r' });
+      const xs = Array.from({ length: 801 }, (_, i) => i / 100);
+      P.path(xs.map((x) => [x, predict(T, x)]), { stroke: 'var(--accent)', 'stroke-width': 2.5 });
+      if (test) for (const [x, y] of test) P.dot(x, y, { r: 3, fill: 'none', stroke: 'var(--warn)', 'stroke-width': 1.3 });
+      for (const [x, y] of train) {
+        P.seg(x - 0.08, y - 0.12, x + 0.08, y + 0.12, { stroke: 'var(--bad)', 'stroke-width': 2.2 });
+        P.seg(x - 0.08, y + 0.12, x + 0.08, y - 0.12, { stroke: 'var(--bad)', 'stroke-width': 2.2 });
+      }
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, leaves(T)), el('span', {}, 'leaves')),
+        el('div', { class: 'stat' }, el('b', {}, depth(T)), el('span', {}, 'depth')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(mse(T, train), 3)), el('span', {}, 'training MSE')),
+        test ? el('div', { class: 'stat' }, el('b', {}, ML.fmt(mse(T, test), 3)), el('span', {}, 'test MSE')) : null);
+      const slideNote = train === SLIDE ? { '0.50': 'θᵣ = 0.5 → 3 leaves (1.37, −1.35, 1.86), the top tree on slide 15.', '0.20': 'θᵣ = 0.2 → 5 leaves (adds splits near x = 5.96 and 6.91), the middle tree.', '0.05': 'θᵣ = 0.05 → 7 leaves (adds splits near x = 0.76 and 6.31), the bottom tree.' }[th.toFixed(2)] : null;
+      fill($('#msg'), slideNote ? el('div', { class: 'callout ok' }, slideNote) : null,
+        el('p', { class: 'small muted' }, '× training points' + (test ? ', ○ test points (never used to grow the tree).' : '. Leaf values are the means of the points in each step.')));
+      fill($('#tree'), el('ul', {}, view(T)));
+      fill($('#rules'), el('table', { class: 't' }, rules(T).map(([c, g], k) => el('tr', {}, el('td', {}, `R${k + 1}`), el('td', { class: 'mono small' }, `IF ${c.join(' AND ') || 'true'} THEN y = ${ML.fmt(g, 2)}`)))));
+      sweep(th);
+    }
+    function sweep(cur) {
+      const ths = Array.from({ length: 67 }, (_, i) => -3 + i * 0.05);
+      const rows = ths.map((l) => { const T = grow(train, 10 ** l); return [l, mse(T, train), test ? mse(T, test) : null, leaves(T)]; });
+      const top = Math.max(...rows.map((r) => Math.max(r[1], r[2] || 0))) * 1.1 || 1;
+      const P = Plot($('#sweep'), { x: [-3, 0.3], y: [0, top], w: 900, h: 240, pad: [14, 40, 30, 46] });
+      P.axes({ xticks: [-3, -2, -1, 0], yticks: [0, +(top / 2).toPrecision(2), +top.toPrecision(2)], xlabel: 'log₁₀ θᵣ', ylabel: 'MSE' });
+      P.path(rows.map((r) => [r[0], r[1]]), { stroke: 'var(--accent-2)' });
+      if (test) P.path(rows.map((r) => [r[0], r[2]]), { stroke: 'var(--warn)' });
+      const maxL = Math.max(...rows.map((r) => r[3]));
+      P.path(rows.map((r) => [r[0], (r[3] / maxL) * top * 0.95]), { stroke: 'var(--muted)', 'stroke-dasharray': '3 3', 'stroke-width': 1.2 });
+      P.seg(Math.log10(cur), 0, Math.log10(cur), top, { stroke: 'var(--text)', 'stroke-dasharray': '2 3' });
+      P.text(-2.95, rows[0][1] + top * 0.04, 'training', { fill: 'var(--accent-2)' });
+      if (test) P.text(-2.95, rows[0][2] + top * 0.04, 'test', { fill: 'var(--warn)' });
+      P.text(0.28, top * 0.95, `leaves (max ${maxL})`, { 'text-anchor': 'end', fill: 'var(--muted)' });
+    }
+    $('#th').addEventListener('input', render);
+    $$('[data-t]').forEach((b) => (b.onclick = () => { $('#th').value = Math.log10(+b.dataset.t); render(); }));
+    $('#dSlide').onclick = () => { train = SLIDE; test = null; render(); };
+    $('#dSine').onclick = () => { train = sine(5, 40); test = sine(99, 120); render(); };
+    render();
+  </script>
+</body>
+</html>

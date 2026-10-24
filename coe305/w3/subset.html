@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Subset Selection · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .cand td { cursor: pointer; }
+    .cand tr:hover td { background: var(--panel-2); }
+    tr.best td { background: color-mix(in srgb, var(--ok) 16%, transparent); }
+    tr.worse td { color: var(--muted); }
+    .fset { display: flex; gap: 6px; flex-wrap: wrap; min-height: 30px; align-items: center; }
+    .bar { height: 10px; background: var(--accent); border-radius: 4px; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="3" data-title="Subset Selection" data-activity="w3-subset">
+  <main>
+    <h1>Subset Selection</h1>
+    <p class="lead">Feature <b>selection</b> keeps k of the d original features. Trying all 2ᵈ subsets is too expensive, so we search greedily using the <b>validation error E</b> of a model trained on each candidate subset (here: least-squares regression predicting the exam score).</p>
+
+    <div class="panel">
+      <h3 style="margin-top:0">The data: 400 students, d = 6 features</h3>
+      <div style="overflow-x:auto"><table class="t" id="preview"></table></div>
+      <p class="small muted">200 students train each model, the other 200 are the validation set that gives E. Two features are irrelevant on purpose and one is redundant — can the search tell?</p>
+      <label>Only accept a change if E improves by more than ε = <input type="number" id="eps" value="0" min="0" step="0.1" class="n"></label>
+      <p class="small muted">The slide's rule is ε = 0. Run both searches, then try ε = 0.5: an irrelevant feature can lower the validation error a tiny bit just by fitting noise.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2 style="margin-top:0">Forward search</h2>
+        <p class="small">F = ∅. Each step add <code>xⱼ = argminᵢ E(F ∪ xᵢ)</code>, but only if <code>E(F ∪ xⱼ) &lt; E(F)</code>. Click a row to add it yourself, or let the algorithm choose.</p>
+        <div class="fset" id="fF"></div>
+        <table class="t cand" id="fT"></table>
+        <div class="row" style="margin-top:8px"><button class="primary" id="fStep">Step</button><button id="fReset">Reset</button></div>
+        <div id="fMsg"></div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">Backward search</h2>
+        <p class="small">Start with all features. Each step remove the feature whose removal gives the lowest E, if E does not get worse.</p>
+        <div class="fset" id="bF"></div>
+        <table class="t cand" id="bT"></table>
+        <div class="row" style="margin-top:8px"><button class="primary" id="bStep">Step</button><button id="bReset">Reset</button></div>
+        <div id="bMsg"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Exhaustive check: all 2⁶ = 64 subsets</h2>
+      <p class="small">Best subset of each size. Greedy search evaluates far fewer subsets — and is not guaranteed to find these.</p>
+      <table class="t" id="ex"></table>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const NAMES = ['Age', 'GPA', 'Attendance', 'Study hours', 'Distance (km)', 'Study minutes'];
+    const NOTES = ['irrelevant', '', '', '', 'irrelevant', 'redundant: ≈ 60 × study hours'];
+    const r = ML.rng(77);
+    const ROWS = Array.from({ length: 400 }, () => {
+      const gpa = Math.min(4, Math.max(1.5, 2.8 + 0.55 * ML.gauss(r)));
+      const att = Math.min(100, Math.max(30, 50 + 12 * gpa + 8 * ML.gauss(r)));
+      const hrs = Math.max(0, 9 + 4 * ML.gauss(r));
+      const x = [Math.round(18 + r() * 8), +gpa.toFixed(2), Math.round(att), +hrs.toFixed(1), Math.round(1 + r() * 30), Math.round(hrs * 60 + 25 * ML.gauss(r))];
+      const y = 5 + 11 * gpa + 0.22 * att + 2.2 * hrs + 5 * ML.gauss(r);
+      return { x, y: Math.round(y) };
+    });
+    const TR = ROWS.slice(0, 200), VA = ROWS.slice(200);
+    const mu = NAMES.map((_, j) => ML.mean(TR.map((d) => d.x[j]))), sd = NAMES.map((_, j) => ML.std(TR.map((d) => d.x[j])));
+    const z = (d, F) => [1, ...F.map((j) => (d.x[j] - mu[j]) / sd[j])];
+    const cache = {};
+    function E(F) {
+      const key = [...F].sort().join(',');
+      if (key in cache) return cache[key];
+      const w = ML.lstsq(TR.map((d) => z(d, F)), TR.map((d) => d.y), 1e-6);
+      return (cache[key] = ML.mean(VA.map((d) => (d.y - z(d, F).reduce((s, v, i) => s + v * w[i], 0)) ** 2)));
+    }
+    const f2 = (v) => ML.fmt(v, 2);
+    const eps = () => Math.max(0, +$('#eps').value || 0);
+    const chips = (F) => (F.length ? F.map((j) => el('span', { class: 'tok c' + (j % 6) }, NAMES[j])) : el('span', { class: 'muted small' }, 'F = ∅'));
+
+    fill($('#preview'), el('tr', {}, el('th', {}, '#'), NAMES.map((n, j) => el('th', {}, n, NOTES[j] ? el('div', { class: 'small muted' }, `(${NOTES[j]})`) : null)), el('th', {}, 'Exam score r')),
+      ROWS.slice(0, 5).map((d, i) => el('tr', {}, el('td', {}, i + 1), d.x.map((v) => el('td', { class: 'num' }, v)), el('td', { class: 'num' }, d.y))),
+      el('tr', {}, el('td', { colspan: 8, class: 'muted small' }, '… 395 more')));
+
+    /* ---- forward ---- */
+    let fF = [], fDone = false;
+    function fRender() {
+      const base = E(fF), cands = NAMES.map((_, j) => j).filter((j) => !fF.includes(j)).map((j) => [j, E([...fF, j])]);
+      const bestJ = cands.length ? cands.reduce((a, b) => (b[1] < a[1] ? b : a))[0] : null;
+      fill($('#fF'), chips(fF), el('span', { class: 'small' }, `E(F) = ${fF.length ? f2(base) : f2(base) + ' (predict the mean)'}`));
+      fill($('#fT'), el('tr', {}, el('th', {}, 'add xᵢ'), el('th', {}, 'E(F ∪ xᵢ)'), el('th', {}, 'vs E(F)')),
+        cands.map(([j, e]) => el('tr', { class: (j === bestJ ? 'best' : '') + (e >= base ? ' worse' : ''), onclick: () => { if (!fDone) { fF = [...fF, j]; fRender(); } } },
+          el('td', {}, NAMES[j]), el('td', { class: 'num' }, f2(e)), el('td', { class: 'num' }, (e < base ? '−' : '+') + f2(Math.abs(base - e))))));
+      if (!fDone) fill($('#fMsg'));
+      return { base, cands, bestJ };
+    }
+    $('#fStep').onclick = () => {
+      if (fDone) return;
+      const { base, cands, bestJ } = fRender();
+      const best = cands.find((c) => c[0] === bestJ);
+      if (!best || best[1] >= base - eps()) {
+        fDone = true;
+        fill($('#fMsg'), el('div', { class: 'callout ok' }, `Stop: no remaining feature lowers E${eps() ? ` by more than ε = ${eps()}` : ''}. Selected ${fF.length} of ${NAMES.length}: ${fF.map((j) => NAMES[j]).join(', ')}. Validation error ${f2(base)}.`));
+        return;
+      }
+      fF = [...fF, bestJ]; fRender();
+      fill($('#fMsg'), el('div', { class: 'callout' }, `Added ${NAMES[bestJ]}: E ${f2(base)} → ${f2(best[1])}.`));
+    };
+    $('#fReset').onclick = () => { fF = []; fDone = false; fRender(); };
+
+    /* ---- backward ---- */
+    let bF = NAMES.map((_, j) => j), bDone = false;
+    function bRender() {
+      const base = E(bF), cands = bF.map((j) => [j, E(bF.filter((k) => k !== j))]);
+      const bestJ = cands.length ? cands.reduce((a, b) => (b[1] < a[1] ? b : a))[0] : null;
+      fill($('#bF'), chips(bF), el('span', { class: 'small' }, `E(F) = ${f2(base)}`));
+      fill($('#bT'), el('tr', {}, el('th', {}, 'remove xᵢ'), el('th', {}, 'E(F − xᵢ)'), el('th', {}, 'vs E(F)')),
+        cands.map(([j, e]) => el('tr', { class: (j === bestJ ? 'best' : '') + (e > base ? ' worse' : ''), onclick: () => { if (!bDone) { bF = bF.filter((k) => k !== j); bRender(); } } },
+          el('td', {}, NAMES[j]), el('td', { class: 'num' }, f2(e)), el('td', { class: 'num' }, (e <= base ? '−' : '+') + f2(Math.abs(base - e))))));
+      if (!bDone) fill($('#bMsg'));
+      return { base, cands, bestJ };
+    }
+    $('#bStep').onclick = () => {
+      if (bDone) return;
+      const { base, cands, bestJ } = bRender();
+      const best = cands.find((c) => c[0] === bestJ);
+      if (!best || best[1] > base + eps()) {
+        bDone = true;
+        fill($('#bMsg'), el('div', { class: 'callout ok' }, `Stop: removing anything would raise E${eps() ? ` by more than ε = ${eps()}` : ''}. Kept ${bF.length}: ${bF.map((j) => NAMES[j]).join(', ')}. Validation error ${f2(base)}.`));
+        return;
+      }
+      bF = bF.filter((k) => k !== bestJ); bRender();
+      fill($('#bMsg'), el('div', { class: 'callout' }, `Removed ${NAMES[bestJ]}: E ${f2(base)} → ${f2(best[1])}.`));
+    };
+    $('#bReset').onclick = () => { bF = NAMES.map((_, j) => j); bDone = false; bRender(); };
+
+    /* ---- exhaustive ---- */
+    const all = [];
+    for (let m = 0; m < 64; m++) { const F = NAMES.map((_, j) => j).filter((j) => m & (1 << j)); all.push([F, E(F)]); }
+    const worst = Math.max(...all.map((a) => a[1]));
+    fill($('#ex'), el('tr', {}, el('th', {}, 'k'), el('th', {}, 'best subset of size k'), el('th', {}, 'validation E'), el('th', { style: { width: '30%' } }, '')),
+      [0, 1, 2, 3, 4, 5, 6].map((k) => {
+        const best = all.filter((a) => a[0].length === k).reduce((a, b) => (b[1] < a[1] ? b : a));
+        return el('tr', {}, el('td', {}, k), el('td', {}, best[0].map((j) => NAMES[j]).join(', ') || '∅ (predict the mean)'), el('td', { class: 'num' }, f2(best[1])),
+          el('td', {}, el('div', { class: 'bar', style: { width: `${(100 * best[1]) / worst}%` } })));
+      }));
+    $('#eps').onchange = () => { fF = []; fDone = false; fRender(); bF = NAMES.map((_, j) => j); bDone = false; bRender(); };
+    fRender(); bRender();
+  </script>
+</body>
+</html>

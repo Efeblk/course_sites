@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Credit Scoring Lab · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .lab { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+    @media (max-width: 900px) { .lab { grid-template-columns: 1fr; } }
+    .sl { display: grid; grid-template-columns: 120px 1fr 70px; gap: 8px; align-items: center; margin: 6px 0; }
+    .sl input[type=range] { width: 100%; }
+    svg.plot { cursor: crosshair; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="1" data-title="Credit Scoring Lab" data-activity="w1-credit">
+  <main>
+    <h1>Credit Scoring Lab</h1>
+    <p class="lead">Slide 9's discriminant: <code>IF income &gt; θ₁ AND savings &gt; θ₂ THEN low-risk ELSE high-risk</code>. Learning = choosing θ₁ and θ₂ from past customers. Then slide 12: <b>regression</b> predicts a number instead of a class.</p>
+
+    <h2>1 · Classification: two thresholds</h2>
+    <div class="lab">
+      <div class="panel">
+        <svg id="cls"></svg>
+        <p class="small muted">Green = low-risk (paid back), red = high-risk (defaulted). The shaded corner is where your rule says <b>low-risk</b>. Click the plot to put the corner (θ₁, θ₂) there.</p>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="sl"><span>θ₁ income</span><input type="range" id="t1" min="0" max="100" step="1" value="30"><code id="t1V"></code></div>
+          <div class="sl"><span>θ₂ savings</span><input type="range" id="t2" min="0" max="50" step="1" value="10"><code id="t2V"></code></div>
+          <div class="row">
+            <button class="primary" id="best">Learn best θ₁, θ₂</button>
+            <label><input type="checkbox" id="noise" checked> noisy labels</label>
+            <button class="chip" id="newData">New customers</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="stats" id="stats"></div>
+          <div id="msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>2 · Regression: price of a used car</h2>
+    <div class="lab">
+      <div class="panel">
+        <svg id="reg"></svg>
+        <p class="small muted">Each × is a car (mileage, price). The vertical segments are the errors rᵗ − g(xᵗ).</p>
+      </div>
+      <div>
+        <div class="panel">
+          <p class="small"><code>g(x) = w·x + w₀</code></p>
+          <div class="sl"><span>w (slope)</span><input type="range" id="w" min="-0.4" max="0.1" step="0.005" value="-0.05"><code id="wV"></code></div>
+          <div class="sl"><span>w₀ (intercept)</span><input type="range" id="w0" min="0" max="60" step="0.5" value="25"><code id="w0V"></code></div>
+          <div class="row"><button class="primary" id="fit">Least-squares fit</button></div>
+        </div>
+        <div class="panel">
+          <div class="stats" id="rstats"></div>
+          <p class="muted small">Classification asks "which class?" (count mistakes). Regression asks "how much?" (measure distance). Same idea — a model with parameters learned from examples — different output.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    let seed = 7, D = [];
+    function makeData() {
+      const r = ML.rng(seed);
+      D = Array.from({ length: 70 }, () => {
+        const inc = 8 + r() * 90, sav = r() * 48;
+        let low = inc > 45 && sav > 18;
+        const flip = r() < 0.08;
+        return { inc, sav, truth: low, low: $('#noise').checked && flip ? !low : low };
+      });
+    }
+    function counts(t1, t2) {
+      const c = { tp: 0, fp: 0, fn: 0, tn: 0 };
+      for (const d of D) {
+        const pred = d.inc > t1 && d.sav > t2;
+        c[pred ? (d.low ? 'tp' : 'fp') : (d.low ? 'fn' : 'tn')]++;
+      }
+      return c;
+    }
+    function drawCls() {
+      const t1 = +$('#t1').value, t2 = +$('#t2').value;
+      $('#t1V').textContent = t1 + 'k'; $('#t2V').textContent = t2 + 'k';
+      const P = Plot($('#cls'), { x: [0, 100], y: [0, 50], w: 560, h: 320 });
+      P.rect(t1, t2, 100, 50, { fill: 'var(--ok)', opacity: 0.13 });
+      P.axes({ xticks: [0, 20, 40, 60, 80, 100], yticks: [0, 10, 20, 30, 40, 50], xlabel: 'income (k)', ylabel: 'savings (k)' });
+      P.seg(t1, 0, t1, 50, { stroke: 'var(--warn)', 'stroke-dasharray': '5 4' });
+      P.seg(0, t2, 100, t2, { stroke: 'var(--warn)', 'stroke-dasharray': '5 4' });
+      P.text(t1 + 1, 47, 'θ₁', { fill: 'var(--warn)' }); P.text(97, t2 + 1.5, 'θ₂', { fill: 'var(--warn)', 'text-anchor': 'end' });
+      for (const d of D) {
+        const pred = d.inc > t1 && d.sav > t2, wrong = pred !== d.low;
+        P.dot(d.inc, d.sav, { r: wrong ? 6 : 4.5, fill: d.low ? 'var(--ok)' : 'var(--bad)', stroke: wrong ? 'var(--text)' : 'none', 'stroke-width': 2 });
+      }
+      const c = counts(t1, t2), err = c.fp + c.fn;
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, err), el('span', {}, 'errors E')),
+        el('div', { class: 'stat' }, el('b', {}, c.fp), el('span', {}, 'false positives')),
+        el('div', { class: 'stat' }, el('b', {}, c.fn), el('span', {}, 'false negatives')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(100 * (1 - err / D.length), 1) + '%'), el('span', {}, 'accuracy')));
+      fill($('#msg'), el('div', { class: 'callout' + (err ? '' : ' ok') }, err
+        ? `Circled dots are mistakes. A false positive here means lending to someone who defaults (costly!); a false negative means refusing a good customer.`
+        : 'Zero errors: this rule is consistent with every training customer.'));
+    }
+    function best() {
+      let b = null;
+      for (let t1 = 0; t1 <= 100; t1++) for (let t2 = 0; t2 <= 50; t2++) {
+        const c = counts(t1, t2), e = c.fp + c.fn;
+        if (!b || e < b.e) b = { e, t1, t2 };
+      }
+      $('#t1').value = b.t1; $('#t2').value = b.t2; drawCls();
+      $('#msg').append(el('p', { class: 'small' }, `Searched all ${101 * 51} threshold pairs. Lowest training error: ${b.e}. ` +
+        ($('#noise').checked ? 'With noisy labels no rectangle is perfect — some customers break the pattern.' : 'Without noise a perfect rule exists.')));
+    }
+    $('#t1').addEventListener('input', drawCls); $('#t2').addEventListener('input', drawCls);
+    $('#best').onclick = best;
+    $('#noise').onchange = () => { makeData(); drawCls(); };
+    $('#newData').onclick = () => { seed++; makeData(); drawCls(); };
+    $('#cls').addEventListener('click', (e) => {
+      const svg = $('#cls'), pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const [x, y] = Plot(svg, { x: [0, 100], y: [0, 50], w: 560, h: 320 }).inv(p.x, p.y);
+      $('#t1').value = Math.round(x); $('#t2').value = Math.round(y); drawCls();
+    });
+
+    /* ---- regression ---- */
+    const r2 = ML.rng(3);
+    const CARS = Array.from({ length: 16 }, () => { const x = 10 + r2() * 180; return [x, Math.max(2, 32 - 0.12 * x + ML.gauss(r2) * 2.6)]; });
+    function drawReg() {
+      const w = +$('#w').value, w0 = +$('#w0').value;
+      $('#wV').textContent = w.toFixed(3); $('#w0V').textContent = w0.toFixed(1);
+      const P = Plot($('#reg'), { x: [0, 200], y: [0, 40], w: 560, h: 300 });
+      P.axes({ xticks: [0, 50, 100, 150, 200], yticks: [0, 10, 20, 30, 40], xlabel: 'mileage (×1000 km)', ylabel: 'price (×1000)' });
+      for (const [x, y] of CARS) P.seg(x, y, x, w * x + w0, { stroke: 'var(--bad)', opacity: 0.6 });
+      P.fn((x) => w * x + w0, { stroke: 'var(--accent)' });
+      for (const [x, y] of CARS) {
+        P.seg(x - 2.5, y - 1, x + 2.5, y + 1, { stroke: 'var(--warn)', 'stroke-width': 2 });
+        P.seg(x - 2.5, y + 1, x + 2.5, y - 1, { stroke: 'var(--warn)', 'stroke-width': 2 });
+      }
+      const res = CARS.map(([x, y]) => y - (w * x + w0));
+      const mse = ML.mean(res.map((v) => v * v));
+      fill($('#rstats'),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(mse, 2)), el('span', {}, 'MSE (1/N)Σ(r − g)²')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(ML.mean(res.map(Math.abs)), 2)), el('span', {}, 'MAE')),
+        el('div', { class: 'stat' }, el('b', {}, ML.fmt(w * 100 + w0, 1) + 'k'), el('span', {}, 'predicted price at 100k km')));
+    }
+    $('#w').addEventListener('input', drawReg); $('#w0').addEventListener('input', drawReg);
+    $('#fit').onclick = () => {
+      const [b, a] = ML.lstsq(CARS.map(([x]) => [1, x]), CARS.map(([, y]) => y));
+      $('#w').value = a; $('#w0').value = b; drawReg();
+    };
+
+    makeData(); drawCls(); drawReg();
+  </script>
+</body>
+</html>
