@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Quality Inspector · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .scroll { overflow-x: auto; }
+    #ehr td { cursor: pointer; white-space: nowrap; font-size: .88rem; }
+    #ehr td:hover { outline: 2px solid var(--accent); outline-offset: -2px; }
+    #ehr td.sel { outline: 2px solid var(--warn); outline-offset: -2px; }
+    #ehr td.found { background: color-mix(in srgb, var(--ok) 24%, transparent); }
+    #ehr td.wrong { background: color-mix(in srgb, var(--bad) 20%, transparent); }
+    #ehr td.missed { background: color-mix(in srgb, var(--warn) 28%, transparent); }
+    .dims button { margin: 3px; }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="3" data-title="Data Quality Inspector" data-activity="w3-quality">
+  <main>
+    <h1>Data Quality Inspector</h1>
+    <p class="lead">An AI model will be trained on this EHR extract from two hospital systems. Before that, it needs a quality check. <b>Nine cells hide a problem.</b> Click a cell you suspect and name the data-quality dimension it violates (slides 12–13).</p>
+
+    <div class="panel">
+      <div class="scroll"><table class="t" id="ehr"></table></div>
+      <p class="small muted">Source system A records weight in kg; source system B in lb. "Decision" = time the treatment decision was made.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0" id="selH">Select a cell</h3>
+        <div id="selInfo" class="small"></div>
+        <div class="dims" id="dims"></div>
+        <div id="fb"></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Progress</h3>
+        <div class="stats" id="stats"></div>
+        <div class="row" style="margin-top:10px"><button id="reveal">Reveal remaining problems</button><button id="reset">Start again</button></div>
+        <div id="found" class="small" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>The six dimensions:</b> <b>accuracy</b> (does it reflect reality?), <b>completeness</b> (are required fields present?), <b>consistency</b> (do values agree across records and systems?), <b>timeliness</b> (current enough for the decision?), <b>validity</b> (expected format, range or code set?), <b>uniqueness</b> (duplicates?). Data preparation is not a minor technical step: it shapes what a model learns and whom it serves (slide 11).
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const DIMS = ['Accuracy', 'Completeness', 'Consistency', 'Timeliness', 'Validity', 'Uniqueness'];
+    const COLS = ['MRN', 'Name', 'Date of birth', 'Source', 'Temp (°C)', 'Weight', 'Medications (structured list)', 'Clinical note (free text)', 'Last lab result', 'Lab time', 'Decision'];
+    const ROWS = [
+      ['1001', 'Ayşe Demir', '1958-03-12', 'A', '37.1', '64 kg', 'metformin', 'Diabetic, stable.', 'Glucose 7.2 mmol/L', '08:10', '09:00'],
+      ['1002', 'Mehmet Kaya', '1971-11-02', 'A', '410', '82 kg', 'ramipril', 'Febrile, rigors.', 'CRP 96 mg/L', '07:40', '08:15'],
+      ['1003', 'Elif Şahin', '', 'A', '36.6', '58 kg', '—', 'Planned day surgery.', 'Hb 13.1 g/dL', '06:55', '10:00'],
+      ['1004', 'Jonas Berg', '1965-07-21', 'B', '36.8', '176', 'atorvastatin', 'Chest pain, ruled out MI.', 'Troponin < 5 ng/L', '09:20', '11:30'],
+      ['1005', 'Ayse Demir', '1958-03-12', 'B', '37.0', '141 lb', 'metformin', 'Diabetes review.', 'HbA1c 7.4 %', '10:05', '10:40'],
+      ['1006', 'Can Yıldız', '1949-01-30', 'A', '36.9', '77 kg', 'aspirin', 'On apixaban for atrial fibrillation.', 'INR 1.1', '08:30', '09:10'],
+      ['1007', 'Zeynep Arslan', '1983-09-14', 'A', '37.3', '69 kg', 'iron tablets', 'Fatigue.', 'Hb 7.1 g/dL (sample barcode belongs to MRN 1009)', '07:15', '08:00'],
+      ['1008', 'Ali Öztürk', '1990-04-08', 'A', '38.4', '90 kg', '—', 'Suspected infection, antibiotics started.', 'Blood count — result available', '14:30', '11:00'],
+      ['1009', 'Deniz Aydın', '2031-05-04', 'A', '36.7', '72 kg', '—', 'Routine check.', 'Hb 13.8 g/dL', '07:20', '08:05'],
+    ];
+    // planted problems: [row, col, dimension, explanation, possible harm, control]
+    const ISSUES = [
+      [1, 4, 4, 'A body temperature of 410 °C is outside any possible range (probably 41.0 typed without the decimal point).', 'An AI model learns from an impossible value; a decision rule may fire wrongly.', 'Range checks at data entry.'],
+      [2, 2, 1, 'Date of birth is empty — a required field is missing.', 'Age-based risk scores cannot be computed or silently use a default.', 'Mandatory fields; flag incomplete records before analysis.'],
+      [3, 5, 2, 'Weight "176" comes from system B, which records pounds (≈ 80 kg). Next to kg values it looks like a 176 kg patient.', 'A weight-based dose calculation could be more than twice too high.', 'Unit harmonisation; always store the unit with the value.'],
+      [4, 1, 5, 'MRN 1005 "Ayse Demir" is the same person as MRN 1001 "Ayşe Demir" (same date of birth, same medication) registered in the other system with a slightly different name.', 'Duplicate patients double-count in statistics and split the history across two records.', 'Record linkage / master patient index.'],
+      [4, 5, 2, 'Weight 141 lb — the same patient is 64 kg (≈ 141 lb) in system A. Values only agree after unit conversion.', 'Models see two different weights for one person.', 'Convert to one unit before merging systems.'],
+      [5, 6, 1, 'The structured medication list lacks the anticoagulant (apixaban) that the clinical note mentions.', 'Bleeding risk is missed by any decision support that reads only the structured list.', 'Medication reconciliation; NLP on notes with human check.'],
+      [6, 8, 0, 'The Hb result belongs to another patient (barcode of MRN 1009) — an identity-matching failure.', 'A healthy patient may receive a transfusion; the real patient\'s problem is missed.', 'Positive patient identification and barcode matching.'],
+      [7, 9, 3, 'The lab result arrived at 14:30, but the treatment decision was made at 11:00.', 'The decision was made without the result; an AI trained on this record would assume the result was known.', 'Track result times; use only data available at decision time (no leakage).'],
+      [8, 2, 4, 'Date of birth 2031-05-04 is in the future — an invalid date.', 'Age becomes negative; the record breaks age-based models.', 'Validation rules for dates.'],
+    ];
+    let sel = null, state = {}; // key "r,c" -> 'found' | 'wrong' | 'missed'
+    const key = (r, c) => `${r},${c}`;
+    function draw() {
+      fill($('#ehr'), el('tr', {}, COLS.map((c) => el('th', {}, c))),
+        ROWS.map((row, r) => el('tr', {}, row.map((v, c) => el('td', {
+          class: [state[key(r, c)] || '', sel && sel[0] === r && sel[1] === c ? 'sel' : ''].join(' '),
+          onclick: () => { sel = [r, c]; draw(); },
+        }, v === '' ? el('i', { class: 'muted' }, '(empty)') : v)))));
+      const found = ISSUES.filter((i) => state[key(i[0], i[1])] === 'found').length;
+      fill($('#stats'), el('div', { class: 'stat' }, el('b', {}, `${found} / ${ISSUES.length}`), el('span', {}, 'problems found')),
+        el('div', { class: 'stat' }, el('b', {}, Object.values(state).filter((v) => v === 'wrong').length), el('span', {}, 'false alarms')));
+      fill($('#found'), ISSUES.filter((i) => state[key(i[0], i[1])] === 'found' || state[key(i[0], i[1])] === 'missed').map((i) =>
+        el('div', { class: 'box', style: { margin: '6px 0' } }, el('b', {}, `${ROWS[i[0]][1]} · ${COLS[i[1]]} → ${DIMS[i[2]]}`), el('div', {}, i[3]), el('div', {}, el('b', {}, 'Harm: '), i[4]), el('div', {}, el('b', {}, 'Control: '), i[5]))));
+      if (!sel) { fill($('#selInfo'), 'Click any cell in the table.'); fill($('#dims')); return; }
+      const [r, c] = sel;
+      $('#selH').textContent = `${ROWS[r][1]} — ${COLS[c]}`;
+      fill($('#selInfo'), el('p', {}, 'Value: ', el('b', {}, ROWS[r][c] || '(empty)'), '. Which dimension is violated?'));
+      fill($('#dims'), DIMS.map((d, i) => el('button', { onclick: () => answer(i) }, d)), el('button', { class: 'chip', onclick: () => answer(-1) }, 'Looks fine'));
+    }
+    function answer(d) {
+      const [r, c] = sel, iss = ISSUES.find((i) => i[0] === r && i[1] === c);
+      let msg;
+      if (iss && d === iss[2]) { state[key(r, c)] = 'found'; msg = el('div', { class: 'callout ok' }, `Yes — ${DIMS[d]}. `, iss[3]); }
+      else if (iss && d >= 0) msg = el('div', { class: 'callout warn' }, `There is a problem here, but it is not mainly ${DIMS[d]}. Think again.`);
+      else if (iss) msg = el('div', { class: 'callout warn' }, 'Look again — something is wrong with this cell.');
+      else if (d < 0) msg = el('div', { class: 'callout ok' }, 'Right, this value looks fine.');
+      else { state[key(r, c)] = 'wrong'; msg = el('div', { class: 'callout bad' }, 'No planted problem here.'); }
+      draw(); fill($('#fb'), msg);
+      if (ISSUES.every((i) => state[key(i[0], i[1])] === 'found')) CS.progress.recordScore('w3-quality', ISSUES.length, ISSUES.length);
+    }
+    $('#reveal').onclick = () => { for (const i of ISSUES) if (state[key(i[0], i[1])] !== 'found') state[key(i[0], i[1])] = 'missed'; draw(); };
+    $('#reset').onclick = () => { state = {}; sel = null; fill($('#fb')); $('#selH').textContent = 'Select a cell'; draw(); };
+    draw();
+  </script>
+</body>
+</html>

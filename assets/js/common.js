@@ -12,6 +12,7 @@
     coe303: { code: 'COE303', unit: 'Chapter' },
     coe025: { code: 'COE025', unit: 'Week' },
     coe305: { code: 'COE305', unit: 'Week' },
+    uni480: { code: 'UNI480', unit: 'Week' },
   };
   const course = COURSES[body.dataset.course];
   const unit = course ? course.unit : 'Chapter';

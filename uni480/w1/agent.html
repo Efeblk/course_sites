@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ward Monitoring Agent · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .loop { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: stretch; }
+    .loop .box { text-align: center; }
+    .loop .box b { display: block; margin-bottom: 4px; }
+    .arrow { display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--muted); }
+    .grid24 { border-collapse: collapse; font-size: .78rem; }
+    .grid24 td, .grid24 th { width: 22px; height: 22px; padding: 0; text-align: center; border: 1px solid var(--line); }
+    .grid24 th.p { width: auto; padding: 0 8px; text-align: left; white-space: nowrap; font-weight: 500; }
+    .grid24 td.det { background: color-mix(in srgb, var(--warn) 22%, transparent); }
+    .grid24 td.crit { background: color-mix(in srgb, var(--bad) 30%, transparent); }
+    .grid24 td.now { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+    .dot.tp { background: var(--ok); } .dot.fp { background: var(--accent-2); }
+    .legend span { margin-right: 14px; white-space: nowrap; }
+    .scroll { overflow-x: auto; }
+    label.s { margin-right: 14px; white-space: nowrap; }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="1" data-title="Ward Monitoring Agent" data-activity="w1-agent">
+  <main>
+    <h1>Ward Monitoring Agent</h1>
+    <p class="lead">An <b>AI agent</b> perceives its environment through <b>sensors</b> and acts on it through <b>actuators</b> to reach a goal (slides 9–10). Here the agent watches 10 patients on a ward for 24 hours and pages the nurse when it thinks someone is deteriorating. You design it, then judge it with its <b>performance measure</b>.</p>
+
+    <div class="panel">
+      <div class="loop">
+        <div class="box"><b>Environment</b><span class="small">Ward, 10 patients, 24 h. Some patients slowly deteriorate.</span></div>
+        <div class="box"><b>Sensors</b><span class="small" id="sensTxt"></span></div>
+        <div class="box"><b>Agent function</b><span class="small" id="fnTxt"></span></div>
+        <div class="box"><b>Actuator</b><span class="small">Pages the nurse (one alert per patient-hour).</span></div>
+        <div class="box"><b>Performance measure</b><span class="small">Catch deterioration early, avoid misses and false alarms.</span></div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">1 · Sensors (what can it perceive?)</h3>
+        <div id="sensors"></div>
+        <p class="small muted">Each sensor gives one hourly reading with some measurement noise.</p>
+        <h3>2 · Agent function (perceptions → action)</h3>
+        <p class="small">Page the nurse when at least
+          <select id="k"><option>1</option><option selected>2</option><option>3</option></select>
+          of its readings are abnormal.</p>
+        <label class="s"><input type="checkbox" id="noisy"> Noisy environment (sensor glitches)</label>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">3 · Run the shift</h3>
+        <div class="row">
+          <button id="step">Next hour ▶</button>
+          <button class="primary" id="run">Run 24 hours</button>
+          <button id="reset">Reset</button>
+          <button class="chip" id="newWard">New ward</button>
+        </div>
+        <div class="stats" id="stats" style="margin-top:12px"></div>
+        <div id="verdict"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">The ward, hour by hour</h3>
+      <div class="scroll"><table class="grid24" id="grid"></table></div>
+      <p class="small legend"><span><span class="dot tp"></span> alert on a deteriorating patient</span><span><span class="dot fp"></span> false alarm</span><span style="background:color-mix(in srgb, var(--warn) 22%, transparent)">&nbsp;deteriorating&nbsp;</span> <span style="background:color-mix(in srgb, var(--bad) 30%, transparent)">&nbsp;critical event if not caught&nbsp;</span></p>
+      <div id="detail" class="small"></div>
+    </div>
+
+    <div class="callout">
+      <b>Things to try.</b> Remove the SpO₂ sensor and run again: the respiratory patient is missed — the agent cannot act on what it cannot perceive. Set the rule to "1 abnormal reading" with noise on: it catches everyone but floods the nurse (the start of <i>alert fatigue</i>, week 4). The numbers are illustrative, not clinical thresholds.
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/ml.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const SENS = [
+      { id: 'hr', name: 'Heart rate', unit: '/min', base: 78, sd: 6, abn: (v) => v > 110, txt: '> 110' },
+      { id: 'rr', name: 'Respiratory rate', unit: '/min', base: 16, sd: 1.5, abn: (v) => v > 24, txt: '> 24' },
+      { id: 'spo2', name: 'Oxygen saturation SpO₂', unit: '%', base: 97, sd: 0.8, abn: (v) => v < 92, txt: '< 92' },
+      { id: 'temp', name: 'Temperature', unit: '°C', base: 36.9, sd: 0.2, abn: (v) => v > 38.3, txt: '> 38.3' },
+    ];
+    // how each kind of deterioration changes the vital signs per hour after onset
+    const KINDS = {
+      sepsis: { label: 'infection (sepsis-like)', d: { hr: 7, rr: 1.6, spo2: -0.4, temp: 0.32 } },
+      resp: { label: 'respiratory', d: { hr: 2.4, rr: 1.8, spo2: -1.4, temp: 0 } },
+      bleed: { label: 'internal bleeding', d: { hr: 8.5, rr: 1.6, spo2: -0.15, temp: 0 } },
+    };
+    const ON = { hr: true, rr: true, spo2: true, temp: true };
+    let seed = 7, ward, hour, alerts;
+
+    function newWard() {
+      const r = ML.rng(seed);
+      const names = ['Bed 1', 'Bed 2', 'Bed 3', 'Bed 4', 'Bed 5', 'Bed 6', 'Bed 7', 'Bed 8', 'Bed 9', 'Bed 10'];
+      const sick = [1, 4, 7].map((i) => (i + seed) % 10), kinds = ['sepsis', 'resp', 'bleed'];
+      ward = names.map((name, i) => {
+        const k = sick.indexOf(i);
+        const p = { name, kind: k >= 0 ? kinds[k] : null, onset: k >= 0 ? 3 + Math.floor(r() * 10) : null, vitals: [] };
+        p.crit = p.onset != null ? p.onset + 9 : null; // critical event if not caught by then
+        const off = Object.fromEntries(SENS.map((s) => [s.id, (r() - 0.5) * s.sd]));
+        for (let h = 0; h < 24; h++) {
+          const v = {};
+          for (const s of SENS) {
+            const t = p.onset != null && h >= p.onset ? h - p.onset + 1 : 0;
+            v[s.id] = s.base + off[s.id] + s.sd * ML.gauss(r) * 0.6 + (p.kind ? KINDS[p.kind].d[s.id] * t : 0);
+          }
+          v.glitch = r() < 0.06 ? SENS[Math.floor(r() * 4)].id : null;
+          p.vitals.push(v);
+        }
+        return p;
+      });
+      reset();
+    }
+    function reading(p, h, s) {
+      let v = p.vitals[h][s.id];
+      if ($('#noisy').checked && p.vitals[h].glitch === s.id) v = s.id === 'spo2' ? 86 : s.id === 'temp' ? 38.9 : s.base * 1.6;
+      return v;
+    }
+    function decide(p, h) {
+      const abn = SENS.filter((s) => ON[s.id] && s.abn(reading(p, h, s)));
+      return { alert: abn.length >= +$('#k').value, abn };
+    }
+    function reset() { hour = 0; alerts = ward.map(() => []); draw(); }
+    function stepHour() {
+      if (hour >= 24) return;
+      ward.forEach((p, i) => { if (decide(p, hour).alert) alerts[i].push(hour); });
+      hour++; draw();
+    }
+    function score() {
+      let caught = 0, late = 0, fa = 0, crit = 0;
+      ward.forEach((p, i) => {
+        const A = alerts[i];
+        if (p.kind) {
+          fa += A.filter((h) => h < p.onset).length;
+          const first = A.find((h) => h >= p.onset);
+          if (first != null && first < p.crit) { if (first <= p.onset + 5) caught++; else late++; }
+          else if (hour > p.crit) crit++;
+        } else fa += A.length;
+      });
+      const total = ward.reduce((a, p, i) => a + alerts[i].length, 0);
+      return { caught, late, fa, total, crit, perf: caught * 10 + late * 4 - crit * 25 - fa };
+    }
+    function draw() {
+      const k = +$('#k').value, on = SENS.filter((s) => ON[s.id]);
+      $('#sensTxt').textContent = on.length ? on.map((s) => s.name.split(' ')[0] === 'Oxygen' ? 'SpO₂' : s.name).join(', ') : 'none — it is blind!';
+      $('#fnTxt').textContent = `IF ≥ ${k} of ${on.length} readings abnormal THEN page nurse ELSE wait`;
+      fill($('#sensors'), SENS.map((s) => el('label', { class: 's', style: { display: 'block' } },
+        el('input', { type: 'checkbox', checked: ON[s.id], onchange: (e) => { ON[s.id] = e.target.checked; reset(); } }),
+        ` ${s.name} — abnormal if ${s.txt} ${s.unit}`)));
+      const head = el('tr', {}, el('th', { class: 'p' }, 'Hour →'), ...Array.from({ length: 24 }, (_, h) => el('th', { class: h === hour - 1 ? 'now' : '' }, h)));
+      const rows = ward.map((p, i) => el('tr', {},
+        el('th', { class: 'p' }, p.name, hour >= 24 && p.kind ? el('span', { class: 'small muted' }, ` · ${KINDS[p.kind].label}`) : ''),
+        ...Array.from({ length: 24 }, (_, h) => {
+          const det = p.kind && h >= p.onset, a = alerts[i].includes(h);
+          const td = el('td', { class: (h === p.crit ? 'crit' : det && hour >= 24 ? 'det' : '') + (h === hour - 1 ? ' now' : ''), title: `${p.name}, hour ${h}`, style: { cursor: h < hour ? 'pointer' : 'default' }, onclick: () => h < hour && show(p, h, a) },
+            a ? el('span', { class: 'dot ' + (det ? 'tp' : 'fp') }) : '');
+          return td;
+        })));
+      fill($('#grid'), head, ...rows);
+      const s = score();
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, `${hour} / 24`), el('span', {}, 'hours run')),
+        el('div', { class: 'stat' }, el('b', {}, s.caught), el('span', {}, 'caught early (≤ 5 h)')),
+        el('div', { class: 'stat' }, el('b', {}, s.late), el('span', {}, 'caught late')),
+        el('div', { class: 'stat' }, el('b', {}, s.crit), el('span', {}, 'critical events missed')),
+        el('div', { class: 'stat' }, el('b', {}, s.fa), el('span', {}, 'false alarms')),
+        el('div', { class: 'stat' }, el('b', {}, s.perf), el('span', {}, 'performance score')));
+      fill($('#verdict'), hour < 24 ? el('p', { class: 'small muted' }, 'Score = 10 per early catch + 4 per late catch − 25 per missed critical event − 1 per false alarm. Deteriorating patients are revealed after 24 h.')
+        : el('div', { class: 'callout ' + (s.crit ? 'bad' : s.fa > 4 ? 'warn' : 'ok') },
+          s.crit ? `The agent missed ${s.crit} deteriorating patient${s.crit > 1 ? 's' : ''}. Which sensor would have seen it, or is the rule too strict?`
+            : s.fa > 4 ? `Every deteriorating patient was caught, but with ${s.fa} false alarms the nurse may start ignoring the pager.`
+              : `All three deteriorating patients were caught with only ${s.fa} false alarm${s.fa === 1 ? '' : 's'}. A well-designed agent for this environment.`));
+    }
+    function show(p, h, a) {
+      const d = decide(p, h);
+      fill($('#detail'), el('div', { class: 'box' },
+        el('b', {}, `${p.name}, hour ${h}: `),
+        SENS.map((s) => {
+          const v = reading(p, h, s), ab = s.abn(v);
+          return el('span', { style: { marginRight: '12px', color: !ON[s.id] ? 'var(--muted)' : ab ? 'var(--bad)' : 'inherit', textDecoration: ON[s.id] ? 'none' : 'line-through' } }, `${s.name.split(' ')[0] === 'Oxygen' ? 'SpO₂' : s.name} ${v.toFixed(s.id === 'temp' ? 1 : 0)}${s.unit}`);
+        }),
+        el('div', {}, `→ ${d.abn.length} abnormal reading${d.abn.length === 1 ? '' : 's'} perceived → ${a ? 'PAGE NURSE' : 'wait'}.`,
+          hour >= 24 ? ` Truth: ${p.kind && h >= p.onset ? 'deteriorating (' + KINDS[p.kind].label + ')' : 'stable'}.` : '')));
+    }
+    $('#step').onclick = stepHour;
+    $('#run').onclick = async () => { while (hour < 24) { stepHour(); await CS.sleep(60); } };
+    $('#reset').onclick = reset;
+    $('#newWard').onclick = () => { seed++; newWard(); };
+    $('#k').onchange = reset;
+    $('#noisy').onchange = reset;
+    newWard();
+  </script>
+</body>
+</html>

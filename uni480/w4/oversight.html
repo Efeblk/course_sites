@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Human Oversight Trainer · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .case { max-width: 820px; }
+    .ai { border: 1px solid var(--accent-2); border-radius: 10px; padding: 10px 14px; background: color-mix(in srgb, var(--accent-2) 12%, var(--panel-2)); margin: 10px 0; }
+    .ai b.big { display: block; font-size: 1.1rem; margin-top: 2px; }
+    .facts li { margin: 3px 0; }
+    .choice { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .choice button { flex: 1; min-width: 220px; padding: 12px; }
+    .reason select { margin-left: 6px; }
+    .pg { height: 6px; background: var(--panel-2); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+    .pg div { height: 100%; background: var(--accent); }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="4" data-title="Human Oversight Trainer" data-activity="w4-oversight">
+  <main>
+    <h1>Human Oversight Trainer</h1>
+    <p class="lead"><b>Augmented intelligence</b>: AI extends human capability, and the human is <b>not merely a rubber stamp</b> (slide 15). For each case, read the record and the AI output, then <b>accept</b> it or <b>override / escalate</b>. Some outputs are right. Some are wrong because of stale data, a wrong-patient record, a unit error or missing context.</p>
+
+    <div class="panel case" id="box"></div>
+
+    <div class="callout">
+      <b>Error types (slide 16).</b> <b>Commission error</b>: following an incorrect recommendation. <b>Omission error</b>: failing to act because the system did not flag a problem. <b>Under-trust</b>: ignoring useful support. The aim is <b>calibrated trust</b> — not "always trust" and not "never trust".
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const REASONS = ['The AI is right', 'Inputs are out of date (timeliness)', 'Data belongs to another patient (accuracy)', 'Unit / measurement error (consistency)', 'Contradicts the record', 'Missing patient context or preferences', 'Patient is outside the model\'s intended population'];
+    // ok: is the AI output correct? flag: does the AI flag a problem (true) or say "no action needed" (false)?
+    const CASES = [
+      { title: 'Ward early warning, 03:00', facts: ['78-year-old after hip surgery.', 'Last full set of vital signs: 18:00 yesterday (9 hours ago).', 'Nurse note 02:50: "newly confused, breathing fast".'],
+        ai: 'Deterioration risk 4% — low. No action needed.', ok: false, flag: false, reason: 1,
+        why: 'The score is based on 9-hour-old vital signs and cannot know the nurse\'s new observation. Accepting "no action" because the system did not flag a problem is an omission error. Escalate and re-measure.' },
+      { title: 'Sepsis alert, emergency department', facts: ['Temperature 39.1 °C, heart rate 124, respiratory rate 26, recorded 10 minutes ago.', 'Suspected urinary infection.'],
+        ai: 'High sepsis risk — urgent clinical review recommended.', ok: true, flag: true, reason: 0,
+        why: 'Current, abnormal observations support the alert. Accepting and reviewing the patient is correct; dismissing it would be under-trust.' },
+      { title: 'Prescribing alert', facts: ['Documented allergy: penicillin (rash, 2015).', 'New order: amoxicillin (a penicillin antibiotic).'],
+        ai: 'Allergy alert: documented penicillin allergy — consider an alternative.', ok: true, flag: true, reason: 0,
+        why: 'A classic knowledge-based CDSS alert that is correct and actionable. This is exactly the kind of alert that must not be lost to alert fatigue.' },
+      { title: 'Anaemia risk model', facts: ['Patient reports dizziness and looks pale.', 'Hb result on file: 13.8 g/dL — the sample barcode belongs to a different MRN.'],
+        ai: 'Low risk of anaemia. No action needed.', ok: false, flag: false, reason: 2,
+        why: 'The model used another patient\'s normal result. A wrong-patient match travels downstream. Accepting would be an omission error; repeat the test with correct identification.' },
+      { title: 'Discharge readiness', facts: ['Medically stable, observations normal for 48 h.', 'Lives alone on the 4th floor, no lift; cannot yet climb stairs.', 'Patient says she is afraid to go home today.'],
+        ai: 'Ready for discharge today (readmission risk 6%).', ok: false, flag: true, reason: 5,
+        why: 'The model sees clinical data, not the patient\'s home situation or preferences. Following the recommendation would be a commission error. AI cannot independently supply all clinical context (slide 4).' },
+      { title: 'AI-drafted discharge letter', facts: ['Record: penicillin allergy documented.'],
+        ai: 'Draft letter: "The patient has no known drug allergies."', ok: false, flag: true, reason: 4,
+        why: 'Generative AI produced a fluent but false statement. Signing it unchanged is a commission error; verify key claims and document the review.' },
+      { title: 'Chest X-ray triage tool', facts: ['Patient: 4-year-old child.', 'Tool documentation: validated on adults aged 18+.'],
+        ai: 'Normal chest X-ray — low priority.', ok: false, flag: false, reason: 6,
+        why: 'The patient is outside the intended use and validation population. The output cannot be trusted here; a clinician must read the image. Accepting would be an omission error.' },
+      { title: 'CT prioritisation', facts: ['Sudden severe headache, on anticoagulant.', 'CT head just acquired.'],
+        ai: 'Possible intracranial bleed — move to the top of the reading list.', ok: true, flag: true, reason: 0,
+        why: 'Re-ordering the worklist is consistent with the clinical picture and low-risk; the radiologist still reads the scan. Accept.' },
+      { title: 'Weight-based dose calculator', facts: ['Weight field: 176 (imported from a system that records pounds).', 'Ward scale today: 80 kg.'],
+        ai: 'Suggested dose calculated for 176 kg.', ok: false, flag: true, reason: 3,
+        why: '176 lb ≈ 80 kg. The dose would be more than twice too high. Following it is a commission error; correct the unit first.' },
+      { title: 'No-show prediction, outpatient clinic', facts: ['Patient attended all 6 previous appointments.', 'Confirmed the appointment by phone yesterday.'],
+        ai: 'Low no-show risk — no extra reminder needed.', ok: true, flag: false, reason: 0,
+        why: 'Low stakes and consistent with the record. Overriding would cost time without benefit — calibrated trust means accepting good, low-risk support.' },
+    ];
+    let i = 0, picks = [];
+    function draw() {
+      const box = $('#box');
+      if (i >= CASES.length) return summary();
+      const c = CASES[i];
+      fill(box, el('div', { class: 'pg' }, el('div', { style: { width: `${(100 * i) / CASES.length}%` } })),
+        el('div', { class: 'small muted' }, `Case ${i + 1} of ${CASES.length}`),
+        el('h2', { style: { margin: '4px 0' } }, c.title),
+        el('ul', { class: 'facts' }, c.facts.map((f) => el('li', {}, f))),
+        el('div', { class: 'ai' }, el('span', { class: 'small muted' }, 'AI output'), el('b', { class: 'big' }, c.ai)),
+        el('div', { class: 'reason small' }, 'Your reason:', el('select', { id: 'rsn' }, REASONS.map((r, k) => el('option', { value: k }, r)))),
+        el('div', { class: 'choice' },
+          el('button', { onclick: () => decide(true) }, '✓ Accept the AI output'),
+          el('button', { onclick: () => decide(false) }, '✋ Override / escalate')),
+        el('div', { id: 'fb' }));
+    }
+    function decide(accept) {
+      const c = CASES[i], right = accept === c.ok, reason = +$('#rsn').value;
+      const type = right ? 'correct' : !c.ok ? (c.flag ? 'commission' : 'omission') : 'under-trust';
+      picks.push({ accept, right, type, reasonOk: reason === c.reason });
+      const lab = { correct: 'Correct.', commission: 'Commission error — you followed an incorrect recommendation.', omission: 'Omission error — you did not act because the system did not flag a problem.', 'under-trust': 'Under-trust — you overrode useful, correct support.' }[type];
+      $$box('.choice button').forEach((b) => (b.disabled = true)); $('#rsn').disabled = true;
+      fill($('#fb'), el('div', { class: 'callout ' + (right ? 'ok' : 'bad') }, el('b', {}, lab + ' '), c.why,
+        !c.ok ? el('div', { class: 'small', style: { marginTop: '6px' } }, `Main reason: ${REASONS[c.reason]}.`, reason === c.reason ? ' ✓ You named it.' : '') : null),
+        el('button', { class: 'primary', onclick: () => { i++; draw(); } }, i + 1 < CASES.length ? 'Next case →' : 'See summary'));
+    }
+    const $$box = (s) => [...$('#box').querySelectorAll(s)];
+    function summary() {
+      const n = (t) => picks.filter((p) => p.type === t).length, right = n('correct');
+      CS.progress.recordScore('w4-oversight', right, CASES.length);
+      fill($('#box'), el('h2', { style: { marginTop: 0 } }, 'Your oversight profile'),
+        el('div', { class: 'stats' },
+          el('div', { class: 'stat' }, el('b', {}, `${right} / ${CASES.length}`), el('span', {}, 'correct decisions')),
+          el('div', { class: 'stat' }, el('b', {}, n('commission')), el('span', {}, 'commission errors')),
+          el('div', { class: 'stat' }, el('b', {}, n('omission')), el('span', {}, 'omission errors')),
+          el('div', { class: 'stat' }, el('b', {}, n('under-trust')), el('span', {}, 'under-trust')),
+          el('div', { class: 'stat' }, el('b', {}, picks.filter((p, k) => !CASES[k].ok && p.reasonOk).length + ' / ' + CASES.filter((c) => !c.ok).length), el('span', {}, 'failure reasons named'))),
+        el('div', { class: 'callout' }, n('commission') + n('omission') > n('under-trust')
+          ? 'Your errors lean toward over-reliance (automation bias). Before accepting, ask: are the inputs current, about this patient, in the right units, and is the patient inside the model\'s intended use?'
+          : n('under-trust') ? 'Your errors lean toward under-trust. Rejecting correct, low-risk support also has a cost: it wastes time and weakens the benefit of the tool.'
+            : 'Calibrated trust: you accepted good support and stopped the wrong outputs.'),
+        el('p', { class: 'small' }, 'Meaningful oversight requires time, information and the authority to disagree (slide 15). Responsibility cannot be delegated to an algorithm (slide 19).'),
+        el('button', { onclick: () => { i = 0; picks = []; draw(); } }, 'Try again'));
+    }
+    draw();
+  </script>
+</body>
+</html>

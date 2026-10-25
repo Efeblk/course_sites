@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>You Are the Hospital Manager · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .proj { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+    .pc { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--panel-2); cursor: pointer; }
+    .pc:hover { border-color: var(--accent); }
+    .pc.on { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent); }
+    .pc h4 { margin: 0 0 4px; }
+    .prob { display: inline-block; font-size: .75rem; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); margin: 2px 3px 0 0; }
+    .rep h4 { margin: 14px 0 4px; }
+    .rep ul { margin: 4px 0; }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="1" data-title="You Are the Hospital Manager" data-activity="w1-manager">
+  <main>
+    <h1>You Are the Hospital Manager</h1>
+    <p class="lead">Slide 4: you manage a large hospital with <b>long waiting times, staff shortages, increasing costs and high patient demand</b>. The board gives you budget for <b>three</b> AI projects. Choose them, decide whether each may act <b>without human approval</b>, then read the review.</p>
+
+    <div class="panel">
+      <div class="row"><b>Your problems:</b> <span id="probs"></span></div>
+      <p class="small muted" id="count"></p>
+      <div class="proj" id="proj"></div>
+    </div>
+
+    <div class="panel" id="planP">
+      <h3 style="margin-top:0">Your plan</h3>
+      <div id="plan"><p class="muted small">Click three project cards above.</p></div>
+      <div class="row" style="margin-top:10px"><button class="primary" id="go" disabled>Submit plan to the board</button></div>
+    </div>
+
+    <div class="panel rep" id="report" hidden></div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const PROBLEMS = { wait: 'Long waiting times', staff: 'Staff shortages', cost: 'Increasing costs', demand: 'High patient demand' };
+    const AREA = ['Clinical AI', 'Administrative & operational AI', 'Strategic & system-level AI'];
+    // risk: how much harm an unchecked wrong output can do. autoOK: acceptable to act without human approval.
+    const P = [
+      { id: 'ed', t: 'Emergency-department demand forecasting', area: 1, solves: ['wait', 'demand', 'staff'], risk: 'low', autoOK: false,
+        d: 'Predicts tomorrow\'s ED arrivals from past admissions, weather and seasonal patterns so managers can plan staff and beds.',
+        can: 'Supports demand forecasting and resource allocation (slide 13, "improving efficiency").', cannot: 'It cannot guarantee lower costs: the forecast only helps if someone changes the rota.',
+        needs: 'Historical data of good quality; validation on this hospital\'s own seasons; a manager who acts on it.', why: 'The forecast is advice. Moving staff affects patients and workers, so a manager should approve the rota.' },
+      { id: 'sched', t: 'Smart scheduling & no-show reminders', area: 1, solves: ['wait', 'cost'], risk: 'low', autoOK: true,
+        d: 'Predicts which outpatients are likely to miss appointments and sends them automatic reminders.',
+        can: 'Reduces wasted slots and administrative work.', cannot: 'Not equally accurate for every group — e.g. patients without smartphones may be predicted badly.',
+        needs: 'Check performance across patient groups; privacy-respecting messages; monitoring of no-show rates.', why: 'A reminder message is low-risk, so automatic sending is acceptable — as long as its effect is monitored. Over-booking decisions should still be human.' },
+      { id: 'triage', t: 'AI symptom checker for ED triage', area: 0, solves: ['wait', 'demand'], risk: 'high', autoOK: false,
+        d: 'Patients enter symptoms on a tablet; the AI proposes an urgency level.',
+        can: 'Can organize information and speed up the first assessment.', cannot: 'Cannot guarantee a correct assessment in every case, nor equal accuracy for elderly, non-native speakers or children.',
+        needs: 'Validation in this ED; fairness checks; a triage nurse who confirms every level; continuous monitoring.', why: 'Under-triage of a critical patient can cost a life (high consequences, time sensitivity). A human must confirm.' },
+      { id: 'xray', t: 'Chest X-ray prioritisation', area: 0, solves: ['wait', 'staff'], risk: 'medium', autoOK: false,
+        d: 'A vision model ranks the radiology worklist so suspicious images are read first.',
+        can: 'Supports earlier detection and helps a short-staffed radiology team prioritise.', cannot: 'Cannot guarantee a correct finding; may work worse on images from another device.',
+        needs: 'External validation on local scanners; radiologist still reads every image; monitoring for drift.', why: 'It only re-orders the list, but the final report must be a radiologist\'s decision.' },
+      { id: 'doc', t: 'AI clinical documentation assistant', area: 1, solves: ['staff', 'cost'], risk: 'medium', autoOK: false,
+        d: 'Listens to the consultation (with consent) and drafts the clinical note.',
+        can: 'Reduces administrative burden and gives professionals more time for patients (slide 13).', cannot: 'Drafts can contain errors or invented details; it does not remove professional responsibility.',
+        needs: 'Patient consent and privacy protection; the clinician reviews and signs every note.', why: 'A wrong note travels downstream to every later decision. The clinician must check it.' },
+      { id: 'ews', t: 'Ward early-warning for deterioration', area: 0, solves: ['staff'], risk: 'high', autoOK: false,
+        d: 'Scores every inpatient hourly from vital signs and lab results and alerts the ward team.',
+        can: 'Supports earlier detection of deterioration.', cannot: 'Cannot guarantee better outcomes in every setting; too many alerts cause alert fatigue.',
+        needs: 'Validation on this hospital\'s wards; agreed alert thresholds; a response protocol; monitoring.', why: 'The alert should trigger a human review, never an automatic treatment.' },
+      { id: 'pop', t: 'Population-health risk stratification', area: 2, solves: ['demand', 'cost'], risk: 'medium', autoOK: false,
+        d: 'Identifies people in the region at high risk of hospital admission so prevention programmes can reach them.',
+        can: 'Supports long-term planning and population health (strategic AI).', cannot: 'Cannot guarantee unbiased results: groups with less access to care have less data.',
+        needs: 'Lawful data use and privacy; fairness checks; public-health staff decide who is invited.', why: 'Deciding who receives a programme is a value judgement with equity consequences.' },
+      { id: 'beds', t: 'Bed & supply-chain optimisation', area: 1, solves: ['wait', 'cost'], risk: 'low', autoOK: false,
+        d: 'Forecasts discharges and stock use to plan beds, linen and medical supplies.',
+        can: 'Improves patient flow and reduces waste.', cannot: 'Does not automatically reduce costs; forecasts can be wrong in unusual weeks.',
+        needs: 'Accurate, timely data from wards and stores; staff who can override.', why: 'Supply orders could be partly automated, but bed allocation affects patients, so keep a human in charge.' },
+      { id: 'kiosk', t: 'Autonomous AI diagnosis kiosk (no doctor)', area: 0, solves: ['wait', 'staff', 'cost', 'demand'], risk: 'unacceptable', autoOK: false,
+        d: 'Patients are diagnosed and prescribed treatment by an AI kiosk, without any clinician.',
+        can: 'Looks like it solves every problem at once.', cannot: 'Violates almost every point of slide 14: no guaranteed correct diagnosis, no full understanding of the patient, no elimination of responsibility.',
+        needs: 'Not acceptable as described. It would need to become a decision-support tool with clinician oversight.', why: 'AI has no professional judgment, empathy or moral responsibility (slide 5). Removing the human is the red flag.' },
+    ];
+    const sel = new Map(); // id -> auto (bool)
+
+    function draw() {
+      fill($('#probs'), Object.values(PROBLEMS).map((p) => el('span', { class: 'prob' }, p)));
+      $('#count').textContent = `${sel.size} of 3 chosen.`;
+      fill($('#proj'), P.map((p) => el('div', { class: 'pc' + (sel.has(p.id) ? ' on' : ''), onclick: () => toggle(p.id) },
+        el('h4', {}, p.t), el('div', { class: 'small' }, p.d),
+        el('div', {}, p.solves.map((s) => el('span', { class: 'prob' }, PROBLEMS[s]))))));
+      if (!sel.size) fill($('#plan'), el('p', { class: 'muted small' }, 'Click three project cards above.'));
+      else fill($('#plan'), el('table', { class: 't' },
+        el('tr', {}, el('th', {}, 'Project'), el('th', {}, 'Which area of AI? (slide 11)'), el('th', {}, 'Should it decide without human approval?')),
+        [...sel.keys()].map((id) => {
+          const p = P.find((x) => x.id === id), st = sel.get(id);
+          return el('tr', {}, el('td', {}, p.t),
+            el('td', {}, el('select', { onchange: (e) => { st.area = +e.target.value; } }, el('option', { value: -1 }, '— choose —'), AREA.map((a, i) => el('option', { value: i, selected: st.area === i }, a)))),
+            el('td', {}, ['Yes, it may act alone', 'No, a human approves'].map((lab, i) =>
+              el('label', { style: { marginRight: '12px' } }, el('input', { type: 'radio', name: 'a-' + id, checked: st.auto === (i === 0), onchange: () => { st.auto = i === 0; } }), ' ' + lab))));
+        })));
+      $('#go').disabled = sel.size !== 3;
+    }
+    function toggle(id) {
+      if (sel.has(id)) sel.delete(id);
+      else if (sel.size < 3) sel.set(id, { area: -1, auto: null });
+      $('#report').hidden = true; draw();
+    }
+    function review() {
+      const chosen = [...sel.entries()].map(([id, st]) => ({ p: P.find((x) => x.id === id), st }));
+      const covered = new Set(chosen.flatMap((c) => c.p.solves));
+      const areaRight = chosen.filter((c) => c.st.area === c.p.area).length;
+      const autoRight = chosen.filter((c) => c.st.auto === c.p.autoOK).length;
+      const kiosk = chosen.some((c) => c.p.id === 'kiosk');
+      const R = $('#report'); R.hidden = false;
+      fill(R, el('h2', { style: { marginTop: 0 } }, 'Board review'),
+        el('div', { class: 'stats' },
+          el('div', { class: 'stat' }, el('b', {}, `${covered.size} / 4`), el('span', {}, 'problems addressed')),
+          el('div', { class: 'stat' }, el('b', {}, `${areaRight} / 3`), el('span', {}, 'areas classified correctly')),
+          el('div', { class: 'stat' }, el('b', {}, `${autoRight} / 3`), el('span', {}, 'oversight decisions matching the lecture'))),
+        kiosk ? el('div', { class: 'callout bad' }, el('b', {}, 'Red flag: '), 'the autonomous diagnosis kiosk. It promises to solve all four problems, which is exactly why it should worry you: AI cannot guarantee a correct diagnosis, full understanding of the patient or the end of professional responsibility (slide 14).') : null,
+        covered.size < 4 ? el('p', { class: 'small' }, 'Not covered: ', [...Object.keys(PROBLEMS)].filter((k) => !covered.has(k)).map((k) => PROBLEMS[k]).join(', '), '. That is fine — no single plan solves everything, and AI is only one of the tools a manager has.') : null,
+        chosen.map(({ p, st }) => el('div', { class: 'box', style: { margin: '10px 0' } },
+          el('h4', { style: { marginTop: 0 } }, p.t),
+          el('div', { class: 'small' }, el('b', {}, 'Area: '), AREA[p.area], st.area === p.area ? ' ✓' : st.area < 0 ? ' (you did not choose)' : ` — you chose ${AREA[st.area]} ✗`),
+          el('div', { class: 'small' }, el('b', {}, 'What it can do: '), p.can),
+          el('div', { class: 'small' }, el('b', {}, 'What it cannot guarantee: '), p.cannot),
+          el('div', { class: 'small' }, el('b', {}, 'Needed before it is safe: '), p.needs),
+          el('div', { class: 'small', style: { color: st.auto === p.autoOK ? 'var(--ok)' : 'var(--bad)' } }, el('b', {}, 'Human approval? '),
+            p.autoOK ? 'May act alone (low risk), with monitoring. ' : 'A human should approve. ', st.auto == null ? '(you did not choose) ' : st.auto === p.autoOK ? '✓ ' : '✗ ', p.why))),
+        el('div', { class: 'callout' }, el('b', {}, 'The lecture\'s checklist (slide 14) applies to every project: '), 'data quality and validation · evaluation in the intended clinical setting · protection of patient privacy · human oversight where necessary · continuous monitoring of safety and performance.'));
+      R.scrollIntoView({ behavior: 'smooth' });
+    }
+    $('#go').onclick = review;
+    draw();
+  </script>
+</body>
+</html>

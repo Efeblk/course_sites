@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calibration &amp; the New Hospital · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sl { display: grid; grid-template-columns: 230px 1fr 70px; gap: 10px; align-items: center; margin: 6px 0; }
+    .sl input { width: 100%; }
+    td.up { color: var(--ok); } td.down { color: var(--bad); }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="4" data-title="Calibration & the New Hospital" data-activity="w4-calibration">
+  <main>
+    <h1>Calibration &amp; the New Hospital</h1>
+    <p class="lead">A deterioration model was developed and validated at <b>Hospital A</b>, where 10% of patients deteriorate. It works well there. Now <b>Hospital B</b> wants to buy it. <b>Discrimination</b> asks whether it still separates high- from low-risk patients; <b>calibration</b> asks whether "20% risk" still means 20 out of 100 (slide 14).</p>
+
+    <div class="panel">
+      <div class="row"><span class="small muted">Hospital B is…</span>
+        <button class="chip" data-s="same">just like A</button>
+        <button class="chip" data-s="low">a community hospital (condition rarer)</button>
+        <button class="chip" data-s="high">a referral centre (sicker patients)</button>
+        <button class="chip" data-s="device">using a different lab analyser</button>
+        <button class="chip" data-s="mix">a different patient population</button>
+      </div>
+      <div class="sl"><span>Prevalence at B</span><input type="range" id="prev" min="1" max="40" step="1"><code id="prevV"></code></div>
+      <div class="sl"><span>Measurement shift at B</span><input type="range" id="shift" min="-1.5" max="1.5" step="0.1"><code id="shiftV"></code></div>
+      <div class="sl"><span>How informative the inputs are at B</span><input type="range" id="dB" min="0.4" max="2" step="0.1"><code id="dBV"></code></div>
+      <div class="sl"><span>Alert when predicted risk ≥</span><input type="range" id="thr" min="5" max="60" step="5"><code id="thrV"></code></div>
+      <div class="row"><button id="recal">Recalibrate on local Hospital B data</button><button class="chip" id="undo">Use the original model</button> <span class="small" id="mode"></span></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">Calibration plot at Hospital B</h3>
+        <svg id="cal"></svg>
+        <p class="small muted">Each dot groups patients with similar predicted risk (dot size = how many). On the diagonal = well calibrated. Below = the model over-estimates risk; above = it under-estimates.</p>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Hospital A (development) vs Hospital B</h3>
+        <table class="t" id="tbl"></table>
+        <div id="msg"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Remember (slides 12–14):</b> PPV and NPV depend strongly on prevalence, so the same model behaves differently in different settings. <b>Internal validation</b> tests performance inside the development data; <b>external validation</b> tests another site or time period. A model with strong development results is not automatically ready for clinical use — reassess after deployment and whenever data or workflow change.
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const erf = (x) => { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + 0.3275911 * x); return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x)); };
+    const Phi = (z) => 0.5 * (1 + erf(z / Math.SQRT2));
+    const phi = (z) => Math.exp(-z * z / 2);
+    const sig = (v) => 1 / (1 + Math.exp(-v)), logit = (p) => Math.log(p / (1 - p));
+    // latent score s: non-cases N(0,1), cases N(d,1). The model was fitted at A (prevalence 10 %, d = 1.8).
+    const A = { prev: 0.10, d: 1.8, shift: 0 };
+    const SCEN = { same: { prev: 10, shift: 0, dB: 1.8 }, low: { prev: 3, shift: 0, dB: 1.8 }, high: { prev: 25, shift: 0, dB: 1.8 }, device: { prev: 10, shift: 0.8, dB: 1.8 }, mix: { prev: 10, shift: 0, dB: 1 } };
+    let recal = null; // { a, b } applied to the original model's logit
+    const baseLogit = (sMeasured) => logit(A.prev) + A.d * sMeasured - A.d * A.d / 2;
+    const predict = (sMeasured) => sig(recal ? recal.a + recal.b * baseLogit(sMeasured) : baseLogit(sMeasured));
+
+    function evaluate(H) { // numeric integration over the latent score
+      const grid = []; for (let s = -5; s <= H.d + 5; s += 0.02) grid.push(s);
+      const bins = [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.65, 0.8, 1.0001].map((b, i, a) => ({ lo: b, hi: a[i + 1], w: 0, wp: 0, ev: 0 })).slice(0, -1);
+      let TP = 0, FP = 0, P = 0, Nn = 0, meanP = 0, tot = 0;
+      const thr = +$('#thr').value / 100;
+      for (const s of grid) {
+        const wPos = H.prev * phi(s - H.d), wNeg = (1 - H.prev) * phi(s), w = wPos + wNeg;
+        const p = predict(s + H.shift);
+        const b = bins.find((x) => p >= x.lo && p < x.hi); b.w += w; b.wp += w * p; b.ev += wPos;
+        tot += w; meanP += w * p; P += wPos; Nn += wNeg;
+        if (p >= thr) { TP += wPos; FP += wNeg; }
+      }
+      return { bins: bins.filter((b) => b.w / tot > 0.002).map((b) => ({ pred: b.wp / b.w, obs: b.ev / b.w, mass: b.w / tot })), meanP: meanP / tot, prev: P / tot,
+        sens: TP / P, ppv: TP + FP ? TP / (TP + FP) : NaN, alerts: (1000 * (TP + FP)) / tot, auc: Phi(H.d / Math.SQRT2) };
+    }
+    function hospB() { return { prev: +$('#prev').value / 100, shift: +$('#shift').value, d: +$('#dB').value }; }
+    function draw() {
+      const B = hospB();
+      $('#prevV').textContent = $('#prev').value + '%'; $('#shiftV').textContent = (+$('#shift').value).toFixed(1); $('#dBV').textContent = (+$('#dB').value).toFixed(1); $('#thrV').textContent = $('#thr').value + '%';
+      $('#mode').textContent = recal ? 'Using the model recalibrated at Hospital B.' : 'Using the original Hospital A model.';
+      const savedRecal = recal; recal = null; const eA = evaluate(A); recal = savedRecal;
+      const eB = evaluate(B);
+      const P = Plot($('#cal'), { x: [0, 1], y: [0, 1], w: 420, h: 340, pad: [12, 12, 32, 40] });
+      P.axes({ xticks: [0, 0.2, 0.4, 0.6, 0.8, 1], yticks: [0, 0.2, 0.4, 0.6, 0.8, 1], xlabel: 'predicted risk', ylabel: 'observed rate' });
+      P.path([[0, 0], [1, 1]], { stroke: 'var(--muted)', 'stroke-dasharray': '4 3', 'stroke-width': 1 });
+      P.path(eB.bins.map((b) => [b.pred, b.obs]), { stroke: 'var(--accent)', 'stroke-width': 1.5 });
+      for (const b of eB.bins) P.dot(b.pred, b.obs, { r: 3 + 14 * Math.sqrt(b.mass), fill: 'var(--accent)', 'fill-opacity': 0.75 });
+      const pct = (v, dd = 1) => (isNaN(v) ? '—' : (100 * v).toFixed(dd) + '%');
+      const row = (lab, a, b, fmt, betterUp) => {
+        const diff = b - a, cls = Math.abs(diff) < 1e-3 ? '' : (diff > 0) === betterUp ? 'up' : 'down';
+        return el('tr', {}, el('td', {}, lab), el('td', { class: 'num' }, fmt(a)), el('td', { class: 'num ' + cls }, fmt(b)));
+      };
+      fill($('#tbl'), el('tr', {}, el('th', {}, ''), el('th', {}, 'Hospital A'), el('th', {}, 'Hospital B')),
+        row('Prevalence (true rate)', eA.prev, eB.prev, (v) => pct(v)),
+        row('Average predicted risk', eA.meanP, eB.meanP, (v) => pct(v)),
+        row('Discrimination (AUC)', eA.auc, eB.auc, (v) => v.toFixed(2), true),
+        row(`Sensitivity at ≥ ${$('#thr').value}%`, eA.sens, eB.sens, (v) => pct(v), true),
+        row(`PPV at ≥ ${$('#thr').value}%`, eA.ppv, eB.ppv, (v) => pct(v), true),
+        row('Alerts per 1,000 patients', eA.alerts, eB.alerts, (v) => Math.round(v), false));
+      const msgs = [], gap = eB.meanP - eB.prev;
+      if (Math.abs(gap) > 0.02) msgs.push(el('div', { class: 'callout warn' }, el('b', {}, gap > 0 ? 'Over-estimation. ' : 'Under-estimation. '),
+        `At Hospital B the model predicts ${pct(eB.meanP)} on average, but only ${pct(eB.prev)} of patients deteriorate. Its probabilities no longer mean what they say: it is miscalibrated.`));
+      if (B.prev < A.prev - 0.02 && !recal) msgs.push(el('p', { class: 'small' }, `The ranking of patients is unchanged (AUC ${eB.auc.toFixed(2)}), yet PPV fell from ${pct(eA.ppv)} to ${pct(eB.ppv)}: with a rarer condition, more alerts are false. Same model, different setting.`));
+      if (B.d < A.d - 0.2) msgs.push(el('p', { class: 'small' }, `Discrimination dropped (AUC ${eA.auc.toFixed(2)} → ${eB.auc.toFixed(2)}): the inputs carry less information in this population. Recalibration fixes the probabilities but cannot restore the lost ranking ability — the model may need re-development with local data.`));
+      if (Math.abs(B.shift) >= 0.3 && !recal) msgs.push(el('p', { class: 'small' }, 'A different analyser shifts every measurement. The model sees "worse" (or "better") values than it was trained on, so all its risks move together — a device difference, not a change in the patients.'));
+      if (recal && Math.abs(gap) <= 0.02) msgs.push(el('div', { class: 'callout ok' }, 'After recalibration on local data, predicted risks match observed rates again. This needs local outcome data, careful validation and monitoring — it is part of external validation, not a one-off fix.'));
+      if (!msgs.length) msgs.push(el('div', { class: 'callout ok' }, 'Hospital B looks like Hospital A, so the model transfers well. In practice you only know this after external validation at B.'));
+      fill($('#msg'), msgs);
+    }
+    function setScen(k) {
+      const s = SCEN[k]; $('#prev').value = s.prev; $('#shift').value = s.shift; $('#dB').value = s.dB; recal = null;
+      $$('[data-s]').forEach((b) => b.classList.toggle('active', b.dataset.s === k)); draw();
+    }
+    $('#recal').onclick = () => {
+      const B = hospB(), b = B.d / A.d;
+      // exact recalibration: true logit at B is linear in the original model's logit
+      recal = { b, a: logit(B.prev) - B.d * B.shift - B.d * B.d / 2 - b * (logit(A.prev) - A.d * A.d / 2) };
+      draw();
+    };
+    $('#undo').onclick = () => { recal = null; draw(); };
+    $$('input[type=range]').forEach((i) => i.addEventListener('input', () => { if (i.id !== 'thr') recal = null; draw(); }));
+    $$('[data-s]').forEach((b) => (b.onclick = () => setScen(b.dataset.s)));
+    $('#thr').value = 20; setScen('low');
+  </script>
+</body>
+</html>

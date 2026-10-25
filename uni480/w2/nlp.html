@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clinical Note NLP Lab · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    textarea { width: 100%; min-height: 90px; font-size: .95rem; background: var(--bg-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; font-family: var(--sans); }
+    .note { font-size: 1.05rem; line-height: 2; }
+    .cn { padding: 1px 5px; border-radius: 5px; font-weight: 600; }
+    .st-Present { background: color-mix(in srgb, var(--bad) 28%, transparent); }
+    .st-Negated { background: color-mix(in srgb, var(--ok) 28%, transparent); text-decoration: line-through; }
+    .st-Historical { background: color-mix(in srgb, var(--accent-2) 28%, transparent); }
+    .st-Uncertain { background: color-mix(in srgb, var(--warn) 30%, transparent); }
+    .st-Family { background: color-mix(in srgb, var(--accent) 26%, transparent); }
+    .cue { border-bottom: 2px dotted var(--text); }
+    td.ok { color: var(--ok); } td.bad { color: var(--bad); }
+    .legend span { margin-right: 10px; }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="2" data-title="Clinical Note NLP Lab" data-activity="w2-nlp">
+  <main>
+    <h1>Clinical Note NLP Lab</h1>
+    <p class="lead">NLP turns clinical free text into structured information, but <b>context and negation matter</b> (slide 12): "No evidence of pneumonia" must not be stored as "pneumonia". Compare a <b>naive keyword extractor</b> with a <b>context-aware rule system</b> that looks for negation, time, uncertainty and family-history cues.</p>
+
+    <div class="panel">
+      <div class="row" id="presets"></div>
+      <textarea id="txt"></textarea>
+      <p class="small muted">Edit the note freely. Concepts it knows: pneumonia, fever, cough, chest pain, shortness of breath, nausea, headache, diabetes, hypertension, tuberculosis, discharge.</p>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Context-aware reading</h3>
+      <div class="note" id="note"></div>
+      <p class="small legend"><span class="cn st-Present">present</span><span class="cn st-Negated">negated</span><span class="cn st-Historical">historical</span><span class="cn st-Uncertain">uncertain / planned</span><span class="cn st-Family">family member</span><span class="cue">cue word</span></p>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Structured output</h3>
+      <p class="small">First choose your own answer for each concept, as a clinician would read it. Then check.</p>
+      <table class="t" id="tbl"></table>
+      <div class="row" style="margin-top:10px"><button class="primary" id="check">Check my answers</button></div>
+      <div id="res"></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">The rules it uses</h3>
+        <div class="small" id="rules"></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Why it matters</h3>
+        <p class="small">A naive extractor turns "denies chest pain" into a chest-pain record. Downstream, a decision-support rule may then fire, a cohort for research may include the wrong patient, or a billing code may be added. NLP errors can be subtle: <b>omissions, wrong negation, wrong temporality or unsupported inferences</b> (slide 13).</p>
+        <p class="small">Even the smarter rule system fails on the two "tricky" notes. Real clinical NLP uses trained models (up to transformer language models), and its output still needs checking.</p>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const CONCEPTS = {
+      'pneumonia': ['pneumonia'], 'fever': ['fever', 'febrile'], 'cough': ['cough'], 'chest pain': ['chest pain'],
+      'shortness of breath': ['shortness of breath', 'breathlessness', 'dyspnea', 'dyspnoea'], 'nausea': ['nausea'], 'headache': ['headache'],
+      'diabetes': ['diabetes'], 'hypertension': ['hypertension'], 'tuberculosis': ['tuberculosis'], 'discharge': ['discharge'],
+    };
+    const STATES = ['Present', 'Negated', 'Historical', 'Uncertain', 'Family'];
+    const CUES = {
+      Family: ['family history of', 'mother', 'father', 'sister', 'brother'],
+      Negated: ['no evidence of', 'no signs of', 'negative for', 'free of', 'absence of', 'denies', 'denied', 'without', 'no', 'not'],
+      Uncertain: ['possible', 'possibly', 'probable', 'suspected', 'suspicion of', 'may have', 'considering', 'consider', 'rule out', 'planned', 'query'],
+      Historical: ['history of', 'last month', 'last week', 'last year', 'previous', 'prior', 'ago', 'treated for', 'was admitted', 'in 2019', 'in 2020', 'in 2021', 'in 2022'],
+    };
+    const AFTER = { Negated: ['resolved', 'ruled out', 'is absent', 'was excluded'], Uncertain: ['cannot be excluded', 'not excluded', 'is suspected', 'is being considered'] };
+    const PRESETS = [
+      { name: 'Slide 12', text: 'Patient reports shortness of breath; denies chest pain.', gold: { 'shortness of breath': 'Present', 'chest pain': 'Negated' } },
+      { name: 'Slide 14 note', text: 'A 68-year-old patient was admitted last month for pneumonia. Today the patient has no fever and denies cough. The clinician is considering discharge.', gold: { pneumonia: 'Historical', fever: 'Negated', cough: 'Negated', discharge: 'Uncertain' } },
+      { name: 'No evidence', text: 'No evidence of pneumonia on chest X-ray.', gold: { pneumonia: 'Negated' } },
+      { name: 'Denies vs reports', text: 'Patient denies shortness of breath. Patient reports nausea.', gold: { 'shortness of breath': 'Negated', nausea: 'Present' } },
+      { name: 'Family history', text: 'Family history of diabetes; the patient has hypertension.', gold: { diabetes: 'Family', hypertension: 'Present' } },
+      { name: 'Uncertain', text: 'Possible pneumonia; rule out tuberculosis.', gold: { pneumonia: 'Uncertain', tuberculosis: 'Uncertain' } },
+      { name: 'Resolved', text: 'Fever resolved overnight but cough persists.', gold: { fever: 'Negated', cough: 'Present' } },
+      { name: 'Past vs now', text: 'Treated for tuberculosis in 2019. Now presents with fever and headache.', gold: { tuberculosis: 'Historical', fever: 'Present', headache: 'Present' } },
+      { name: 'Tricky 1', text: 'No improvement in cough after three days.', gold: { cough: 'Present' }, note: '"No" negates the improvement, not the cough — the cough is still there.' },
+      { name: 'Tricky 2', text: 'Patient is not sure when the headache started.', gold: { headache: 'Present' }, note: '"Not" belongs to "sure"; the headache is real.' },
+    ];
+    let preset = PRESETS[1], mine = {};
+
+    const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const has = (txt, cue) => new RegExp(`(^|[^a-z])${esc(cue)}([^a-z]|$)`).test(txt);
+    function analyse(text) {
+      const low = text.toLowerCase(), found = [];
+      // clauses: split at . ; and the words "but" / "however"
+      const re = /[.;]|\bbut\b|\bhowever\b/g; let start = 0, m; const clauses = [];
+      while ((m = re.exec(low))) { clauses.push([start, m.index]); start = m.index + m[0].length; }
+      clauses.push([start, low.length]);
+      for (const [name, syns] of Object.entries(CONCEPTS)) for (const syn of syns) {
+        const r = new RegExp(`\\b${esc(syn)}\\b`, 'g'); let mm;
+        while ((mm = r.exec(low))) {
+          const pos = mm.index, [cs, ce] = clauses.find(([a, b]) => pos >= a && pos < b);
+          const pre = low.slice(cs, pos), post = low.slice(pos + syn.length, ce);
+          const win = pre.split(/\s+/).slice(-6).join(' '); // look back at most ~5 words
+          let status = 'Present', cue = null;
+          const test = (st, src) => { for (const c of CUES[st]) if (has(src, c)) return c; return null; };
+          if ((cue = test('Family', pre))) status = 'Family';
+          else if ((cue = test('Negated', win)) || (cue = AFTER.Negated.find((c) => post.trim().startsWith(c) || has(post.slice(0, 25), c)))) status = 'Negated';
+          else if ((cue = test('Uncertain', win)) || (cue = AFTER.Uncertain.find((c) => has(post.slice(0, 30), c)))) status = 'Uncertain';
+          else if ((cue = test('Historical', low.slice(cs, ce)))) status = 'Historical';
+          found.push({ name, start: pos, end: pos + syn.length, status, cue, clause: [cs, ce] });
+        }
+      }
+      return found.sort((a, b) => a.start - b.start);
+    }
+    function render() {
+      const text = $('#txt').value, F = analyse(text), low = text.toLowerCase();
+      // highlight concepts and their cue words
+      const marks = [];
+      for (const f of F) {
+        marks.push({ s: f.start, e: f.end, cls: 'cn st-' + f.status, title: f.status + (f.cue ? ` (cue: "${f.cue}")` : '') });
+        if (f.cue) {
+          const [cs, ce] = f.clause, i = low.slice(cs, ce).search(new RegExp(`(^|[^a-z])${esc(f.cue)}([^a-z]|$)`));
+          if (i >= 0) { const s = cs + i + (low[cs + i] === f.cue[0] ? 0 : 1); if (!marks.some((m) => s < m.e && s + f.cue.length > m.s)) marks.push({ s, e: s + f.cue.length, cls: 'cue', title: 'cue word' }); }
+        }
+      }
+      marks.sort((a, b) => a.s - b.s);
+      const parts = []; let p = 0;
+      for (const m of marks) { if (m.s < p) continue; parts.push(text.slice(p, m.s), el('span', { class: m.cls, title: m.title }, text.slice(m.s, m.e))); p = m.e; }
+      parts.push(text.slice(p));
+      fill($('#note'), parts);
+      const byName = new Map(); for (const f of F) if (!byName.has(f.name)) byName.set(f.name, f);
+      const gold = preset && preset.text === text ? preset.gold : null;
+      fill($('#tbl'), el('tr', {}, el('th', {}, 'Concept'), el('th', {}, 'Your reading'), el('th', {}, 'Naive keyword extractor'), el('th', {}, 'Context-aware rules'), gold ? el('th', {}, 'Correct reading') : null),
+        [...byName.values()].map((f) => el('tr', {}, el('td', {}, f.name),
+          el('td', {}, el('select', { 'data-c': f.name, onchange: (e) => { mine[f.name] = e.target.value; } }, el('option', { value: '' }, '— choose —'), STATES.map((s) => el('option', { value: s, selected: mine[f.name] === s }, s)))),
+          el('td', { class: 'res-naive' }, 'Present'), el('td', { class: 'res-ctx' }, f.status + (f.cue ? ` ("${f.cue}")` : '')),
+          gold ? el('td', {}, gold[f.name] || '—') : null)));
+      fill($('#res'));
+      if (!F.length) fill($('#tbl'), el('tr', {}, el('td', { class: 'muted' }, 'No known concept in this note.')));
+    }
+    function check() {
+      const text = $('#txt').value, F = analyse(text), gold = preset && preset.text === text ? preset.gold : null;
+      const names = [...new Set(F.map((f) => f.name))];
+      if (!names.length) return;
+      let you = 0, naive = 0, ctx = 0;
+      const rows = $('#tbl').querySelectorAll('tr');
+      names.forEach((n, i) => {
+        const f = F.find((x) => x.name === n), truth = gold ? gold[n] : f.status, tr = rows[i + 1];
+        const y = mine[n] === truth, nv = truth === 'Present', c = f.status === truth;
+        you += y; naive += nv; ctx += c;
+        tr.children[2].className = nv ? 'ok' : 'bad'; tr.children[3].className = c ? 'ok' : 'bad';
+        tr.children[1].className = y ? 'ok' : 'bad';
+      });
+      fill($('#res'), el('div', { class: 'stats', style: { marginTop: '10px' } },
+        el('div', { class: 'stat' }, el('b', {}, `${you} / ${names.length}`), el('span', {}, 'you')),
+        el('div', { class: 'stat' }, el('b', {}, `${naive} / ${names.length}`), el('span', {}, 'naive keywords')),
+        el('div', { class: 'stat' }, el('b', {}, `${ctx} / ${names.length}`), el('span', {}, 'context-aware rules'))),
+        !gold ? el('p', { class: 'small muted' }, 'Your own note has no answer key, so the context-aware rules are used as the reference — they can be wrong too.') : null,
+        gold && preset.note ? el('div', { class: 'callout warn' }, el('b', {}, 'Why the rules fail here: '), preset.note, ' Negation scope is hard; rules look at words near the concept, not at what the sentence means.') : null,
+        gold && !preset.note && naive < names.length ? el('div', { class: 'callout' }, 'The naive extractor records every mention as present. "What is historical? What is current? What is explicitly denied? What remains uncertain?" (slide 14)') : null);
+    }
+    fill($('#presets'), el('span', { class: 'small muted' }, 'Notes:'), PRESETS.map((p) => el('button', { class: 'chip', onclick: () => { preset = p; mine = {}; $('#txt').value = p.text; render(); } }, p.name)));
+    fill($('#rules'), Object.entries(CUES).map(([st, cs]) => el('div', { style: { marginBottom: '6px' } }, el('span', { class: 'cn st-' + st }, st), ' if one of these appears ', st === 'Historical' ? 'in the same clause' : st === 'Family' ? 'before it in the clause' : 'in the 5 words before it', ': ', el('i', {}, cs.join(', ')),
+      AFTER[st] ? el('span', {}, ' — or right after it: ', el('i', {}, AFTER[st].join(', '))) : null)),
+      el('p', { class: 'muted' }, 'Clauses are split at ". ; but however". Priority: family → negated → uncertain → historical → present.'));
+    $('#txt').value = preset.text;
+    $('#txt').addEventListener('input', () => { mine = {}; render(); });
+    $('#check').onclick = check;
+    render();
+  </script>
+</body>
+</html>

@@ -20,6 +20,10 @@ materials/
     projects/    ML_Project_COE305.pdf
     text/        slide text (zip/XML extraction) + PDF text (PyMuPDF)
     png/         every slide exported to PNG with PowerPoint (equations are images)
+  UNI480/
+    slides/      Week 1, Week 2-3, Week 3, Week 4, Week 5 (.pptx)
+    syllabus/    course syllabus PDF
+    text/        slide text (zip/XML extraction) + syllabus text (PyMuPDF)
 ```
 
 ## Adding new files
@@ -64,3 +68,14 @@ mostly images (COE025 weeks 1–2); export them to PNG with PowerPoint to read t
 | slides/05.pptx | 17 | Week 5 Decision trees: entropy on Play Tennis, regression trees, pruning, rules |
 | syllabus/COE305 - Machine Learning.pdf | 4 | Syllabus: 12 weeks, projects 30 / midterm 30 / final 40 |
 | projects/ML_Project_COE305.pdf | 3 | Practical project, 5 tasks, due 2026-11-20 17:00 |
+
+## UNI480 inventory (as of 2026-10-25)
+
+| File | Slides | Content |
+|---|---|---|
+| slides/Week 1.pptx | 14 | Week 1 Introduction to AI in healthcare: definitions, history, agents, areas, limits |
+| slides/Week 2-3.pptx | 28 | Week 2 AI technologies: ML, DL, NLP, computer vision, robotics, generative AI |
+| slides/Week 3.pptx | 23 | Week 3 Healthcare data: EHR, big data, data quality, interoperability, analytics |
+| slides/Week 4.pptx | 25 | Week 4 Clinical decision-making: CDSS, predictive analytics, metrics, augmented intelligence |
+| slides/Week 5.pptx | 20 | A shortened copy of the Week 4 deck (no new topic; syllabus week 5 is medical imaging) |
+| syllabus/UNI480 - AI in Health Management.pdf | 3 | Syllabus: 13 weeks, midterm 30 / final 50 / term project 20, MCQ exams |

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="..">
+  <main>
+    <h1 id="title">Quiz</h1>
+    <p class="muted small">Answer, read the explanation, move on. Options are shuffled every time. <kbd>1</kbd>–<kbd>4</kbd> to answer, <kbd>Enter</kbd> for next.</p>
+    <div class="progressbar"><div id="bar" style="width:0"></div></div>
+    <div class="panel" id="stage"></div>
+  </main>
+  <script src="data.js"></script>
+  <script>
+    const n = Number(new URLSearchParams(location.search).get('ch')) || 1;
+    document.body.dataset.course = COURSE.id;
+    document.body.dataset.chapter = n;
+    document.body.dataset.title = 'Quiz';
+    document.body.dataset.activity = `quiz-ch${n}`;
+  </script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { el, shuffle, progress } = CS;
+    const ch = COURSE.chapters.find((c) => c.n === n);
+    document.getElementById('title').textContent = `${CS.unit} ${n} Quiz — ${ch.title}`;
+    document.title = `${CS.unit} ${n} Quiz · ${COURSE.code}`;
+
+    const stage = document.getElementById('stage');
+    const bar = document.getElementById('bar');
+    let order, i, score, answered, wrong;
+
+    function start() {
+      order = shuffle(ch.quiz);
+      i = 0; score = 0; wrong = [];
+      show();
+    }
+
+    function show() {
+      answered = false;
+      bar.style.width = `${(i / order.length) * 100}%`;
+      const item = order[i];
+      const opts = shuffle(item.options.map((text, idx) => ({ text, right: idx === item.answer })));
+      const feedback = el('div');
+      const next = el('button', { class: 'primary', style: { display: 'none', marginTop: '10px' }, onclick: advance },
+        i + 1 < order.length ? 'Next →' : 'See result');
+
+      const buttons = opts.map((o, k) => el('button', {
+        class: 'opt',
+        onclick: () => {
+          if (answered) return;
+          answered = true;
+          buttons.forEach((b, j) => {
+            b.disabled = true;
+            if (opts[j].right) b.classList.add('right');
+          });
+          if (o.right) score++;
+          else { buttons[k].classList.add('wrong'); wrong.push(item); }
+          feedback.replaceChildren(el('div', { class: `callout ${o.right ? 'ok' : 'bad'}` },
+            el('b', {}, o.right ? 'Correct. ' : 'Not quite. '), item.explain));
+          next.style.display = '';
+          next.focus();
+        },
+      }, `${k + 1}. ${o.text}`));
+
+      CS.fill(stage, 
+        el('div', { class: 'muted small' }, `Question ${i + 1} of ${order.length} · score ${score}`),
+        el('div', { class: 'quiz-q' }, item.q),
+        buttons, feedback, next);
+    }
+
+    function advance() {
+      i++;
+      if (i < order.length) return show();
+      bar.style.width = '100%';
+      progress.recordScore(`quiz-ch${n}`, score, order.length);
+      const pct = Math.round((score / order.length) * 100);
+      CS.fill(stage, 
+        el('h2', { style: { marginTop: 0 } }, `${score} / ${order.length} (${pct}%)`),
+        el('p', {}, pct >= 85 ? `Excellent — you are exam-ready on this ${CS.unit.toLowerCase()}.` : pct >= 60 ? 'Good. Review the ones you missed below, then try again.' : 'Worth another pass — try the simulations for the topics you missed.'),
+        wrong.length ? el('div', {},
+          el('h3', {}, 'Review'),
+          wrong.map((w) => el('div', { class: 'callout warn' },
+            el('b', {}, w.q), el('br'), '✓ ', w.options[w.answer], el('br'),
+            el('span', { class: 'muted small' }, w.explain)))) : null,
+        el('div', { class: 'row', style: { marginTop: '14px' } },
+          el('button', { class: 'primary', onclick: start }, 'Try again'),
+          el('a', { class: 'btn', href: `cards.html?ch=${n}` }, 'Flashcards')));
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (/^[1-9]$/.test(e.key)) stage.querySelectorAll('.opt')[Number(e.key) - 1]?.click();
+      if (e.key === 'Enter' && answered && document.activeElement?.tagName !== 'BUTTON') advance();
+    });
+    start();
+  </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Threshold &amp; Alert Lab · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sl { display: grid; grid-template-columns: 210px 1fr 80px; gap: 10px; align-items: center; margin: 6px 0; }
+    .sl input { width: 100%; }
+    table.cm td, table.cm th { text-align: center; padding: 6px 12px; }
+    table.cm td.tp { background: color-mix(in srgb, var(--ok) 22%, transparent); }
+    table.cm td.tn { background: color-mix(in srgb, var(--ok) 12%, transparent); }
+    table.cm td.fp { background: color-mix(in srgb, var(--warn) 24%, transparent); }
+    table.cm td.fn { background: color-mix(in srgb, var(--bad) 24%, transparent); }
+    table.cm b { font-size: 1.2rem; }
+    .formula { font-family: var(--mono); font-size: .82rem; color: var(--muted); }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="4" data-title="Threshold & Alert Lab" data-activity="w4-threshold">
+  <main>
+    <h1>Threshold &amp; Alert Lab</h1>
+    <p class="lead">An early-warning model gives every patient a <b>risk score</b>. A <b>threshold</b> turns the score into an action: "review urgently" (slide 11). Lower thresholds catch more true cases but create more false alarms; higher thresholds reduce alerts but miss more patients. Find a threshold you could defend.</p>
+
+    <div class="panel">
+      <div class="row"><span class="small muted">Scenarios:</span>
+        <button class="chip" data-p="ward">Ward early warning</button>
+        <button class="chip" data-p="slide13">Slide 13: 1% prevalence</button>
+        <button class="chip" data-p="nobody">"Predict no condition for everyone"</button>
+        <button class="chip" data-p="rare">Rare condition, good model</button>
+        <button class="chip" data-p="urgent">Treatable, life-threatening</button>
+      </div>
+      <div class="sl"><span>Alert threshold (risk score)</span><input type="range" id="thr" min="0" max="101" step="1"><code id="thrV"></code></div>
+      <div class="sl"><span>Prevalence (who truly has it)</span><input type="range" id="prev" min="0" max="100" step="1"><code id="prevV"></code></div>
+      <div class="sl"><span>Model quality (separation)</span><input type="range" id="d" min="0" max="4" step="0.1"><code id="dV"></code></div>
+      <div class="sl"><span>Alerts the team can review</span><input type="range" id="cap" min="10" max="300" step="5"><code id="capV"></code></div>
+      <p class="small muted">1,000 patients are scored. Scores and outcomes are simulated; they illustrate the trade-offs, not a real product.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">Score distribution</h3>
+        <svg id="dist"></svg>
+        <label class="small"><input type="checkbox" id="scaled" checked> draw groups to scale (shows how few true cases there are when prevalence is low)</label>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Confusion matrix</h3>
+        <table class="t cm" id="cm"></table>
+        <div id="load" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <div class="stats" id="stats"></div>
+        <div id="msg"></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">ROC curve (discrimination)</h3>
+        <svg id="roc"></svg>
+        <p class="small muted">Each threshold is one point: sensitivity vs false-positive rate. Moving the threshold moves along the curve; only a better model moves the curve itself. Prevalence does not change the curve — but it changes PPV and NPV.</p>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const N = 1000;
+    // non-cases: z ~ N(0,1); cases: z ~ N(d,1); shown as score = 35 + 10·z  (0–100)
+    const erf = (x) => { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + 0.3275911 * x); return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x)); };
+    const Phi = (z) => 0.5 * (1 + erf(z / Math.SQRT2));
+    const phi = (z) => Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    const toZ = (s) => (s - 35) / 10;
+    const PRE = {
+      ward: { thr: 55, prev: 8, d: 2, cap: 80 },
+      slide13: { thr: 55, prev: 1, d: 2, cap: 80 },
+      nobody: { thr: 101, prev: 1, d: 2, cap: 80 },
+      rare: { thr: 55, prev: 0.5, d: 2.8, cap: 80 },
+      urgent: { thr: 48, prev: 8, d: 2, cap: 150 },
+    };
+    // prevalence slider is non-linear so that 0.5 % and 1 % are reachable
+    const PREV = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30, 40, 50];
+    const prevFromSlider = (v) => PREV[Math.round((v / 100) * (PREV.length - 1))];
+    const sliderFromPrev = (p) => Math.round((PREV.indexOf(p) / (PREV.length - 1)) * 100);
+    let scenario = 'ward';
+
+    function counts(thr, prev, d) {
+      const pos = N * prev / 100, neg = N - pos, z = toZ(thr);
+      const sens = thr > 100 ? 0 : 1 - Phi(z - d), fpr = thr > 100 ? 0 : 1 - Phi(z);
+      return { TP: pos * sens, FN: pos * (1 - sens), FP: neg * fpr, TN: neg * (1 - fpr), sens, spec: 1 - fpr };
+    }
+    function draw() {
+      const thr = +$('#thr').value, prev = prevFromSlider(+$('#prev').value), d = +$('#d').value, cap = +$('#cap').value;
+      $('#thrV').textContent = thr > 100 ? 'nobody' : thr; $('#prevV').textContent = prev + '%'; $('#dV').textContent = d.toFixed(1); $('#capV').textContent = cap;
+      const c = counts(thr, prev, d), R = (v) => Math.round(v);
+      const TP = R(c.TP), FN = R(c.FN), FP = R(c.FP), TN = N - TP - FN - FP;
+      const sens = TP + FN ? TP / (TP + FN) : NaN, spec = (TN + FP) ? TN / (TN + FP) : NaN, ppv = TP + FP ? TP / (TP + FP) : NaN, npv = TN + FN ? TN / (TN + FN) : NaN, acc = (TP + TN) / N, alerts = TP + FP;
+      const pct = (v) => (isNaN(v) ? '—' : (100 * v).toFixed(1) + '%');
+      // distribution plot
+      const scaled = $('#scaled').checked, wNeg = scaled ? (100 - prev) / 100 : 0.5, wPos = scaled ? prev / 100 : 0.5;
+      const top = Math.max(wNeg, wPos) * phi(0) / 10 * 1.15;
+      const P = Plot($('#dist'), { x: [0, 100], y: [0, top], w: 520, h: 260, pad: [14, 12, 30, 12] });
+      P.axes({ xticks: [0, 20, 40, 60, 80, 100], yticks: [], xlabel: 'risk score' });
+      const dens = (s, w, m) => (w * phi(toZ(s) - m)) / 10;
+      const area = (from, to, w, m, fillc) => {
+        const pts = [[from, 0]]; for (let s = from; s <= to; s += 0.5) pts.push([s, dens(s, w, m)]); pts.push([to, 0]);
+        P.path(pts, { fill: fillc, stroke: 'none', 'fill-opacity': 0.45 });
+      };
+      const T = Math.min(thr, 100);
+      area(T, 100, wNeg, 0, 'var(--warn)'); area(0, T, wPos, d, 'var(--bad)'); area(T, 100, wPos, d, 'var(--ok)');
+      P.fn((s) => dens(s, wNeg, 0), { stroke: 'var(--accent)' }, 200);
+      P.fn((s) => dens(s, wPos, d), { stroke: 'var(--bad)' }, 200);
+      if (thr <= 100) { P.seg(thr, 0, thr, top, { stroke: 'var(--text)', 'stroke-dasharray': '4 3' }); P.text(thr + 1, top * 0.92, 'threshold'); }
+      P.text(35 - 8, dens(35, wNeg, 0) + top * 0.04, 'no condition', { fill: 'var(--accent)' });
+      P.text(35 + 10 * d - 6, dens(35 + 10 * d, wPos, d) + top * 0.04, 'has condition', { fill: 'var(--bad)' });
+      // confusion matrix
+      fill($('#cm'), el('tr', {}, el('th', {}), el('th', {}, 'Truly has it'), el('th', {}, 'Truly does not'), el('th', {}, 'Total')),
+        el('tr', {}, el('th', {}, 'Flagged (alert)'), el('td', { class: 'tp' }, el('b', {}, TP), el('div', { class: 'small' }, 'true positive')), el('td', { class: 'fp' }, el('b', {}, FP), el('div', { class: 'small' }, 'false alarm')), el('td', {}, alerts)),
+        el('tr', {}, el('th', {}, 'Not flagged'), el('td', { class: 'fn' }, el('b', {}, FN), el('div', { class: 'small' }, 'missed case')), el('td', { class: 'tn' }, el('b', {}, TN), el('div', { class: 'small' }, 'correctly cleared')), el('td', {}, FN + TN)),
+        el('tr', {}, el('th', {}, 'Total'), el('td', {}, TP + FN), el('td', {}, FP + TN), el('td', {}, N)));
+      fill($('#load'), alerts > cap
+        ? el('div', { class: 'callout warn' }, `${alerts} alerts but the team can review only ${cap}. ${alerts - cap} alerts will be skimmed or ignored — alert fatigue (slide 16). Of every 10 alerts only ${isNaN(ppv) ? 0 : Math.round(ppv * 10)} are real.`)
+        : el('div', { class: 'callout ok' }, `${alerts} alerts — within the team's capacity of ${cap}.`));
+      const stat = (v, l, f) => el('div', { class: 'stat' }, el('b', {}, v), el('span', {}, l), el('div', { class: 'formula' }, f));
+      fill($('#stats'), stat(pct(sens), 'sensitivity', 'TP / (TP + FN)'), stat(pct(spec), 'specificity', 'TN / (TN + FP)'), stat(pct(ppv), 'PPV', 'TP / (TP + FP)'), stat(pct(npv), 'NPV', 'TN / (TN + FN)'), stat(pct(acc), 'accuracy', '(TP + TN) / all'));
+      const msgs = [];
+      if (TP + FN > 0 && TP === 0) msgs.push(el('div', { class: 'callout bad' }, el('b', {}, `Accuracy ${pct(acc)} — and not a single affected patient found. `), 'This is slide 13: when only ', prev, '% have the condition, predicting "no condition" for everyone looks excellent on accuracy alone. Always check the confusion matrix.'));
+      else if (prev <= 1 && ppv < 0.35) msgs.push(el('div', { class: 'callout warn' }, el('b', {}, 'Rare condition: '), `even with sensitivity ${pct(sens)} and specificity ${pct(spec)}, only ${pct(ppv)} of alerts are true. PPV depends strongly on prevalence — always examine the base rate (slide 12).`));
+      if (scenario === 'urgent') msgs.push(el('div', { class: 'callout' }, 'For a rapidly treatable, life-threatening condition a missed case is very costly, so a lower threshold (high sensitivity) is usually defended — as long as the team has the capacity to respond to the extra alerts.'));
+      if (FN > 0 && TP > 0) msgs.push(el('p', { class: 'small' }, `At this threshold ${FN} patient${FN === 1 ? ' is' : 's are'} missed and ${FP} false alarm${FP === 1 ? '' : 's'} occur. Which error causes greater harm here, and who bears it?`));
+      fill($('#msg'), msgs);
+      // ROC
+      const Q = Plot($('#roc'), { x: [0, 1], y: [0, 1], w: 300, h: 260, pad: [12, 12, 30, 36] });
+      Q.axes({ xticks: [0, 0.5, 1], yticks: [0, 0.5, 1], xlabel: 'false-positive rate', ylabel: 'sensitivity' });
+      Q.path([[0, 0], [1, 1]], { stroke: 'var(--muted)', 'stroke-dasharray': '3 3', 'stroke-width': 1 });
+      const roc = []; for (let z = 6; z >= -6; z -= 0.1) roc.push([1 - Phi(z), 1 - Phi(z - d)]);
+      Q.path(roc, { stroke: 'var(--accent-2)' });
+      Q.dot(thr > 100 ? 0 : 1 - Phi(toZ(thr)), thr > 100 ? 0 : 1 - Phi(toZ(thr) - d), { fill: 'var(--warn)' });
+      Q.text(0.55, 0.12, `AUC = ${Phi(d / Math.SQRT2).toFixed(2)}`, { fill: 'var(--accent-2)' });
+    }
+    function setPreset(k) {
+      scenario = k; const p = PRE[k];
+      $('#thr').value = p.thr; $('#prev').value = sliderFromPrev(p.prev); $('#d').value = p.d; $('#cap').value = p.cap;
+      $$('[data-p]').forEach((b) => b.classList.toggle('active', b.dataset.p === k));
+      draw();
+    }
+    $$('input[type=range], #scaled').forEach((i) => i.addEventListener('input', draw));
+    $$('[data-p]').forEach((b) => (b.onclick = () => setPreset(b.dataset.p)));
+    setPreset('ward');
+  </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify the AI Draft · UNI480</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .rec td:first-child { color: var(--muted); white-space: nowrap; width: 1%; }
+    .sent { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin: 8px 0; background: var(--panel-2); }
+    .sent p { margin: 0 0 6px; font-size: 1rem; }
+    .sent.ok { border-color: var(--ok); } .sent.bad { border-color: var(--bad); }
+    .sent .fb { font-size: .86rem; margin-top: 6px; }
+    .ai { font-family: Georgia, serif; }
+  </style>
+</head>
+<body data-root="../.." data-course="uni480" data-chapter="2" data-title="Verify the AI Draft" data-activity="w2-verify">
+  <main>
+    <h1>Verify the AI Draft</h1>
+    <p class="lead">Generative AI drafted a discharge summary. It reads fluently — but <b>fluent output is not proof of factual accuracy</b> (slide 20). Your job is the human step of the pattern <i>prompt → model → output → <b>review</b></i>: check every sentence against the patient record.</p>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">Patient record (the source of truth)</h3>
+        <table class="t rec">
+          <tr><td>Patient</td><td>Fictional patient "M. K.", 68, lives with spouse</td></tr>
+          <tr><td>Admission</td><td>12 → 18 October. Community-acquired pneumonia, right lower lobe</td></tr>
+          <tr><td>Imaging</td><td>Chest X-ray on 12 Oct: right lower-lobe consolidation. Repeat X-ray 17 Oct: improving. <i>No CT scan was performed.</i></td></tr>
+          <tr><td>Allergies</td><td>Penicillin — rash (2015)</td></tr>
+          <tr><td>Treatment</td><td>IV antibiotics for 3 days, then oral <b>doxycycline</b>. Oxygen 12–14 Oct only</td></tr>
+          <tr><td>Discharge medicines</td><td>Doxycycline for 4 more days; usual metformin and ramipril unchanged</td></tr>
+          <tr><td>Results</td><td>CRP falling. <b>Blood culture: final result still pending</b></td></tr>
+          <tr><td>Follow-up</td><td>GP review in 7 days; repeat chest X-ray in 6 weeks</td></tr>
+          <tr><td>Patient preference</td><td>Wants written instructions in large print</td></tr>
+        </table>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">How to judge a sentence</h3>
+        <ul class="small">
+          <li><b>Supported</b> — the record says this.</li>
+          <li><b>Contradicts the record</b> — the record says something different.</li>
+          <li><b>Unsupported (hallucination)</b> — a fabricated fact, test, reference or policy that is not in the record (slide 22).</li>
+          <li><b>Misleading / missing context</b> — partly true, but it ignores a patient-specific detail or uncertainty.</li>
+        </ul>
+        <div class="stats" id="stats"></div>
+        <div class="row" style="margin-top:10px"><button class="primary" id="check">Check my review</button><button id="reset">Reset</button></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">AI-generated discharge summary <span class="tag">draft — not reviewed</span></h3>
+      <div id="draft"></div>
+    </div>
+
+    <div class="panel" id="after" hidden>
+      <h3 style="margin-top:0">The safer pattern (slide 22)</h3>
+      <p>Constrain the task → use trusted sources → request uncertainty → verify key claims → document human review.</p>
+      <p class="small">In this draft the most dangerous errors are the allergy statement, the wrong antibiotic and "all results normal" while a culture is still pending — a patient or GP acting on them could be harmed. Automation bias makes them easy to miss, because the rest of the text is polished and correct. The human role shifts toward <b>defining the task, checking evidence and taking responsibility</b> (slide 20).</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const LABELS = ['Supported', 'Contradicts the record', 'Unsupported (hallucination)', 'Misleading / missing context'];
+    const S = [
+      { t: 'M. K., a 68-year-old patient, was admitted on 12 October with community-acquired pneumonia of the right lower lobe.', a: 0, w: 'Matches the admission record.' },
+      { t: 'A CT scan of the chest on admission showed no other abnormalities.', a: 2, w: 'No CT scan was performed. The model invented a plausible test — a classic hallucination.' },
+      { t: 'The patient has no known drug allergies.', a: 1, w: 'The record documents a penicillin allergy (rash). This contradiction could lead to a dangerous prescription.' },
+      { t: 'After three days of intravenous antibiotics, treatment was switched to oral amoxicillin.', a: 1, w: 'The record says doxycycline. Amoxicillin is a penicillin — for this patient the error is doubly dangerous.' },
+      { t: 'Oxygen was given from 12 to 14 October and was then no longer needed.', a: 0, w: 'Matches the treatment record.' },
+      { t: 'All test results have returned to normal.', a: 3, w: 'CRP is falling (not necessarily normal) and the blood culture is still pending. The sentence removes the uncertainty a GP needs to know about.' },
+      { t: 'In line with national guideline NG-417 (2024), no follow-up imaging is required.', a: 2, w: 'A fabricated guideline reference, and the record actually plans a repeat chest X-ray in 6 weeks.' },
+      { t: 'Usual metformin and ramipril are continued unchanged.', a: 0, w: 'Matches the discharge medicines.' },
+      { t: 'The patient should see the GP in 7 days.', a: 0, w: 'Matches the follow-up plan.' },
+      { t: 'Standard printed instructions were provided.', a: 3, w: 'The patient asked for large-print instructions. Generic output ignores a patient-specific preference (missing context, human-centered care).' },
+    ];
+    let ans = {}, checked = false;
+    function draw() {
+      fill($('#draft'), S.map((s, i) => el('div', { class: 'sent' + (checked ? (ans[i] === s.a ? ' ok' : ' bad') : '') },
+        el('p', { class: 'ai' }, s.t),
+        el('div', { class: 'row' }, LABELS.map((l, j) => el('label', { class: 'small', style: { marginRight: '10px' } },
+          el('input', { type: 'radio', name: 's' + i, checked: ans[i] === j, disabled: checked, onchange: () => { ans[i] = j; stats(); } }), ' ' + l))),
+        checked ? el('div', { class: 'fb', style: { color: ans[i] === s.a ? 'var(--ok)' : 'var(--bad)' } }, ans[i] === s.a ? '✓ ' : `✗ Correct: ${LABELS[s.a]}. `, s.w) : null)));
+      stats();
+    }
+    function stats() {
+      const done = Object.keys(ans).length, right = S.filter((s, i) => ans[i] === s.a).length;
+      const errs = S.filter((s) => s.a > 0), caught = S.filter((s, i) => s.a > 0 && ans[i] > 0).length;
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, `${done} / ${S.length}`), el('span', {}, 'sentences judged')),
+        checked ? el('div', { class: 'stat' }, el('b', {}, `${right} / ${S.length}`), el('span', {}, 'exactly right')) : null,
+        checked ? el('div', { class: 'stat' }, el('b', {}, `${caught} / ${errs.length}`), el('span', {}, 'problem sentences caught')) : null);
+    }
+    $('#check').onclick = () => { checked = true; draw(); $('#after').hidden = false; const r = S.filter((s, i) => ans[i] === s.a).length; CS.progress.recordScore('w2-verify', r, S.length); };
+    $('#reset').onclick = () => { ans = {}; checked = false; $('#after').hidden = true; draw(); };
+    draw();
+  </script>
+</body>
+</html>
