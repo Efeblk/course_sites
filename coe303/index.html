@@ -10,16 +10,19 @@
   <main>
     <h1 id="h"></h1>
     <p class="lead" id="meta"></p>
+    <div class="callout small"><b>How to study:</b> for each week, open <b>📘 Start here: Guided lesson</b> and follow its steps. It teaches the idea, sends you to the right lab with instructions, then to the games, quiz and flashcards. Use the other cards below to review.</div>
     <div class="row" id="toc"></div>
     <div id="chapters"></div>
   </main>
   <script src="data.js"></script>
+  <script src="guide.js"></script>
   <script>document.body.dataset.course = COURSE.id;</script>
   <script src="../assets/js/common.js"></script>
   <script>
     const { el, progress } = CS;
     const C = window.COURSE;
     const U = CS.unit;
+    const G = window.GUIDE || {};
 
     document.getElementById('h').textContent = `${C.code} — ${C.name}`;
     document.title = `${C.code} — ${C.name} · Course Sites`;
@@ -49,6 +52,14 @@
           el('span', { class: 'chnum' }, `${U.toUpperCase()} ${ch.n}`),
           el('h2', { style: { margin: 0 } }, ch.title)),
         el('p', { class: 'muted' }, ch.summary),
+
+        G[ch.n] ? (() => {
+          const k = `guide:${C.id}:${ch.n}`, d = (progress.get(k) || []).length, tot = G[ch.n].steps.length + 1;
+          return el('a', { class: 'card start-card', href: `learn.html?ch=${ch.n}` },
+            el('h3', {}, el('span', {}, `📘 Start here: Guided lesson — ${U} ${ch.n}`),
+              el('span', { class: `tag ${d >= tot ? 'done' : 'sim'}` }, d ? `${Math.min(d, tot)}/${tot} steps` : `${tot} steps`)),
+            el('p', {}, `New to this? Learn it step by step from zero: short explanations, then "open this lab and do this", quick checks and videos. ${G[ch.n].time || ''}`));
+        })() : null,
 
         el('h3', {}, 'Simulations'),
         el('div', { class: 'act-list' },

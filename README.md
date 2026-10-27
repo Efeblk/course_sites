@@ -1,7 +1,10 @@
 # course_sites
 
-Interactive simulations, games, quizzes and flashcards built from my course
+Guided lessons, interactive simulations, games, quizzes and flashcards built from my course
 materials, to understand the material rather than memorize it.
+
+Every chapter/week starts with a **guided lesson** (`learn.html?ch=N`): step-by-step teaching from
+zero, "open this lab and do this" tasks, quick checks, YouTube search suggestions, then the games, quiz and flashcards.
 
 Open `index.html` in a browser. Everything is plain HTML/CSS/JS: no build
 step, no server, works offline. Progress is saved in the browser (localStorage).
@@ -30,11 +33,13 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
 index.html            course list
 assets/css/style.css  shared styles
 assets/js/common.js   top bar, progress, el() helper
+assets/js/learn.js    guided-lesson engine (reads <course>/guide.js)
 assets/js/race.js     race-condition stepper (used by COE303 ch3 + ch4)
 assets/js/plot.js     tiny SVG plotting helper (COE025, COE305, UNI480)
 assets/js/ml.js       seeded RNG, least squares, entropy, colors (COE305, UNI480)
 <course>/data.js      all content for a course: takeaways, quizzes, cards, games (sets window.COURSE)
-<course>/{index,quiz,cards,game}.html   generic hub + engines (?ch=N / ?id=game); identical in every course folder
+<course>/guide.js     step-by-step guided lessons per chapter (sets window.GUIDE)
+<course>/{index,learn,quiz,cards,game}.html   generic hub + engines (?ch=N / ?id=game); identical in every course folder
 coe303/chN/, coe025/wN/, coe305/wN/, uni480/wN/   custom simulations per chapter / week
 materials/            raw course files — local only, gitignored (copyrighted)
 ```
@@ -44,9 +49,10 @@ materials/            raw course files — local only, gitignored (copyrighted)
 1. Put the new slides in `materials/<CODE>/slides/` and extract text (see `materials/README.md`).
 2. Add a chapter object (takeaways, traps, activities, quiz, cards) and its games to `<course>/data.js`.
 3. Add simulation pages under `<course>/chN/` (or `wN/`) when a topic needs one.
+4. Write its guided lesson in `<course>/guide.js` (format documented in `assets/js/learn.js`).
 
 ## Adding a course
 
-1. Copy `coe303/{index,quiz,cards,game}.html` into the new folder unchanged.
-2. Write its `data.js` (`window.COURSE = { id, code, name, chapters, games, ... }`).
+1. Copy `coe303/{index,learn,quiz,cards,game}.html` into the new folder unchanged.
+2. Write its `data.js` (`window.COURSE = { id, code, name, chapters, games, ... }`) and `guide.js`.
 3. Register the folder in `COURSES` in `assets/js/common.js` and add a card to `index.html`.
