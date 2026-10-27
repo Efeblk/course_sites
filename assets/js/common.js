@@ -55,7 +55,8 @@
   /* ---- progress (localStorage; works on file:// too) ---- */
   const KEY = 'course-sites:v1';
   /* ids are per course; COE303 predates this and keeps its bare ids */
-  const ns = (id) => (!body.dataset.course || body.dataset.course === 'coe303' ? id : `${body.dataset.course}:${id}`);
+  const nsFor = (c, id) => (!c || c === 'coe303' ? id : `${c}:${id}`);
+  const ns = (id) => nsFor(body.dataset.course, id);
   function load() {
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
   }
@@ -66,11 +67,30 @@
     visited(id) { return !!load()['visit:' + ns(id)]; },
     markVisited(id) { progress.set('visit:' + ns(id), Date.now()); },
     best(id) { return load()['best:' + ns(id)]; },
+    /* the same, for any course (used by the progress page, which belongs to no course) */
+    visitedIn(c, id) { return load()['visit:' + nsFor(c, id)]; },
+    bestIn(c, id) { return load()['best:' + nsFor(c, id)]; },
+    all: load,
     recordScore(id, score, total) {
       const prev = progress.best(id);
       if (!prev || score / total > prev.score / prev.total) progress.set('best:' + ns(id), { score, total });
     },
   };
+
+  /* ---- understanding test status (attempts saved by test.js under test:<course>:<n>) ---- */
+  const day = (t) => new Date(t).toDateString();
+  function testStatus(c, n) {
+    const tries = progress.get(`test:${c}:${n}`) || [];
+    const last = tries[tries.length - 1];
+    if (!last) return { v: 'none', label: 'Not tested', cls: '', tip: 'Take the understanding test to find out.' };
+    const yesDays = new Set(tries.filter((t) => t.verdict === 'yes').map((t) => day(t.at)));
+    if (last.verdict === 'yes' && yesDays.size >= 2)
+      return { v: 'confirmed', label: '✅ Understood', cls: 'done', last, tip: 'Passed on two different days, so it has stuck.' };
+    if (last.verdict === 'yes')
+      return { v: 'yes', label: '✅ Understood once', cls: 'done', last, tip: 'Passed once. Take it again on another day to confirm it has stuck.' };
+    if (last.verdict === 'part') return { v: 'part', label: '🟡 Partly', cls: 'quiz', last, tip: 'Some parts are not clear yet.' };
+    return { v: 'no', label: '🔴 Not yet', cls: 'bad', last, tip: 'Not understood yet.' };
+  }
 
   /* ---- top bar ---- */
   function topbar() {
@@ -81,6 +101,7 @@
       if (d.chapter) parts.push(el('span', { class: 'sep' }, '/'), el('a', { href: `${root}/${d.course}/index.html#ch${d.chapter}` }, `${unit} ${d.chapter}`));
     }
     if (d.title) parts.push(el('span', { class: 'sep' }, '/'), el('span', { class: 'here' }, d.title));
+    parts.push(el('a', { class: 'mine', href: `${root}/progress.html` }, '📊 My progress'));
     body.prepend(el('header', { class: 'topbar' }, el('div', { class: 'inner' }, parts)));
     if (d.title && !document.title) document.title = `${d.title} · Course Sites`;
   }
@@ -104,7 +125,7 @@
     };
   }
 
-  window.CS = { el, fill, $, $$, shuffle, param, sleep, progress, logger, root, unit };
+  window.CS = { el, fill, $, $$, shuffle, param, sleep, progress, logger, root, unit, COURSES, testStatus };
 
   topbar();
   footer();

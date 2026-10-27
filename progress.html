@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My progress · Course Sites</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-root="." data-title="My progress">
+  <main>
+    <h1>My progress</h1>
+    <p class="lead">What you have done, and, more importantly, what you have really understood.</p>
+    <div class="callout warn small"><b>Be honest with yourself:</b> a ✓ only means you <i>opened</i> something. Only the <b>🎯 understanding test</b> shows whether you understood it. A week counts as <b>✅ Understood</b> only when you pass the test on two different days. Passing once may just be short-term memory.</div>
+    <div id="out"><p class="muted">Loading…</p></div>
+  </main>
+  <script src="assets/js/common.js"></script>
+  <script>
+    const { el, fill, progress, COURSES, testStatus } = CS;
+
+    /* each course's data.js / guide.js sets window.COURSE / window.GUIDE, so load them one at a time */
+    const load = (src) => new Promise((ok) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = ok; s.onerror = ok;
+      document.head.append(s);
+    });
+    async function courses() {
+      const list = [];
+      for (const dir of Object.keys(COURSES)) {
+        window.COURSE = null; window.GUIDE = null;
+        await load(`${dir}/data.js`); await load(`${dir}/guide.js`);
+        if (window.COURSE) list.push({ dir, C: window.COURSE, G: window.GUIDE || {} });
+      }
+      return list;
+    }
+
+    const ago = (t) => {
+      if (!t) return 'never';
+      const d = Math.floor((Date.now() - t) / 86400000);
+      return d <= 0 ? 'today' : d === 1 ? 'yesterday' : `${d} days ago`;
+    };
+    const mini = (x, tot) => [el('span', { class: 'mini' }, el('i', { style: { width: `${tot ? (100 * x) / tot : 0}%` } })), `${x}/${tot}`];
+
+    function chapterRow(dir, C, G, ch) {
+      const U = COURSES[dir].unit, at = (h) => `${dir}/${h}`;
+      const g = G[ch.n];
+      const stepsTot = g ? g.steps.length + 1 : 0;
+      const stepsDone = g ? Math.min((progress.get(`guide:${C.id}:${ch.n}`) || []).length, stepsTot) : 0;
+      const labs = ch.activities.filter((a) => progress.visitedIn(dir, a.id)).length;
+      const games = Object.keys(C.games).filter((id) => C.games[id].ch === ch.n);
+      const gamesDone = games.filter((id) => progress.visitedIn(dir, `game-${id}`)).length;
+      const best = progress.bestIn(dir, `quiz-ch${ch.n}`);
+      const cards = progress.visitedIn(dir, `cards-ch${ch.n}`);
+      const st = testStatus(C.id, ch.n);
+
+      /* the one next thing to do for this week, in the order the guided lesson teaches it */
+      /* once tested, the test result decides; before that, follow the lesson */
+      let next;
+      if (st.v === 'none' && g && stepsDone === 0) next = ['Start the guided lesson', at(`learn.html?ch=${ch.n}`)];
+      else if (st.v === 'none' && g && stepsDone < stepsTot) next = ['Finish the guided lesson', at(`learn.html?ch=${ch.n}`)];
+      else if (st.v === 'none') next = ['Take the understanding test', at(`test.html?ch=${ch.n}`)];
+      else if (st.v === 'no' || st.v === 'part') next = ['Redo the weak steps, then retest tomorrow', at(`test.html?ch=${ch.n}`)];
+      else if (st.v === 'yes') next = [new Date(st.last.at).toDateString() === new Date().toDateString()
+        ? 'Retest tomorrow or later to confirm' : 'Retest now to confirm', at(`test.html?ch=${ch.n}`)];
+      else next = ['Done. Review flashcards before the exam', at(`cards.html?ch=${ch.n}`)];
+
+      return {
+        st, next, label: `${U} ${ch.n}`,
+        row: el('tr', {},
+          el('td', {}, el('a', { href: at(`index.html#ch${ch.n}`) }, `${U === 'Week' ? 'W' : 'Ch.'}${ch.n}`), ' ', el('span', { class: 'small' }, ch.title)),
+          el('td', {}, g ? mini(stepsDone, stepsTot) : '—'),
+          el('td', {}, mini(labs, ch.activities.length)),
+          el('td', {}, mini(gamesDone, games.length)),
+          el('td', { class: 'c' }, best ? `${Math.round((100 * best.score) / best.total)}%` : '—'),
+          el('td', { class: 'c' }, cards ? '✓' : '—'),
+          el('td', {}, el('span', { class: `tag ${st.cls}`, title: st.tip }, st.label),
+            st.last ? el('div', { class: 'small muted' }, `${Math.round((100 * st.last.solid) / st.last.total)}% right & sure · ${ago(st.last.at)}`) : null),
+          el('td', {}, el('a', { href: next[1] }, next[0] + ' →'))),
+      };
+    }
+
+    courses().then((list) => {
+      const upNext = [];
+      const sections = list.map(({ dir, C, G }) => {
+        const rows = C.chapters.map((ch) => chapterRow(dir, C, G, ch));
+        const understood = rows.filter((r) => r.st.v === 'confirmed').length;
+        const once = rows.filter((r) => r.st.v === 'yes').length;
+        const stamps = Object.entries(progress.all())
+          .filter(([k]) => dir === 'coe303' ? /^visit:[^:]+$/.test(k) || k.startsWith('guide:coe303:') || k.startsWith('test:coe303:') : k.includes(`${C.id}:`))
+          .map(([, v]) => Array.isArray(v) ? Math.max(0, ...v.map((t) => (t && t.at) || 0)) : typeof v === 'number' && v > 1e12 ? v : 0);
+        const last = Math.max(0, ...stamps);
+        const todo = rows.find((r) => r.st.v !== 'confirmed');
+        if (todo) upNext.push(el('li', {}, el('b', {}, `${C.code} ${todo.label}: `), el('a', { href: todo.next[1] }, todo.next[0] + ' →')));
+        return el('section', { class: 'panel' },
+          el('h2', { style: { marginTop: 0 } }, el('a', { href: `${dir}/index.html` }, `${C.code} — ${C.name}`)),
+          el('div', { class: 'stats', style: { marginBottom: '12px' } },
+            el('div', { class: 'stat' }, el('b', {}, `${understood}/${rows.length}`), el('span', {}, `${COURSES[dir].unit.toLowerCase()}s understood`)),
+            el('div', { class: 'stat' }, el('b', {}, once), el('span', {}, 'passed once (confirm)')),
+            el('div', { class: 'stat' }, el('b', {}, ago(last || null)), el('span', {}, 'last studied'))),
+          C.examFormat ? el('p', { class: 'small muted' }, C.examFormat) : null,
+          el('div', { style: { overflowX: 'auto' } }, el('table', { class: 't prog' },
+            el('tr', {}, ['', 'Lesson steps', 'Labs opened', 'Games', 'Quiz best', 'Cards', '🎯 Understood?', 'Next'].map((h) => el('th', {}, h))),
+            rows.map((r) => r.row))));
+      });
+      fill(document.getElementById('out'),
+        el('div', { class: 'panel up-next' }, el('h2', { style: { marginTop: 0 } }, '👉 Up next'),
+          upNext.length ? el('ul', {}, upNext) : el('p', {}, 'Everything is confirmed as understood. Keep reviewing the flashcards before your exams.')),
+        sections,
+        el('p', { class: 'small muted' }, 'Progress is saved in this browser only (localStorage). If you use another browser or clear site data, it starts again from zero.'));
+    });
+  </script>
+</body>
+</html>

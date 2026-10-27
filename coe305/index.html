@@ -50,7 +50,8 @@
       const sec = el('section', { class: 'chapter', id: `ch${ch.n}` },
         el('div', { class: 'chapter-head' },
           el('span', { class: 'chnum' }, `${U.toUpperCase()} ${ch.n}`),
-          el('h2', { style: { margin: 0 } }, ch.title)),
+          el('h2', { style: { margin: 0 } }, ch.title),
+          (() => { const st = CS.testStatus(C.id, ch.n); return el('span', { class: `tag ${st.cls}` }, st.label); })()),
         el('p', { class: 'muted' }, ch.summary),
 
         G[ch.n] ? (() => {
@@ -77,7 +78,13 @@
           actCard({ href: `quiz.html?ch=${ch.n}`, title: `${U} ${ch.n} Quiz`, kind: 'quiz', id: `quiz-ch${ch.n}`,
             desc: `${ch.quiz.length} questions with explanations.` + (best ? ` Best: ${best.score}/${best.total}.` : '') }),
           actCard({ href: `cards.html?ch=${ch.n}`, title: 'Flashcards', kind: 'quiz', id: `cards-ch${ch.n}`,
-            desc: `${ch.cards.length} key terms — flip, then mark known or again.` })),
+            desc: `${ch.cards.length} key terms — flip, then mark known or again.` }),
+          (() => {
+            const st = CS.testStatus(C.id, ch.n);
+            return el('a', { class: 'card test-card', href: `test.html?ch=${ch.n}` },
+              el('h3', {}, el('span', {}, '🎯 Did I understand it?'), el('span', { class: `tag ${st.cls}` }, st.label)),
+              el('p', {}, 'An honest final test with no hints. You rate how sure you are, and guesses do not count. ' + st.tip));
+          })()),
 
         el('details', { class: 'takeaways' },
           el('summary', {}, 'Key takeaways & exam traps'),

@@ -35,7 +35,8 @@
   const next = C.chapters.find((c) => c.n === n + 1);
 
   const steps = [...g.steps, { t: 'Practice & test yourself', practice: true }];
-  let cur = Math.min(Number(progress.get(KEY + ':at')) || 0, steps.length - 1);
+  const askStep = CS.param('step'); // the test links straight to a step to re-learn
+  let cur = Math.min(Number(askStep ?? progress.get(KEY + ':at')) || 0, steps.length - 1);
 
   const nav = el('ol', { class: 'steps-nav' });
   const stage = el('div', { class: 'panel step-body' });
@@ -110,7 +111,11 @@
         el('li', {}, el('b', {}, 'Exam traps. '), 'The mistakes students make most often:',
           el('table', { class: 't', style: { marginTop: '6px' } },
             el('tr', {}, el('th', {}, 'Students often say…'), el('th', {}, 'Correct version')),
-            ch.traps.map(([a, b]) => el('tr', {}, el('td', {}, a), el('td', {}, b)))))),
+            ch.traps.map(([a, b]) => el('tr', {}, el('td', {}, a), el('td', {}, b))))),
+        el('li', {}, el('b', {}, 'Did I really understand it? (10 min, best tomorrow). '),
+          'An honest test. You get no hints, and you say how sure you are for every answer, so lucky guesses do not count. It tells you which steps to redo.',
+          el('div', { style: { marginTop: '6px' } }, el('a', { class: 'btn primary-btn', href: `test.html?ch=${n}` }, `🎯 Take the ${U} ${n} understanding test`),
+            el('span', { class: 'muted small' }, '  Status: ' + CS.testStatus(C.id, n).label)))),
       el('div', { class: 'callout ok' }, next
         ? ['When the quiz goes well, continue with ', el('a', { href: `learn.html?ch=${next.n}` }, `${U} ${next.n}: ${next.title} →`)]
         : 'This is the last ' + U.toLowerCase() + ' for now. Repeat the quizzes of earlier weeks before the exam — mixing topics is the best practice.'),

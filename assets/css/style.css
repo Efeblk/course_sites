@@ -79,6 +79,7 @@ a.card { transition: transform .12s, border-color .12s; }
 .tag.game { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent-2) 40%, transparent); }
 .tag.quiz { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
 .tag.done { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.tag.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
 .callout { border-left: 4px solid var(--accent); background: var(--panel-2); padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 12px 0; }
 .callout.warn { border-color: var(--warn); }
 .callout.ok { border-color: var(--ok); }
@@ -243,3 +244,21 @@ ol.plan > li { margin: 12px 0; }
 .start-card { display: block; margin: 12px 0 6px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 .start-card h3 { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 @media (max-width: 820px) { .learn { grid-template-columns: 1fr; } .learn aside { position: static; } }
+
+/* ---------- understanding test + progress page ---------- */
+.topbar .mine { margin-left: auto; }
+.opt.sel { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.opt.idk { color: var(--muted); border-style: dashed; }
+.conf { margin-top: 14px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: color-mix(in srgb, var(--warn) 7%, var(--panel)); }
+.verdict.v-yes { border-color: var(--ok); }
+.verdict.v-part { border-color: var(--warn); }
+.verdict.v-no { border-color: var(--bad); }
+.review-item { padding: 8px 0; border-top: 1px dashed var(--line); }
+.review-item:first-of-type { border-top: 0; }
+.test-card { border-color: color-mix(in srgb, var(--warn) 50%, var(--line)); }
+table.prog td { vertical-align: middle; }
+table.prog td:nth-child(n+2):nth-child(-n+4) { white-space: nowrap; }
+table.prog .mini { display: inline-block; width: 60px; height: 6px; background: var(--panel-2); border-radius: 99px; overflow: hidden; vertical-align: middle; margin-right: 6px; }
+table.prog .mini > i { display: block; height: 100%; background: var(--accent); }
+.up-next li { margin: 6px 0; }
+@media (max-width: 820px) { table.prog { font-size: .8rem; } }
