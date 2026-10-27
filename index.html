@@ -11,6 +11,12 @@
     <h1>Course Sites</h1>
     <p class="lead">Guided lessons, interactive simulations, games, quizzes and flashcards built from my course materials — to actually understand the material, not just memorize it.</p>
 
+    <div id="continue"></div>
+
+    <h2>Guided lessons: start here</h2>
+    <p class="muted">Each lesson teaches one week from zero, with pictures, labs you use right inside the page, quick checks, games and a quiz.</p>
+    <div class="grid" id="lessons"></div>
+
     <h2>Courses</h2>
     <div class="grid">
       <a class="card" href="coe303/index.html">
@@ -38,9 +44,9 @@
     <h2>How to study (start here)</h2>
     <ol>
       <li>Open a course and go to the week (or chapter) your class is on.</li>
-      <li>Click <b>📘 Start here: Guided lesson</b>. It teaches the topic from zero, one step at a time: read a short explanation, open the lab it points to and do the listed tasks, answer the quick check, then click <b>Next step</b>.</li>
+      <li>Open its <b>guided lesson</b>. It teaches the topic from zero, one step at a time: read the big idea, look at the picture, use the lab right there in the page, answer the quick check, then click <b>Next</b>.</li>
       <li>Want a video first? Each lesson lists YouTube searches for good explainer channels at the top.</li>
-      <li>The last step sends you to the games, the quiz and the flashcards. Retake the quiz until you get 80% or more, and do the flashcards again the day before the exam.</li>
+      <li>The last step has the games, the quiz and the flashcards built in. Retake the quiz until you get 80% or more, and do the flashcards again the day before the exam.</li>
       <li>The next day, take the <b>🎯 Did I understand it?</b> test. You get no hints and you rate how sure you are, so lucky guesses do not count. It tells you honestly whether you understood the week and which steps to redo. Pass it on two different days and the week counts as understood.</li>
     </ol>
     <p><a class="btn primary-btn" href="progress.html">📊 My progress: what's done, what's understood, what to do next</a></p>
@@ -49,5 +55,41 @@
     <p class="muted small">Every page is plain HTML + JavaScript — open it straight from the folder, no server or internet needed. Progress (visited activities, best quiz scores) is saved in your browser.</p>
   </main>
   <script src="assets/js/common.js"></script>
+  <script>
+    /* lesson list per course + "continue where you left off". Each data.js / guide.js sets window.COURSE / GUIDE, so load one at a time. */
+    (async () => {
+      const { el, fill, progress, COURSES } = CS;
+      const load = (src) => new Promise((ok) => { const s = document.createElement('script'); s.src = src; s.onload = s.onerror = ok; document.head.append(s); });
+      const cards = [], info = {};
+      for (const dir of Object.keys(COURSES)) {
+        window.COURSE = null; window.GUIDE = null;
+        await load(`${dir}/data.js`); await load(`${dir}/guide.js`);
+        const C = window.COURSE, G = window.GUIDE || {};
+        if (!C) continue;
+        const U = COURSES[dir].unit;
+        info[dir] = { C, G, U };
+        cards.push(el('div', { class: 'card' },
+          el('h3', {}, el('a', { href: `${dir}/index.html` }, `${C.code} — ${C.name}`)),
+          el('ul', { class: 'lesson-list' }, C.chapters.filter((ch) => G[ch.n]).map((ch) => {
+            const tot = G[ch.n].steps.length + 1, d = Math.min((progress.get(`guide:${C.id}:${ch.n}`) || []).length, tot);
+            const st = CS.testStatus(C.id, ch.n);
+            return el('li', {}, el('a', { href: `${dir}/learn.html?ch=${ch.n}` },
+              el('span', {}, `${U === 'Week' ? 'W' : 'Ch.'}${ch.n} ${ch.title}`),
+              el('span', { class: 'muted small', style: { whiteSpace: 'nowrap' } }, st.v === 'confirmed' || st.v === 'yes' ? st.label : d >= tot ? '✓ done' : d ? `${d}/${tot}` : '')));
+          }))));
+      }
+      fill(document.getElementById('lessons'), cards);
+      const last = progress.get('last-lesson');
+      const L = last && info[last.course];
+      const ch = L && L.C.chapters.find((c) => c.n === last.n);
+      if (ch && L.G[ch.n]) {
+        const at = Number(progress.get(`guide:${L.C.id}:${ch.n}:at`)) || 0, tot = L.G[ch.n].steps.length + 1;
+        fill(document.getElementById('continue'), el('div', { class: 'continue' },
+          el('div', {}, el('div', { class: 'small muted' }, 'Continue where you left off'),
+            el('b', {}, `${L.C.code} · ${L.U} ${ch.n}: ${ch.title}`), el('span', { class: 'muted' }, ` (step ${at + 1} of ${tot})`)),
+          el('a', { class: 'btn primary-btn', href: `${last.course}/learn.html?ch=${ch.n}` }, '▶ Continue the lesson')));
+      }
+    })();
+  </script>
 </body>
 </html>

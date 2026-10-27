@@ -3,8 +3,9 @@
 Guided lessons, interactive simulations, games, quizzes and flashcards built from my course
 materials, to understand the material rather than memorize it.
 
-Every chapter/week starts with a **guided lesson** (`learn.html?ch=N`): step-by-step teaching from
-zero, "open this lab and do this" tasks, quick checks, YouTube search suggestions, then the games, quiz and flashcards.
+The **guided lessons** (`learn.html?ch=N`) are the main part. Each week is taught from zero, one step at a time.
+Every step has a one-sentence "big idea", a diagram, the explanation, the lab embedded in the page with a task
+checklist, and a quick check. The last step embeds the week's games, quiz, flashcards and understanding test as tabs.
 It ends with an honest **understanding test** (`test.html?ch=N`). It gives no feedback until the end and asks how sure you
 are about each answer. Only answers that are right *and* sure count. "Understood" means at least 80% right and sure,
 with at most 1 confident mistake, and it is confirmed after passing on two different days.
@@ -38,6 +39,7 @@ index.html            course list
 assets/css/style.css  shared styles
 assets/js/common.js   top bar, progress, el() helper
 assets/js/learn.js    guided-lesson engine (reads <course>/guide.js)
+assets/js/figs.js     lesson diagrams (flow, stack, compare, boxes, graph, plot, bars) from short descriptions
 assets/js/test.js     understanding test (lesson checks + quiz questions, confidence-rated)
 progress.html         progress dashboard across all courses
 assets/js/race.js     race-condition stepper (used by COE303 ch3 + ch4)
@@ -55,7 +57,9 @@ materials/            raw course files — local only, gitignored (copyrighted)
 1. Put the new slides in `materials/<CODE>/slides/` and extract text (see `materials/README.md`).
 2. Add a chapter object (takeaways, traps, activities, quiz, cards) and its games to `<course>/data.js`.
 3. Add simulation pages under `<course>/chN/` (or `wN/`) when a topic needs one.
-4. Write its guided lesson in `<course>/guide.js` (format documented in `assets/js/learn.js`).
+4. Write its guided lesson in `<course>/guide.js` (format in `assets/js/learn.js`). Give every step a `key` (big idea) and a `fig` (see `assets/js/figs.js`).
+
+Pages opened inside a lesson (in an iframe) hide their top bar and report their height to the lesson (`common.js`, embed mode).
 
 ## Adding a course
 

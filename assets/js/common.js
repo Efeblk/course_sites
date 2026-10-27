@@ -23,7 +23,7 @@
       if (v == null || v === false) continue;
       if (k === 'class') n.className = v;
       else if (k === 'html') n.innerHTML = v;
-      else if (k === 'style' && typeof v === 'object') Object.assign(n.style, v);
+      else if (k === 'style' && typeof v === 'object') for (const [p, x] of Object.entries(v)) p.startsWith('--') ? n.style.setProperty(p, x) : (n.style[p] = x);
       else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
       else n.setAttribute(k, v === true ? '' : v);
     }
@@ -125,9 +125,26 @@
     };
   }
 
-  window.CS = { el, fill, $, $$, shuffle, param, sleep, progress, logger, root, unit, COURSES, testStatus };
+  /* ---- embedded in a guided lesson (iframe): no top bar, report height, open lesson pages in the top window ---- */
+  let embedded = false;
+  try { embedded = window.self !== window.top; } catch { embedded = true; }
+  function embedMode() {
+    body.classList.add('embedded');
+    const post = () => {
+      const m = $('main') || body;
+      parent.postMessage({ cs: 'height', h: Math.ceil(m.getBoundingClientRect().bottom + window.scrollY) + 4 }, '*');
+    };
+    new ResizeObserver(post).observe(body);
+    window.addEventListener('load', post);
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('a[href]');
+      if (a && /(^|\/)(learn|index|progress)\.html/.test(a.getAttribute('href'))) a.target = '_top';
+    });
+  }
 
-  topbar();
-  footer();
+  window.CS = { el, fill, $, $$, shuffle, param, sleep, progress, logger, root, unit, COURSES, testStatus, embedded };
+
+  if (embedded) embedMode();
+  else { topbar(); footer(); }
   if (body.dataset.activity) progress.markVisited(body.dataset.activity);
 })();

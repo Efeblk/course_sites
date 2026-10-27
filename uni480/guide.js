@@ -15,6 +15,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'Why hospitals are interested in AI',
+        key: 'Start with the <b>problem</b>, not the technology. Hospitals are under pressure on quality, access, efficiency and safety at the same time, and they produce huge amounts of data.',
+        fig: { type: 'compare', cols: [{ icon: '⭐', t: 'Quality', pts: ['is the care good?'], c: 'c1' }, { icon: '🚪', t: 'Access', pts: ['can patients get care when they need it?'], c: 'c0' }, { icon: '⚙️', t: 'Efficiency', pts: ['are staff, beds and money used well?'], c: 'c2' }, { icon: '🛡️', t: 'Patient safety', pts: ['are we avoiding harm?'], c: 'c4' }], cap: 'The key question of the course: can AI help us deliver better care with the resources we have?' },
         html: `
 <p>Start with the problem, not the technology. The lecture's opening scenario (slide 4): you manage a large hospital with <b>long waiting times, staff shortages, rising costs and high patient demand</b>.</p>
 <p>Healthcare is under pressure on four things at the same time:</p>
@@ -29,6 +31,8 @@ window.GUIDE = {
       },
       {
         t: 'What AI is — and what it is not',
+        key: 'AI = computer systems that do tasks we normally link to <b>human intelligence</b>: learning from data, understanding language, reading images, predicting, and supporting decisions.',
+        fig: { type: 'flow', t: 'What AI can do in a hospital', items: [['📈', 'Learn patterns', 'from patient data', 'c0'], ['📝', 'Understand language', 'doctors\' notes', 'c3'], ['🩻', 'Interpret images', 'X-rays, scans', 'c5'], ['🔮', 'Predict', 'risk of deterioration', 'c2'], ['🤝', 'Support decisions', 'a human decides', 'c1']] },
         html: `
 <p><b>Artificial Intelligence</b> is a field of computer science that builds systems able to perform tasks we normally associate with human intelligence. In healthcare that means systems that can:</p>
 <ul>
@@ -43,6 +47,8 @@ window.GUIDE = {
       },
       {
         t: 'A short history of AI (memorise this timeline)',
+        key: '<b>Turing</b> asked the question ("Can machines think?"). <b>Dartmouth 1956</b> gave the field its name. AI is booming today because of <b>data + computing power + better algorithms</b>.',
+        fig: { type: 'flow', items: [['🤔', '1940s–50s', 'Turing: "Can machines think?", the Turing Test', 'c3'], ['🏷️', '1956', 'Dartmouth: the name "Artificial Intelligence"', 'c0'], ['📏', '1950s–70s', 'logic and hand-written rules', 'c5'], ['❄️', 'AI winters', 'big promises, then funding cuts', 'mute'], ['🚀', 'Today', 'machine learning and deep learning', 'c1']] },
         html: `
 <table class="t">
   <tr><th>When</th><th>What happened</th><th>Remember</th></tr>
@@ -58,6 +64,8 @@ window.GUIDE = {
       },
       {
         t: 'The AI agent: sense → think → act',
+        key: 'An <b>agent</b> senses its environment, decides with its <b>agent function</b>, and acts through <b>actuators</b>. It can be pure software; it does not have to be a robot.',
+        fig: { type: 'flow', t: 'A ward monitoring agent', items: [['🏥', 'Environment', 'a ward with 10 patients', 'c3'], ['📡', 'Sensors', 'heart rate, breathing, SpO₂, temperature', 'c0'], ['🧠', 'Agent function', '"2 or more abnormal → alert"', 'c2'], ['📟', 'Actuator', 'pages the nurse', 'c4'], ['🎯', 'Performance measure', 'catch deterioration early, few misses, few false alarms', 'c1']] },
         html: `
 <p>An <b>intelligent agent</b> is anything that <b>perceives its environment through sensors</b> and <b>acts on it through actuators</b> to reach a goal. It can be pure software — it does not have to be a robot.</p>
 <p>It has five parts (slide 10). Learn them with this hospital example — a ward monitoring system:</p>
@@ -79,6 +87,8 @@ window.GUIDE = {
       },
       {
         t: 'The three areas of AI in healthcare',
+        key: 'AI in healthcare is <b>not only diagnosis</b>. There are three areas: caring for the patient, running the hospital, and planning for the whole system and the future.',
+        fig: { type: 'compare', cols: [{ icon: '🩺', t: '1. Clinical AI', pts: ['diagnosis support', 'medical imaging', 'risk prediction', 'treatment planning, monitoring'], c: 'c0' }, { icon: '🗓️', t: '2. Administrative & operational', pts: ['appointment scheduling', 'staff planning, demand forecasting', 'bed management, billing'], c: 'c2' }, { icon: '🌍', t: '3. Strategic & system-level', pts: ['population-health analysis', 'financial forecasting', 'public-health surveillance, long-term planning'], c: 'c1' }], cap: 'Ask "who is it for?": one patient → clinical; today\'s operations → operational; the whole system or years ahead → strategic.' },
         html: `
 <p>AI in healthcare is <b>not only about diagnosing disease</b>. The lecture sorts it into three areas (slide 11):</p>
 <table class="t">
@@ -93,6 +103,8 @@ window.GUIDE = {
       },
       {
         t: 'Why healthcare is a special industry',
+        key: 'A hospital is not Netflix. Decisions are <b>complex, urgent, uncertain and high-stakes</b>, resources are limited, and care must centre on the patient.',
+        fig: { type: 'boxes', t: 'Six reasons (slide 12)', rows: [{ cells: [['🧩 Complex information', 'c0'], ['⏱️ Time sensitivity', 'c2'], ['❓ Uncertainty', 'c3']] }, { cells: [['⚠️ High consequences', 'bad'], ['🛏️ Resource constraints', 'c5'], ['💛 Human-centred care', 'c1']] }], cap: 'If Netflix gets it wrong you lose two hours. If a hospital AI misses sepsis, a patient may die.' },
         html: `
 <p>Using AI in a hospital is harder than recommending films on Netflix. Slide 12 gives six reasons — learn them as a list:</p>
 <ol>
@@ -108,6 +120,8 @@ window.GUIDE = {
       },
       {
         t: 'What AI cannot guarantee — and how to use it responsibly',
+        key: 'AI <b>cannot guarantee</b> a correct diagnosis, better outcomes everywhere, fair results for everyone, or savings. The human keeps the <b>professional responsibility</b>.',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '🚫', t: 'AI cannot guarantee', pts: ['a correct diagnosis every time', 'better outcomes in every setting', 'unbiased results for every population', 'full understanding of a patient', 'automatic cost savings', 'the end of human error or responsibility'], c: 'c4' }, { icon: '✅', t: 'So responsible use needs', pts: ['good data and validation', 'testing in the intended clinical setting', 'a human who checks and decides'], c: 'c1' }] },
         html: `
 <p>AI <b>cannot guarantee</b> (slide 14):</p>
 <ul>
@@ -151,6 +165,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'AI is an umbrella: six technology families',
+        key: '"AI" is an <b>umbrella</b> over six families. Deep learning sits <b>inside</b> machine learning, and modern NLP and vision mostly use deep learning.',
+        fig: { type: 'compare', cols: [{ icon: '📈', t: 'Machine learning', pts: ['readmission risk'], c: 'c0' }, { icon: '🧠', t: 'Deep learning', pts: ['reading X-ray pixels'], c: 'c3' }, { icon: '📝', t: 'NLP', pts: ['diagnoses from notes'], c: 'c1' }, { icon: '🩻', t: 'Computer vision', pts: ['lesion on a scan'], c: 'c5' }, { icon: '🦾', t: 'Robotics', pts: ['surgery, deliveries'], c: 'c2' }, { icon: '✍️', t: 'Generative AI', pts: ['drafting a discharge letter'], c: 'c4' }] },
         html: `
 <p>"AI" is not one technology. It is an <b>umbrella term</b>. A system may <b>classify, predict, generate, recommend or act</b> — and each capability carries different risks. <b>Start with the problem, not the tool.</b></p>
 <table class="t">
@@ -167,6 +183,8 @@ window.GUIDE = {
       },
       {
         t: 'How machine learning learns',
+        key: 'Normal software follows rules a person wrote. Machine learning <b>learns the rules from past examples</b> by reducing its error, and then predicts for new patients.',
+        fig: { type: 'flow', t: 'The ML pipeline (slides 6–7)', items: [['🗃️', 'Inputs', '10,000 past patient records', 'c0'], ['🔧', 'Training', 'adjust parameters to reduce the error (loss)', 'c2'], ['🔮', 'Output', 'a prediction, probability or ranking', 'c1'], ['🧑‍⚕️', 'Human use', 'a clinician decides', 'c3']] },
         html: `
 <p>Traditional software follows <b>rules a person wrote</b>. Machine learning <b>learns the rules from examples</b>.</p>
 <p>The ML pipeline (slides 6–7):</p>
@@ -188,6 +206,8 @@ window.GUIDE = {
       },
       {
         t: 'Accuracy is not the whole story',
+        key: 'Always ask two questions. Of the truly sick, <b>how many did we catch</b> (sensitivity)? Of the healthy, <b>how many did we leave alone</b> (specificity)?',
+        fig: { type: 'boxes', t: '100 patients: 10 truly sick, 90 healthy', head: ['', 'truly sick (10)', 'truly healthy (90)'], rows: [{ label: 'flagged', cells: [['8 true positives', 'ok'], ['4 false alarms', 'warn']] }, { label: 'not flagged', cells: [['2 missed!', 'bad'], ['86 true negatives', 'ok']] }], cap: 'Sensitivity = 8/10 = 80%. Specificity = 86/90 ≈ 96%.' },
         html: `
 <p>Imagine a test for a disease in <b>100 patients</b>: 10 are truly sick, 90 are healthy. The model flags 12 patients: 8 of them sick, 4 healthy.</p>
 <table class="t">
@@ -207,6 +227,8 @@ window.GUIDE = {
       },
       {
         t: 'Deep learning',
+        key: 'Deep learning uses neural networks with <b>many layers</b>. Each layer sees something more abstract, from raw pixels up to "a lesion".',
+        fig: { type: 'flow', items: [['🔲', 'Pixels', 'raw input', 'mute'], ['📐', 'Edges', 'layer 1', 'c0'], ['🔷', 'Shapes', 'middle layers', 'c3'], ['🎯', '"A lesion"', 'last layer', 'c4']], cap: '✅ Works on raw data (images, audio, ECG, text). ❌ Needs lots of data and computing power, and is hard to explain.' },
         html: `
 <p><b>Deep learning</b> is a subset of machine learning that uses <b>neural networks with many layers</b>. Each layer learns a slightly more abstract representation of the input:</p>
 <p style="text-align:center"><code>pixels → edges → shapes → "a lesion"</code></p>
@@ -219,6 +241,8 @@ window.GUIDE = {
       },
       {
         t: 'NLP: reading clinical text',
+        key: 'NLP turns free-text notes into structured data. The trap is <b>context</b>: a word can appear in a note even though the patient does <b>not</b> have it.',
+        fig: { type: 'boxes', head: ['Sentence in the note', 'Naive keyword reader', 'Correct meaning'], rows: [{ cells: [['"No evidence of pneumonia"', ''], ['pneumonia ✗', 'bad'], ['negated: does NOT have it', 'ok']] }, { cells: [['"Mother has diabetes"', ''], ['diabetes ✗', 'bad'], ['family history, not the patient', 'ok']] }] },
         html: `
 <p>Most clinical information is written as free text: notes, letters, reports. <b>NLP</b> turns it into structured data (symptoms, diagnoses, medications).</p>
 <p>The hard part is that the <b>same word can mean opposite things</b> depending on context:</p>
@@ -239,6 +263,8 @@ window.GUIDE = {
       },
       {
         t: 'Computer vision: what, where, which pixels',
+        key: 'Three vision tasks, three questions about the same X-ray: <b>what</b> is there (classification), <b>where</b> (detection), <b>which exact pixels</b> (segmentation).',
+        fig: { type: 'compare', cols: [{ icon: '🏷️', t: 'Classification', pts: ['What is present?', '→ "Lesion: yes"'], c: 'c0' }, { icon: '🔲', t: 'Detection', pts: ['Where is it?', '→ a box around it'], c: 'c2' }, { icon: '✏️', t: 'Segmentation', pts: ['Which exact pixels?', '→ its outline'], c: 'c1' }] },
         html: `
 <p>Computer vision has three main tasks (slide 15). Same chest X-ray, three different questions:</p>
 <table class="t">
@@ -258,6 +284,8 @@ window.GUIDE = {
       },
       {
         t: 'Robotics',
+        key: 'A robot is an AI agent <b>with a body</b>: it senses, plans, controls and physically acts.',
+        fig: { type: 'compare', cols: [{ icon: '🔪', t: 'Surgical assistance', pts: ['precise, surgeon-guided'], c: 'c4' }, { icon: '📦', t: 'Hospital logistics', pts: ['medicines, samples, linen'], c: 'c2' }, { icon: '🦿', t: 'Rehabilitation', pts: ['exoskeletons, therapy'], c: 'c1' }, { icon: '🤖', t: 'Social / assistive', pts: ['companionship, reminders'], c: 'c3' }] },
         html: `
 <p>A robot combines <b>sensing, planning, control and mechanical action</b> — an AI agent with a body.</p>
 <ul>
@@ -270,6 +298,8 @@ window.GUIDE = {
       },
       {
         t: 'Generative AI: fluent is not the same as true',
+        key: 'Generative AI writes beautifully, but <b>fluent is not the same as true</b>. A human must always <b>review</b> the output before it is used.',
+        fig: { type: 'flow', items: [['💬', 'Prompt', '', 'c0'], ['🤖', 'Model', '', 'c3'], ['📄', 'Output', 'reads very well…', 'c2'], ['🧑‍⚕️', 'Human review', 'check facts, context, patient details', 'c1']], cap: 'The three risks: hallucination (invented facts), missing context, and automation bias (trusting it too much).' },
         html: `
 <p><b>Generative AI</b> (like ChatGPT) creates new content. The pattern: <code>prompt → model → output → human review</code>.</p>
 <p>Its output reads beautifully — but <b>fluent output is not proof of accuracy</b>. The three risks:</p>
@@ -295,6 +325,8 @@ window.GUIDE = {
       },
       {
         t: 'The healthcare AI lifecycle & responsible AI',
+        key: 'Every project goes <b>Need → Data → Develop → Validate → Implement → Monitor</b>, and back to the start. Memory hook: "Never Do Dangerous Validations In Medicine".',
+        fig: [{ type: 'flow', items: [['❓', 'Define need', '', 'c0'], ['🗃️', 'Assess data', '', 'c3'], ['🔧', 'Develop', '', 'c2'], ['✅', 'Validate', '', 'c1'], ['🏥', 'Implement', '', 'c5'], ['📡', 'Monitor', '↺ back to start', 'c4']] }, { type: 'boxes', t: 'Six responsible-AI questions', rows: [{ cells: [['Safety & effectiveness', 'c1'], ['Fairness', 'c0'], ['Privacy & security', 'c3']] }, { cells: [['Transparency', 'c5'], ['Accountability', 'c2'], ['Human oversight', 'c4']] }] }],
         html: `
 <p>Every healthcare AI project follows a lifecycle (learn the order):</p>
 <p style="text-align:center"><b>Define need → Assess data → Develop → Validate → Implement → Monitor</b> (and back to the start)</p>
@@ -327,6 +359,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'AI is only as good as its data',
+        key: '<b>Garbage in, garbage out.</b> The challenge is not <i>more</i> data, but data that is trustworthy, usable and responsibly governed.',
+        fig: { type: 'flow', items: [['🗑️', 'Incomplete or wrong data', '', 'bad'], ['🤖', 'AI model', 'learns from it', 'mute'], ['⚠️', 'Unreliable output', 'wrong alerts, unfair results', 'bad']] },
         html: `
 <p>AI learns from data. If the inputs are incomplete or misleading, the outputs are unreliable — <i>"garbage in, garbage out."</i></p>
 <div class="callout"><b>💡 Key message:</b> the challenge is not <i>more</i> data, but data that is <b>trustworthy, usable and responsibly governed</b>.</div>
@@ -342,6 +376,8 @@ window.GUIDE = {
       },
       {
         t: 'Electronic health records (EHR)',
+        key: 'An <b>EMR</b> lives inside one hospital. An <b>EHR</b> follows the patient <b>across organisations over time</b>. A scanned paper chart is neither: it is just a picture.',
+        fig: [{ type: 'compare', cols: [{ icon: '🏥', t: 'EMR', pts: ['one organisation\'s record'], c: 'c0' }, { icon: '🌐', t: 'EHR', pts: ['longitudinal, across organisations and care settings'], c: 'c1' }, { icon: '📷', t: 'Scanned paper chart', pts: ['❌ not an EHR', 'the computer cannot read the values'], c: 'c4' }] }, { type: 'flow', t: 'How data moves through an EHR (errors travel downstream!)', items: [['✍️', 'Capture', '', 'c0'], ['📏', 'Standardise', '', 'c3'], ['🗄️', 'Store & link', '', 'c5'], ['📤', 'Exchange', '', 'c2'], ['🩺', 'Use', '', 'c1'], ['🔄', 'Update', '', 'c4']] }],
         html: `
 <p>An <b>EHR</b> is a digital record of a patient's health information <b>across encounters and care settings</b> — a long-term view of the patient.</p>
 <table class="t">
@@ -357,6 +393,8 @@ window.GUIDE = {
       },
       {
         t: 'Structured vs unstructured data, and big data',
+        key: '<b>Structured</b> data fits fixed fields (BP 120/80). <b>Unstructured</b> data is free form (notes, images). <b>Semi-structured</b> has some tags (XML/JSON messages).',
+        fig: { type: 'compare', cols: [{ icon: '🔢', t: 'Structured', pts: ['blood pressure 120/80', 'coded diagnosis', 'date of birth'], c: 'c1' }, { icon: '🏷️', t: 'Semi-structured', pts: ['tagged messages (XML / JSON)'], c: 'c2' }, { icon: '📝', t: 'Unstructured', pts: ['doctor\'s notes', 'discharge summaries', 'scan images'], c: 'c4' }] },
         html: `
 <table class="t">
   <tr><th>Type</th><th>Meaning</th><th>Examples</th></tr>
@@ -378,6 +416,8 @@ window.GUIDE = {
       },
       {
         t: 'Making an AI-ready dataset',
+        key: 'Raw hospital data is <b>not</b> ready for AI. Define the question first, then source, document, clean and check the data, and keep monitoring it.',
+        fig: { type: 'flow', items: [['❓', 'Define the question', 'predict what, for whom?', 'c0'], ['⚖️', 'Lawful, relevant sources', '', 'c3'], ['🧾', 'Document provenance', 'where it came from', 'c5'], ['🧹', 'Clean and harmonise', 'units, codes, duplicates', 'c2'], ['🕳️', 'Handle missingness', 'missing is not random!', 'c4'], ['🔁', 'Version and monitor', '', 'c1']] },
         html: `
 <p>Raw hospital data is not ready for AI. The steps:</p>
 <ol>
@@ -391,6 +431,8 @@ window.GUIDE = {
       },
       {
         t: 'The six dimensions of data quality',
+        key: 'Learn the <b>six dimensions</b> of data quality, each with one example. They are very likely exam questions.',
+        fig: { type: 'boxes', head: ['Dimension', 'Example of a problem'], rows: [{ cells: [['🎯 Accuracy', 'c0'], ['temperature recorded as 410 °C', '']] }, { cells: [['🧩 Completeness', 'c1'], ['allergy field left empty', '']] }, { cells: [['🔗 Consistency', 'c2'], ['kg in system A, pounds in system B', '']] }, { cells: [['⏰ Timeliness', 'c3'], ['vital signs from 9 hours ago used for a decision now', '']] }, { cells: [['✅ Validity', 'c5'], ['date "31/02/2026"; an invalid diagnosis code', '']] }, { cells: [['🪞 Uniqueness', 'c4'], ['the same patient registered twice', '']] }], cap: 'Memory hook: "A Cat Can Take Very Unusual naps".' },
         html: `
 <p>Learn these six with one example each — they are very likely exam questions:</p>
 <table class="t">
@@ -412,6 +454,8 @@ window.GUIDE = {
       },
       {
         t: 'Bias and privacy',
+        key: 'Models learn <b>old inequalities</b> from historical data. A <b>proxy</b> like past spending can make groups who had less access look healthier than they are.',
+        fig: { type: 'flow', t: 'How a proxy creates bias', items: [['🚪', 'Group had less access to care', '', 'c3'], ['💸', 'So they spent less', '', 'c2'], ['📉', 'Model uses spending as "need"', '', 'c4'], ['⚠️', 'They look healthier, so they get less help', '', 'bad']] },
         html: `
 <h3>Where bias comes from</h3>
 <ul>
@@ -430,6 +474,8 @@ window.GUIDE = {
       },
       {
         t: 'Interoperability: can systems understand each other?',
+        key: 'Interoperability means systems can <b>exchange</b> data and <b>use</b> it. It has four levels; data arriving (technical) is only the first.',
+        fig: { type: 'stack', t: 'Four levels (analogy: sending a letter)', items: [['4. Organisational', 'policies, trust: everyone agrees who acts on the letter', 'c4'], ['3. Semantic', 'shared meaning (codes, units): same language, same meaning', 'c2'], ['2. Syntactic', 'shared format: the same letter format', 'c0'], ['1. Technical', 'systems connect: the letter reaches the house', 'c1']], cap: 'Standards: HL7 v2 and FHIR for messages, SNOMED CT and others for meaning.' },
         html: `
 <p><b>Interoperability</b> = systems can <b>exchange</b> data <b>and use</b> the information exchanged. Four levels, from bottom to top:</p>
 <table class="t">
@@ -459,6 +505,8 @@ window.GUIDE = {
       },
       {
         t: 'Four levels of analytics & evaluating AI',
+        key: 'Analytics climbs four steps: <b>what happened → why → what will happen → what should we do</b>.',
+        fig: { type: 'flow', items: [['📊', 'Descriptive', 'What happened? "wait was 3 h"', 'c0'], ['🔍', 'Diagnostic', 'Why? "two doctors on leave"', 'c3'], ['🔮', 'Predictive', 'What will happen? "+30% Monday"', 'c2'], ['🧭', 'Prescriptive', 'What should we do? "add a doctor"', 'c1']] },
         html: `
 <table class="t">
   <tr><th>Level</th><th>Question</th><th>Example</th></tr>
@@ -497,6 +545,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'Clinical decisions and where AI fits',
+        key: 'The value of AI depends on whether it <b>improves a decision</b>, not just whether it produces a prediction.',
+        fig: { type: 'flow', items: [['🗂️', 'Information', 'symptoms, history, exam, tests, preferences', 'c0'], ['🧑‍⚕️', 'Clinician + AI', 'under uncertainty', 'c3'], ['✅', 'Decision', 'diagnosis, triage, treatment, discharge, referral', 'c1']] },
         html: `
 <p>A clinical decision is <b>more than a diagnosis</b>. Clinicians combine symptoms, history, examination, tests, <b>patient preferences</b> and the care context — and decide about diagnosis, triage, treatment, monitoring, discharge and referral. <b>Uncertainty is unavoidable.</b></p>
 <div class="callout"><b>💡 Key idea (slide 4):</b> the value of AI depends on whether it <b>improves a decision</b>, not simply whether it produces a prediction.</div>
@@ -512,6 +562,8 @@ window.GUIDE = {
       },
       {
         t: 'Clinical decision support systems (CDSS)',
+        key: 'A CDSS gives <b>patient-specific</b> help at the moment of a decision: reminders, alerts, risk estimates. It can be <b>rules</b> (knowledge-based) or <b>learned</b> (non-knowledge-based).',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '📜', t: 'Knowledge-based', pts: ['rules from guidelines and experts', 'IF allergy = penicillin AND order = amoxicillin → alert'], c: 'c0' }, { icon: '📈', t: 'Non-knowledge-based', pts: ['patterns learned from data (ML)', 'a deterioration risk model'], c: 'c3' }], cap: 'Also: passive (you look it up) vs active (it pops up in the workflow), and patient-facing decision aids.' },
         html: `
 <p>A <b>CDSS</b> gives <b>patient-specific</b> information to support a healthcare decision — reminders, alerts, risk estimates, ranked options. Classic example: the patient has a penicillin allergy → an alert appears before the prescription is completed.</p>
 <table class="t">
@@ -527,6 +579,8 @@ window.GUIDE = {
       },
       {
         t: 'Predictive analytics: from prediction to action',
+        key: 'A prediction <b>estimates risk</b>. It does not prove the event will happen or explain why. It only helps if it is <b>connected to an action</b>.',
+        fig: { type: 'flow', t: 'From prediction to action: 6 steps (slide 10)', items: [['🎯', 'Define the target', 'ICU transfer in 24 h', 'c0'], ['⏱️', 'Prediction time', 'what was known then?', 'c3'], ['📈', 'Estimate risk', 'validated model', 'c5'], ['🎚️', 'Choose a threshold', 'benefits vs false alarms', 'c2'], ['🏃', 'Connect to a response', 'review, test, treat', 'c4'], ['📏', 'Measure outcomes', 'does the pathway improve?', 'c1']] },
         html: `
 <p><b>Predictive analytics</b> estimates the likelihood of a future event: deterioration, readmission, complications, falls, missed appointments.</p>
 <div class="callout warn"><b>⚠ A prediction estimates risk.</b> It does not prove the event will happen, and it does not explain the cause. The care team still decides what to do.</div>
@@ -544,6 +598,8 @@ window.GUIDE = {
       },
       {
         t: 'The confusion matrix — calculate it yourself',
+        key: '<b>Sensitivity</b> and <b>specificity</b> start from the <b>truth</b> (columns). <b>PPV</b> and <b>NPV</b> start from the <b>alert</b> (rows).',
+        fig: [{ type: 'boxes', t: '1,000 patients, 50 truly deteriorate', head: ['', 'truly deteriorates (50)', 'truly fine (950)'], rows: [{ label: 'alert (135)', cells: [['TP = 40', 'ok'], ['FP = 95 false alarms', 'warn']] }, { label: 'no alert (865)', cells: [['FN = 10 missed!', 'bad'], ['TN = 855', 'ok']] }] }, { type: 'bars', items: [['Sensitivity = 40 / 50', 80, 'c1', '80%'], ['Specificity = 855 / 950', 90, 'c0', '90%'], ['PPV = 40 / 135', 30, 'c4', '30%: only 3 in 10 alerts are real'], ['NPV = 855 / 865', 98.8, 'c0', '98.8%']], max: 100 }],
         html: `
 <p>Every alert decision has four possible outcomes:</p>
 <table class="t">
@@ -572,6 +628,8 @@ window.GUIDE = {
       },
       {
         t: 'Thresholds, prevalence and the 99% trap',
+        key: 'A <b>lower threshold</b> catches more sick patients but gives more false alarms. And when a condition is <b>rare</b>, "99% accurate" can mean the model finds nobody.',
+        fig: [{ type: 'compare', vs: true, cols: [{ icon: '⬇️', t: 'Lower threshold', pts: ['more true cases caught (sensitivity ↑)', 'more false alarms'], c: 'c2' }, { icon: '⬆️', t: 'Higher threshold', pts: ['fewer alerts', 'more missed patients'], c: 'c0' }] }, { type: 'boxes', t: 'The 99% trap: 1,000 patients, 10 have it; the model says "no" for everyone', rows: [{ cells: [['990 healthy → "no" ✓', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['10 sick → "no" ✗', 'bad']] }], cap: 'Accuracy 99%, sensitivity 0%. Always look at the confusion matrix.' }],
         html: `
 <p>A model gives each patient a <b>risk score</b>. A <b>threshold</b> turns the score into an action ("review urgently if score ≥ 55").</p>
 <ul>
@@ -592,6 +650,8 @@ window.GUIDE = {
       },
       {
         t: 'Discrimination, calibration and validation',
+        key: '<b>Discrimination</b> (AUC): does it rank sicker patients higher? <b>Calibration</b>: when it says 20%, do about 20 in 100 really have the event?',
+        fig: { type: 'plot', t: 'Calibration: predicted risk vs what really happened', w: 500, h: 300, x: [0, 100], y: [0, 100], xl: 'predicted risk (%)', yl: 'observed rate (%)', lines: [{ pts: [[0, 0], [100, 100]], c: 'mute', dash: true, label: 'perfect' }, { pts: [[0, 0], [20, 19], [40, 42], [60, 58], [80, 81], [100, 98]], c: 'c1', label: 'well calibrated' }, { pts: [[0, 0], [20, 8], [40, 17], [60, 28], [80, 40], [100, 52]], c: 'c4', label: 'at a new hospital' }], cap: 'Illustrative. A model can rank well but be badly calibrated somewhere new, so validate it locally (external validation).' },
         html: `
 <table class="t">
   <tr><th>Concept</th><th>Question</th></tr>
@@ -615,6 +675,8 @@ window.GUIDE = {
       },
       {
         t: 'Humans and AI together: oversight and automation bias',
+        key: '<b>Augmented</b> intelligence: AI extends people, it does not replace them. The human must be <b>more than a rubber stamp</b>, with the time, information and authority to disagree.',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '🤖', t: 'AI brings', pts: ['speed', 'pattern detection', 'consistent calculation'], c: 'c0' }, { icon: '🧑‍⚕️', t: 'Clinicians bring', pts: ['context, examination', 'communication, values', 'experience, ethical judgement'], c: 'c1' }], cap: '<b>Automation bias</b> = trusting the computer too much, even when it is wrong.' },
         html: `
 <p><b>Augmented intelligence</b> = AI <b>extends</b> human capability rather than replacing people. AI brings speed, pattern detection and consistent calculation; clinicians bring context, examination, communication, values, experience and ethical judgement.</p>
 <div class="callout"><b>💡 Core principle (slide 15):</b> the human is <b>not merely a rubber stamp</b>. Meaningful oversight needs <b>time, information and the authority to disagree</b>.</div>
@@ -638,6 +700,8 @@ window.GUIDE = {
       },
       {
         t: 'Explainability, bias, governance and implementation',
+        key: 'Before trusting a tool, ask: can users <b>understand</b> it, is it <b>fair</b> for every group, <b>who is responsible</b>, and is it <b>monitored</b> after go-live?',
+        fig: { type: 'compare', cols: [{ icon: '💡', t: 'Explainability', pts: ['what the output means and when it may fail', 'associations are not causes'], c: 'c0' }, { icon: '⚖️', t: 'Bias and equity', pts: ['check performance by age, sex, ethnicity…'], c: 'c3' }, { icon: '🏛️', t: 'Governance', pts: ['responsibility cannot be delegated to an algorithm', 'name who owns the decision and the model'], c: 'c2' }, { icon: '🔧', t: 'Implementation', pts: ['map the workflow, pilot, train users', 'monitor alerts, overrides, subgroups'], c: 'c1' }], cap: 'Key message: evaluate the whole human–AI–workflow system, not the algorithm alone.' },
         html: `
 <h3>Explainability (slide 17)</h3>
 <p>Users must understand what an output means, what it does <i>not</i> mean and when it may fail. "Higher estimated risk based on recent observations" is better than a mysterious red warning with no next step. Don't present <b>associations as causes</b>.</p>

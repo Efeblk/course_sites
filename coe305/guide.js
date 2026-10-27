@@ -16,6 +16,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'What machine learning is — and when we need it',
+        key: 'In normal programming a human writes the rules. In machine learning we give the computer <b>examples</b>, and it <b>finds the rules</b> itself (it builds a model).',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '👩‍💻', t: 'Normal programming', pts: ['rules + data → answers', 'a human writes IF … THEN …'], c: 'c0' }, { icon: '🤖', t: 'Machine learning', pts: ['data + answers → rules (a model)', 'the computer learns from examples'], c: 'c1' }], cap: 'We need learning when nobody can write the rules: there is no expert (Mars), the expert cannot explain it (speech), things change (routing), or it must adapt to each user.' },
         html: `
 <p><b>Machine learning</b> = programming computers to <b>optimise a performance criterion using example data or past experience</b>.</p>
 <p>Normal programming: a human writes the rules. ML: we give examples, and the computer <b>finds the rules</b> (builds a <b>model</b>).</p>
@@ -34,6 +36,8 @@ window.GUIDE = {
       },
       {
         t: 'Learning associations (basket analysis)',
+        key: 'An association rule "X → Y" is measured by <b>P(Y | X)</b>: of the baskets that have X, what share also have Y?',
+        fig: { type: 'boxes', t: '10 baskets that contain a computer', rows: [{ cells: [['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻', 'mute'], ['💻', 'mute'], ['💻', 'mute']] }], cap: '7 of the 10 also have a mouse, so P(mouse | computer) = 7/10 = 0.7. That is <b>not</b> the same as P(computer | mouse).' },
         html: `
 <p>A shop wants to know: <i>"people who buy X also buy Y"</i>. This is an <b>association rule</b>, measured by a conditional probability:</p>
 <p style="text-align:center"><b>P(Y | X) = (# baskets with X and Y) / (# baskets with X)</b></p>
@@ -48,6 +52,8 @@ window.GUIDE = {
       },
       {
         t: 'Supervised learning: classification and regression',
+        key: 'Supervised learning means every example comes with the <b>right answer</b>. A <b>category</b> as the answer = classification. A <b>number</b> as the answer = regression.',
+        fig: { type: 'plot', t: 'Credit scoring: IF income > θ₁ AND savings > θ₂ THEN low-risk', w: 520, h: 300, x: [0, 10], y: [0, 10], xl: 'income', yl: 'savings', rects: [{ x0: 4, y0: 4.5, x1: 10, y1: 10, c: 'c1', label: 'low-risk' }], pts: [[6, 7, 'c1'], [7.5, 8.5, 'c1'], [8.5, 6, 'c1'], [6.5, 5.5, 'c1'], [9, 9, 'c1'], [2, 3, 'c4'], [3, 7, 'c4'], [1.5, 8, 'c4'], [6, 2, 'c4'], [8, 1.5, 'c4'], [2.5, 1.2, 'c4']], texts: [[4, 0.5, 'θ₁', 'c2'], [0.6, 4.9, 'θ₂', 'c2']], cap: 'Green = paid back (low-risk), coral = did not. "Learning" means choosing θ₁ and θ₂ from past data.' },
         html: `
 <p>In <b>supervised</b> learning every training example comes with the <b>correct answer</b> (the label / output).</p>
 <table class="t">
@@ -74,6 +80,8 @@ window.GUIDE = {
       },
       {
         t: 'Unsupervised and reinforcement learning',
+        key: 'There are three kinds of learning, depending on what the data gives you: the <b>answer</b> (supervised), <b>nothing</b> (unsupervised) or a <b>delayed reward</b> (reinforcement).',
+        fig: { type: 'compare', cols: [{ icon: '👩‍🏫', t: 'Supervised', pts: ['input + correct output', 'learn input → output', 'credit scoring, car price'], c: 'c0' }, { icon: '🔍', t: 'Unsupervised', pts: ['input only', 'find structure / groups', 'customer segments'], c: 'c1' }, { icon: '🎮', t: 'Reinforcement', pts: ['reward after many actions', 'learn a policy', 'games, robot in a maze'], c: 'c2' }] },
         html: `
 <table class="t">
   <tr><th>Kind</th><th>What the data gives</th><th>Goal</th><th>Examples</th></tr>
@@ -100,6 +108,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'Learning a class: the family car',
+        key: 'We <b>guess the shape</b> of the answer (a rectangle in price × engine power), then pick the rectangle that fits the training cars best.',
+        fig: { type: 'plot', w: 520, h: 300, x: [0, 10], y: [0, 10], xl: 'x₁ = price', yl: 'x₂ = engine power', rects: [{ x0: 3, y0: 3, x1: 7, y1: 7, c: 'c1', label: 'h: a rectangle' }], pts: [[4, 4.5, 'c1'], [5, 5.5, 'c1'], [6, 4, 'c1'], [4.5, 6.2, 'c1'], [5.8, 6.4, 'c1'], [1.5, 2, 'c4'], [8.5, 8, 'c4'], [2, 8.5, 'c4'], [8.5, 2, 'c4'], [5, 9, 'c4'], [9, 5, 'c4']], cap: 'Green = family car (r = 1), coral = not (r = 0). The hypothesis class H is all axis-aligned rectangles; each rectangle is one hypothesis h.' },
         html: `
 <p>Is car x a "family car"? Two inputs: <b>x₁ = price</b>, <b>x₂ = engine power</b>. Output <b>r = 1</b> (family car, positive) or <b>r = 0</b> (negative).</p>
 <p>Training set: <b>X = {xᵗ, rᵗ}</b>, t = 1…N — N examples, each with its label.</p>
@@ -116,6 +126,8 @@ window.GUIDE = {
       },
       {
         t: 'S, G, version space and margin',
+        key: '<b>S</b> is the tightest rectangle around the positives, <b>G</b> is the biggest one that still has no negatives. Any rectangle between them fits the data. Choose the one in the middle, with the <b>largest margin</b>.',
+        fig: { type: 'plot', w: 520, h: 300, x: [0, 10], y: [0, 10], xl: 'price', yl: 'engine power', rects: [{ x0: 1.8, y0: 2.3, x1: 8.2, y1: 8.6, c: 'c0', label: 'G (most general)' }, { x0: 3.9, y0: 3.9, x1: 6.1, y1: 6.5, c: 'c1', label: 'S' }], pts: [[4, 4.5, 'c1'], [5, 5.5, 'c1'], [6, 4, 'c1'], [4.5, 6.4, 'c1'], [1.5, 2, 'c4'], [8.5, 8, 'c4'], [1.4, 8.8, 'c4'], [8.6, 2, 'c4'], [5, 9, 'c4'], [9, 5, 'c4']], cap: 'The version space is everything between S and G.' },
         html: `
 <p>Usually many rectangles have zero training error. Two special ones:</p>
 <ul>
@@ -134,6 +146,8 @@ window.GUIDE = {
       },
       {
         t: 'Multiple classes, regression, and simple vs complex models',
+        key: 'In regression we fit a curve through the points by making the <b>squared errors</b> as small as possible. A higher degree means a more complex model, and complex is not always better.',
+        fig: { type: 'plot', t: 'Used-car price vs mileage', w: 520, h: 300, x: [0, 10], y: [0, 10], xl: 'mileage', yl: 'price', pts: [[1, 8.6, 'c0'], [2, 7.4, 'c0'], [3, 7.1, 'c0'], [4, 5.6, 'c0'], [5, 5.2, 'c0'], [6, 4.1, 'c0'], [7, 3.6, 'c0'], [8, 2.4, 'c0'], [9, 2.2, 'c0']], lines: [{ pts: [[0.5, 8.9], [9.5, 1.7]], c: 'c1', label: 'linear: w₁x + w₀' }, { pts: [[0.5, 9.2], [2, 7.6], [4, 5.7], [6, 4.2], [8, 2.9], [9.5, 2.1]], c: 'c2', dash: true, label: 'quadratic' }], cap: 'One-vs-rest for K classes: train K classifiers, each with its own class against all the others.' },
         html: `
 <h3>K classes</h3>
 <p>Train <b>K hypotheses</b> hᵢ(x), one per class: each treats its own class as positive and <b>all others as negative</b> (one-vs-rest).</p>
@@ -152,6 +166,8 @@ window.GUIDE = {
       },
       {
         t: 'Overfitting, underfitting and the triple trade-off',
+        key: '<b>Too simple</b> misses the pattern (underfitting). <b>Too complex</b> memorises the noise (overfitting). The validation error tells you where the sweet spot is.',
+        fig: { type: 'plot', w: 540, h: 300, x: [1, 9], y: [0, 10], xl: 'model complexity (e.g. polynomial degree) →', yl: 'error', lines: [{ pts: [[1, 9], [2, 6.5], [3, 4.6], [4, 3.3], [5, 2.4], [6, 1.7], [7, 1.2], [8, 0.8], [9, 0.5]], c: 'c0', label: 'training error' }, { pts: [[1, 9.4], [2, 7.2], [3, 5.6], [4, 4.7], [5, 4.6], [6, 5.2], [7, 6.3], [8, 7.6], [9, 9]], c: 'c4', label: 'validation error' }], texts: [[2, 1.5, 'underfitting', 'c0'], [4.6, 3.6, 'sweet spot', 'c1'], [8, 4.5, 'overfitting', 'c4']], cap: 'Triple trade-off: model complexity, amount of training data, and error on new data.' },
         html: `
 <p>Learning is <b>ill-posed</b>: the data alone does not give a unique answer. We need <b>inductive bias</b> — assumptions about H (e.g. "it's a rectangle", "it's a line").</p>
 <ul>
@@ -173,6 +189,8 @@ window.GUIDE = {
       },
       {
         t: 'Train / validation / test and K-fold cross-validation',
+        key: 'K-fold cross-validation splits the data into K parts. Each part takes one turn as the validation set, and you <b>average the K scores</b>.',
+        fig: { type: 'boxes', t: '5-fold cross-validation', head: ['part 1', 'part 2', 'part 3', 'part 4', 'part 5', 'score'], rows: [{ label: 'round 1', cells: [['validate', 'c2'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['E₁', '']] }, { label: 'round 2', cells: [['train', 'c0'], ['validate', 'c2'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['E₂', '']] }, { label: 'round 3', cells: [['train', 'c0'], ['train', 'c0'], ['validate', 'c2'], ['train', 'c0'], ['train', 'c0'], ['E₃', '']] }, { label: 'round 4', cells: [['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['validate', 'c2'], ['train', 'c0'], ['E₄', '']] }, { label: 'round 5', cells: [['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['validate', 'c2'], ['E₅', '']] }], cap: 'Result = average of E₁…E₅. The <b>test</b> set is kept apart the whole time and used once at the very end.' },
         html: `
 <p>To estimate how well a model works on unseen data, we must test it on data it has not seen during training.</p>
 <table class="t">
@@ -199,6 +217,8 @@ window.GUIDE = {
       },
       {
         t: 'The three dimensions of a supervised learner',
+        key: 'Every supervised method is three choices: <b>Model</b> (what shape), <b>Loss</b> (how wrong), <b>Optimisation</b> (how to fix it).',
+        fig: { type: 'flow', items: [['📐', 'Model g(x | θ)', 'e.g. a line, θ = {w₁, w₀}', 'c0'], ['📏', 'Loss E(θ | X)', 'e.g. squared error', 'c4'], ['🔧', 'Optimise θ* = argmin E', 'e.g. least squares, gradient descent', 'c1']] },
         html: `
 <p>Every supervised learning method is defined by three choices:</p>
 <ol>
@@ -225,6 +245,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'Dimensionality and why we reduce it',
+        key: 'Dimensionality = <b>number of features</b>. Fewer, better features mean faster, cheaper, more robust and easier-to-explain models.',
+        fig: { type: 'boxes', t: 'A student described by d = 5 features', rows: [{ label: 'all features', cells: [['Age', 'c0'], ['GPA', 'c0'], ['Attendance', 'c0'], ['Study hours', 'c0'], ['Income', 'c0']] }, { label: 'after reduction', cells: [['', ''], ['GPA', 'c1'], ['', ''], ['Study hours', 'c1'], ['', '']] }], cap: '"More useful information is better, not necessarily more features."' },
         html: `
 <p>The <b>dimensionality</b> of a sample = the <b>number of features</b> used to represent it. Age, GPA, Attendance, Study hours, Income → <b>d = 5</b>.</p>
 <h3>Why reduce it?</h3>
@@ -240,6 +262,8 @@ window.GUIDE = {
       },
       {
         t: 'Feature selection vs feature extraction',
+        key: '<b>Selection selects</b>: it keeps some of the original features. <b>Extraction transforms</b>: it builds new features out of combinations of the old ones.',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '✂️', t: 'Feature selection', pts: ['keep k of the d original features', 'e.g. keep {GPA, study hours}', 'subset selection (forward / backward)', '✅ easy to interpret'], c: 'c0' }, { icon: '🧪', t: 'Feature extraction', pts: ['make k new features', 'e.g. z₁ = 0.6·height + 0.8·weight', 'PCA, LDA, FA, MDS', '❌ what does z₁ mean?'], c: 'c3' }] },
         html: `
 <table class="t">
   <tr><th></th><th>Feature selection</th><th>Feature extraction</th></tr>
@@ -259,6 +283,8 @@ window.GUIDE = {
       },
       {
         t: 'Subset selection: forward and backward search',
+        key: 'Trying all 2ᵈ subsets is impossible, so we go <b>greedily</b>: add (forward) or remove (backward) <b>one feature at a time</b>, as long as the validation error improves.',
+        fig: { type: 'flow', t: 'Forward search (illustrative numbers)', items: [['∅', 'Start: F = { }', 'E = 0.40', 'mute'], ['➕', 'add GPA', 'E = 0.25 ✓ best', 'c1'], ['➕', 'add study hours', 'E = 0.18 ✓', 'c1'], ['➕', 'add age?', 'E = 0.19 ✗ worse', 'c4'], ['🛑', 'Stop', 'F = {GPA, study hours}', 'c0']], cap: 'Greedy is not guaranteed to find the best subset.' },
         html: `
 <p>With d features there are <b>2ᵈ</b> possible subsets — with d = 30 that's over a billion. Too many to try, so we search <b>greedily</b> using the <b>validation error E</b>.</p>
 <h3>Forward search</h3>
@@ -279,6 +305,8 @@ window.GUIDE = {
       },
       {
         t: 'PCA: find the direction of maximum variance',
+        key: 'PCA turns the axes so that the first new axis, <b>PC1</b>, follows the direction where the data is <b>most spread out</b>. PC2 is perpendicular to it.',
+        fig: { type: 'plot', t: 'Height and weight of students (centred)', w: 480, h: 320, x: [-5, 5], y: [-5, 5], xl: 'height', yl: 'weight', pts: [[-3.5, -3, 'c0'], [-2.6, -2.4, 'c0'], [-2, -1.1, 'c0'], [-1, -1.4, 'c0'], [-0.5, 0.2, 'c0'], [0.4, -0.3, 'c0'], [1, 1.4, 'c0'], [1.8, 1.1, 'c0'], [2.5, 2.7, 'c0'], [3.4, 2.8, 'c0'], [-1.5, -0.4, 'c0'], [0.8, 0.2, 'c0']], lines: [{ pts: [[-4.5, -4], [4.5, 4]], c: 'c2', label: 'PC1: most variance' }, { pts: [[1.6, -1.8], [-1.6, 1.8]], c: 'c3', label: 'PC2' }], cap: 'Keep PC1 only and each student is one number (their position along the line) instead of two, with little information lost.' },
         html: `
 <p>Imagine height and weight of students: the points lie roughly along a diagonal line. Instead of two features, we could use <b>one</b>: the position along that line.</p>
 <ol>
@@ -314,6 +342,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'Classes vs clusters; parametric vs nonparametric',
+        key: '<b>Classes</b> are given (labels exist). <b>Clusters</b> are found (no labels). Clustering groups <b>rows</b> (instances); dimensionality reduction groups <b>columns</b> (features).',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '🏷️', t: 'Supervised: classes', pts: ['X = {xᵗ, rᵗ}', 'K classes are given'], c: 'c0' }, { icon: '🫧', t: 'Unsupervised: clusters', pts: ['X = {xᵗ}', 'k clusters are found'], c: 'c1' }] },
         html: `
 <table class="t">
   <tr><th></th><th>Supervised</th><th>Unsupervised</th></tr>
@@ -325,6 +355,8 @@ window.GUIDE = {
       },
       {
         t: 'k-means: assign, update, repeat',
+        key: 'k-means repeats two moves: <b>assign</b> every point to its nearest centre, then <b>move</b> every centre to the mean of its points. It stops when nothing changes.',
+        fig: { type: 'boxes', t: 'The lesson\'s example: points 1, 2, 9, 10, 11 with k = 2', head: ['1', '2', '9', '10', '11', 'centres'], rows: [{ label: 'start', cells: [['', ''], ['', ''], ['', ''], ['', ''], ['', ''], ['m₁ = 1, m₂ = 2', 'mute']] }, { label: 'assign 1', cells: [['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['update → m₁ = 1, m₂ = 8', '']] }, { label: 'assign 2', cells: [['m₁', 'c0'], ['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['update → m₁ = 1.5, m₂ = 10', '']] }, { label: 'assign 3', cells: [['m₁', 'c0'], ['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['no change → done ✓', 'ok']] }] },
         html: `
 <p>Goal: find <b>k reference vectors</b> mᵢ (also called prototypes, codebook vectors, codewords) that best represent the data.</p>
 <h3>The algorithm</h3>
@@ -355,6 +387,8 @@ window.GUIDE = {
       },
       {
         t: 'Soft clustering with EM',
+        key: 'k-means says "this point is in A". EM says "this point is <b>70% A, 30% B</b>". Each cluster is a Gaussian bell curve.',
+        fig: [{ type: 'compare', vs: true, cols: [{ icon: '🧱', t: 'Hard: k-means', pts: ['each point in exactly one cluster', 'point x → A (100%)'], c: 'c0' }, { icon: '☁️', t: 'Soft: EM', pts: ['each point in every cluster with a probability', 'point x → A 70%, B 30%'], c: 'c3' }] }, { type: 'flow', items: [['🎲', 'Start', 'random Gaussians', 'mute'], ['E', 'E-step', 'probability of each cluster for each point', 'c2'], ['M', 'M-step', 're-fit each μ and σ², weighted', 'c1'], ['↺', 'Repeat', 'until it converges', 'c0']] }],
         html: `
 <p>k-means is <b>hard</b> clustering: each point belongs to exactly <b>one</b> cluster. <b>EM</b> (Expectation-Maximisation) gives <b>soft</b> clustering: each point belongs to <b>every</b> cluster with some probability (e.g. 70% A, 30% B).</p>
 <p>Each cluster is a <b>Gaussian</b> (bell curve) with mean μᵢ and variance σᵢ².</p>
@@ -374,6 +408,8 @@ window.GUIDE = {
       },
       {
         t: 'Hierarchical clustering and the dendrogram',
+        key: 'Agglomerative clustering starts with every point alone and keeps <b>merging the two closest groups</b>. The <b>dendrogram</b> shows the merges; cut it at any height to get clusters.',
+        fig: { type: 'plot', t: 'A dendrogram for five points', w: 500, h: 300, x: [0, 6], y: [-0.6, 4.5], yl: 'merge distance', lines: [{ pts: [[1, 0], [1, 1], [2, 1], [2, 0]], c: 'c0' }, { pts: [[4, 0], [4, 1.5], [5, 1.5], [5, 0]], c: 'c1' }, { pts: [[1.5, 1], [1.5, 2.5], [3, 2.5], [3, 0]], c: 'c0' }, { pts: [[2.25, 2.5], [2.25, 4], [4.5, 4], [4.5, 1.5]], c: 'mute' }, { pts: [[0.2, 3.2], [5.8, 3.2]], c: 'c4', dash: true, label: 'cut here → 2 clusters' }], texts: [[1, -0.4, 'A'], [2, -0.4, 'B'], [3, -0.4, 'C'], [4, -0.4, 'D'], [5, -0.4, 'E']], cap: 'A and B merge first (closest), then D and E, then C joins A–B. No need to choose k in advance.' },
         html: `
 <p>No need to choose k in advance. <b>Agglomerative</b> clustering:</p>
 <ol>
@@ -403,6 +439,8 @@ window.GUIDE = {
       },
       {
         t: 'How to choose k',
+        key: 'The error <b>always</b> drops as k grows, so never just pick the lowest error. Pick the <b>elbow</b>, where adding more clusters stops helping much.',
+        fig: { type: 'plot', t: 'Elbow method (illustrative)', w: 520, h: 280, x: [1, 8], y: [0, 100], xl: 'k (number of clusters)', yl: 'reconstruction error', lines: [{ pts: [[1, 100], [2, 55], [3, 30], [4, 25], [5, 21], [6, 18], [7, 16], [8, 14.5]], c: 'c0' }], pts: [[3, 30, 'c4', '← elbow: k = 3']] },
         html: `
 <ul>
   <li><b>The application decides</b> — e.g. image quantisation with 256 colours → k = 256.</li>
@@ -431,6 +469,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'What a decision tree is',
+        key: 'A decision tree is a <b>flowchart of questions</b>. Inner nodes ask about one attribute, branches are the answers, and leaves give the prediction.',
+        fig: { type: 'graph', t: 'The Play Tennis tree', w: 700, h: 280, nodes: { o: [350, 40, 'Outlook?', 'c0'], h: [130, 150, 'Humidity?', 'c0'], y1: [350, 150, '✅ Yes', 'c1'], w: [570, 150, 'Wind?', 'c0'], n1: [60, 250, '❌ No', 'c4'], y2: [200, 250, '✅ Yes', 'c1'], n2: [500, 250, '❌ No', 'c4'], y3: [640, 250, '✅ Yes', 'c1'] }, edges: [['o', 'h', 'sunny'], ['o', 'y1', 'overcast'], ['o', 'w', 'rain'], ['h', 'n1', 'high'], ['h', 'y2', 'normal'], ['w', 'n2', 'strong'], ['w', 'y3', 'weak']] },
         html: `
 <p>A decision tree is a flowchart of questions:</p>
 <ul>
@@ -447,6 +487,8 @@ window.GUIDE = {
       },
       {
         t: 'Impurity: entropy',
+        key: '<b>Entropy</b> measures how mixed a node is: <b>0</b> = pure (one class only), <b>1 bit</b> = a 50/50 mix (for two classes).',
+        fig: { type: 'plot', t: 'Entropy of a two-class node', w: 520, h: 280, x: [0, 1], y: [0, 1.1], xl: 'p = share of "yes"', yl: 'entropy (bits)', lines: [{ pts: [[0, 0], [0.05, 0.286], [0.1, 0.469], [0.2, 0.722], [0.3, 0.881], [0.4, 0.971], [0.5, 1], [0.6, 0.971], [0.7, 0.881], [0.8, 0.722], [0.9, 0.469], [0.95, 0.286], [1, 0]], c: 'c0' }], pts: [[0.643, 0.94, 'c2', 'Play Tennis: 9/14 yes → 0.940'], [0.5, 1, 'c4', '50/50 → 1'], [1, 0, 'c1', 'pure → 0']] },
         html: `
 <p>At node m, Nₘ examples arrive, Nₘⁱ of them from class i, so pₘⁱ = Nₘⁱ / Nₘ. The node is <b>pure</b> if all its examples are from one class.</p>
 <p>We measure impurity with <b>entropy</b>:</p>
@@ -462,6 +504,8 @@ window.GUIDE = {
       },
       {
         t: 'Choosing the split (ID3) on Play Tennis',
+        key: 'Try every attribute, compute the <b>weighted entropy after the split</b>, and pick the <b>lowest</b>. That is the same as the highest information gain.',
+        fig: [{ type: 'boxes', t: 'Splitting on Outlook', head: ['Sunny (5 days)', 'Overcast (4 days)', 'Rain (5 days)'], rows: [{ label: 'yes / no', cells: [['2 / 3', 'c2'], ['4 / 0', 'ok'], ['3 / 2', 'c2']] }, { label: 'entropy', cells: [['0.971', ''], ['0 (pure!)', 'ok'], ['0.971', '']] }] }, { type: 'bars', t: 'Weighted entropy after each split (lower = better)', items: [['Outlook', 0.694, 'c1', '0.694 ← root'], ['Humidity', 0.789, 'c0', '0.789'], ['Wind', 0.892, 'c0', '0.892'], ['Temperature', 0.911, 'c0', '0.911']], max: 1 }],
         html: `
 <p>For each attribute, compute the <b>weighted entropy after the split</b>:</p>
 <p style="text-align:center"><b>𝓘′ₘ = Σⱼ (Nₘⱼ / Nₘ) · 𝓘(branch j)</b></p>
@@ -486,6 +530,8 @@ window.GUIDE = {
       },
       {
         t: 'Regression trees and pruning',
+        key: 'A regression tree predicts the <b>average</b> of the examples in each leaf, so its prediction is a <b>step function</b>. A smaller error threshold θᵣ gives more steps and more risk of overfitting.',
+        fig: { type: 'plot', t: 'A regression tree with 3 leaves (illustrative)', w: 520, h: 280, x: [0, 10], y: [0, 10], xl: 'x', yl: 'r', pts: [[0.5, 2.2, 'c0'], [1.5, 1.6, 'c0'], [2.5, 2.6, 'c0'], [3.3, 2, 'c0'], [4, 6.2, 'c0'], [4.8, 7.1, 'c0'], [5.5, 6.4, 'c0'], [6.3, 7.2, 'c0'], [7.2, 4.1, 'c0'], [8, 3.4, 'c0'], [8.8, 4, 'c0'], [9.6, 3.5, 'c0']], lines: [{ pts: [[0, 2.1], [3.7, 2.1], [3.7, 6.7], [6.8, 6.7], [6.8, 3.75], [10, 3.75]], c: 'c2', label: 'leaf averages' }] },
         html: `
 <p>In a <b>regression tree</b> each leaf predicts a number: gₘ = the <b>average r</b> of the examples reaching it. The node error is the mean squared error:</p>
 <p style="text-align:center"><b>Eₘ = (1/Nₘ) Σₜ (rᵗ − gₘ)²</b></p>

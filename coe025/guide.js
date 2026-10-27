@@ -15,6 +15,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'What NLP is, and how it got here',
+        key: 'NLP teaches computers to work with human language. The big problem behind everything is that <b>computers only understand numbers</b>, so every method is a way of turning text into numbers.',
+        fig: { type: 'flow', t: 'Five eras of NLP', items: [['📜', '1950s–80s', 'hand-written rules (ELIZA)', 'c3'], ['📊', '1990s', 'statistics: n-grams, HMMs', 'c0'], ['🧠', '2010s', 'deep learning: Word2Vec, LSTM', 'c1'], ['⚡', '2017+', 'Transformers, LLMs: BERT, GPT', 'c2'], ['🧰', 'Now', 'pick the right tool for the job', 'c4']] },
         html: `
 <p><b>Natural Language Processing (NLP)</b> = teaching computers to <b>understand, interpret and generate human language</b>. It stands on three pillars: <b>linguistics</b> (how language works), <b>statistics</b> (learning from data) and <b>computer science</b> (algorithms).</p>
 <table class="t">
@@ -30,6 +32,8 @@ window.GUIDE = {
       },
       {
         t: 'Corpus, document, token — and the OOV problem',
+        key: 'A model only knows the tokens it saw in training. A new word becomes <code>[UNK]</code> and its meaning is lost, unless we split it into <b>known subword pieces</b>.',
+        fig: [{ type: 'stack', t: 'From big to small', items: [['📚 Corpus', 'all 50,000 movie reviews', 'c3'], ['📄 Document', 'one review', 'c0'], ['🔤 Token', '"movie", "!", "n\'t"', 'c1']] }, { type: 'boxes', t: 'The word "unhappiness" was never seen in training', rows: [{ label: 'word-level', cells: [['[UNK] ❌ meaning lost', 'bad']] }, { label: 'subword (BPE)', cells: [['un', 'c0'], ['happi', 'c1'], ['ness', 'c2']] }], cap: 'Every subword piece is in the vocabulary, so nothing is lost.' }],
         html: `
 <table class="t">
   <tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
@@ -57,6 +61,8 @@ window.GUIDE = {
       },
       {
         t: 'Text → numbers: one-hot and bag of words',
+        key: '<b>One-hot</b>: one 1 per word, so no meaning and very long vectors. <b>Bag of words</b>: count each word in a document, but <b>word order is lost</b>.',
+        fig: [{ type: 'boxes', t: 'One-hot, vocabulary [cat, dog, sat, the]', head: ['cat', 'dog', 'sat', 'the'], rows: [{ label: 'cat', cells: [['1', 'c0'], ['0', ''], ['0', ''], ['0', '']] }, { label: 'dog', cells: [['0', ''], ['1', 'c0'], ['0', ''], ['0', '']] }] }, { type: 'boxes', t: 'Bag of words for "the cat sat the"', head: ['cat', 'dog', 'sat', 'the'], rows: [{ label: 'counts', cells: [['1', 'c1'], ['0', ''], ['1', 'c1'], ['2', 'c2']] }], cap: '"dog bites man" and "man bites dog" get the same bag-of-words vector.' }],
         html: `
 <p>Take the vocabulary <code>[cat, dog, sat, the]</code>.</p>
 <h3>One-hot</h3>
@@ -74,6 +80,8 @@ window.GUIDE = {
       },
       {
         t: 'TF-IDF: important words get big numbers',
+        key: 'TF-IDF is <b>high</b> for words that are frequent in <i>this</i> document but <b>rare in the others</b>. Those are the words that tell you what it is about.',
+        fig: { type: 'bars', t: 'IDF = ln(N / df) with N = 3 documents', items: [['"the": in 3 of 3 docs', 0, 'mute', 'ln(3/3) = 0'], ['a word in 2 of 3 docs', 0.41, 'c0', 'ln(3/2) ≈ 0.41'], ['"cat": in 1 of 3 docs', 1.1, 'c1', 'ln(3/1) ≈ 1.10']], max: 1.2, cap: 'A word that is in every document gets weight 0, because it tells the documents apart not at all.' },
         html: `
 <p>Counts have a flaw: "the" appears in every document, so it dominates, but it tells us nothing. <b>TF-IDF</b> fixes this:</p>
 <p style="text-align:center"><b>TF-IDF(word, doc) = TF × IDF</b></p>
@@ -94,6 +102,8 @@ window.GUIDE = {
       },
       {
         t: 'Dense embeddings: words with meaning',
+        key: 'An <b>embedding</b> is a short list of numbers per word, learned so that <b>similar words end up close together</b>. Directions can even carry meaning.',
+        fig: { type: 'plot', t: 'Words as points (2 of the 50–300 dimensions, simplified)', w: 560, h: 300, x: [0, 9], y: [0, 6], pts: [[1, 2, 'c0', 'man'], [1.8, 0.6, 'c4', 'woman'], [4, 5, 'c0', 'king'], [4.8, 3.6, 'c4', 'queen'], [7, 1.6, 'c1', 'cat'], [7.6, 2.3, 'c1', 'dog']], lines: [{ pts: [[1, 2], [4, 5]], c: 'mute', dash: true }, { pts: [[1.8, 0.6], [4.8, 3.6]], c: 'mute', dash: true }], cap: 'man → king and woman → queen are the same arrow, so king − man + woman ≈ queen. "cat" and "dog" sit close together.' },
         html: `
 <p>Instead of a huge one-hot vector, give each word a short <b>dense vector</b> of 50–300 real numbers, learned from data so that <b>words with similar meaning get similar vectors</b>.</p>
 <ul>
@@ -115,6 +125,8 @@ window.GUIDE = {
       },
       {
         t: 'The model zoo: BERT, GPT, T5',
+        key: '<b>Encoders read</b> (they understand), <b>decoders draft</b> (they generate), and <b>encoder-decoders transform</b> one text into another.',
+        fig: { type: 'compare', cols: [{ icon: '📖', t: 'Encoder-only: BERT', pts: ['understanding', 'classification, NER, question answering'], c: 'c0' }, { icon: '✍️', t: 'Decoder-only: GPT', pts: ['generation', 'writing text, chat'], c: 'c1' }, { icon: '🔁', t: 'Encoder-decoder: T5, BART', pts: ['text → text', 'translation, summarisation'], c: 'c3' }] },
         html: `
 <p>Modern models are built from Transformers (week 3 explains how). There are three families — know which job each does:</p>
 <table class="t">
@@ -128,6 +140,8 @@ window.GUIDE = {
       },
       {
         t: 'Bulldozer or nutcracker: when NOT to use an LLM',
+        key: 'A huge LLM is not always best. For a simple, high-volume task, a <b>small classical model</b> can be cheaper, faster and even more accurate.',
+        fig: { type: 'boxes', t: 'Spam filter, 1 million emails a day (lecture example)', head: ['', '🚜 LLM (GPT-4 API)', '🌰 Naive Bayes'], rows: [{ label: 'Cost', cells: [['≈ $30,000 / month', 'bad'], ['< $10 / month', 'ok']] }, { label: 'Accuracy', cells: [['98.5%', 'warn'], ['99.2%', 'ok']] }, { label: 'Latency', cells: [['100–1000 ms', 'bad'], ['< 10 ms', 'ok']] }] },
         html: `
 <p><i>"Don't use a bulldozer to crack a chestnut."</i> The lecture's example, spam filtering 1 million emails a day:</p>
 <table class="t">
@@ -160,6 +174,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'What text classification is',
+        key: 'Text classification means giving each document <b>one label from a fixed list</b>: f(text) → label.',
+        fig: { type: 'boxes', head: ['Text', 'Task', 'Label'], rows: [{ cells: [['"Win money now!!!"', ''], ['spam detection', 'mute'], ['spam', 'bad']] }, { cells: [['"Great, it broke again."', ''], ['sentiment', 'mute'], ['negative (sarcasm!)', 'c4']] }, { cells: [['"Galatasaray won 3–1"', ''], ['topic', 'mute'], ['sports', 'c1']] }] },
         html: `
 <p><b>Text classification</b> = assigning a predefined <b>label</b> to a document: <code>f(text) → label</code>.</p>
 <ul>
@@ -177,6 +193,8 @@ window.GUIDE = {
       },
       {
         t: 'The ML pipeline, and why classical models first',
+        key: 'Every project follows the same loop: <b>data → features → model → prediction → evaluation</b>, then improve and go round again.',
+        fig: { type: 'flow', items: [['🗃️', 'Data', 'labelled examples', 'c3'], ['🔢', 'Features', 'BoW, TF-IDF', 'c0'], ['🤖', 'Model', 'NB, LR, SVM', 'c1'], ['🏷️', 'Prediction', 'new text → label', 'c2'], ['📏', 'Evaluation', 'how good? then improve ↺', 'c4']] },
         html: `
 <p style="text-align:center"><b>1 Data → 2 Features → 3 Model → 4 Prediction → 5 Evaluation</b> → back to data</p>
 <ol>
@@ -192,6 +210,8 @@ window.GUIDE = {
       },
       {
         t: 'Naive Bayes: count, multiply, compare',
+        key: 'For each class, multiply <b>how common the class is</b> by <b>how likely each word is in that class</b>. The bigger product wins. Add-one smoothing stops a single unseen word from making it 0.',
+        fig: { type: 'flow', t: 'Classifying "Win free tickets"', items: [['🔢', 'Count words per class', 'in the training emails', 'c0'], ['⚖️', 'Prior P(class)', 'spam 2/4, ham 2/4', 'c3'], ['✖️', 'Multiply P(word | class)', 'with +1 smoothing', 'c2'], ['🏆', 'Compare', 'spam score > ham score → spam', 'c1']], cap: 'Without smoothing, "win" never appears in ham, so P(win | ham) = 0 and the whole ham product becomes 0.' },
         html: `
 <p>Naive Bayes asks: <i>"Given these words, which class is more likely?"</i></p>
 <p style="text-align:center"><b>P(class | text) ∝ P(class) × P(word₁ | class) × P(word₂ | class) × …</b></p>
@@ -218,6 +238,8 @@ window.GUIDE = {
       },
       {
         t: 'Logistic regression: weighted sum → probability',
+        key: 'Give every word a <b>weight</b>, add them up into a score z, and squash z into a probability with the <b>sigmoid</b>. Predict positive if p ≥ 0.5.',
+        fig: { type: 'plot', t: 'The sigmoid σ(z) = 1 / (1 + e^−z)', w: 560, h: 280, x: [-6, 6], y: [0, 1], xl: 'score z = w·x + b', yl: 'P(positive)', lines: [{ pts: [[-6, 0.0025], [-4, 0.018], [-3, 0.047], [-2, 0.119], [-1, 0.269], [0, 0.5], [1, 0.731], [2, 0.881], [3, 0.953], [4, 0.982], [6, 0.9975]], c: 'c0' }, { pts: [[-6, 0.5], [6, 0.5]], c: 'mute', dash: true }], pts: [[2, 0.881, 'c1', '"good movie": z = 2 → 0.88'], [0, 0.5, 'warn', 'z = 0 → 0.5']] },
         html: `
 <p>Despite its name, logistic regression is a <b>classifier</b>.</p>
 <ol>
@@ -242,6 +264,8 @@ window.GUIDE = {
       },
       {
         t: 'SVM: the widest street between classes',
+        key: 'Many lines separate the classes. The SVM picks the one with the <b>widest street</b> (maximum margin). Only the points on the edge of the street, the <b>support vectors</b>, decide it.',
+        fig: { type: 'plot', w: 520, h: 320, x: [0, 6], y: [0, 6], pts: [[2, 3, 'c1', 'support vector'], [3.5, 4.5, 'c1'], [1, 3.6, 'c1'], [1.6, 5, 'c1'], [2.6, 5.2, 'c1'], [3, 2, 'c4', 'support vector'], [4.5, 3.5, 'c4'], [4, 1.4, 'c4'], [5.2, 2.6, 'c4'], [3.6, 0.8, 'c4']], lines: [{ pts: [[0, 0], [6, 6]], c: 'c0', label: 'decision line' }, { pts: [[0, 1], [5, 6]], c: 'mute', dash: true }, { pts: [[1, 0], [6, 5]], c: 'mute', dash: true }], cap: 'Green = positive reviews, coral = negative. The dashed lines are the edges of the street.' },
         html: `
 <p>Imagine positive reviews as green dots and negative as red dots. Many lines can separate them. The <b>Support Vector Machine</b> picks the one with the <b>maximum margin</b> — the widest "street" between the two classes.</p>
 <ul>
@@ -259,6 +283,8 @@ window.GUIDE = {
       },
       {
         t: 'Feature engineering',
+        key: 'The model only sees the numbers you give it. <b>Better features</b> (n-grams, TF-IDF, handling negation…) often help more than a fancier model.',
+        fig: { type: 'compare', cols: [{ icon: '🧺', t: 'Words', pts: ['bag of words', 'n-grams: "not good" as one feature'], c: 'c0' }, { icon: '⚖️', t: 'Weights', pts: ['TF-IDF instead of raw counts'], c: 'c1' }, { icon: '🛠️', t: 'Extra signals', pts: ['text length', 'number of "!"', 'ALL CAPS words'], c: 'c2' }] },
         html: `
 <p><i>"Good features = good performance."</i> A classical model only sees the numbers you give it. Four families:</p>
 <table class="t">
@@ -294,6 +320,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'The big picture & honest evaluation (no leakage!)',
+        key: 'Fit everything (vocabulary, IDF, model) on the <b>training set only</b>. The test set is the final exam: you look at it <b>once</b>, at the end.',
+        fig: [{ type: 'flow', items: [['📝', 'Text', '', 'c3'], ['🔢', 'Representation', 'counts / TF-IDF / vectors', 'c0'], ['🤖', 'Classifier', 'classical or neural', 'c1'], ['🏷️', 'Label', '', 'c2']] }, { type: 'boxes', t: 'Three splits (for example 70 / 15 / 15)', rows: [{ cells: [['Train: fit vocabulary, IDF and model', 'c0'], ['', 'c0'], ['', 'c0'], ['', 'c0'], ['Validation: choose settings', 'c2'], ['Test: report once', 'c4']] }], cap: 'fit_transform on train, only transform on validation and test. Anything else leaks the test data into training.' }],
         html: `
 <p style="text-align:center"><b>text → representation (counts / TF-IDF / vectors) → classifier (classical or neural) → label</b></p>
 <p><b>Training</b> learns parameters; <b>inference</b> reuses them on new text.</p>
@@ -310,6 +338,8 @@ window.GUIDE = {
       },
       {
         t: 'The math of NB, LR and SVM in one page',
+        key: 'Three classic models, three ideas: NB <b>multiplies probabilities</b>, LR <b>squashes a weighted sum</b>, SVM <b>maximises the margin</b>.',
+        fig: { type: 'compare', cols: [{ icon: '🎲', t: 'Naive Bayes', pts: ['ĉ = argmax P(c) ∏ P(wᵢ | c)', 'generative', 'add-one smoothing'], c: 'c0' }, { icon: '📈', t: 'Logistic regression', pts: ['p = σ(w·x + b)', 'discriminative', 'loss: cross-entropy'], c: 'c1' }, { icon: '🛣️', t: 'SVM', pts: ['sign(w·x + b)', 'maximum margin', 'loss: hinge; C sets the trade-off'], c: 'c2' }] },
         html: `
 <table class="t">
   <tr><th>Model</th><th>Score</th><th>Loss / training</th></tr>
@@ -322,6 +352,8 @@ window.GUIDE = {
       },
       {
         t: 'Learning embeddings: Word2Vec, GloVe, FastText',
+        key: '"You shall know a word by the company it keeps." Word2Vec learns a word\'s vector by <b>predicting its neighbours</b>.',
+        fig: [{ type: 'boxes', t: 'Skip-gram, window = 2: centre word "brown"', rows: [{ cells: [['the', 'c1', 'context'], ['quick', 'c1', 'context'], ['brown', 'c2', 'centre'], ['fox', 'c1', 'context'], ['jumps', 'c1', 'context'], ['over', '']] }], cap: 'Training pairs: (brown, the), (brown, quick), (brown, fox), (brown, jumps).' }, { type: 'compare', cols: [{ t: 'Word2Vec', pts: ['predict neighbours (skip-gram / CBOW)'], c: 'c0' }, { t: 'GloVe', pts: ['global co-occurrence counts'], c: 'c3' }, { t: 'FastText', pts: ['character n-grams, so it handles unseen words'], c: 'c1' }] }],
         html: `
 <p>An <b>embedding table</b> stores one vector per word; a word's ID just selects its row. How do we learn these rows? From raw text — <b>no labels needed</b>.</p>
 <h3>Word2Vec</h3>
@@ -345,6 +377,8 @@ window.GUIDE = {
       },
       {
         t: 'CNNs for text',
+        key: 'A CNN slides a small <b>filter</b> over every 2–3-word window, scores each window, then keeps the <b>maximum</b> (max-pooling). It finds key phrases wherever they are.',
+        fig: { type: 'boxes', t: 'One filter that detects "not good"-like phrases', rows: [{ label: 'tokens', cells: [['this', ''], ['movie', ''], ['is', ''], ['not', 'c4'], ['good', 'c4'], ['at', ''], ['all', '']] }, { label: '3-word windows', cells: [['0.1', 'mute'], ['0.0', 'mute'], ['0.7', 'c2'], ['0.9', 'c4'], ['0.3', 'mute'], ['', ''], ['', '']] }, { label: 'max-pool', cells: [['0.9 → one number for this filter', 'c4']] }], cap: 'Window scores are made-up numbers to show the idea. Many filters give many such numbers, which go into a classifier.' },
         html: `
 <p>A text CNN slides a small <b>filter</b> over windows of word vectors, like reading 2–3 words at a time:</p>
 <ol>
@@ -362,6 +396,8 @@ window.GUIDE = {
       },
       {
         t: 'RNNs and LSTMs: reading in order',
+        key: 'An RNN reads <b>one word at a time</b> and carries a memory h forward. Plain RNNs forget early words (<b>vanishing gradient</b>); LSTM <b>gates</b> decide what to keep.',
+        fig: { type: 'flow', items: [['h₀', 'start', 'empty memory', 'mute'], ['📥', 'h₁ = f(x₁ "the", h₀)', '', 'c0'], ['📥', 'h₂ = f(x₂ "movie", h₁)', '', 'c0'], ['📥', 'h₃ = f(x₃ "rocks", h₂)', '', 'c0'], ['🏷️', 'classify from h₃', 'positive', 'c1']], cap: 'Gradient over 20 steps: 0.5²⁰ ≈ 0.000001 (vanishes), 1.5²⁰ ≈ 3325 (explodes).' },
         html: `
 <p>An <b>RNN</b> reads tokens one by one and carries a running <b>state</b> (memory):</p>
 <p style="text-align:center"><b>h[t] = tanh(x[t] + W·h[t−1])</b> — new state = mix of the current word and the previous state</p>
@@ -386,6 +422,8 @@ window.GUIDE = {
       },
       {
         t: 'Attention, step by step',
+        key: 'With attention, each word <b>looks at all the other words</b> and decides how much each one matters to it. The weights in a row add up to 1.',
+        fig: { type: 'boxes', t: 'Where does "it" look? "The animal didn\'t cross the street because it was tired"', rows: [{ label: 'weight', cells: [['The', 'mute', '.02'], ['animal', 'c2', '.61'], ['didn\'t', 'mute', '.03'], ['cross', 'mute', '.04'], ['street', 'c0', '.18'], ['because', 'mute', '.02'], ['it', 'mute', '.05'], ['was', 'mute', '.02'], ['tired', 'mute', '.03']] }], cap: 'Illustrative weights (they add up to 1). "it" attends most to "animal", which is what it refers to. Formula: softmax(QKᵀ / √dₖ) · V.' },
         html: `
 <p>Attention lets each word <b>look at all other words</b> and decide which ones matter for it. Each token has three vectors:</p>
 <ul>
@@ -417,6 +455,8 @@ window.GUIDE = {
       },
       {
         t: 'Transformers and BERT',
+        key: 'BERT is a stack of attention layers. It is <b>pretrained</b> by guessing hidden words, then <b>fine-tuned</b> with a small head on the <code>[CLS]</code> output for your task.',
+        fig: [{ type: 'boxes', t: 'BERT input: each vector = token + segment + position embedding', rows: [{ label: 'token', cells: [['[CLS]', 'c2'], ['the', 'c0'], ['film', 'c0'], ['was', 'c0'], ['great', 'c0'], ['[SEP]', 'c2']] }, { label: '+ segment', cells: [['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3']] }, { label: '+ position', cells: [['0', 'c5'], ['1', 'c5'], ['2', 'c5'], ['3', 'c5'], ['4', 'c5'], ['5', 'c5']] }] }, { type: 'flow', items: [['📚', 'Pretrain', '"The film was [MASK]" → guess', 'c0'], ['🧠', 'Transformer layers', 'all tokens in parallel', 'c3'], ['🎯', '[CLS] vector', '', 'c2'], ['🏷️', 'Fine-tuned head', '→ positive', 'c1']] }],
         html: `
 <p>A <b>Transformer</b> stacks attention layers (plus small feed-forward layers). No recurrence, so it processes all tokens in parallel.</p>
 <h3>BERT's input</h3>
@@ -431,6 +471,8 @@ window.GUIDE = {
       },
       {
         t: 'Metrics: accuracy, precision, recall, F1',
+        key: '<b>Precision</b>: of everything I flagged, how much was right? <b>Recall</b>: of everything that was really there, how much did I find? <b>F1</b> balances the two.',
+        fig: [{ type: 'boxes', t: 'Slide 33 confusion matrix (100 examples)', head: ['', 'predicted positive', 'predicted negative'], rows: [{ label: 'actually positive', cells: [['TP = 30', 'ok'], ['FN = 10', 'bad']] }, { label: 'actually negative', cells: [['FP = 5', 'bad'], ['TN = 55', 'ok']] }] }, { type: 'bars', items: [['Accuracy = (30+55)/100', 0.85, 'c0', '0.85'], ['Precision = 30/(30+5)', 0.857, 'c1', '0.857'], ['Recall = 30/(30+10)', 0.75, 'c2', '0.75'], ['F1 = 2PR/(P+R)', 0.8, 'c3', '0.80']], max: 1 }],
         html: `
 <table class="t">
   <tr><th></th><th>Predicted POSITIVE</th><th>Predicted NEGATIVE</th></tr>
@@ -474,6 +516,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'Sequence labeling: one label per token',
+        key: 'In sequence labeling, the model gives <b>every token its own label</b>, not just one label for the whole text. POS tagging and NER are both like this.',
+        fig: { type: 'boxes', t: 'POS tagging', rows: [{ label: 'word', cells: [['Janet', ''], ['will', ''], ['back', ''], ['the', ''], ['bill', '']] }, { label: 'tag', cells: [['PROPN', 'c3'], ['AUX', 'c5'], ['VERB', 'c1'], ['DET', 'c2'], ['NOUN', 'c0']] }] },
         html: `
 <p>So far: one label per <b>document</b>. Now: one label per <b>token</b>. This is <b>sequence labeling</b>.</p>
 <p><b>POS tagging</b> maps words x₁…xₙ to tags y₁…yₙ — <b>exactly one tag per word</b>.</p>
@@ -486,6 +530,8 @@ window.GUIDE = {
       },
       {
         t: 'Open vs closed classes and the UD tagset',
+        key: 'Ask: <b>can someone invent a new word of this type tomorrow?</b> Yes, so it is an <b>open</b> class (nouns, verbs). No, so it is a <b>closed</b> class (the, in, and).',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '🌱', t: 'Open class: content words', pts: ['NOUN, VERB, ADJ, ADV, PROPN, INTJ', 'new ones appear: "selfie", "to google"'], c: 'c1' }, { icon: '🔒', t: 'Closed class: function words', pts: ['DET, PRON, ADP, CCONJ, SCONJ, AUX, PART', 'small fixed set: the, she, in, and, is, not'], c: 'c4' }], cap: 'Other: NUM, PUNCT, SYM, X. 17 UD tags in total.' },
         html: `
 <table class="t">
   <tr><th>Class</th><th>Meaning</th><th>Universal Dependencies tags</th></tr>
@@ -499,6 +545,8 @@ window.GUIDE = {
       },
       {
         t: 'Ambiguity, the baseline, and clues a tagger uses',
+        key: 'Most words have one tag, but the <b>common</b> words are ambiguous. Just picking each word\'s most frequent tag already gives <b>~92%</b>.',
+        fig: [{ type: 'boxes', t: 'One word, five tags: "back"', rows: [{ cells: [['the back door', 'c2', 'ADJ'], ['on my back', 'c0', 'NOUN'], ['back the bill', 'c1', 'VERB'], ['call back', 'c3', 'PART'], ['came back', 'c5', 'ADV']] }] }, { type: 'bars', items: [['Most-frequent-tag baseline', 92, 'c2', '~92%'], ['HMM / CRF / BERT taggers', 97, 'c1', '~97%'], ['Humans', 97, 'c0', '~97%']], max: 100 }],
         html: `
 <ul>
   <li>Only <b>~15% of word types</b> (dictionary entries) are ambiguous…</li>
@@ -522,6 +570,8 @@ window.GUIDE = {
       },
       {
         t: 'Named entity recognition (NER)',
+        key: 'NER finds <b>names of things</b> in text and says what type they are: person, organisation, location, geo-political entity…',
+        fig: { type: 'boxes', rows: [{ cells: [['Jane Villanueva', 'c3', 'PER'], ['of', ''], ['United', 'c0', 'ORG'], [', a unit of', ''], ['United Airlines Holding', 'c0', 'ORG'], [', said the fare applies to the', ''], ['Chicago', 'c1', 'LOC'], ['route.', '']] }], cap: 'Hard parts: where a name starts and ends, and the type ("Washington" can be a person, a city or a state).' },
         html: `
 <p><b>NER</b> finds <b>spans</b> of text that are proper names and labels their type:</p>
 <table class="t">
@@ -541,6 +591,8 @@ window.GUIDE = {
       },
       {
         t: 'BIO tagging: turning spans into one tag per token',
+        key: '<b>B</b> = begins an entity, <b>I</b> = inside it, <b>O</b> = outside. With n entity types, BIO needs <b>2n + 1</b> tags.',
+        fig: { type: 'boxes', rows: [{ label: 'token', cells: [['Jane', ''], ['Villanueva', ''], ['of', ''], ['United', ''], [',', ''], ['…', ''], ['United', ''], ['Airlines', ''], ['Holding', '']] }, { label: 'BIO', cells: [['B-PER', 'c3'], ['I-PER', 'c3'], ['O', 'mute'], ['B-ORG', 'c0'], ['O', 'mute'], ['', ''], ['B-ORG', 'c0'], ['I-ORG', 'c0'], ['I-ORG', 'c0']] }], cap: '4 types (PER, ORG, LOC, GPE) → 2·4 + 1 = 9 tags. Invalid: O followed by I-PER, or B-PER followed by I-ORG.' },
         html: `
 <p>To use a sequence labeler for NER, turn spans into one tag per token:</p>
 <ul>

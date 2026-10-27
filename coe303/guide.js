@@ -17,6 +17,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'What an operating system is',
+        key: 'The OS is the <b>middleman</b> between programs and hardware: programs never touch the hardware themselves, they <b>ask the OS</b>.',
+        fig: { type: 'stack', t: 'The four components of a computer system', items: [['👤 Users', 'people, machines, other computers', 'c3'], ['🧩 Application programs', 'browser, compiler, games', 'c1'], ['⚙️ Operating system', 'controls the hardware and shares it out', 'c4'], ['🖥️ Hardware', 'CPU, memory, I/O devices', 'c0']], cap: 'Each layer only talks to the layer below it. Only the OS touches the hardware.' },
         html: `
 <p>A computer system has <b>four components</b>:</p>
 <ol>
@@ -37,6 +39,8 @@ window.GUIDE = {
       },
       {
         t: 'How devices get the CPU\'s attention: interrupts',
+        key: 'Instead of the CPU asking "are you done yet?" again and again (<b>polling</b>), the device <b>taps the CPU on the shoulder</b> when it finishes (an <b>interrupt</b>).',
+        fig: { type: 'flow', t: 'What happens when an interrupt arrives', items: [['⌨️', 'Device signals', 'interrupt line', 'c2'], ['⏹️', 'Finish current instruction', '', 'c0'], ['💾', 'Save state', 'PC + registers', 'c3'], ['📖', 'Look up handler', 'interrupt vector', 'c5'], ['🛠️', 'Run the ISR', 'kernel mode', 'c4'], ['↩️', 'Restore state', 'program continues', 'c1']], cap: 'The interrupted program never notices. It continues exactly where it stopped.' },
         html: `
 <p>Devices (keyboard, disk, network) each have a <b>device controller</b> with a small local buffer. The CPU and controllers work at the same time. When a device finishes, how does the CPU find out?</p>
 <ul>
@@ -62,6 +66,8 @@ window.GUIDE = {
       },
       {
         t: 'I/O and DMA',
+        key: 'For big transfers, <b>DMA</b> lets the device copy a whole block straight into memory and interrupt the CPU <b>once per block</b>, not once per word.',
+        fig: { type: 'boxes', t: 'Interrupts for one 4 KB disk transfer', rows: [{ label: 'Interrupt-driven', cells: [['⚡', 'bad'], ['⚡', 'bad'], ['⚡', 'bad'], ['⚡', 'bad'], ['⚡', 'bad'], ['⚡', 'bad'], ['⚡', 'bad'], ['… ×1000', 'bad']] }, { label: 'DMA', cells: [['copying…', 'mute'], ['', 'mute'], ['', 'mute'], ['', 'mute'], ['', 'mute'], ['', 'mute'], ['', 'mute'], ['⚡ done', 'ok']] }], cap: 'Each ⚡ is one interrupt. With DMA the CPU is free during the whole copy.' },
         html: `
 <p>With <b>interrupt-driven I/O</b>, the device interrupts the CPU for <b>every word</b> (a few bytes) — fine for a keyboard, terrible for a disk transferring megabytes.</p>
 <p><b>DMA (Direct Memory Access)</b>: the device controller copies a whole <b>block</b> of data directly into memory <b>without the CPU</b>, and interrupts <b>once per block</b>.</p>
@@ -74,6 +80,8 @@ window.GUIDE = {
       },
       {
         t: 'The storage hierarchy and caching',
+        key: 'Storage is a trade-off: the <b>faster</b> it is, the <b>smaller and more expensive</b> it is. A <b>cache</b> keeps a copy of the data you need now in faster storage.',
+        fig: { type: 'stack', pyramid: true, top: '⚡ faster, smaller, costly', bottom: '🐢 slower, bigger, cheap', items: [['Registers', 'inside the CPU', 'c4'], ['Cache', 'SRAM', 'c2'], ['Main memory (RAM)', 'volatile', 'c1'], ['SSD / NVM', 'non-volatile', 'c5'], ['Hard disk', 'non-volatile', 'c0'], ['Optical disk / tape', 'archive', 'c3']], cap: 'Registers, cache and RAM lose their contents when the power goes off (<b>volatile</b>). SSD and below keep them.' },
         html: `
 <p>Storage is a trade-off: <b>fast = small and expensive</b>, <b>large = slow and cheap</b>.</p>
 <p style="text-align:center"><b>registers → cache → main memory (RAM) → SSD → hard disk → optical / tape</b><br><span class="muted small">faster, smaller, volatile ⟵ ⟶ slower, larger, non-volatile</span></p>
@@ -92,6 +100,8 @@ window.GUIDE = {
       },
       {
         t: 'Protection: dual mode and the timer',
+        key: 'A <b>mode bit</b> separates <b>user mode</b> (limited) from <b>kernel mode</b> (everything allowed). The only way into kernel mode is through a trap, interrupt or system call.',
+        fig: { type: 'graph', w: 640, h: 210, nodes: { u: [130, 105, '👤 User mode (bit = 1)', 'c1'], k: [510, 105, '🛡️ Kernel mode (bit = 0)', 'c4'] }, edges: [['u', 'k', 'system call / trap / interrupt', 45], ['k', 'u', 'return from kernel', 45]], cap: 'Privileged instructions (I/O, timer, interrupt control) only work in kernel mode. The <b>timer</b> makes sure the OS gets control back even if a program loops forever.' },
         html: `
 <p>If any program could do anything, one buggy game could erase the disk or freeze the whole computer. Hardware helps with a <b>mode bit</b>:</p>
 <table class="t">
@@ -114,6 +124,8 @@ window.GUIDE = {
       },
       {
         t: 'What the OS manages',
+        key: 'The OS is a manager of <b>five things</b>: processes, memory, storage (files), I/O devices, and protection and security.',
+        fig: { type: 'compare', cols: [{ icon: '🏃', t: 'Processes', pts: ['create, delete', 'schedule', 'synchronize, communicate'], c: 'c0' }, { icon: '🧠', t: 'Memory', pts: ['who uses which part', 'move in and out', 'allocate, free'], c: 'c1' }, { icon: '🗂️', t: 'Storage', pts: ['files, directories', 'free-space, disks'], c: 'c2' }, { icon: '🔌', t: 'I/O', pts: ['drivers', 'buffering, caching, spooling'], c: 'c3' }, { icon: '🔒', t: 'Protection', pts: ['control access', 'defend against attacks'], c: 'c4' }] },
         html: `
 <table class="t">
   <tr><th>Area</th><th>OS responsibilities</th></tr>
@@ -144,6 +156,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'OS services',
+        key: 'The OS offers <b>services</b>: some help the <b>user</b> (UI, running programs, files, I/O, errors), others keep the <b>system</b> efficient (resources, accounting, protection).',
+        fig: { type: 'compare', vs: false, cols: [{ icon: '🙋', t: 'Helpful for the user', pts: ['user interface (GUI, CLI, touch)', 'program execution', 'I/O operations', 'file-system manipulation', 'communication', 'error detection'], c: 'c1' }, { icon: '🏭', t: 'Keep the system efficient', pts: ['resource allocation', 'logging / accounting', 'protection and security'], c: 'c0' }] },
         html: `
 <p>The OS offers services. For the <b>user</b>:</p>
 <ul>
@@ -162,6 +176,8 @@ window.GUIDE = {
       },
       {
         t: 'System calls: the door into the kernel',
+        key: 'A <b>system call</b> is how a program asks the kernel to do something it may not do itself. Programs usually call it through an <b>API</b> (like <code>printf</code> → <code>write</code>).',
+        fig: { type: 'flow', t: 'The journey of one system call', items: [['📝', 'Program calls API', 'e.g. read()', 'c1'], ['🔢', 'Library puts the call number in a register', '', 'c0'], ['🚪', 'Trap', 'mode bit → kernel', 'c4'], ['📖', 'Kernel looks up the number in the system-call table', '', 'c5'], ['🛠️', 'Kernel runs the service', '', 'c4'], ['↩️', 'Return to user mode', 'with the result', 'c1']], cap: 'Parameters travel in <b>registers</b>, in a <b>block in memory</b> (address in a register), or on the <b>stack</b>.' },
         html: `
 <p>A <b>system call</b> is a <b>controlled entry point</b> into the kernel. Programs usually don't call it directly; they use an <b>API</b> (e.g. POSIX <code>read()</code> in the C library), which calls the real system call.</p>
 <h3>Journey of <code>read()</code></h3>
@@ -187,6 +203,8 @@ window.GUIDE = {
       },
       {
         t: 'Six types of system calls',
+        key: 'Every system call falls into one of <b>six families</b>. Learn one example of each.',
+        fig: { type: 'boxes', head: ['Family', 'Example (UNIX)'], rows: [{ cells: [['🏃 Process control', 'c0'], ['fork(), exit(), wait()', '']] }, { cells: [['🗂️ File management', 'c1'], ['open(), read(), close()', '']] }, { cells: [['🔌 Device management', 'c2'], ['ioctl(), read(), write()', '']] }, { cells: [['ℹ️ Information maintenance', 'c5'], ['getpid(), alarm(), sleep()', '']] }, { cells: [['📨 Communication', 'c3'], ['pipe(), shm_open(), mmap()', '']] }, { cells: [['🔒 Protection', 'c4'], ['chmod(), umask(), chown()', '']] }] },
         html: `
 <table class="t">
   <tr><th>Type</th><th>Examples (Unix)</th><th>Windows</th></tr>
@@ -203,6 +221,8 @@ window.GUIDE = {
       },
       {
         t: 'Design: mechanism vs policy',
+        key: '<b>Mechanism</b> = <i>how</i> to do something. <b>Policy</b> = <i>what</i> will be done. Keeping them separate means you can change the policy without rewriting the mechanism.',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '🔧', t: 'Mechanism: HOW', pts: ['the timer that interrupts the CPU', 'the code that switches processes'], c: 'c0' }, { icon: '📜', t: 'Policy: WHAT', pts: ['how long each user gets the CPU', 'which process runs next'], c: 'c2' }], cap: 'Example from the slides: the timer is a mechanism; deciding how long the timer is set for a user is a policy.' },
         html: `
 <ul>
   <li><b>Mechanism</b> = <b>how</b> to do something. (The timer is a mechanism to guarantee CPU protection.)</li>
@@ -214,6 +234,8 @@ window.GUIDE = {
       },
       {
         t: 'Kernel structures',
+        key: 'Kernels are built in different ways. It is a trade-off between <b>speed</b> (everything in one big kernel) and <b>safety and flexibility</b> (small pieces that can fail or change alone).',
+        fig: { type: 'compare', cols: [{ icon: '🧱', t: 'Monolithic', pts: ['one big kernel (UNIX, Linux)', '✅ fast', '❌ hard to change; one bug can crash all'], c: 'c4' }, { icon: '🍰', t: 'Layered', pts: ['layer N uses only layer N−1', '✅ easy to debug', '❌ slow, hard to define layers'], c: 'c2' }, { icon: '🔬', t: 'Microkernel', pts: ['tiny kernel; services in user space (Mach)', '✅ safe, easy to extend', '❌ message-passing overhead'], c: 'c1' }, { icon: '🧩', t: 'Modules / hybrid', pts: ['core + loadable modules (Linux, Windows, macOS)', '✅ flexible and fast'], c: 'c0' }] },
         html: `
 <table class="t">
   <tr><th>Structure</th><th>Idea</th><th>Example</th><th>+ / −</th></tr>
@@ -247,6 +269,8 @@ window.GUIDE = {
     steps: [
       {
         t: 'What a process is',
+        key: 'A <b>program</b> is a passive file on disk. A <b>process</b> is that program <b>running</b>, with its own memory and state.',
+        fig: { type: 'stack', t: 'A process in memory', top: 'max address', bottom: '0', items: [['Stack', 'function calls, local variables (grows ↓)', 'c4'], ['⋮ free space ⋮', '', 'mute'], ['Heap', 'malloc / new (grows ↑)', 'c2'], ['Data', 'global variables', 'c1'], ['Text', 'the program code', 'c0']], cap: 'One program (e.g. a browser) can run as several processes at the same time.' },
         html: `
 <p>A <b>program</b> is a passive file on disk. A <b>process</b> is a <b>program in execution</b> — active, with its own state.</p>
 <h3>Memory layout of a process</h3>
@@ -262,6 +286,8 @@ window.GUIDE = {
       },
       {
         t: 'Five states, six transitions',
+        key: 'Every process is in one of <b>five states</b>. Learn the <b>arrows</b> between them: exams ask which transitions are possible.',
+        fig: { type: 'graph', w: 760, h: 300, nodes: { n: [70, 50, 'new', 'c5'], r: [210, 150, 'ready', 'c1'], u: [550, 150, 'running', 'c0'], w: [380, 265, 'waiting', 'c2'], t: [690, 50, 'terminated', 'c4'] }, edges: [['n', 'r', 'admitted'], ['r', 'u', 'scheduler dispatch', -30], ['u', 'r', 'interrupt', -30], ['u', 'w', 'I/O or event wait'], ['w', 'r', 'I/O or event completion'], ['u', 't', 'exit']], cap: 'There is <b>no</b> arrow waiting → running: a waiting process must go back to the ready queue first.' },
         html: `
 <table class="t">
   <tr><th>State</th><th>Meaning</th></tr>
@@ -289,6 +315,8 @@ window.GUIDE = {
       },
       {
         t: 'PCB, scheduling queues and context switch',
+        key: 'The OS keeps a <b>PCB</b> (process control block) for every process. A <b>context switch</b> saves the old process\'s state into its PCB and loads the new one\'s.',
+        fig: { type: 'boxes', t: 'Context switch from P0 to P1', head: ['P0', 'OS', 'P1'], rows: [{ cells: [['▶ running', 'ok'], ['', ''], ['idle', 'mute']] }, { cells: [['⏸ interrupt', 'warn'], ['save state into PCB0', 'c4'], ['idle', 'mute']] }, { cells: [['idle', 'mute'], ['load state from PCB1', 'c4'], ['idle', 'mute']] }, { cells: [['idle', 'mute'], ['', ''], ['▶ running', 'ok']] }], cap: 'While the OS is switching, <b>no</b> process does useful work, so a context switch is pure overhead.' },
         html: `
 <p>The OS keeps everything about a process in its <b>PCB (Process Control Block)</b> — Linux: <code>task_struct</code>:</p>
 <ul>
@@ -303,6 +331,8 @@ window.GUIDE = {
       },
       {
         t: 'Creating processes: fork, exec, wait, exit',
+        key: '<code>fork()</code> makes a <b>copy</b> of the process. It returns <b>0 in the child</b> and the <b>child\'s PID in the parent</b>. <code>exec()</code> then replaces the copy with a new program.',
+        fig: { type: 'graph', w: 680, h: 260, nodes: { p: [90, 130, 'parent', 'c0'], f: [240, 130, 'fork()', 'c2'], pc: [430, 60, 'parent: pid > 0 → wait()', 'c0'], cc: [430, 200, 'child: pid = 0 → exec()', 'c1'], e: [610, 200, 'exit()', 'c4'], r: [610, 60, 'resumes', 'c0'] }, edges: [['p', 'f'], ['f', 'pc'], ['f', 'cc'], ['cc', 'e'], ['pc', 'r'], ['e', 'r', 'parent wakes up', 30]], cap: '<b>Zombie</b> = finished child whose parent has not called wait() yet. <b>Orphan</b> = child whose parent ended without waiting.' },
         html: `
 <ul>
   <li><b>fork()</b> creates a <b>child</b> that is a <b>copy</b> of the parent and continues from the same point. It returns <b>0 in the child</b> and the <b>child's PID in the parent</b> (−1 on error).</li>
@@ -328,6 +358,8 @@ else if (pid > 0)  { wait(NULL); printf("Child done"); } // parent</pre>
       },
       {
         t: 'Interprocess communication (IPC)',
+        key: 'Processes can talk in two ways: write into a <b>shared memory</b> area, or <b>send messages</b> through the kernel.',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '🧺', t: 'Shared memory', pts: ['processes share one memory region', '✅ fast: no kernel after setup', '❌ processes must synchronize themselves (bounded buffer!)'], c: 'c1' }, { icon: '📨', t: 'Message passing', pts: ['send(P, msg) / receive(Q, msg)', '✅ easy, works across computers', '❌ slower: each message goes through the kernel'], c: 'c0' }] },
         html: `
 <table class="t">
   <tr><th></th><th>Shared memory</th><th>Message passing</th></tr>
@@ -366,6 +398,8 @@ else if (pid > 0)  { wait(NULL); printf("Child done"); } // parent</pre>
     steps: [
       {
         t: 'Threads vs processes',
+        key: 'A <b>thread</b> is a path of execution <b>inside</b> a process. The threads of one process <b>share</b> code, data and files, but each has its <b>own</b> registers and stack.',
+        fig: { type: 'boxes', t: 'Single-threaded vs multithreaded process', head: ['', 'Thread 1', 'Thread 2', 'Thread 3'], rows: [{ label: 'shared', cells: [['code · data · files (shared by all threads)', 'c0'], ['', 'c0'], ['', 'c0']] }, { label: 'own', cells: [['registers + stack', 'c2'], ['registers + stack', 'c2'], ['registers + stack', 'c2']] }], cap: 'Threads are cheaper than processes: creating one and switching between them is much faster.' },
         html: `
 <p>A <b>thread</b> is a basic unit of CPU use inside a process. A process can have several threads that run its code at the same time.</p>
 <table class="t">
@@ -384,6 +418,8 @@ else if (pid > 0)  { wait(NULL); printf("Child done"); } // parent</pre>
       },
       {
         t: 'Concurrency vs parallelism, and Amdahl\'s Law',
+        key: '<b>Concurrency</b> = tasks take turns and all make progress. <b>Parallelism</b> = tasks really run <b>at the same moment</b> on different cores. Amdahl\'s Law: the <b>serial part</b> limits the speedup.',
+        fig: [{ type: 'boxes', t: 'Four tasks over time', rows: [{ label: '1 core: concurrent', cells: [['T1', 'c0'], ['T2', 'c1'], ['T3', 'c2'], ['T4', 'c3'], ['T1', 'c0'], ['T2', 'c1'], ['T3', 'c2'], ['T4', 'c3']] }, { label: 'core 1: parallel', cells: [['T1', 'c0'], ['T3', 'c2'], ['T1', 'c0'], ['T3', 'c2'], ['', ''], ['', ''], ['', ''], ['', '']] }, { label: 'core 2', cells: [['T2', 'c1'], ['T4', 'c3'], ['T2', 'c1'], ['T4', 'c3'], ['', ''], ['', ''], ['', ''], ['', '']] }] }, { type: 'bars', t: 'Amdahl: speedup = 1 / (S + (1 − S)/N), with serial part S = 25%', items: [['1 core', 1, 'mute', '1.0×'], ['2 cores', 1.6, 'c0', '1.6×'], ['4 cores', 2.29, 'c0', '2.29×'], ['8 cores', 2.91, 'c0', '2.91×'], ['∞ cores', 4, 'c4', '4× max (= 1/S)']], max: 4 }],
         html: `
 <ul>
   <li><b>Concurrency</b> — several tasks make <b>progress</b> by taking turns, even on <b>one core</b>.</li>
@@ -405,6 +441,8 @@ else if (pid > 0)  { wait(NULL); printf("Child done"); } // parent</pre>
       },
       {
         t: 'User threads, kernel threads and the three models',
+        key: '<b>User threads</b> are managed by a library; <b>kernel threads</b> by the OS. A model says how many user threads map onto how many kernel threads.',
+        fig: { type: 'compare', cols: [{ icon: '🔻', t: 'Many-to-one', pts: ['many user threads → 1 kernel thread', '❌ one blocking call blocks all', '❌ no parallelism on multicore'], c: 'c4' }, { icon: '↕️', t: 'One-to-one', pts: ['each user thread → its own kernel thread', '✅ real parallelism', '❌ too many kernel threads is costly', 'Windows, Linux'], c: 'c1' }, { icon: '🔀', t: 'Many-to-many', pts: ['many user threads → a smaller or equal number of kernel threads', '✅ flexible', '❌ hard to implement'], c: 'c0' }] },
         html: `
 <p><b>User threads</b> are managed by a library in user space. <b>Kernel threads</b> are what the OS actually schedules on cores. A model maps one to the other:</p>
 <table class="t">
@@ -423,6 +461,8 @@ else if (pid > 0)  { wait(NULL); printf("Child done"); } // parent</pre>
       },
       {
         t: 'Pthreads in C',
+        key: 'Pthreads is a <b>specification</b> (an API). You create a thread with <code>pthread_create</code>, and wait for it with <code>pthread_join</code>.',
+        fig: { type: 'flow', items: [['🧵', 'pthread_attr_init', 'default attributes', 'c5'], ['🚀', 'pthread_create', 'start runner()', 'c0'], ['⚙️', 'runner() works', 'e.g. sums 1..N', 'c1'], ['🚪', 'pthread_exit', 'thread ends', 'c2'], ['🤝', 'pthread_join', 'main waits, then prints', 'c3']] },
         html: `
 <pre>#include &lt;pthread.h&gt;
 int sum;                              /* shared by the threads */
@@ -447,6 +487,8 @@ int main(int argc, char *argv[]) {
       },
       {
         t: 'Race conditions and threading issues',
+        key: 'When two threads update the same variable <b>at the same time</b>, the result depends on timing. That is a <b>race condition</b>, and updates can get lost.',
+        fig: { type: 'boxes', t: 'counter++ is really 3 steps: load, add, store. Start: counter = 0', head: ['Thread A', 'Thread B', 'counter'], rows: [{ cells: [['load 0', 'c0'], ['', ''], ['0', 'mute']] }, { cells: [['', ''], ['load 0', 'c2'], ['0', 'mute']] }, { cells: [['add → 1', 'c0'], ['', ''], ['0', 'mute']] }, { cells: [['', ''], ['add → 1', 'c2'], ['0', 'mute']] }, { cells: [['store 1', 'c0'], ['', ''], ['1', 'mute']] }, { cells: [['', ''], ['store 1', 'c2'], ['1 ❌ (should be 2)', 'bad']] }], cap: 'Both threads added 1, but one update was lost.' },
         html: `
 <p><code>counter++</code> looks like one step, but it is <b>three</b> machine instructions: <b>load</b> counter into a register, <b>add</b> 1, <b>store</b> it back.</p>
 <p>Two threads, counter = 0:</p>
