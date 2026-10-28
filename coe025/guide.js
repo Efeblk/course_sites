@@ -62,7 +62,7 @@ window.GUIDE = {
       {
         t: 'Text → numbers: one-hot and bag of words',
         key: '<b>One-hot</b>: one 1 per word, so no meaning and very long vectors. <b>Bag of words</b>: count each word in a document, but <b>word order is lost</b>.',
-        fig: [{ type: 'boxes', t: 'One-hot, vocabulary [cat, dog, sat, the]', head: ['cat', 'dog', 'sat', 'the'], rows: [{ label: 'cat', cells: [['1', 'c0'], ['0', ''], ['0', ''], ['0', '']] }, { label: 'dog', cells: [['0', ''], ['1', 'c0'], ['0', ''], ['0', '']] }] }, { type: 'boxes', t: 'Bag of words for "the cat sat the"', head: ['cat', 'dog', 'sat', 'the'], rows: [{ label: 'counts', cells: [['1', 'c1'], ['0', ''], ['1', 'c1'], ['2', 'c2']] }], cap: '"dog bites man" and "man bites dog" get the same bag-of-words vector.' }],
+        fig: [{ type: 'boxes', t: 'One-hot, vocabulary [cat, dog, sat, the]', head: ['cat', 'dog', 'sat', 'the'], rows: [{ label: 'cat', cells: [['1', 'c0'], ['0', ''], ['0', ''], ['0', '']] }, { label: 'dog', cells: [['0', ''], ['1', 'c0'], ['0', ''], ['0', '']] }] }, { type: 'anim', name: 'bow', t: 'Bag of words, one word at a time' }],
         html: `
 <p>Take the vocabulary <code>[cat, dog, sat, the]</code>.</p>
 <h3>One-hot</h3>
@@ -397,7 +397,7 @@ window.GUIDE = {
       {
         t: 'RNNs and LSTMs: reading in order',
         key: 'An RNN reads <b>one word at a time</b> and carries a memory h forward. Plain RNNs forget early words (<b>vanishing gradient</b>); LSTM <b>gates</b> decide what to keep.',
-        fig: { type: 'flow', items: [['h₀', 'start', 'empty memory', 'mute'], ['📥', 'h₁ = f(x₁ "the", h₀)', '', 'c0'], ['📥', 'h₂ = f(x₂ "movie", h₁)', '', 'c0'], ['📥', 'h₃ = f(x₃ "rocks", h₂)', '', 'c0'], ['🏷️', 'classify from h₃', 'positive', 'c1']], cap: 'Gradient over 20 steps: 0.5²⁰ ≈ 0.000001 (vanishes), 1.5²⁰ ≈ 3325 (explodes).' },
+        fig: { type: 'anim', name: 'rnn', t: 'An RNN reading “the movie rocks”', cap: 'The memory dots are illustrative. Gradient over 20 steps: 0.5²⁰ ≈ 0.000001 (vanishes), 1.5²⁰ ≈ 3325 (explodes).' },
         html: `
 <p>An <b>RNN</b> reads tokens one by one and carries a running <b>state</b> (memory):</p>
 <p style="text-align:center"><b>h[t] = tanh(x[t] + W·h[t−1])</b> — new state = mix of the current word and the previous state</p>
@@ -423,7 +423,7 @@ window.GUIDE = {
       {
         t: 'Attention, step by step',
         key: 'With attention, each word <b>looks at all the other words</b> and decides how much each one matters to it. The weights in a row add up to 1.',
-        fig: { type: 'boxes', t: 'Where does "it" look? "The animal didn\'t cross the street because it was tired"', rows: [{ label: 'weight', cells: [['The', 'mute', '.02'], ['animal', 'c2', '.61'], ['didn\'t', 'mute', '.03'], ['cross', 'mute', '.04'], ['street', 'c0', '.18'], ['because', 'mute', '.02'], ['it', 'mute', '.05'], ['was', 'mute', '.02'], ['tired', 'mute', '.03']] }], cap: 'Illustrative weights (they add up to 1). "it" attends most to "animal", which is what it refers to. Formula: softmax(QKᵀ / √dₖ) · V.' },
+        fig: { type: 'anim', name: 'attention', t: 'Where does “it” look? “The animal didn\'t cross the street because it was tired”', cap: 'Illustrative weights (they add up to 1).' },
         html: `
 <p>Attention lets each word <b>look at all other words</b> and decide which ones matter for it. Each token has three vectors:</p>
 <ul>
@@ -592,7 +592,7 @@ window.GUIDE = {
       {
         t: 'BIO tagging: turning spans into one tag per token',
         key: '<b>B</b> = begins an entity, <b>I</b> = inside it, <b>O</b> = outside. With n entity types, BIO needs <b>2n + 1</b> tags.',
-        fig: { type: 'boxes', rows: [{ label: 'token', cells: [['Jane', ''], ['Villanueva', ''], ['of', ''], ['United', ''], [',', ''], ['…', ''], ['United', ''], ['Airlines', ''], ['Holding', '']] }, { label: 'BIO', cells: [['B-PER', 'c3'], ['I-PER', 'c3'], ['O', 'mute'], ['B-ORG', 'c0'], ['O', 'mute'], ['', ''], ['B-ORG', 'c0'], ['I-ORG', 'c0'], ['I-ORG', 'c0']] }], cap: '4 types (PER, ORG, LOC, GPE) → 2·4 + 1 = 9 tags. Invalid: O followed by I-PER, or B-PER followed by I-ORG.' },
+        fig: { type: 'anim', name: 'bio', t: 'From spans to BIO tags', cap: 'Invalid: O followed by I-PER, or B-PER followed by I-ORG.' },
         html: `
 <p>To use a sequence labeler for NER, turn spans into one tag per token:</p>
 <ul>

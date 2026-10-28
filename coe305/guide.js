@@ -190,7 +190,7 @@ window.GUIDE = {
       {
         t: 'Train / validation / test and K-fold cross-validation',
         key: 'K-fold cross-validation splits the data into K parts. Each part takes one turn as the validation set, and you <b>average the K scores</b>.',
-        fig: { type: 'boxes', t: '5-fold cross-validation', head: ['part 1', 'part 2', 'part 3', 'part 4', 'part 5', 'score'], rows: [{ label: 'round 1', cells: [['validate', 'c2'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['E₁', '']] }, { label: 'round 2', cells: [['train', 'c0'], ['validate', 'c2'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['E₂', '']] }, { label: 'round 3', cells: [['train', 'c0'], ['train', 'c0'], ['validate', 'c2'], ['train', 'c0'], ['train', 'c0'], ['E₃', '']] }, { label: 'round 4', cells: [['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['validate', 'c2'], ['train', 'c0'], ['E₄', '']] }, { label: 'round 5', cells: [['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['train', 'c0'], ['validate', 'c2'], ['E₅', '']] }], cap: 'Result = average of E₁…E₅. The <b>test</b> set is kept apart the whole time and used once at the very end.' },
+        fig: { type: 'anim', name: 'kfold', t: 'K-fold cross-validation', cap: 'Result = the average of the K scores. The <b>test</b> set is kept apart the whole time and used once at the very end.' },
         html: `
 <p>To estimate how well a model works on unseen data, we must test it on data it has not seen during training.</p>
 <table class="t">
@@ -306,7 +306,7 @@ window.GUIDE = {
       {
         t: 'PCA: find the direction of maximum variance',
         key: 'PCA turns the axes so that the first new axis, <b>PC1</b>, follows the direction where the data is <b>most spread out</b>. PC2 is perpendicular to it.',
-        fig: { type: 'plot', t: 'Height and weight of students (centred)', w: 480, h: 320, x: [-5, 5], y: [-5, 5], xl: 'height', yl: 'weight', pts: [[-3.5, -3, 'c0'], [-2.6, -2.4, 'c0'], [-2, -1.1, 'c0'], [-1, -1.4, 'c0'], [-0.5, 0.2, 'c0'], [0.4, -0.3, 'c0'], [1, 1.4, 'c0'], [1.8, 1.1, 'c0'], [2.5, 2.7, 'c0'], [3.4, 2.8, 'c0'], [-1.5, -0.4, 'c0'], [0.8, 0.2, 'c0']], lines: [{ pts: [[-4.5, -4], [4.5, 4]], c: 'c2', label: 'PC1: most variance' }, { pts: [[1.6, -1.8], [-1.6, 1.8]], c: 'c3', label: 'PC2' }], cap: 'Keep PC1 only and each student is one number (their position along the line) instead of two, with little information lost.' },
+        fig: { type: 'anim', name: 'pca', t: 'Height and weight of students (centred)', cap: 'Press <b>New data</b> for a different cloud: PCA always finds the long axis.' },
         html: `
 <p>Imagine height and weight of students: the points lie roughly along a diagonal line. Instead of two features, we could use <b>one</b>: the position along that line.</p>
 <ol>
@@ -356,7 +356,7 @@ window.GUIDE = {
       {
         t: 'k-means: assign, update, repeat',
         key: 'k-means repeats two moves: <b>assign</b> every point to its nearest centre, then <b>move</b> every centre to the mean of its points. It stops when nothing changes.',
-        fig: { type: 'boxes', t: 'The lesson\'s example: points 1, 2, 9, 10, 11 with k = 2', head: ['1', '2', '9', '10', '11', 'centres'], rows: [{ label: 'start', cells: [['', ''], ['', ''], ['', ''], ['', ''], ['', ''], ['m₁ = 1, m₂ = 2', 'mute']] }, { label: 'assign 1', cells: [['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['update → m₁ = 1, m₂ = 8', '']] }, { label: 'assign 2', cells: [['m₁', 'c0'], ['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['update → m₁ = 1.5, m₂ = 10', '']] }, { label: 'assign 3', cells: [['m₁', 'c0'], ['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['no change → done ✓', 'ok']] }] },
+        fig: [{ type: 'anim', name: 'kmeans', t: 'k-means in two dimensions', cap: 'Change k or press <b>New data</b>: a bad start can end in a worse clustering.' }, { type: 'boxes', t: 'The lesson\'s example: points 1, 2, 9, 10, 11 with k = 2', head: ['1', '2', '9', '10', '11', 'centres'], rows: [{ label: 'start', cells: [['', ''], ['', ''], ['', ''], ['', ''], ['', ''], ['m₁ = 1, m₂ = 2', 'mute']] }, { label: 'assign 1', cells: [['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['update → m₁ = 1, m₂ = 8', '']] }, { label: 'assign 2', cells: [['m₁', 'c0'], ['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['update → m₁ = 1.5, m₂ = 10', '']] }, { label: 'assign 3', cells: [['m₁', 'c0'], ['m₁', 'c0'], ['m₂', 'c2'], ['m₂', 'c2'], ['m₂', 'c2'], ['no change → done ✓', 'ok']] }] }],
         html: `
 <p>Goal: find <b>k reference vectors</b> mᵢ (also called prototypes, codebook vectors, codewords) that best represent the data.</p>
 <h3>The algorithm</h3>
@@ -505,7 +505,7 @@ window.GUIDE = {
       {
         t: 'Choosing the split (ID3) on Play Tennis',
         key: 'Try every attribute, compute the <b>weighted entropy after the split</b>, and pick the <b>lowest</b>. That is the same as the highest information gain.',
-        fig: [{ type: 'boxes', t: 'Splitting on Outlook', head: ['Sunny (5 days)', 'Overcast (4 days)', 'Rain (5 days)'], rows: [{ label: 'yes / no', cells: [['2 / 3', 'c2'], ['4 / 0', 'ok'], ['3 / 2', 'c2']] }, { label: 'entropy', cells: [['0.971', ''], ['0 (pure!)', 'ok'], ['0.971', '']] }] }, { type: 'bars', t: 'Weighted entropy after each split (lower = better)', items: [['Outlook', 0.694, 'c1', '0.694 ← root'], ['Humidity', 0.789, 'c0', '0.789'], ['Wind', 0.892, 'c0', '0.892'], ['Temperature', 0.911, 'c0', '0.911']], max: 1 }],
+        fig: [{ type: 'anim', name: 'id3', t: 'ID3 grows the Play Tennis tree' }, { type: 'bars', t: 'Weighted entropy after each split (lower = better)', items: [['Outlook', 0.694, 'c1', '0.694 ← root'], ['Humidity', 0.789, 'c0', '0.789'], ['Wind', 0.892, 'c0', '0.892'], ['Temperature', 0.911, 'c0', '0.911']], max: 1 }],
         html: `
 <p>For each attribute, compute the <b>weighted entropy after the split</b>:</p>
 <p style="text-align:center"><b>𝓘′ₘ = Σⱼ (Nₘⱼ / Nₘ) · 𝓘(branch j)</b></p>

@@ -177,6 +177,8 @@
 
   function draw() {
     const s = steps[cur];
+    stage.classList.remove('enter');
+    requestAnimationFrame(() => stage.classList.add('enter'));
     if (s.practice || !s.check) finish(cur); // reading-only steps count as done when opened
     drawNav();
     fill(stage,

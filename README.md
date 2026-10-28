@@ -42,6 +42,10 @@ assets/css/style.css  shared styles: "study notebook" look (paper/ink themes, se
 assets/js/common.js   top bar, progress, el() helper
 assets/js/learn.js    guided-lesson engine (reads <course>/guide.js)
 assets/js/figs.js     lesson diagrams (flow, stack, compare, boxes, graph, plot, bars) from short descriptions
+                      (static diagrams build themselves in when they scroll into view)
+assets/js/anim.js     animated, step-by-step diagrams: a scene player with captions, play/pause,
+                      back/forward, speed, and optional "new data" button or slider
+<course>/anims.js     that course's animations, used in guide.js as fig: { type: 'anim', name }
 assets/js/test.js     understanding test (lesson checks + quiz questions, confidence-rated)
 progress.html         progress dashboard across all courses
 assets/js/race.js     race-condition stepper (used by COE303 ch3 + ch4)
@@ -59,7 +63,7 @@ materials/            raw course files — local only, gitignored (copyrighted)
 1. Put the new slides in `materials/<CODE>/slides/` and extract text (see `materials/README.md`).
 2. Add a chapter object (takeaways, traps, activities, quiz, cards) and its games to `<course>/data.js`.
 3. Add simulation pages under `<course>/chN/` (or `wN/`) when a topic needs one.
-4. Write its guided lesson in `<course>/guide.js` (format in `assets/js/learn.js`). Give every step a `key` (big idea) and a `fig` (see `assets/js/figs.js`).
+4. Write its guided lesson in `<course>/guide.js` (format in `assets/js/learn.js`). Give every step a `key` (big idea) and a `fig` (see `assets/js/figs.js`). For an idea that is a process (something that happens in steps over time), prefer an animation in `<course>/anims.js` (API at the top of `assets/js/anim.js`).
 
 Pages opened inside a lesson (in an iframe) hide their top bar and report their height to the lesson (`common.js`, embed mode).
 

@@ -461,3 +461,70 @@ details.extra h3 { font-family: var(--sans); font-size: .8rem; font-weight: 600;
   main { padding: 24px 16px 72px; }
   .home-head h1 { font-size: 2.3rem; }
 }
+
+/* ---------- animated diagrams (anim.js) ---------- */
+.a-player { display: flex; flex-direction: column; gap: 10px; }
+.a-stage { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 6px; }
+.a-svg { display: block; width: 100%; height: auto; max-height: 470px; overflow: visible; font-family: var(--sans); }
+.a-svg text { fill: var(--text); }
+.a-svg .mono { font-family: var(--mono); white-space: pre; }
+.a-svg .it { font-style: italic; font-family: var(--serif); }
+.a-box rect { fill: color-mix(in srgb, var(--c) 13%, var(--panel)); stroke: var(--c); stroke-width: 1.6; transition: fill .45s, stroke .45s; }
+.a-box.solid rect { fill: var(--c); }
+.a-box.solid text { fill: var(--panel); }
+.a-box.ghost rect { fill: none; stroke: var(--line-2); stroke-dasharray: 4 4; }
+.a-box.ghost .a-t { fill: var(--muted); font-weight: 500; }
+.a-box .a-t { font-weight: 650; }
+.a-box .a-sub { font-size: 10.5px; fill: var(--muted); }
+.a-box.solid .a-sub { fill: var(--panel); opacity: .85; }
+.a-dot circle { fill: var(--c); stroke: var(--bg); stroke-width: 1.2; transition: fill .45s; }
+.a-dot.ring circle { fill: color-mix(in srgb, var(--c) 18%, var(--bg)); stroke: var(--c); stroke-width: 2.4; }
+.a-text text { fill: var(--c); transition: fill .45s; }
+.a-line path { fill: none; stroke: var(--c); stroke-linecap: round; transition: stroke .45s; }
+.a-area rect { fill: color-mix(in srgb, var(--c) 8%, transparent); stroke: color-mix(in srgb, var(--c) 45%, transparent); stroke-dasharray: 4 3; transition: fill .45s, stroke .45s; }
+.a-area.solid rect { fill: color-mix(in srgb, var(--c) 70%, var(--panel)); stroke: var(--c); stroke-dasharray: none; }
+.a-alab { font-size: 11px; fill: var(--muted) !important; font-family: var(--mono); }
+.a-area.solid .a-alab { fill: var(--panel) !important; font-weight: 600; }
+.a-pulse rect, .a-pulse circle, .a-pulse path { animation: a-pulse .8s ease; }
+@keyframes a-pulse { 0%, 100% { stroke-width: 1.6; filter: none; } 35% { stroke-width: 5; filter: drop-shadow(0 0 6px var(--c)); } }
+.a-cap { font-family: var(--serif); font-size: 1.06rem; line-height: 1.55; min-height: 3.2em; padding: 0 2px; font-variant-numeric: lining-nums; }
+.a-cap b { font-weight: 650; }
+.a-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.a-controls button { padding: 4px 11px; font-size: .86rem; }
+.a-controls .a-play { min-width: 76px; }
+.a-count { font-size: .8rem; color: var(--muted); min-width: 44px; text-align: center; }
+.a-ticks { flex: 1; display: flex; gap: 3px; min-width: 120px; }
+.a-tick { flex: 1; height: 14px; padding: 0 !important; border: 0 !important; background: none !important; position: relative; cursor: pointer; }
+.a-tick::after { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 4px; background: var(--line); border-radius: 2px; transition: background .3s; }
+.a-tick.done::after { background: var(--muted); }
+.a-tick.on::after { background: var(--accent); }
+.a-speed { font-size: .82rem; padding: 3px 4px; }
+.a-extra { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
+.a-slider input { width: 160px; vertical-align: middle; }
+figure.f-anim-fig { padding-bottom: 16px; }
+
+/* ---------- motion for the static diagrams and the lesson ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .fig.pre .f-box, .fig.pre .f-layer, .fig.pre .f-card, .fig.pre .f-cell, .fig.pre .f-bar, .fig.pre .f-arrow, .fig.pre .f-vs,
+  .fig.pre .f-svg .f-node, .fig.pre .f-svg .f-ntext, .fig.pre .f-svg .f-pt, .fig.pre .f-svg .f-elab, .fig.pre .f-svg .f-elab-bg { opacity: 0; }
+  .fig.pre .f-svg .f-edge, .fig.pre .f-svg .f-pline:not(.dashed) { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+  .fig.in .f-box, .fig.in .f-layer, .fig.in .f-card, .fig.in .f-cell { animation: f-rise .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+  .fig.in .f-arrow, .fig.in .f-vs { animation: f-fade .4s both; animation-delay: calc(var(--i, 0) * 55ms + 120ms); }
+  .fig.in .f-bar { animation: f-grow .9s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 90ms + 100ms); transform-origin: left; }
+  .fig.in .f-svg .f-node, .fig.in .f-svg .f-ntext { animation: f-fade .45s both; animation-delay: calc(var(--i, 0) * 70ms); }
+  .fig.in .f-svg .f-pt { animation: f-pop .45s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(var(--i, 0) * 25ms + 150ms); transform-box: fill-box; transform-origin: center; }
+  .fig.in .f-svg .f-edge, .fig.in .f-svg .f-pline:not(.dashed) { stroke-dasharray: 1 1; animation: f-draw .9s ease both; animation-delay: calc(var(--i, 0) * 80ms + 250ms); }
+  .fig.in .f-svg .f-elab, .fig.in .f-svg .f-elab-bg { animation: f-fade .4s both; animation-delay: calc(var(--i, 0) * 80ms + 700ms); }
+  .step-card.enter > * { animation: f-rise .45s cubic-bezier(.2, .7, .2, 1) both; }
+  .step-card.enter > :nth-child(2) { animation-delay: 40ms; }
+  .step-card.enter > :nth-child(n+3) { animation-delay: 90ms; }
+  .opt.wrong { animation: f-shake .4s; }
+  .opt.right { animation: f-ok .5s; }
+}
+@keyframes f-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes f-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes f-grow { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes f-pop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+@keyframes f-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes f-shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+@keyframes f-ok { 40% { box-shadow: inset 3px 0 0 var(--ok), 0 0 0 4px color-mix(in srgb, var(--ok) 25%, transparent); } }

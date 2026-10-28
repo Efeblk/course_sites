@@ -40,7 +40,7 @@ window.GUIDE = {
       {
         t: 'How devices get the CPU\'s attention: interrupts',
         key: 'Instead of the CPU asking "are you done yet?" again and again (<b>polling</b>), the device <b>taps the CPU on the shoulder</b> when it finishes (an <b>interrupt</b>).',
-        fig: { type: 'flow', t: 'What happens when an interrupt arrives', items: [['⌨️', 'Device signals', 'interrupt line', 'c2'], ['⏹️', 'Finish current instruction', '', 'c0'], ['💾', 'Save state', 'PC + registers', 'c3'], ['📖', 'Look up handler', 'interrupt vector', 'c5'], ['🛠️', 'Run the ISR', 'kernel mode', 'c4'], ['↩️', 'Restore state', 'program continues', 'c1']], cap: 'The interrupted program never notices. It continues exactly where it stopped.' },
+        fig: { type: 'anim', name: 'interrupt', t: 'What happens when an interrupt arrives', cap: 'The interrupted program never notices. It continues exactly where it stopped.' },
         html: `
 <p>Devices (keyboard, disk, network) each have a <b>device controller</b> with a small local buffer. The CPU and controllers work at the same time. When a device finishes, how does the CPU find out?</p>
 <ul>
@@ -177,7 +177,7 @@ window.GUIDE = {
       {
         t: 'System calls: the door into the kernel',
         key: 'A <b>system call</b> is how a program asks the kernel to do something it may not do itself. Programs usually call it through an <b>API</b> (like <code>printf</code> → <code>write</code>).',
-        fig: { type: 'flow', t: 'The journey of one system call', items: [['📝', 'Program calls API', 'e.g. read()', 'c1'], ['🔢', 'Library puts the call number in a register', '', 'c0'], ['🚪', 'Trap', 'mode bit → kernel', 'c4'], ['📖', 'Kernel looks up the number in the system-call table', '', 'c5'], ['🛠️', 'Kernel runs the service', '', 'c4'], ['↩️', 'Return to user mode', 'with the result', 'c1']], cap: 'Parameters travel in <b>registers</b>, in a <b>block in memory</b> (address in a register), or on the <b>stack</b>.' },
+        fig: { type: 'anim', name: 'syscall', t: 'The journey of one system call', cap: 'Parameters travel in <b>registers</b>, in a <b>block in memory</b> (address in a register), or on the <b>stack</b>.' },
         html: `
 <p>A <b>system call</b> is a <b>controlled entry point</b> into the kernel. Programs usually don't call it directly; they use an <b>API</b> (e.g. POSIX <code>read()</code> in the C library), which calls the real system call.</p>
 <h3>Journey of <code>read()</code></h3>
@@ -287,7 +287,7 @@ window.GUIDE = {
       {
         t: 'Five states, six transitions',
         key: 'Every process is in one of <b>five states</b>. Learn the <b>arrows</b> between them: exams ask which transitions are possible.',
-        fig: { type: 'graph', w: 760, h: 300, nodes: { n: [70, 50, 'new', 'c5'], r: [210, 150, 'ready', 'c1'], u: [550, 150, 'running', 'c0'], w: [380, 265, 'waiting', 'c2'], t: [690, 50, 'terminated', 'c4'] }, edges: [['n', 'r', 'admitted'], ['r', 'u', 'scheduler dispatch', -30], ['u', 'r', 'interrupt', -30], ['u', 'w', 'I/O or event wait'], ['w', 'r', 'I/O or event completion'], ['u', 't', 'exit']], cap: 'There is <b>no</b> arrow waiting → running: a waiting process must go back to the ready queue first.' },
+        fig: { type: 'anim', name: 'states', t: 'One process through its life', cap: 'There is <b>no</b> arrow waiting → running: a waiting process must go back to the ready queue first.' },
         html: `
 <table class="t">
   <tr><th>State</th><th>Meaning</th></tr>
@@ -316,7 +316,7 @@ window.GUIDE = {
       {
         t: 'PCB, scheduling queues and context switch',
         key: 'The OS keeps a <b>PCB</b> (process control block) for every process. A <b>context switch</b> saves the old process\'s state into its PCB and loads the new one\'s.',
-        fig: { type: 'boxes', t: 'Context switch from P0 to P1', head: ['P0', 'OS', 'P1'], rows: [{ cells: [['▶ running', 'ok'], ['', ''], ['idle', 'mute']] }, { cells: [['⏸ interrupt', 'warn'], ['save state into PCB0', 'c4'], ['idle', 'mute']] }, { cells: [['idle', 'mute'], ['load state from PCB1', 'c4'], ['idle', 'mute']] }, { cells: [['idle', 'mute'], ['', ''], ['▶ running', 'ok']] }], cap: 'While the OS is switching, <b>no</b> process does useful work, so a context switch is pure overhead.' },
+        fig: { type: 'anim', name: 'ctxswitch', t: 'Context switch from P0 to P1 and back', cap: 'While the OS is switching, <b>no</b> process does useful work, so a context switch is pure overhead.' },
         html: `
 <p>The OS keeps everything about a process in its <b>PCB (Process Control Block)</b> — Linux: <code>task_struct</code>:</p>
 <ul>
@@ -332,7 +332,7 @@ window.GUIDE = {
       {
         t: 'Creating processes: fork, exec, wait, exit',
         key: '<code>fork()</code> makes a <b>copy</b> of the process. It returns <b>0 in the child</b> and the <b>child\'s PID in the parent</b>. <code>exec()</code> then replaces the copy with a new program.',
-        fig: { type: 'graph', w: 680, h: 260, nodes: { p: [90, 130, 'parent', 'c0'], f: [240, 130, 'fork()', 'c2'], pc: [430, 60, 'parent: pid > 0 → wait()', 'c0'], cc: [430, 200, 'child: pid = 0 → exec()', 'c1'], e: [610, 200, 'exit()', 'c4'], r: [610, 60, 'resumes', 'c0'] }, edges: [['p', 'f'], ['f', 'pc'], ['f', 'cc'], ['cc', 'e'], ['pc', 'r'], ['e', 'r', 'parent wakes up', 30]], cap: '<b>Zombie</b> = finished child whose parent has not called wait() yet. <b>Orphan</b> = child whose parent ended without waiting.' },
+        fig: { type: 'anim', name: 'fork', t: 'fork → exec → wait → exit', cap: '<b>Zombie</b> = finished child whose parent has not called wait() yet. <b>Orphan</b> = child whose parent ended without waiting.' },
         html: `
 <ul>
   <li><b>fork()</b> creates a <b>child</b> that is a <b>copy</b> of the parent and continues from the same point. It returns <b>0 in the child</b> and the <b>child's PID in the parent</b> (−1 on error).</li>
@@ -419,7 +419,7 @@ else if (pid > 0)  { wait(NULL); printf("Child done"); } // parent</pre>
       {
         t: 'Concurrency vs parallelism, and Amdahl\'s Law',
         key: '<b>Concurrency</b> = tasks take turns and all make progress. <b>Parallelism</b> = tasks really run <b>at the same moment</b> on different cores. Amdahl\'s Law: the <b>serial part</b> limits the speedup.',
-        fig: [{ type: 'boxes', t: 'Four tasks over time', rows: [{ label: '1 core: concurrent', cells: [['T1', 'c0'], ['T2', 'c1'], ['T3', 'c2'], ['T4', 'c3'], ['T1', 'c0'], ['T2', 'c1'], ['T3', 'c2'], ['T4', 'c3']] }, { label: 'core 1: parallel', cells: [['T1', 'c0'], ['T3', 'c2'], ['T1', 'c0'], ['T3', 'c2'], ['', ''], ['', ''], ['', ''], ['', '']] }, { label: 'core 2', cells: [['T2', 'c1'], ['T4', 'c3'], ['T2', 'c1'], ['T4', 'c3'], ['', ''], ['', ''], ['', ''], ['', '']] }] }, { type: 'bars', t: 'Amdahl: speedup = 1 / (S + (1 − S)/N), with serial part S = 25%', items: [['1 core', 1, 'mute', '1.0×'], ['2 cores', 1.6, 'c0', '1.6×'], ['4 cores', 2.29, 'c0', '2.29×'], ['8 cores', 2.91, 'c0', '2.91×'], ['∞ cores', 4, 'c4', '4× max (= 1/S)']], max: 4 }],
+        fig: [{ type: 'boxes', t: 'Four tasks over time', rows: [{ label: '1 core: concurrent', cells: [['T1', 'c0'], ['T2', 'c1'], ['T3', 'c2'], ['T4', 'c3'], ['T1', 'c0'], ['T2', 'c1'], ['T3', 'c2'], ['T4', 'c3']] }, { label: 'core 1: parallel', cells: [['T1', 'c0'], ['T3', 'c2'], ['T1', 'c0'], ['T3', 'c2'], ['', ''], ['', ''], ['', ''], ['', '']] }, { label: 'core 2', cells: [['T2', 'c1'], ['T4', 'c3'], ['T2', 'c1'], ['T4', 'c3'], ['', ''], ['', ''], ['', ''], ['', '']] }] }, { type: 'anim', name: 'amdahl', t: 'Amdahl: speedup = 1 / (S + (1 − S)/N)', cap: 'Move the slider to change the serial part S and watch the limit 1/S move.' }],
         html: `
 <ul>
   <li><b>Concurrency</b> — several tasks make <b>progress</b> by taking turns, even on <b>one core</b>.</li>
@@ -488,7 +488,7 @@ int main(int argc, char *argv[]) {
       {
         t: 'Race conditions and threading issues',
         key: 'When two threads update the same variable <b>at the same time</b>, the result depends on timing. That is a <b>race condition</b>, and updates can get lost.',
-        fig: { type: 'boxes', t: 'counter++ is really 3 steps: load, add, store. Start: counter = 0', head: ['Thread A', 'Thread B', 'counter'], rows: [{ cells: [['load 0', 'c0'], ['', ''], ['0', 'mute']] }, { cells: [['', ''], ['load 0', 'c2'], ['0', 'mute']] }, { cells: [['add → 1', 'c0'], ['', ''], ['0', 'mute']] }, { cells: [['', ''], ['add → 1', 'c2'], ['0', 'mute']] }, { cells: [['store 1', 'c0'], ['', ''], ['1', 'mute']] }, { cells: [['', ''], ['store 1', 'c2'], ['1 ❌ (should be 2)', 'bad']] }], cap: 'Both threads added 1, but one update was lost.' },
+        fig: { type: 'anim', name: 'race', t: 'counter++ is really 3 steps: load, add, store', cap: 'The first run is the lesson\'s order. Press <b>Try another interleaving</b> to let the scheduler pick a different order.' },
         html: `
 <p><code>counter++</code> looks like one step, but it is <b>three</b> machine instructions: <b>load</b> counter into a register, <b>add</b> 1, <b>store</b> it back.</p>
 <p>Two threads, counter = 0:</p>

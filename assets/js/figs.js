@@ -9,6 +9,7 @@
  *             lines?: [{ pts: [[x, y], ...], c?, dash?, label? }], rects?: [{ x0, y0, x1, y1, c?, label? }],
  *             texts?: [[x, y, text, color?]] }
  *   bars    { items: [[label, value, color?, text?]], max? }
+ *   anim    { name }   an animated, step-by-step diagram from anim.js (registered in <course>/anims.js)
  * Every figure can have `cap` (caption, HTML allowed) and `t` (small title).
  * Colors: c0 blue · c1 green · c2 orange · c3 purple · c4 coral · c5 cyan · ok · bad · warn · mute.
  */
@@ -79,14 +80,14 @@
         const A = N[a], B = N[b];
         if (a === b) { // self-loop above the node
           const [w, h] = A.wh, y = A.y - h / 2;
-          svg.append(s('path', { d: `M${A.x - 12},${y} C${A.x - 30},${y - 42} ${A.x + 30},${y - 42} ${A.x + 12},${y}`, class: 'f-edge', 'marker-end': 'url(#f-ah)' }));
+          svg.append(s('path', { d: `M${A.x - 12},${y} C${A.x - 30},${y - 42} ${A.x + 30},${y - 42} ${A.x + 12},${y}`, class: 'f-edge', pathLength: 1, 'marker-end': 'url(#f-ah)' }));
           if (lab) labels.push([A.x, y - 40, lab]);
           continue;
         }
         const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, len = Math.hypot(B.x - A.x, B.y - A.y) || 1;
         const cx = mx - ((B.y - A.y) / len) * bend, cy = my + ((B.x - A.x) / len) * bend;
         const [x1, y1] = exit(A, cx, cy), [x2, y2] = exit(B, cx, cy);
-        svg.append(s('path', { d: `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`, class: 'f-edge', 'marker-end': 'url(#f-ah)' }));
+        svg.append(s('path', { d: `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`, class: 'f-edge', pathLength: 1, 'marker-end': 'url(#f-ah)' }));
         if (lab) labels.push([0.25 * x1 + 0.5 * cx + 0.25 * x2, 0.25 * y1 + 0.5 * cy + 0.25 * y2, lab]);
       }
       for (const [lx, ly, lab] of labels)
@@ -115,7 +116,7 @@
         if (r.label) svg.append(s('text', { x: X(Math.min(r.x0, r.x1)) + 6, y: Y(Math.max(r.y0, r.y1)) + 15, class: 'f-plab', style: `fill:${col(r.c || 'c2')}` }, r.label));
       }
       for (const l of f.lines || []) {
-        svg.append(s('polyline', { points: l.pts.map(([x, y]) => `${X(x)},${Y(y)}`).join(' '), class: 'f-pline', style: `stroke:${col(l.c || 'c2')}`, 'stroke-dasharray': l.dash ? '6 5' : null }));
+        svg.append(s('polyline', { points: l.pts.map(([x, y]) => `${X(x)},${Y(y)}`).join(' '), class: 'f-pline' + (l.dash ? ' dashed' : ''), style: `stroke:${col(l.c || 'c2')}`, 'stroke-dasharray': l.dash ? '6 5' : null, pathLength: l.dash ? null : 1 }));
         if (l.label) { const [x, y] = l.pts[l.pts.length - 1]; svg.append(s('text', { x: X(x) - 4, y: Y(y) - 7, 'text-anchor': 'end', class: 'f-plab', style: `fill:${col(l.c || 'c2')}` }, l.label)); }
       }
       for (const [x, y, c, lab] of f.pts || []) {
@@ -135,14 +136,27 @@
     },
   };
 
+  R.anim = (f) => (CS.anim ? CS.anim.make(f.name, f) : el('div', { class: 'callout bad' }, 'anim.js is not loaded'));
+
+  /* static diagrams build themselves up the first time they scroll into view (see .fig.pre / .fig.in in the CSS) */
+  const seen = 'IntersectionObserver' in window && new IntersectionObserver((ents) => {
+    for (const en of ents) if (en.isIntersecting) { en.target.classList.replace('pre', 'in'); seen.unobserve(en.target); }
+  }, { threshold: 0.25 });
+  const STAGGER = ['.f-box', '.f-arrow', '.f-layer', '.f-card', '.f-vs', '.f-cell', '.f-bar', '.f-node', '.f-ntext', '.f-edge', '.f-elab', '.f-elab-bg', '.f-pt', '.f-pline'];
   function figure(f) {
     if (Array.isArray(f)) return f.map(figure);
     const draw = R[f.type];
     if (!draw) return el('div', { class: 'callout bad' }, 'Unknown figure type: ' + f.type);
-    return el('figure', { class: `fig f-${f.type}-fig` },
+    const body = el('div', { class: 'fig-body' }, draw(f));
+    const node = el('figure', { class: `fig f-${f.type}-fig` + (seen && f.type !== 'anim' ? ' pre' : '') },
       f.t ? el('div', { class: 'fig-t', html: f.t }) : null,
-      el('div', { class: 'fig-body' }, draw(f)),
+      body,
       f.cap ? el('figcaption', { html: f.cap }) : null);
+    if (seen && f.type !== 'anim') {
+      for (const sel of STAGGER) body.querySelectorAll(sel).forEach((n, i) => n.style.setProperty('--i', Math.min(i, 24)));
+      requestAnimationFrame(() => seen.observe(node));
+    }
+    return node;
   }
 
   CS.figure = figure;

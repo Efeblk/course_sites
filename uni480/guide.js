@@ -65,7 +65,7 @@ window.GUIDE = {
       {
         t: 'The AI agent: sense → think → act',
         key: 'An <b>agent</b> senses its environment, decides with its <b>agent function</b>, and acts through <b>actuators</b>. It can be pure software; it does not have to be a robot.',
-        fig: { type: 'flow', t: 'A ward monitoring agent', items: [['🏥', 'Environment', 'a ward with 10 patients', 'c3'], ['📡', 'Sensors', 'heart rate, breathing, SpO₂, temperature', 'c0'], ['🧠', 'Agent function', '"2 or more abnormal → alert"', 'c2'], ['📟', 'Actuator', 'pages the nurse', 'c4'], ['🎯', 'Performance measure', 'catch deterioration early, few misses, few false alarms', 'c1']] },
+        fig: { type: 'anim', name: 'agent', t: 'A ward monitoring agent', cap: 'Limits as in the lab: heart rate > 110, breathing > 24, SpO₂ < 92%, temperature > 38.3 °C. Illustrative, not clinical.' },
         html: `
 <p>An <b>intelligent agent</b> is anything that <b>perceives its environment through sensors</b> and <b>acts on it through actuators</b> to reach a goal. It can be pure software — it does not have to be a robot.</p>
 <p>It has five parts (slide 10). Learn them with this hospital example — a ward monitoring system:</p>
@@ -599,7 +599,7 @@ window.GUIDE = {
       {
         t: 'The confusion matrix — calculate it yourself',
         key: '<b>Sensitivity</b> and <b>specificity</b> start from the <b>truth</b> (columns). <b>PPV</b> and <b>NPV</b> start from the <b>alert</b> (rows).',
-        fig: [{ type: 'boxes', t: '1,000 patients, 50 truly deteriorate', head: ['', 'truly deteriorates (50)', 'truly fine (950)'], rows: [{ label: 'alert (135)', cells: [['TP = 40', 'ok'], ['FP = 95 false alarms', 'warn']] }, { label: 'no alert (865)', cells: [['FN = 10 missed!', 'bad'], ['TN = 855', 'ok']] }] }, { type: 'bars', items: [['Sensitivity = 40 / 50', 80, 'c1', '80%'], ['Specificity = 855 / 950', 90, 'c0', '90%'], ['PPV = 40 / 135', 30, 'c4', '30%: only 3 in 10 alerts are real'], ['NPV = 855 / 865', 98.8, 'c0', '98.8%']], max: 100 }],
+        fig: { type: 'anim', name: 'confusion', t: '1,000 patients, 50 truly deteriorate' },
         html: `
 <p>Every alert decision has four possible outcomes:</p>
 <table class="t">
@@ -629,7 +629,7 @@ window.GUIDE = {
       {
         t: 'Thresholds, prevalence and the 99% trap',
         key: 'A <b>lower threshold</b> catches more sick patients but gives more false alarms. And when a condition is <b>rare</b>, "99% accurate" can mean the model finds nobody.',
-        fig: [{ type: 'compare', vs: true, cols: [{ icon: '⬇️', t: 'Lower threshold', pts: ['more true cases caught (sensitivity ↑)', 'more false alarms'], c: 'c2' }, { icon: '⬆️', t: 'Higher threshold', pts: ['fewer alerts', 'more missed patients'], c: 'c0' }] }, { type: 'boxes', t: 'The 99% trap: 1,000 patients, 10 have it; the model says "no" for everyone', rows: [{ cells: [['990 healthy → "no" ✓', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['10 sick → "no" ✗', 'bad']] }], cap: 'Accuracy 99%, sensitivity 0%. Always look at the confusion matrix.' }],
+        fig: [{ type: 'anim', name: 'threshold', t: 'Moving the alert threshold', cap: 'Illustrative scores for 40 patients.' }, { type: 'boxes', t: 'The 99% trap: 1,000 patients, 10 have it; the model says "no" for everyone', rows: [{ cells: [['990 healthy → "no" ✓', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['10 sick → "no" ✗', 'bad']] }], cap: 'Accuracy 99%, sensitivity 0%. Always look at the confusion matrix.' }],
         html: `
 <p>A model gives each patient a <b>risk score</b>. A <b>threshold</b> turns the score into an action ("review urgently if score ≥ 55").</p>
 <ul>
