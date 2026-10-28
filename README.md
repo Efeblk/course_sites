@@ -36,7 +36,9 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
 
 ```
 index.html            course list
-assets/css/style.css  shared styles
+assets/css/style.css  shared styles: "study notebook" look (paper/ink themes, serif headings,
+                      hairline rules, no gradients or emoji in the chrome); the top-bar
+                      button switches light/dark (saved as course-sites:theme)
 assets/js/common.js   top bar, progress, el() helper
 assets/js/learn.js    guided-lesson engine (reads <course>/guide.js)
 assets/js/figs.js     lesson diagrams (flow, stack, compare, boxes, graph, plot, bars) from short descriptions

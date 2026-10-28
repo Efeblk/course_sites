@@ -10,7 +10,7 @@
   <main>
     <h1>My progress</h1>
     <p class="lead">What you have done, and, more importantly, what you have really understood.</p>
-    <div class="callout warn small"><b>Be honest with yourself:</b> a ✓ only means you <i>opened</i> something. Only the <b>🎯 understanding test</b> shows whether you understood it. A week counts as <b>✅ Understood</b> only when you pass the test on two different days. Passing once may just be short-term memory.</div>
+    <div class="callout warn small"><b>Be honest with yourself:</b> a ✓ only means you <i>opened</i> something. Only the <b>understanding test</b> shows whether you understood it. A week counts as <b>Understood</b> only when you pass the test on two different days. Passing once may just be short-term memory.</div>
     <div id="out"><p class="muted">Loading…</p></div>
   </main>
   <script src="assets/js/common.js"></script>
@@ -98,11 +98,11 @@
             el('div', { class: 'stat' }, el('b', {}, ago(last || null)), el('span', {}, 'last studied'))),
           C.examFormat ? el('p', { class: 'small muted' }, C.examFormat) : null,
           el('div', { style: { overflowX: 'auto' } }, el('table', { class: 't prog' },
-            el('tr', {}, ['', 'Lesson steps', 'Labs opened', 'Games', 'Quiz best', 'Cards', '🎯 Understood?', 'Next'].map((h) => el('th', {}, h))),
+            el('tr', {}, ['', 'Lesson steps', 'Labs opened', 'Games', 'Quiz best', 'Cards', 'Understood?', 'Next'].map((h) => el('th', {}, h))),
             rows.map((r) => r.row))));
       });
       fill(document.getElementById('out'),
-        el('div', { class: 'panel up-next' }, el('h2', { style: { marginTop: 0 } }, '👉 Up next'),
+        el('div', { class: 'panel up-next' }, el('h2', { style: { marginTop: 0 } }, 'Up next'),
           upNext.length ? el('ul', {}, upNext) : el('p', {}, 'Everything is confirmed as understood. Keep reviewing the flashcards before your exams.')),
         sections,
         el('p', { class: 'small muted' }, 'Progress is saved in this browser only (localStorage). If you use another browser or clear site data, it starts again from zero.'));

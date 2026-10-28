@@ -5,6 +5,8 @@
  */
 (function () {
   const body = document.body;
+  /* light/dark choice from the top-bar toggle (embedded labs read it too); no choice = follow the OS */
+  try { const t = localStorage.getItem('course-sites:theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
   const root = (body.dataset.root || '.').replace(/\/$/, '');
 
   /* course folder → label in the top bar and what a numbered unit is called */
@@ -85,11 +87,11 @@
     if (!last) return { v: 'none', label: 'Not tested', cls: '', tip: 'Take the understanding test to find out.' };
     const yesDays = new Set(tries.filter((t) => t.verdict === 'yes').map((t) => day(t.at)));
     if (last.verdict === 'yes' && yesDays.size >= 2)
-      return { v: 'confirmed', label: '✅ Understood', cls: 'done', last, tip: 'Passed on two different days, so it has stuck.' };
+      return { v: 'confirmed', label: 'Understood', cls: 'done', last, tip: 'Passed on two different days, so it has stuck.' };
     if (last.verdict === 'yes')
-      return { v: 'yes', label: '✅ Understood once', cls: 'done', last, tip: 'Passed once. Take it again on another day to confirm it has stuck.' };
-    if (last.verdict === 'part') return { v: 'part', label: '🟡 Partly', cls: 'quiz', last, tip: 'Some parts are not clear yet.' };
-    return { v: 'no', label: '🔴 Not yet', cls: 'bad', last, tip: 'Not understood yet.' };
+      return { v: 'yes', label: 'Understood once', cls: 'done', last, tip: 'Passed once. Take it again on another day to confirm it has stuck.' };
+    if (last.verdict === 'part') return { v: 'part', label: 'Partly', cls: 'quiz', last, tip: 'Some parts are not clear yet.' };
+    return { v: 'no', label: 'Not yet', cls: 'bad', last, tip: 'Not understood yet.' };
   }
 
   /* ---- top bar ---- */
@@ -101,7 +103,14 @@
       if (d.chapter) parts.push(el('span', { class: 'sep' }, '/'), el('a', { href: `${root}/${d.course}/index.html#ch${d.chapter}` }, `${unit} ${d.chapter}`));
     }
     if (d.title) parts.push(el('span', { class: 'sep' }, '/'), el('span', { class: 'here' }, d.title));
-    parts.push(el('a', { class: 'mine', href: `${root}/progress.html` }, '📊 My progress'));
+    parts.push(el('a', { class: 'mine', href: `${root}/progress.html` }, 'My progress'));
+    const isDark = () => (document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
+    const tb = el('button', { class: 'theme', title: 'Switch light / dark' });
+    const label = () => { tb.textContent = isDark() ? 'Light' : 'Dark'; };
+    tb.onclick = () => { const t = isDark() ? 'light' : 'dark'; document.documentElement.dataset.theme = t; localStorage.setItem('course-sites:theme', t); label();
+      for (const fr of document.querySelectorAll('iframe')) try { fr.contentDocument.documentElement.dataset.theme = t; } catch {} };
+    label();
+    parts.push(tb);
     body.prepend(el('header', { class: 'topbar' }, el('div', { class: 'inner' }, parts)));
     if (d.title && !document.title) document.title = `${d.title} · Course Sites`;
   }

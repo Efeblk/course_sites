@@ -53,8 +53,8 @@
       el('div', { class: 'embed-bar' },
         el('span', { class: 'embed-title' }, title),
         el('span', { style: { flex: 1 } }),
-        el('button', { class: 'chip', onclick: () => { frame.src = href; } }, '↻ Restart'),
-        el('a', { class: 'btn chip', href, target: '_blank' }, '⤢ Full page')),
+        el('button', { class: 'chip', onclick: () => { frame.src = href; } }, 'Restart'),
+        el('a', { class: 'btn chip', href, target: '_blank' }, 'Open full page ↗')),
       frame);
   }
 
@@ -66,16 +66,16 @@
 
   fill(main,
     el('header', { class: 'lesson-hero' },
-      el('div', { class: 'kicker' }, `${C.code} · ${U} ${n} · Guided lesson`),
+      el('div', { class: 'kicker' }, `${C.code} — ${U} ${n} — guided lesson`),
       el('h1', {}, ch.title),
-      el('p', { class: 'goal' }, el('b', {}, '🎯 By the end you can: '), g.goal),
+      el('p', { class: 'goal' }, el('b', {}, 'By the end you can: '), g.goal),
       el('div', { class: 'row hero-meta' },
-        g.time ? el('span', { class: 'pill' }, '⏱ ' + g.time.replace('≈', '').trim()) : null,
-        el('span', { class: 'pill' }, `📚 ${steps.length} steps`),
-        el('span', { class: 'pill' }, 'Read → look at the picture → try the lab → answer the check')),
+        el('span', { class: 'pill' }, `${steps.length} steps`),
+        g.time ? el('span', { class: 'pill' }, 'about ' + g.time.replace('≈', '').trim()) : null,
+        el('span', { class: 'pill' }, 'read, look, try, check')),
       el('div', { class: 'hero-progress' }, el('div', { class: 'progressbar' }, barFill), barText),
       g.videos && g.videos.length ? el('details', { class: 'videos' },
-        el('summary', {}, `🎬 Prefer a video first? ${g.videos.length} suggestions (click to open)`),
+        el('summary', {}, `Prefer a video first? ${g.videos.length} YouTube searches`),
         el('div', { class: 'video-grid' }, g.videos.map(([label, q]) =>
           el('a', { class: 'video-card', href: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q), target: '_blank', rel: 'noopener' },
             el('span', { class: 'play' }, '▶'), el('span', {}, el('b', {}, label), el('span', { class: 'muted small' }, `YouTube: "${q}"`))))),
@@ -95,17 +95,17 @@
       el('span', { class: 'dot' }, done.has(i) ? '✓' : String(i + 1)), el('span', {}, s.t))));
     const d = [...done].filter((i) => i < steps.length).length;
     barFill.style.width = `${(100 * d) / steps.length}%`;
-    barText.textContent = d >= steps.length ? '✅ All steps done' : `${d} of ${steps.length} steps done`;
+    barText.textContent = d >= steps.length ? 'All steps done' : `${d} of ${steps.length} steps done`;
   }
 
   function checkBox(c, i) {
     const opts = shuffle(c.o.map((text, k) => ({ text, right: k === 0 })));
     const fb = el('div');
-    const box = el('section', { class: 'check' }, el('div', { class: 'sec-h' }, '✋ Quick check: did that make sense?'), el('div', { class: 'quiz-q' }, c.q));
+    const box = el('section', { class: 'check' }, el('div', { class: 'sec-h' }, 'Check', el('b', {}, 'Did that make sense?')), el('div', { class: 'quiz-q' }, c.q));
     const btns = opts.map((o) => el('button', { class: 'opt', onclick: () => {
       btns.forEach((b, k) => { b.disabled = true; if (opts[k].right) b.classList.add('right'); });
       if (!o.right) btns[opts.indexOf(o)].classList.add('wrong');
-      fill(fb, el('div', { class: 'callout ' + (o.right ? 'ok' : 'bad') }, el('b', {}, o.right ? '✅ Correct. ' : '❌ Not quite. '), c.why || '',
+      fill(fb, el('div', { class: 'callout ' + (o.right ? 'ok' : 'bad') }, el('b', {}, o.right ? 'Correct. ' : 'Not quite. '), c.why || '',
         o.right ? null : el('div', { class: 'small', style: { marginTop: '6px' } }, 'Read the big idea and the picture above again before you go on.')));
       finish(i); drawNav();
     } }, o.text));
@@ -117,7 +117,7 @@
     const a = labOf(l.href);
     const title = a ? a.title : l.href;
     return el('section', { class: 'try' },
-      el('div', { class: 'sec-h' }, '🧪 Try it yourself: ', title),
+      el('div', { class: 'sec-h' }, 'Try it yourself', el('b', {}, title)),
       a ? el('p', { class: 'small muted', style: { margin: '2px 0 8px' } }, a.desc) : null,
       el('ol', { class: 'todo' }, l.todo.map((t) => {
         const li = el('li', { html: t });
@@ -134,7 +134,7 @@
     const st = CS.testStatus(C.id, n);
     const panel = el('div', { class: 'tab-panel' });
     const tabs = [
-      ['🎮 Games', `${games.length} quick drills on the words and the steps. Play each one until you get everything right.`, () => {
+      ['Games', `${games.length} quick drills on the words and the steps. Play each one until you get everything right.`, () => {
         const pick = el('div', { class: 'row', style: { margin: '6px 0 10px' } });
         const holder = el('div');
         const show = (id, gm, btn) => {
@@ -148,14 +148,14 @@
         });
         return [pick, holder];
       }],
-      ['📝 Quiz', `${ch.quiz.length} exam-style questions, each with an explanation. Read every explanation, even when you got it right. Aim for 80% or more.` + (best ? ` Your best so far: ${best.score}/${best.total}.` : ''),
+      ['Quiz', `${ch.quiz.length} exam-style questions, each with an explanation. Read every explanation, even when you got it right. Aim for 80% or more.` + (best ? ` Your best so far: ${best.score}/${best.total}.` : ''),
         () => embed(`quiz.html?ch=${n}`, `${U} ${n} Quiz`)],
-      ['🃏 Flashcards', `${ch.cards.length} key terms. Say the answer out loud before you flip the card.`, () => embed(`cards.html?ch=${n}`, 'Flashcards')],
-      ['⚠️ Exam traps', 'The mistakes students make most often. Cover the right column and try to fix each mistake yourself.', () =>
+      ['Flashcards', `${ch.cards.length} key terms. Say the answer out loud before you flip the card.`, () => embed(`cards.html?ch=${n}`, 'Flashcards')],
+      ['Exam traps', 'The mistakes students make most often. Cover the right column and try to fix each mistake yourself.', () =>
         el('table', { class: 't' },
           el('tr', {}, el('th', {}, 'Students often say…'), el('th', {}, 'Correct version')),
           ch.traps.map(([a, b]) => el('tr', {}, el('td', {}, a), el('td', {}, b))))],
-      ['🎯 Did I understand it?', `An honest final test. There are no hints, and you say how sure you are about each answer, so a lucky guess doesn't count. It's best taken tomorrow, not straight after the lesson. Status: ${st.label}.`,
+      ['Did I understand it?', `An honest final test. There are no hints, and you say how sure you are about each answer, so a lucky guess doesn't count. It's best taken tomorrow, not straight after the lesson. Status: ${st.label}.`,
         () => embed(`test.html?ch=${n}`, 'Understanding test')],
     ];
     const bar = el('div', { class: 'tabs' });
@@ -166,8 +166,8 @@
     tabs.forEach(([label], k) => bar.append(el('button', { onclick: () => open(k) }, label)));
     setTimeout(() => open(0));
     return [
-      el('div', { class: 'bigidea' }, el('div', { class: 'sec-h' }, '🏁 You have seen every idea of this ' + U.toLowerCase()),
-        'Now make it stick. Work through the tabs from left to right: games (10 min), quiz (15 min), flashcards (5 min), exam traps. Come back tomorrow for the understanding test.'),
+      el('div', { class: 'bigidea plain' }, el('div', { class: 'sec-h' }, 'You have seen every idea of this ' + U.toLowerCase()),
+        el('div', {}, 'Now make it stick. Work through the tabs from left to right: games (10 min), quiz (15 min), flashcards (5 min), exam traps. Come back tomorrow for the understanding test.')),
       bar, panel,
       el('div', { class: 'callout ok' }, next
         ? ['When the quiz goes well, continue with ', el('a', { href: `learn.html?ch=${next.n}` }, `${U} ${next.n}: ${next.title} →`)]
@@ -183,7 +183,7 @@
       el('div', { class: 'step-kicker' }, `Step ${cur + 1} of ${steps.length}`),
       el('h2', { class: 'step-title' }, s.t),
       s.practice ? practice() : [
-        s.key ? el('div', { class: 'bigidea' }, el('div', { class: 'sec-h' }, '💡 The big idea'), el('div', { html: s.key })) : null,
+        s.key ? el('div', { class: 'bigidea' }, el('div', { class: 'sec-h' }, 'The big idea'), el('div', { html: s.key })) : null,
         s.fig ? CS.figure(s.fig) : null,
         el('div', { class: 'teach', html: s.html }),
         s.lab ? labBox(s.lab) : null,

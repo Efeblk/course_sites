@@ -53,7 +53,7 @@
   }
 
   function history(tries) {
-    const name = { yes: '✅ Understood', part: '🟡 Partly', no: '🔴 Not yet' };
+    const name = { yes: 'Understood', part: 'Partly', no: 'Not yet' };
     return el('div', { class: 'panel' }, el('h3', {}, 'Your earlier attempts'),
       el('table', { class: 't' },
         el('tr', {}, el('th', {}, 'When'), el('th', {}, 'Right & sure'), el('th', {}, 'Lucky / unsure'), el('th', {}, 'Sure but wrong'), el('th', {}, 'Gaps'), el('th', {}, 'Result')),
@@ -78,7 +78,7 @@
     const conf = el('div', { class: 'conf', style: { display: 'none' } },
       el('div', { class: 'check-h' }, 'How sure are you? Be honest. Nobody else sees this.'),
       el('div', { class: 'row' },
-        [['sure', '😎 Sure, I could explain why'], ['unsure', '🤔 Not sure'], ['guess', '🎲 Guessing']].map(([c, label]) =>
+        [['sure', 'Sure, I could explain why'], ['unsure', 'Not sure'], ['guess', 'Guessing']].map(([c, label]) =>
           el('button', { onclick: () => lock(pick, c) }, label))));
     const btns = opts.map((o, k) => el('button', { class: 'opt', onclick: () => {
       pick = o;
@@ -86,7 +86,7 @@
       idk.classList.remove('sel');
       conf.style.display = '';
     } }, `${k + 1}. ${o.text}`));
-    const idk = el('button', { class: 'opt idk', onclick: () => lock(null, 'idk') }, "🤷 I don't know");
+    const idk = el('button', { class: 'opt idk', onclick: () => lock(null, 'idk') }, "I don't know");
 
     function lock(o, c) {
       answers.push({ item, right: !!(o && o.right), conf: c, picked: o ? o.text : null });
@@ -122,9 +122,9 @@
 
     const pct = (x) => Math.round((100 * x) / total);
     const title = {
-      yes: st.v === 'confirmed' ? `✅ You understand ${U} ${n}, and it has stuck.` : `✅ You understand ${U} ${n}.`,
-      part: `🟡 You partly understand ${U} ${n}.`,
-      no: `🔴 Honestly: you don't understand ${U} ${n} yet.`,
+      yes: st.v === 'confirmed' ? `You understand ${U} ${n}, and it has stuck.` : `You understand ${U} ${n}.`,
+      part: `You partly understand ${U} ${n}.`,
+      no: `Honestly: you don't understand ${U} ${n} yet.`,
     }[verdict];
     const text = {
       yes: st.v === 'confirmed'
@@ -171,7 +171,7 @@
       el('div', { class: 'row', style: { marginTop: '14px' } },
         el('a', { class: 'btn', href: `learn.html?ch=${n}` }, 'Guided lesson'),
         el('a', { class: 'btn', href: `index.html#ch${n}` }, `Back to ${U} ${n}`),
-        el('a', { class: 'btn', href: `${CS.root}/progress.html` }, '📊 My progress'),
+        el('a', { class: 'btn', href: `${CS.root}/progress.html` }, 'My progress'),
         el('button', { onclick: intro }, 'Take it again')));
     scrollTo(0, 0);
   }

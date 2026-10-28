@@ -8,51 +8,25 @@
 </head>
 <body data-root=".">
   <main>
-    <h1>Course Sites</h1>
-    <p class="lead">Guided lessons, interactive simulations, games, quizzes and flashcards built from my course materials — to actually understand the material, not just memorize it.</p>
+    <header class="home-head">
+      <div>
+        <h1>Course Sites</h1>
+        <p class="lead">My own study notes for this term: guided lessons that teach each week from zero, with labs, games and quizzes inside them.</p>
+      </div>
+    </header>
 
     <div id="continue"></div>
 
-    <h2>Guided lessons: start here</h2>
-    <p class="muted">Each lesson teaches one week from zero, with pictures, labs you use right inside the page, quick checks, games and a quiz.</p>
-    <div class="grid" id="lessons"></div>
+    <div id="courses"><p class="muted">Loading…</p></div>
 
-    <h2>Courses</h2>
-    <div class="grid">
-      <a class="card" href="coe303/index.html">
-        <span class="tag">Fall 2026</span>
-        <h3 style="margin-top:8px">COE303 — Operating Systems</h3>
-        <p>Chapters 1–4: Introduction, OS Structures, Processes, Threads &amp; Concurrency.</p>
-      </a>
-      <a class="card" href="coe025/index.html">
-        <span class="tag">Fall 25-26</span>
-        <h3 style="margin-top:8px">COE025 — Natural Language Processing</h3>
-        <p>Weeks 1–4: NLP fundamentals, text classification, from counts to BERT (+ evaluation), POS &amp; NER.</p>
-      </a>
-      <a class="card" href="coe305/index.html">
-        <span class="tag">Fall 2026-27</span>
-        <h3 style="margin-top:8px">COE305 — Machine Learning</h3>
-        <p>Weeks 1–5: Introduction, supervised learning, dimensionality reduction (PCA), clustering (k-means, EM, hierarchical), decision trees.</p>
-      </a>
-      <a class="card" href="uni480/index.html">
-        <span class="tag">Fall 2026-27</span>
-        <h3 style="margin-top:8px">UNI480 — AI in Health Management</h3>
-        <p>Weeks 1–4: AI in healthcare, AI technologies (ML, DL, NLP, vision, robotics, generative AI), healthcare data, clinical decision-making.</p>
-      </a>
-    </div>
-
-    <h2>How to study (start here)</h2>
-    <ol>
-      <li>Open a course and go to the week (or chapter) your class is on.</li>
-      <li>Open its <b>guided lesson</b>. It teaches the topic from zero, one step at a time: read the big idea, look at the picture, use the lab right there in the page, answer the quick check, then click <b>Next</b>.</li>
-      <li>Want a video first? Each lesson lists YouTube searches for good explainer channels at the top.</li>
-      <li>The last step has the games, the quiz and the flashcards built in. Retake the quiz until you get 80% or more, and do the flashcards again the day before the exam.</li>
-      <li>The next day, take the <b>🎯 Did I understand it?</b> test. You get no hints and you rate how sure you are, so lucky guesses do not count. It tells you honestly whether you understood the week and which steps to redo. Pass it on two different days and the week counts as understood.</li>
+    <h2>How to study</h2>
+    <ol class="howto">
+      <li><b>Open the lesson</b> for the week your class is on.</li>
+      <li><b>Go step by step.</b> Read the big idea, study the picture, use the lab, answer the check.</li>
+      <li><b>Practise at the end.</b> Games, quiz and flashcards are in the last step. Aim for 80% on the quiz.</li>
+      <li><b>Test yourself tomorrow.</b> No hints, and guesses do not count. Pass on two days and the week counts as understood.</li>
     </ol>
-    <p><a class="btn primary-btn" href="progress.html">📊 My progress: what's done, what's understood, what to do next</a></p>
-
-    <h2>How this works</h2>
-    <p class="muted small">Every page is plain HTML + JavaScript — open it straight from the folder, no server or internet needed. Progress (visited activities, best quiz scores) is saved in your browser.</p>
+    <p class="muted small">Plain HTML and JavaScript, opened straight from the folder, with no server or internet needed (only the YouTube links need internet). Progress is saved in this browser.</p>
   </main>
   <script src="assets/js/common.js"></script>
   <script>
@@ -60,7 +34,13 @@
     (async () => {
       const { el, fill, progress, COURSES } = CS;
       const load = (src) => new Promise((ok) => { const s = document.createElement('script'); s.src = src; s.onload = s.onerror = ok; document.head.append(s); });
-      const cards = [], info = {};
+      const about = {
+        coe303: 'Fall 2026 · Chapters 1–4',
+        coe025: 'Fall 25-26 · Weeks 1–4',
+        coe305: 'Fall 2026-27 · Weeks 1–5',
+        uni480: 'Fall 2026-27 · Weeks 1–4',
+      };
+      const rows = [], info = {};
       for (const dir of Object.keys(COURSES)) {
         window.COURSE = null; window.GUIDE = null;
         await load(`${dir}/data.js`); await load(`${dir}/guide.js`);
@@ -68,17 +48,22 @@
         if (!C) continue;
         const U = COURSES[dir].unit;
         info[dir] = { C, G, U };
-        cards.push(el('div', { class: 'card' },
-          el('h3', {}, el('a', { href: `${dir}/index.html` }, `${C.code} — ${C.name}`)),
+        rows.push(el('section', { class: 'course-row' },
+          el('div', {},
+            el('div', { class: 'code' }, C.code),
+            el('h2', {}, el('a', { href: `${dir}/index.html` }, C.name)),
+            el('p', { class: 'about' }, [about[dir], C.lecturer].filter(Boolean).join(' · '))),
           el('ul', { class: 'lesson-list' }, C.chapters.filter((ch) => G[ch.n]).map((ch) => {
             const tot = G[ch.n].steps.length + 1, d = Math.min((progress.get(`guide:${C.id}:${ch.n}`) || []).length, tot);
             const st = CS.testStatus(C.id, ch.n);
+            const ok = st.v === 'confirmed' || st.v === 'yes';
             return el('li', {}, el('a', { href: `${dir}/learn.html?ch=${ch.n}` },
-              el('span', {}, `${U === 'Week' ? 'W' : 'Ch.'}${ch.n} ${ch.title}`),
-              el('span', { class: 'muted small', style: { whiteSpace: 'nowrap' } }, st.v === 'confirmed' || st.v === 'yes' ? st.label : d >= tot ? '✓ done' : d ? `${d}/${tot}` : '')));
+              el('span', { class: 'ln' }, `${U === 'Week' ? 'W' : 'Ch'}${ch.n}`),
+              el('span', { class: 'lt' }, ch.title),
+              el('span', { class: 'ls' + (ok || d >= tot ? ' done' : '') }, ok ? st.label : d >= tot ? 'read' : d ? `${d} / ${tot}` : '')));
           }))));
       }
-      fill(document.getElementById('lessons'), cards);
+      fill(document.getElementById('courses'), rows);
       const last = progress.get('last-lesson');
       const L = last && info[last.course];
       const ch = L && L.C.chapters.find((c) => c.n === last.n);
@@ -86,8 +71,8 @@
         const at = Number(progress.get(`guide:${L.C.id}:${ch.n}:at`)) || 0, tot = L.G[ch.n].steps.length + 1;
         fill(document.getElementById('continue'), el('div', { class: 'continue' },
           el('div', {}, el('div', { class: 'small muted' }, 'Continue where you left off'),
-            el('b', {}, `${L.C.code} · ${L.U} ${ch.n}: ${ch.title}`), el('span', { class: 'muted' }, ` (step ${at + 1} of ${tot})`)),
-          el('a', { class: 'btn primary-btn', href: `${last.course}/learn.html?ch=${ch.n}` }, '▶ Continue the lesson')));
+            el('b', {}, ch.title), el('span', { class: 'muted small' }, ` — ${L.C.code}, ${L.U.toLowerCase()} ${ch.n}, step ${at + 1} of ${tot}`)),
+          el('a', { class: 'btn primary-btn', href: `${last.course}/learn.html?ch=${ch.n}` }, 'Continue →')));
       }
     })();
   </script>
