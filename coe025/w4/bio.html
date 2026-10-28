@@ -117,7 +117,7 @@
       const g = tagsFor(GOLD).bio, mine = tagsFor(spans).bio;
       const tokOk = mine.filter((t, i) => t === g[i]).length;
       const exact = spans.filter((s) => GOLD.some((x) => key(x) === key(s))).length;
-      $('#checkOut').innerHTML = `Tokens: <b>${tokOk}/${toks.length}</b> · exact spans: <b>${exact}/${GOLD.length}</b>` + (exact === GOLD.length && spans.length === GOLD.length ? ' <b style="color:var(--ok)">— perfect 🎉</b>' : '');
+      $('#checkOut').innerHTML = `Tokens: <b>${tokOk}/${toks.length}</b> · exact spans: <b>${exact}/${GOLD.length}</b>` + (exact === GOLD.length && spans.length === GOLD.length ? ' <b style="color:var(--ok)">— perfect </b>' : '');
     };
     $('#reveal').onclick = () => { if ($('#text').value.trim() !== SLIDE) { $('#text').value = SLIDE; toks = SLIDE.split(' '); } spans = GOLD.map((s) => [...s]); anchor = null; pending = null; render(); $('#checkOut').textContent = 'Note: "United" alone is the airline (ORG); "Chicago" here is a route location (LOC).'; };
 

@@ -35,7 +35,7 @@
       <div class="row" style="justify-content:space-between">
         <h2 style="margin:0">Part 1 — Handle an interrupt</h2>
         <div class="row">
-          <button id="play" class="primary">⏸ Pause</button>
+          <button id="play" class="primary">Pause</button>
           <button id="step">Step ▶</button>
           <label>Speed <input id="speed" type="range" min="150" max="1500" value="700" style="width:120px"></label>
         </div>
@@ -43,10 +43,10 @@
       <p class="muted small">Tip: pause, press a device, then use <b>Step</b> to go through it one stage at a time.</p>
 
       <div class="dev" style="margin:10px 0">
-        <button data-irq="33">⌨️ Key pressed (keyboard)</button>
-        <button data-irq="46">💽 Disk read finished</button>
-        <button data-irq="32">⏱ Timer fires</button>
-        <button data-irq="0">➗ Program divides by zero</button>
+        <button data-irq="33">Key pressed (keyboard)</button>
+        <button data-irq="46">Disk read finished</button>
+        <button data-irq="32">Timer fires</button>
+        <button data-irq="0">Program divides by zero</button>
       </div>
 
       <div class="cpu">
@@ -190,8 +190,8 @@
 
     let timer = null;
     const speed = () => Number($('#speed').max) + Number($('#speed').min) - Number($('#speed').value);
-    function play() { clearInterval(timer); timer = setInterval(tick, speed()); $('#play').textContent = '⏸ Pause'; }
-    function pause() { clearInterval(timer); timer = null; $('#play').textContent = '▶ Play'; }
+    function play() { clearInterval(timer); timer = setInterval(tick, speed()); $('#play').textContent = 'Pause'; }
+    function pause() { clearInterval(timer); timer = null; $('#play').textContent = 'Play'; }
     $('#play').onclick = () => (timer ? pause() : play());
     $('#step').onclick = () => { pause(); tick(); };
     $('#speed').oninput = () => timer && play();

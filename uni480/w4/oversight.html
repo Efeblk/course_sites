@@ -78,7 +78,7 @@
         el('div', { class: 'reason small' }, 'Your reason:', el('select', { id: 'rsn' }, REASONS.map((r, k) => el('option', { value: k }, r)))),
         el('div', { class: 'choice' },
           el('button', { onclick: () => decide(true) }, '✓ Accept the AI output'),
-          el('button', { onclick: () => decide(false) }, '✋ Override / escalate')),
+          el('button', { onclick: () => decide(false) }, 'Override / escalate')),
         el('div', { id: 'fb' }));
     }
     function decide(accept) {

@@ -177,8 +177,8 @@
       $('#mq').replaceChildren(...(Q.length ? Q.map((m) => el('span', { class: 'msg' }, m)) : [el('span', { class: 'muted small' }, capN() === 0 ? 'no buffer — capacity 0' : 'empty')]));
       $('#sender').classList.toggle('blocked', sBlocked);
       $('#receiver').classList.toggle('blocked', rBlocked);
-      $('#sState').innerHTML = sBlocked ? `⏳ <b>blocked</b> in send(${pending})` : 'running';
-      $('#rState').innerHTML = (rBlocked ? '⏳ <b>blocked</b> in receive()' : 'running') + (got.length ? `<br>received: ${got.join(', ')}` : '');
+      $('#sState').innerHTML = sBlocked ? `<b>blocked</b> in send(${pending})` : 'running';
+      $('#rState').innerHTML = (rBlocked ? '<b>blocked</b> in receive()' : 'running') + (got.length ? `<br>received: ${got.join(', ')}` : '');
       $('#send').disabled = sBlocked;
       $('#recv').disabled = rBlocked;
     }

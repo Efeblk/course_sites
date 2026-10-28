@@ -28,8 +28,8 @@
     <h1>Process State Scheduler</h1>
     <p class="lead">Five states, six transitions (Fig 3.2). Click a process, then click the state to move it to. The OS will refuse transitions that can't happen.</p>
     <div class="row">
-      <button class="chip active" data-tab="scenario">🎯 Scenario challenge (Demo 1)</button>
-      <button class="chip" data-tab="sim">⏱ Round-robin simulator (Demo 2)</button>
+      <button class="chip active" data-tab="scenario">Scenario challenge (Demo 1)</button>
+      <button class="chip" data-tab="sim">Round-robin simulator (Demo 2)</button>
     </div>
 
     <div class="panel" id="scenarioPanel">
@@ -43,7 +43,7 @@
 
     <div class="panel" id="simPanel" style="display:none">
       <div class="row">
-        <button class="primary" id="run">▶ Run scheduler</button>
+        <button class="primary" id="run">Run scheduler</button>
         <button id="tick">One tick (10 ms)</button>
         <button id="launch">Launch ./a.out</button>
         <label><input type="checkbox" id="autoio" checked> I/O completes automatically after 30 ms</label>
@@ -189,7 +189,7 @@
       $('#scStep').textContent = sc < SCENARIO.length ? `Step ${sc + 1} / ${SCENARIO.length}` : 'Finished';
       $('#scMist').textContent = `mistakes: ${mistakes}`;
       if (sc >= SCENARIO.length) {
-        $('#scText').innerHTML = mistakes === 0 ? '🎉 Perfect run — you never broke the state diagram.' : `Done with ${mistakes} mistake${mistakes > 1 ? 's' : ''}. Play again to get a clean run.`;
+        $('#scText').innerHTML = mistakes === 0 ? 'Perfect run — you never broke the state diagram.' : `Done with ${mistakes} mistake${mistakes > 1 ? 's' : ''}. Play again to get a clean run.`;
         $('#scText').append(el('div', { style: { marginTop: '10px' } }, el('button', { class: 'primary', onclick: startScenario }, 'Play again')));
         return;
       }
@@ -242,7 +242,7 @@
         if (p.used >= 1) {
           const nextReady = procs.filter((x) => x.state === 'Ready').sort((a, b) => a.order - b.order)[0];
           if (nextReady) {
-            log(`⏱ timer at ${clock} ms: save PCB(${p.name}) → load PCB(${nextReady.name})`, 'k');
+            log(`timer at ${clock} ms: save PCB(${p.name}) → load PCB(${nextReady.name})`, 'k');
             move(p, 'Ready', true); move(nextReady, 'Running', true); switches++;
           } else p.used = 0; // nobody else ready: keeps running
         }
@@ -268,8 +268,8 @@
       }, n || 'idle')));
     }
     $('#run').onclick = () => {
-      if (timer) { clearInterval(timer); timer = null; $('#run').textContent = '▶ Run scheduler'; return; }
-      timer = setInterval(tick, 1100); $('#run').textContent = '⏸ Pause';
+      if (timer) { clearInterval(timer); timer = null; $('#run').textContent = 'Run scheduler'; return; }
+      timer = setInterval(tick, 1100); $('#run').textContent = 'Pause';
     };
     $('#tick').onclick = tick;
     $('#launch').onclick = () => {
@@ -280,7 +280,7 @@
 
     $$('[data-tab]').forEach((b) => (b.onclick = () => {
       $$('[data-tab]').forEach((x) => x.classList.toggle('active', x === b));
-      if (timer) { clearInterval(timer); timer = null; $('#run').textContent = '▶ Run scheduler'; }
+      if (timer) { clearInterval(timer); timer = null; $('#run').textContent = 'Run scheduler'; }
       const sim = b.dataset.tab === 'sim';
       $('#scenarioPanel').style.display = sim ? 'none' : '';
       $('#simPanel').style.display = sim ? '' : 'none';

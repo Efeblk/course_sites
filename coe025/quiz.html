@@ -56,6 +56,7 @@
             b.disabled = true;
             if (opts[j].right) b.classList.add('right');
           });
+          CS.srs.grade(CS.srs.qId(COURSE.id, n, item.q), o.right); // feeds the daily review
           if (o.right) score++;
           else { buttons[k].classList.add('wrong'); wrong.push(item); }
           feedback.replaceChildren(el('div', { class: `callout ${o.right ? 'ok' : 'bad'}` },

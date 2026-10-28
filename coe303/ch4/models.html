@@ -21,7 +21,7 @@
         <button class="chip" data-m="o2o">One-to-one</button>
         <button class="chip" data-m="m2m">Many-to-many</button>
         <label>CPU cores <select id="cores"><option>1</option><option selected>2</option><option>4</option></select></label>
-        <button class="primary" id="play">⏸ Pause</button>
+        <button class="primary" id="play">Pause</button>
       </div>
       <div class="ut-btns" id="ubtns" style="margin-top:10px"></div>
     </div>
@@ -161,8 +161,8 @@
     $('#cores').onchange = () => step(true);
     let timer = setInterval(() => step(false), 1000);
     $('#play').onclick = () => {
-      if (timer) { clearInterval(timer); timer = null; $('#play').textContent = '▶ Play'; }
-      else { timer = setInterval(() => step(false), 1000); $('#play').textContent = '⏸ Pause'; }
+      if (timer) { clearInterval(timer); timer = null; $('#play').textContent = 'Play'; }
+      else { timer = setInterval(() => step(false), 1000); $('#play').textContent = 'Pause'; }
     };
     reset();
   </script>

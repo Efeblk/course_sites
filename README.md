@@ -10,6 +10,10 @@ It ends with an honest **understanding test** (`test.html?ch=N`). It gives no fe
 are about each answer. Only answers that are right *and* sure count. "Understood" means at least 80% right and sure,
 with at most 1 confident mistake, and it is confirmed after passing on two different days.
 `progress.html` shows every course: what has been done, what has been understood, and the next step.
+`review.html` is the **daily review**: spaced repetition over every course's flashcards, lesson checks and quiz
+questions. Whatever you answer in a lesson, quiz or deck is scheduled (right: back in 1, 3, 7, 16, 35, 90 days;
+wrong: again in 10 minutes). **Search** (top bar, `Ctrl+K` or `/`) finds lesson steps, labs, terms and quiz questions
+across all courses.
 
 Open `index.html` in a browser. Everything is plain HTML/CSS/JS: no build
 step, no server, works offline. Progress is saved in the browser (localStorage).
@@ -37,9 +41,11 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
 ```
 index.html            course list
 assets/css/style.css  shared styles: "study notebook" look (paper/ink themes, serif headings,
-                      hairline rules, no gradients or emoji in the chrome); the top-bar
+                      hairline rules, no gradients, no emoji anywhere); the top-bar
                       button switches light/dark (saved as course-sites:theme)
-assets/js/common.js   top bar, progress, el() helper
+assets/js/common.js   top bar, progress, el() helper, search palette, spaced-repetition schedule (CS.srs),
+                      CS.loadCourses() for pages that read every course
+assets/js/review.js   daily review (review.html)
 assets/js/learn.js    guided-lesson engine (reads <course>/guide.js)
 assets/js/figs.js     lesson diagrams (flow, stack, compare, boxes, graph, plot, bars) from short descriptions
                       (static diagrams build themselves in when they scroll into view)
@@ -48,6 +54,7 @@ assets/js/anim.js     animated, step-by-step diagrams: a scene player with capti
 <course>/anims.js     that course's animations, used in guide.js as fig: { type: 'anim', name }
 assets/js/test.js     understanding test (lesson checks + quiz questions, confidence-rated)
 progress.html         progress dashboard across all courses
+review.html           daily spaced-repetition review across all courses
 assets/js/race.js     race-condition stepper (used by COE303 ch3 + ch4)
 assets/js/plot.js     tiny SVG plotting helper (COE025, COE305, UNI480)
 assets/js/ml.js       seeded RNG, least squares, entropy, colors (COE305, UNI480)

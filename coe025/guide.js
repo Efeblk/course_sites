@@ -16,7 +16,7 @@ window.GUIDE = {
       {
         t: 'What NLP is, and how it got here',
         key: 'NLP teaches computers to work with human language. The big problem behind everything is that <b>computers only understand numbers</b>, so every method is a way of turning text into numbers.',
-        fig: { type: 'flow', t: 'Five eras of NLP', items: [['📜', '1950s–80s', 'hand-written rules (ELIZA)', 'c3'], ['📊', '1990s', 'statistics: n-grams, HMMs', 'c0'], ['🧠', '2010s', 'deep learning: Word2Vec, LSTM', 'c1'], ['⚡', '2017+', 'Transformers, LLMs: BERT, GPT', 'c2'], ['🧰', 'Now', 'pick the right tool for the job', 'c4']] },
+        fig: { type: 'flow', t: 'Five eras of NLP', items: [['', '1950s–80s', 'hand-written rules (ELIZA)', 'c3'], ['', '1990s', 'statistics: n-grams, HMMs', 'c0'], ['', '2010s', 'deep learning: Word2Vec, LSTM', 'c1'], ['', '2017+', 'Transformers, LLMs: BERT, GPT', 'c2'], ['', 'Now', 'pick the right tool for the job', 'c4']] },
         html: `
 <p><b>Natural Language Processing (NLP)</b> = teaching computers to <b>understand, interpret and generate human language</b>. It stands on three pillars: <b>linguistics</b> (how language works), <b>statistics</b> (learning from data) and <b>computer science</b> (algorithms).</p>
 <table class="t">
@@ -27,13 +27,13 @@ window.GUIDE = {
   <tr><td>2017+</td><td><b>Transformers &amp; LLMs</b></td><td>BERT, GPT</td></tr>
   <tr><td>Now</td><td>Choosing the <b>right tool</b> for the job</td><td>Sometimes a tiny classic model beats an LLM</td></tr>
 </table>
-<div class="callout"><b>💡 The one problem behind everything this week:</b> computers only work with <b>numbers</b>. Every method you'll see is a different answer to "how do we turn text into numbers without losing its meaning?"</div>`,
+<div class="callout"><b>The one problem behind everything this week:</b> computers only work with <b>numbers</b>. Every method you'll see is a different answer to "how do we turn text into numbers without losing its meaning?"</div>`,
         check: { q: 'Which order of NLP eras is correct?', o: ['Rules → statistics → deep learning → Transformers/LLMs', 'Statistics → rules → Transformers → deep learning', 'Deep learning → rules → statistics → LLMs', 'Transformers → rules → statistics → deep learning'], why: '1950s rules (ELIZA) → 1990s statistics (n-grams, HMMs) → 2010s deep learning → 2017+ Transformers.' },
       },
       {
         t: 'Corpus, document, token — and the OOV problem',
         key: 'A model only knows the tokens it saw in training. A new word becomes <code>[UNK]</code> and its meaning is lost, unless we split it into <b>known subword pieces</b>.',
-        fig: [{ type: 'stack', t: 'From big to small', items: [['📚 Corpus', 'all 50,000 movie reviews', 'c3'], ['📄 Document', 'one review', 'c0'], ['🔤 Token', '"movie", "!", "n\'t"', 'c1']] }, { type: 'boxes', t: 'The word "unhappiness" was never seen in training', rows: [{ label: 'word-level', cells: [['[UNK] ❌ meaning lost', 'bad']] }, { label: 'subword (BPE)', cells: [['un', 'c0'], ['happi', 'c1'], ['ness', 'c2']] }], cap: 'Every subword piece is in the vocabulary, so nothing is lost.' }],
+        fig: [{ type: 'stack', t: 'From big to small', items: [['Corpus', 'all 50,000 movie reviews', 'c3'], ['Document', 'one review', 'c0'], ['Token', '"movie", "!", "n\'t"', 'c1']] }, { type: 'boxes', t: 'The word "unhappiness" was never seen in training', rows: [{ label: 'word-level', cells: [['[UNK] meaning lost', 'bad']] }, { label: 'subword (BPE)', cells: [['un', 'c0'], ['happi', 'c1'], ['ness', 'c2']] }], cap: 'Every subword piece is in the vocabulary, so nothing is lost.' }],
         html: `
 <table class="t">
   <tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
@@ -67,7 +67,7 @@ window.GUIDE = {
 <p>Take the vocabulary <code>[cat, dog, sat, the]</code>.</p>
 <h3>One-hot</h3>
 <p>Each word is a vector as long as the vocabulary with a single 1: cat = [1,0,0,0], dog = [0,1,0,0].</p>
-<div class="callout warn"><b>⚠ Problem:</b> every pair of words is equally far apart. "cat" is no closer to "dog" than to "the". One-hot vectors carry <b>no meaning</b>, and they get huge (50,000 words → 50,000 numbers).</div>
+<div class="callout warn"><b>Problem:</b> every pair of words is equally far apart. "cat" is no closer to "dog" than to "the". One-hot vectors carry <b>no meaning</b>, and they get huge (50,000 words → 50,000 numbers).</div>
 <h3>Bag of words (BoW)</h3>
 <p>A document becomes a vector of <b>word counts</b>: "the cat sat the" → [cat:1, dog:0, sat:1, the:2].</p>
 <ul>
@@ -91,7 +91,7 @@ window.GUIDE = {
 </ul>
 <h3>Worked example</h3>
 <p>3 documents. "the" is in all 3 → IDF = ln(3/3) = ln 1 = <b>0</b> → weight 0, ignored. "cat" is in only 1 → IDF = ln(3/1) ≈ <b>1.10</b> → a high weight.</p>
-<div class="callout"><b>💡 In one sentence:</b> TF-IDF is high for words that are <b>frequent in this document but rare in the others</b> — exactly the words that describe what the document is about.</div>`,
+<div class="callout"><b>In one sentence:</b> TF-IDF is high for words that are <b>frequent in this document but rare in the others</b> — exactly the words that describe what the document is about.</div>`,
         lab: { href: 'w1/vectors.html', todo: [
           'Click the preset <b>W1 TF-IDF slide (3 docs)</b>.',
           'Look at the vocabulary, one-hot, BoW and TF-IDF tables. Click the TF-IDF cell for <b>"cat"</b> and read the arithmetic — you should see the lecture\'s <b>0.183</b>.',
@@ -115,7 +115,7 @@ window.GUIDE = {
   <tr><td><b>Static</b></td><td>One vector per word, always the same</td><td>Word2Vec, GloVe, FastText</td></tr>
   <tr><td><b>Contextual</b></td><td>The vector depends on the sentence</td><td>ELMo, BERT, GPT</td></tr>
 </table>
-<div class="callout"><b>💡 Why contextual matters:</b> "I sat on the river <b>bank</b>" vs "I took a <b>bank</b> loan". A static model gives "bank" one vector for both; a contextual model gives two different vectors.</div>`,
+<div class="callout"><b>Why contextual matters:</b> "I sat on the river <b>bank</b>" vs "I took a <b>bank</b> loan". A static model gives "bank" one vector for both; a contextual model gives two different vectors.</div>`,
         lab: { href: 'w1/embeddings.html', todo: [
           'Click the preset <b>king − man + woman</b> and see where the result lands on the map.',
           'Try <b>puppy − dog + cat</b>.',
@@ -126,7 +126,7 @@ window.GUIDE = {
       {
         t: 'The model zoo: BERT, GPT, T5',
         key: '<b>Encoders read</b> (they understand), <b>decoders draft</b> (they generate), and <b>encoder-decoders transform</b> one text into another.',
-        fig: { type: 'compare', cols: [{ icon: '📖', t: 'Encoder-only: BERT', pts: ['understanding', 'classification, NER, question answering'], c: 'c0' }, { icon: '✍️', t: 'Decoder-only: GPT', pts: ['generation', 'writing text, chat'], c: 'c1' }, { icon: '🔁', t: 'Encoder-decoder: T5, BART', pts: ['text → text', 'translation, summarisation'], c: 'c3' }] },
+        fig: { type: 'compare', cols: [{ icon: '', t: 'Encoder-only: BERT', pts: ['understanding', 'classification, NER, question answering'], c: 'c0' }, { icon: '', t: 'Decoder-only: GPT', pts: ['generation', 'writing text, chat'], c: 'c1' }, { icon: '', t: 'Encoder-decoder: T5, BART', pts: ['text → text', 'translation, summarisation'], c: 'c3' }] },
         html: `
 <p>Modern models are built from Transformers (week 3 explains how). There are three families — know which job each does:</p>
 <table class="t">
@@ -135,13 +135,13 @@ window.GUIDE = {
   <tr><td><b>Decoder-only</b></td><td><b>GPT</b></td><td><b>Generation</b>: writing text, chat</td></tr>
   <tr><td><b>Encoder-decoder</b></td><td><b>T5, BART</b></td><td>Text → text: <b>translation, summarisation</b></td></tr>
 </table>
-<div class="callout"><b>💡 Memory hook:</b> the <b>E</b>ncoder r<b>e</b>ads (understands), the <b>D</b>ecoder <b>d</b>rafts (generates), both together <b>transform</b> one text into another.</div>`,
+<div class="callout"><b>Memory hook:</b> the <b>E</b>ncoder r<b>e</b>ads (understands), the <b>D</b>ecoder <b>d</b>rafts (generates), both together <b>transform</b> one text into another.</div>`,
         check: { q: 'You need to translate English to Turkish. Which architecture is the classic fit?', o: ['Encoder-decoder (T5/BART)', 'Encoder-only (BERT)', 'One-hot + Naive Bayes', 'Decoder-only is the only option'], why: 'Encoder-decoder models map one sequence to another: translation, summarisation.' },
       },
       {
         t: 'Bulldozer or nutcracker: when NOT to use an LLM',
         key: 'A huge LLM is not always best. For a simple, high-volume task, a <b>small classical model</b> can be cheaper, faster and even more accurate.',
-        fig: { type: 'boxes', t: 'Spam filter, 1 million emails a day (lecture example)', head: ['', '🚜 LLM (GPT-4 API)', '🌰 Naive Bayes'], rows: [{ label: 'Cost', cells: [['≈ $30,000 / month', 'bad'], ['< $10 / month', 'ok']] }, { label: 'Accuracy', cells: [['98.5%', 'warn'], ['99.2%', 'ok']] }, { label: 'Latency', cells: [['100–1000 ms', 'bad'], ['< 10 ms', 'ok']] }] },
+        fig: { type: 'boxes', t: 'Spam filter, 1 million emails a day (lecture example)', head: ['', 'LLM (GPT-4 API)', 'Naive Bayes'], rows: [{ label: 'Cost', cells: [['≈ $30,000 / month', 'bad'], ['< $10 / month', 'ok']] }, { label: 'Accuracy', cells: [['98.5%', 'warn'], ['99.2%', 'ok']] }, { label: 'Latency', cells: [['100–1000 ms', 'bad'], ['< 10 ms', 'ok']] }] },
         html: `
 <p><i>"Don't use a bulldozer to crack a chestnut."</i> The lecture's example, spam filtering 1 million emails a day:</p>
 <table class="t">
@@ -151,7 +151,7 @@ window.GUIDE = {
   <tr><td>Latency</td><td>100–1000 ms</td><td>&lt; 10 ms</td></tr>
 </table>
 <p>Other factors that favour a small classical model: <b>interpretability</b> (you can see why), <b>privacy</b> (data stays in-house), <b>customisation</b>, and <b>no hallucinations</b>.</p>
-<div class="callout warn"><b>📝 Exam tip:</b> be able to list the deciding factors: cost, latency, interpretability, privacy, customisation, hallucination risk.</div>`,
+<div class="callout warn"><b>Exam tip:</b> be able to list the deciding factors: cost, latency, interpretability, privacy, customisation, hallucination risk.</div>`,
         lab: { href: 'w1/right-tool.html', todo: [
           'In section 1 use the slide numbers, then raise tokens per email to 300 and watch the cost gap grow.',
           'In section 2 compare the latencies with the 100 ms line.',
@@ -194,7 +194,7 @@ window.GUIDE = {
       {
         t: 'The ML pipeline, and why classical models first',
         key: 'Every project follows the same loop: <b>data → features → model → prediction → evaluation</b>, then improve and go round again.',
-        fig: { type: 'flow', items: [['🗃️', 'Data', 'labelled examples', 'c3'], ['🔢', 'Features', 'BoW, TF-IDF', 'c0'], ['🤖', 'Model', 'NB, LR, SVM', 'c1'], ['🏷️', 'Prediction', 'new text → label', 'c2'], ['📏', 'Evaluation', 'how good? then improve ↺', 'c4']] },
+        fig: { type: 'flow', items: [['', 'Data', 'labelled examples', 'c3'], ['', 'Features', 'BoW, TF-IDF', 'c0'], ['', 'Model', 'NB, LR, SVM', 'c1'], ['', 'Prediction', 'new text → label', 'c2'], ['', 'Evaluation', 'how good? then improve ↺', 'c4']] },
         html: `
 <p style="text-align:center"><b>1 Data → 2 Features → 3 Model → 4 Prediction → 5 Evaluation</b> → back to data</p>
 <ol>
@@ -206,12 +206,12 @@ window.GUIDE = {
 </ol>
 <h3>Why start with classical methods?</h3>
 <p>They are <b>fast to train, easy to interpret, work with small data, cheap</b>, and give a <b>strong baseline</b> to compare fancier models against.</p>
-<div class="callout"><b>💡 Project 1 plan:</b> start with Naive Bayes as the baseline → try logistic regression → if time permits, SVM.</div>`,
+<div class="callout"><b>Project 1 plan:</b> start with Naive Bayes as the baseline → try logistic regression → if time permits, SVM.</div>`,
       },
       {
         t: 'Naive Bayes: count, multiply, compare',
         key: 'For each class, multiply <b>how common the class is</b> by <b>how likely each word is in that class</b>. The bigger product wins. Add-one smoothing stops a single unseen word from making it 0.',
-        fig: { type: 'flow', t: 'Classifying "Win free tickets"', items: [['🔢', 'Count words per class', 'in the training emails', 'c0'], ['⚖️', 'Prior P(class)', 'spam 2/4, ham 2/4', 'c3'], ['✖️', 'Multiply P(word | class)', 'with +1 smoothing', 'c2'], ['🏆', 'Compare', 'spam score > ham score → spam', 'c1']], cap: 'Without smoothing, "win" never appears in ham, so P(win | ham) = 0 and the whole ham product becomes 0.' },
+        fig: { type: 'flow', t: 'Classifying "Win free tickets"', items: [['', 'Count words per class', 'in the training emails', 'c0'], ['', 'Prior P(class)', 'spam 2/4, ham 2/4', 'c3'], ['', 'Multiply P(word | class)', 'with +1 smoothing', 'c2'], ['', 'Compare', 'spam score > ham score → spam', 'c1']], cap: 'Without smoothing, "win" never appears in ham, so P(win | ham) = 0 and the whole ham product becomes 0.' },
         html: `
 <p>Naive Bayes asks: <i>"Given these words, which class is more likely?"</i></p>
 <p style="text-align:center"><b>P(class | text) ∝ P(class) × P(word₁ | class) × P(word₂ | class) × …</b></p>
@@ -227,7 +227,7 @@ window.GUIDE = {
   <li>"win" and "free" appear in spam, never in ham. "tickets" appears nowhere.</li>
   <li>Without smoothing, P(win | ham) = 0 → the whole ham product is <b>0</b>. And P(tickets | spam) = 0 too → spam is 0 as well. One unseen word kills everything!</li>
 </ul>
-<div class="callout"><b>💡 Laplace (add-one) smoothing:</b> P(word | class) = (count + 1) / (tokens in class + |V|). No probability is ever 0. In practice we add <b>logs</b> instead of multiplying tiny numbers (log space), to avoid underflow.</div>
+<div class="callout"><b>Laplace (add-one) smoothing:</b> P(word | class) = (count + 1) / (tokens in class + |V|). No probability is ever 0. In practice we add <b>logs</b> instead of multiplying tiny numbers (log space), to avoid underflow.</div>
 <p>Pros: very fast, works with little data. Cons: the independence assumption is unrealistic. It is a <b>generative</b> model (models how each class produces words).</p>`,
         lab: { href: 'w2/naive-bayes.html', todo: [
           'Choose the <b>W2 spam slide</b> training data and the text "Win free tickets". Read the prediction and the learned likelihoods.',
@@ -254,7 +254,7 @@ window.GUIDE = {
   <li>Pros: <b>interpretable</b> weights, probability output.</li>
   <li>Cons: <b>linear</b> decision boundary. It is <b>discriminative</b> (models the boundary directly).</li>
 </ul>
-<div class="callout warn"><b>⚠ "not good":</b> with single words, "not good" still contains "good" → positive. Adding the <b>bigram</b> "not good" as a feature fixes it.</div>`,
+<div class="callout warn"><b>"not good":</b> with single words, "not good" still contains "good" → positive. Adding the <b>bigram</b> "not good" as a feature fixes it.</div>`,
         lab: { href: 'w2/logreg.html', todo: [
           'In section 1 drag the weights and bias; follow z → σ(z) on the curve. Check that at z = 0, p = 0.5.',
           'In section 2 set a true label and click <b>Take one gradient step</b> a few times. Watch p move towards the label.',
@@ -284,7 +284,7 @@ window.GUIDE = {
       {
         t: 'Feature engineering',
         key: 'The model only sees the numbers you give it. <b>Better features</b> (n-grams, TF-IDF, handling negation…) often help more than a fancier model.',
-        fig: { type: 'compare', cols: [{ icon: '🧺', t: 'Words', pts: ['bag of words', 'n-grams: "not good" as one feature'], c: 'c0' }, { icon: '⚖️', t: 'Weights', pts: ['TF-IDF instead of raw counts'], c: 'c1' }, { icon: '🛠️', t: 'Extra signals', pts: ['text length', 'number of "!"', 'ALL CAPS words'], c: 'c2' }] },
+        fig: { type: 'compare', cols: [{ icon: '', t: 'Words', pts: ['bag of words', 'n-grams: "not good" as one feature'], c: 'c0' }, { icon: '', t: 'Weights', pts: ['TF-IDF instead of raw counts'], c: 'c1' }, { icon: '', t: 'Extra signals', pts: ['text length', 'number of "!"', 'ALL CAPS words'], c: 'c2' }] },
         html: `
 <p><i>"Good features = good performance."</i> A classical model only sees the numbers you give it. Four families:</p>
 <table class="t">
@@ -294,7 +294,7 @@ window.GUIDE = {
   <tr><td><b>Linguistic</b></td><td>POS tags, sentiment lexicons, named entities</td></tr>
   <tr><td><b>Domain-specific</b></td><td>Spam words ("FREE", "WIN"), emoticons, URLs</td></tr>
 </table>
-<div class="callout"><b>💡 Pro tip:</b> combining feature types usually works best. "WON $1000000!!!" is caught by statistical features (!!!, caps) <i>and</i> lexical ones ("won").</div>`,
+<div class="callout"><b>Pro tip:</b> combining feature types usually works best. "WON $1000000!!!" is caught by statistical features (!!!, caps) <i>and</i> lexical ones ("won").</div>`,
         lab: { href: 'w2/features.html', todo: [
           'Click the slide examples one by one (WON $1000000!!!, FREE iPhone, Meeting 3pm…) and watch the four feature families fill in.',
           'Look at the bars: which features push the toy scorer towards spam?',
@@ -321,7 +321,7 @@ window.GUIDE = {
       {
         t: 'The big picture & honest evaluation (no leakage!)',
         key: 'Fit everything (vocabulary, IDF, model) on the <b>training set only</b>. The test set is the final exam: you look at it <b>once</b>, at the end.',
-        fig: [{ type: 'flow', items: [['📝', 'Text', '', 'c3'], ['🔢', 'Representation', 'counts / TF-IDF / vectors', 'c0'], ['🤖', 'Classifier', 'classical or neural', 'c1'], ['🏷️', 'Label', '', 'c2']] }, { type: 'boxes', t: 'Three splits (for example 70 / 15 / 15)', rows: [{ cells: [['Train: fit vocabulary, IDF and model', 'c0'], ['', 'c0'], ['', 'c0'], ['', 'c0'], ['Validation: choose settings', 'c2'], ['Test: report once', 'c4']] }], cap: 'fit_transform on train, only transform on validation and test. Anything else leaks the test data into training.' }],
+        fig: [{ type: 'flow', items: [['', 'Text', '', 'c3'], ['', 'Representation', 'counts / TF-IDF / vectors', 'c0'], ['', 'Classifier', 'classical or neural', 'c1'], ['', 'Label', '', 'c2']] }, { type: 'boxes', t: 'Three splits (for example 70 / 15 / 15)', rows: [{ cells: [['Train: fit vocabulary, IDF and model', 'c0'], ['', 'c0'], ['', 'c0'], ['', 'c0'], ['Validation: choose settings', 'c2'], ['Test: report once', 'c4']] }], cap: 'fit_transform on train, only transform on validation and test. Anything else leaks the test data into training.' }],
         html: `
 <p style="text-align:center"><b>text → representation (counts / TF-IDF / vectors) → classifier (classical or neural) → label</b></p>
 <p><b>Training</b> learns parameters; <b>inference</b> reuses them on new text.</p>
@@ -332,14 +332,14 @@ window.GUIDE = {
   <tr><td><b>Validation</b></td><td>Choose between models and settings</td></tr>
   <tr><td><b>Test</b></td><td>Used <b>once</b>, at the very end, to report the final score</td></tr>
 </table>
-<div class="callout warn"><b>⚠ Data leakage:</b> if the vocabulary or IDF is computed on the test data too (e.g. <code>fit_transform</code> on test), information from the test set "leaks" into training and the score looks better than it really is. Rule: <code>fit</code> on train, only <code>transform</code> on validation/test.</div>
-<div class="callout"><b>💡 Exam analogy:</b> the test set is the final exam. If you've seen the exam questions while studying, your grade says nothing about what you actually learned.</div>`,
+<div class="callout warn"><b>Data leakage:</b> if the vocabulary or IDF is computed on the test data too (e.g. <code>fit_transform</code> on test), information from the test set "leaks" into training and the score looks better than it really is. Rule: <code>fit</code> on train, only <code>transform</code> on validation/test.</div>
+<div class="callout"><b>Exam analogy:</b> the test set is the final exam. If you've seen the exam questions while studying, your grade says nothing about what you actually learned.</div>`,
         check: { q: 'Which is data leakage?', o: ['Computing the TF-IDF vocabulary on train + test together', 'Fitting the vectorizer on train and transforming test', 'Using a validation set to choose the model', 'Reporting the test score once at the end'], why: 'Anything fitted on test data leaks information. Fit on train only.' },
       },
       {
         t: 'The math of NB, LR and SVM in one page',
         key: 'Three classic models, three ideas: NB <b>multiplies probabilities</b>, LR <b>squashes a weighted sum</b>, SVM <b>maximises the margin</b>.',
-        fig: { type: 'compare', cols: [{ icon: '🎲', t: 'Naive Bayes', pts: ['ĉ = argmax P(c) ∏ P(wᵢ | c)', 'generative', 'add-one smoothing'], c: 'c0' }, { icon: '📈', t: 'Logistic regression', pts: ['p = σ(w·x + b)', 'discriminative', 'loss: cross-entropy'], c: 'c1' }, { icon: '🛣️', t: 'SVM', pts: ['sign(w·x + b)', 'maximum margin', 'loss: hinge; C sets the trade-off'], c: 'c2' }] },
+        fig: { type: 'compare', cols: [{ icon: '', t: 'Naive Bayes', pts: ['ĉ = argmax P(c) ∏ P(wᵢ | c)', 'generative', 'add-one smoothing'], c: 'c0' }, { icon: '', t: 'Logistic regression', pts: ['p = σ(w·x + b)', 'discriminative', 'loss: cross-entropy'], c: 'c1' }, { icon: '', t: 'SVM', pts: ['sign(w·x + b)', 'maximum margin', 'loss: hinge; C sets the trade-off'], c: 'c2' }] },
         html: `
 <table class="t">
   <tr><th>Model</th><th>Score</th><th>Loss / training</th></tr>
@@ -367,7 +367,7 @@ window.GUIDE = {
 <p>Counts <b>global co-occurrence</b> (how often word pairs appear near each other in the whole corpus) and fits vectors to those counts.</p>
 <h3>FastText</h3>
 <p>Represents a word as <b>character n-grams</b>: "<code>&lt;ev</code>", "<code>evl</code>", … So it can build vectors for <b>rare and unseen words</b> from their pieces.</p>
-<div class="callout"><b>💡 Memory hook:</b> <b>C</b>BOW = <b>C</b>ontext → center. Skip-gram = the opposite. <b>G</b>loVe = <b>G</b>lobal counts. <b>F</b>astText = <b>F</b>ragments.</div>`,
+<div class="callout"><b>Memory hook:</b> <b>C</b>BOW = <b>C</b>ontext → center. Skip-gram = the opposite. <b>G</b>loVe = <b>G</b>lobal counts. <b>F</b>astText = <b>F</b>ragments.</div>`,
         lab: { href: 'w3/word2vec.html', todo: [
           'Section 1: click words to make them the center and compare the CBOW and skip-gram training pairs.',
           'Section 2–3: follow the CBOW forward pass and the negative-sampling loss.',
@@ -445,7 +445,7 @@ window.GUIDE = {
   <tr><td><b>Causal</b></td><td>GPT decoder</td><td>A token can't see <b>future</b> tokens</td></tr>
   <tr><td>Padding</td><td>Everyone</td><td>Nobody attends to PAD</td></tr>
 </table>
-<div class="callout warn"><b>⚠ Trap:</b> an attention <b>mask</b> is not the <code>[MASK]</code> token. The mask blocks positions; [MASK] is a word hidden during BERT pretraining.</div>`,
+<div class="callout warn"><b>Trap:</b> an attention <b>mask</b> is not the <code>[MASK]</code> token. The mask blocks positions; [MASK] is a word hidden during BERT pretraining.</div>`,
         lab: { href: 'w3/attention.html', todo: [
           'Section 1: load the <b>Slide 25</b> preset and check the weights [.25, .50, .25] — each row sums to 1.',
           'Switch the mask between bidirectional, causal and "token 3 is PAD" and see which weights become 0.',
@@ -456,7 +456,7 @@ window.GUIDE = {
       {
         t: 'Transformers and BERT',
         key: 'BERT is a stack of attention layers. It is <b>pretrained</b> by guessing hidden words, then <b>fine-tuned</b> with a small head on the <code>[CLS]</code> output for your task.',
-        fig: [{ type: 'boxes', t: 'BERT input: each vector = token + segment + position embedding', rows: [{ label: 'token', cells: [['[CLS]', 'c2'], ['the', 'c0'], ['film', 'c0'], ['was', 'c0'], ['great', 'c0'], ['[SEP]', 'c2']] }, { label: '+ segment', cells: [['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3']] }, { label: '+ position', cells: [['0', 'c5'], ['1', 'c5'], ['2', 'c5'], ['3', 'c5'], ['4', 'c5'], ['5', 'c5']] }] }, { type: 'flow', items: [['📚', 'Pretrain', '"The film was [MASK]" → guess', 'c0'], ['🧠', 'Transformer layers', 'all tokens in parallel', 'c3'], ['🎯', '[CLS] vector', '', 'c2'], ['🏷️', 'Fine-tuned head', '→ positive', 'c1']] }],
+        fig: [{ type: 'boxes', t: 'BERT input: each vector = token + segment + position embedding', rows: [{ label: 'token', cells: [['[CLS]', 'c2'], ['the', 'c0'], ['film', 'c0'], ['was', 'c0'], ['great', 'c0'], ['[SEP]', 'c2']] }, { label: '+ segment', cells: [['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3'], ['A', 'c3']] }, { label: '+ position', cells: [['0', 'c5'], ['1', 'c5'], ['2', 'c5'], ['3', 'c5'], ['4', 'c5'], ['5', 'c5']] }] }, { type: 'flow', items: [['', 'Pretrain', '"The film was [MASK]" → guess', 'c0'], ['', 'Transformer layers', 'all tokens in parallel', 'c3'], ['', '[CLS] vector', '', 'c2'], ['', 'Fine-tuned head', '→ positive', 'c1']] }],
         html: `
 <p>A <b>Transformer</b> stacks attention layers (plus small feed-forward layers). No recurrence, so it processes all tokens in parallel.</p>
 <h3>BERT's input</h3>
@@ -466,7 +466,7 @@ window.GUIDE = {
   <li><b>Pretraining</b> on huge unlabelled text with the <b>masked language model</b>: "The film was [MASK]" → predict the hidden word. Learns language in general.</li>
   <li><b>Fine-tuning</b> on your labelled data: put a small <b>classification head</b> on the [CLS] output and train for your task (e.g. sentiment).</li>
 </ol>
-<div class="callout warn"><b>⚠ Truncation:</b> BERT has a maximum length (e.g. 512 tokens). Long reviews get cut — and if the decisive sentence ("…but the ending ruined it") is at the end, it's lost.</div>`,
+<div class="callout warn"><b>Truncation:</b> BERT has a maximum length (e.g. 512 tokens). Long reviews get cut — and if the decisive sentence ("…but the ending ruined it") is at the end, it's lost.</div>`,
         check: { q: 'How is BERT pretrained?', o: ['By predicting masked words in unlabelled text', 'By classifying sentiment from the start', 'By generating text left to right only', 'By counting word co-occurrences'], why: 'Masked language modelling, then fine-tuning a classification head.' },
       },
       {
@@ -493,7 +493,7 @@ window.GUIDE = {
   <li>Recall = 30 / 40 = <b>0.75</b></li>
   <li>F1 = 60 / (60 + 5 + 10) = <b>0.80</b></li>
 </ul>
-<div class="callout warn"><b>⚠ Always compare with the majority baseline.</b> If 90% of reviews are positive, "always positive" already gets 90% accuracy.</div>`,
+<div class="callout warn"><b>Always compare with the majority baseline.</b> If 90% of reviews are positive, "always positive" already gets 90% accuracy.</div>`,
         lab: { href: 'w3/metrics.html', todo: [
           'Click <b>Slide 33 example</b> and check the four numbers above.',
           'Click <b>"Always negative" baseline</b>: high accuracy possible, but recall = 0.',
@@ -531,7 +531,7 @@ window.GUIDE = {
       {
         t: 'Open vs closed classes and the UD tagset',
         key: 'Ask: <b>can someone invent a new word of this type tomorrow?</b> Yes, so it is an <b>open</b> class (nouns, verbs). No, so it is a <b>closed</b> class (the, in, and).',
-        fig: { type: 'compare', vs: true, cols: [{ icon: '🌱', t: 'Open class: content words', pts: ['NOUN, VERB, ADJ, ADV, PROPN, INTJ', 'new ones appear: "selfie", "to google"'], c: 'c1' }, { icon: '🔒', t: 'Closed class: function words', pts: ['DET, PRON, ADP, CCONJ, SCONJ, AUX, PART', 'small fixed set: the, she, in, and, is, not'], c: 'c4' }], cap: 'Other: NUM, PUNCT, SYM, X. 17 UD tags in total.' },
+        fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Open class: content words', pts: ['NOUN, VERB, ADJ, ADV, PROPN, INTJ', 'new ones appear: "selfie", "to google"'], c: 'c1' }, { icon: '', t: 'Closed class: function words', pts: ['DET, PRON, ADP, CCONJ, SCONJ, AUX, PART', 'small fixed set: the, she, in, and, is, not'], c: 'c4' }], cap: 'Other: NUM, PUNCT, SYM, X. 17 UD tags in total.' },
         html: `
 <table class="t">
   <tr><th>Class</th><th>Meaning</th><th>Universal Dependencies tags</th></tr>
@@ -540,7 +540,7 @@ window.GUIDE = {
   <tr><td>Other</td><td></td><td>NUM, PUNCT, SYM, X</td></tr>
 </table>
 <p>UD has <b>17</b> tags in total.</p>
-<div class="callout"><b>💡 Test:</b> can you invent a new word of this type tomorrow? A new noun — yes ("a selfie"). A new preposition — no. So nouns are open, prepositions closed.</div>`,
+<div class="callout"><b>Test:</b> can you invent a new word of this type tomorrow? A new noun — yes ("a selfie"). A new preposition — no. So nouns are open, prepositions closed.</div>`,
         check: { q: 'Which is a closed-class category?', o: ['Determiners (the, a, this)', 'Nouns', 'Verbs', 'Adjectives'], why: 'Function words (DET, PRON, ADP, CONJ, AUX, PART) form closed classes.' },
       },
       {
@@ -607,7 +607,7 @@ window.GUIDE = {
 <h3>How many tags?</h3>
 <p>With <b>n</b> entity types: <b>BIO = 2n + 1</b> (a B and an I for each type, plus O). Variants: <b>IO = n + 1</b>, <b>BIOES = 4n + 1</b> (adds E = end, S = single-token entity).</p>
 <p>Example: 4 types (PER, ORG, LOC, GPE) → BIO has 2·4 + 1 = <b>9</b> tags.</p>
-<div class="callout warn"><b>⚠ Invalid sequences:</b> <code>O I-PER</code> (an I can't follow O) and <code>B-PER I-ORG</code> (the type can't switch inside a span).</div>
+<div class="callout warn"><b>Invalid sequences:</b> <code>O I-PER</code> (an I can't follow O) and <code>B-PER I-ORG</code> (the type can't switch inside a span).</div>
 <p>Algorithms for POS and NER: HMMs, CRFs/MEMMs, neural sequence models (RNNs, Transformers), fine-tuned BERT — all <b>supervised</b>, needing hand-labelled data.</p>`,
         lab: { href: 'w4/bio.html', todo: [
           'Section 1: mark the entities in the slide sentence (first word, last word, type) and click <b>Check against the slide</b>.',

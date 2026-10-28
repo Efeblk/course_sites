@@ -24,30 +24,24 @@
       <li><b>Open the lesson</b> for the week your class is on.</li>
       <li><b>Go step by step.</b> Read the big idea, study the picture, use the lab, answer the check.</li>
       <li><b>Practise at the end.</b> Games, quiz and flashcards are in the last step. Aim for 80% on the quiz.</li>
+      <li><b>Review every day.</b> The daily review brings back the cards and questions you met, right before you would forget them.</li>
       <li><b>Test yourself tomorrow.</b> No hints, and guesses do not count. Pass on two days and the week counts as understood.</li>
     </ol>
     <p class="muted small">Plain HTML and JavaScript, opened straight from the folder, with no server or internet needed (only the YouTube links need internet). Progress is saved in this browser.</p>
   </main>
   <script src="assets/js/common.js"></script>
   <script>
-    /* lesson list per course + "continue where you left off". Each data.js / guide.js sets window.COURSE / GUIDE, so load one at a time. */
+    /* lesson list per course, "continue where you left off" and the daily review */
     (async () => {
-      const { el, fill, progress, COURSES } = CS;
-      const load = (src) => new Promise((ok) => { const s = document.createElement('script'); s.src = src; s.onload = s.onerror = ok; document.head.append(s); });
+      const { el, fill, progress } = CS;
       const about = {
         coe303: 'Fall 2026 · Chapters 1–4',
         coe025: 'Fall 25-26 · Weeks 1–4',
         coe305: 'Fall 2026-27 · Weeks 1–5',
         uni480: 'Fall 2026-27 · Weeks 1–4',
       };
-      const rows = [], info = {};
-      for (const dir of Object.keys(COURSES)) {
-        window.COURSE = null; window.GUIDE = null;
-        await load(`${dir}/data.js`); await load(`${dir}/guide.js`);
-        const C = window.COURSE, G = window.GUIDE || {};
-        if (!C) continue;
-        const U = COURSES[dir].unit;
-        info[dir] = { C, G, U };
+      const rows = [], info = await CS.loadCourses();
+      for (const [dir, { C, G, U }] of Object.entries(info)) {
         rows.push(el('section', { class: 'course-row' },
           el('div', {},
             el('div', { class: 'code' }, C.code),
@@ -74,6 +68,12 @@
             el('b', {}, ch.title), el('span', { class: 'muted small' }, ` — ${L.C.code}, ${L.U.toLowerCase()} ${ch.n}, step ${at + 1} of ${tot}`)),
           el('a', { class: 'btn primary-btn', href: `${last.course}/learn.html?ch=${ch.n}` }, 'Continue →')));
       }
+      const due = CS.srs.dueCount(), met = Object.keys(CS.srs.all()).length;
+      document.getElementById('continue').append(el('div', { class: 'continue rv' },
+        el('div', {}, el('div', { class: 'small muted' }, 'Daily review'),
+          el('b', {}, due ? `${due} card${due > 1 ? 's' : ''} and questions due` : met ? 'Nothing due right now' : 'Spaced repetition across all courses'),
+          el('span', { class: 'muted small' }, due ? ' — a few minutes keeps them in memory' : met ? ` — ${met} in rotation` : ' — what you answer in lessons comes back right before you would forget it')),
+        el('a', { class: 'btn' + (due ? ' primary-btn' : ''), href: 'review.html' }, due ? 'Review now →' : 'Open review →')));
     })();
   </script>
 </body>

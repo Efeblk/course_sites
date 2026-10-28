@@ -107,6 +107,7 @@
       if (!o.right) btns[opts.indexOf(o)].classList.add('wrong');
       fill(fb, el('div', { class: 'callout ' + (o.right ? 'ok' : 'bad') }, el('b', {}, o.right ? 'Correct. ' : 'Not quite. '), c.why || '',
         o.right ? null : el('div', { class: 'small', style: { marginTop: '6px' } }, 'Read the big idea and the picture above again before you go on.')));
+      CS.srs.grade(CS.srs.qId(C.id, n, c.q), o.right); // the daily review asks it again later
       finish(i); drawNav();
     } }, o.text));
     box.append(...btns, fb);

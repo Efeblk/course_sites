@@ -17,7 +17,7 @@ window.GUIDE = {
       {
         t: 'What machine learning is — and when we need it',
         key: 'In normal programming a human writes the rules. In machine learning we give the computer <b>examples</b>, and it <b>finds the rules</b> itself (it builds a model).',
-        fig: { type: 'compare', vs: true, cols: [{ icon: '👩‍💻', t: 'Normal programming', pts: ['rules + data → answers', 'a human writes IF … THEN …'], c: 'c0' }, { icon: '🤖', t: 'Machine learning', pts: ['data + answers → rules (a model)', 'the computer learns from examples'], c: 'c1' }], cap: 'We need learning when nobody can write the rules: there is no expert (Mars), the expert cannot explain it (speech), things change (routing), or it must adapt to each user.' },
+        fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Normal programming', pts: ['rules + data → answers', 'a human writes IF … THEN …'], c: 'c0' }, { icon: '', t: 'Machine learning', pts: ['data + answers → rules (a model)', 'the computer learns from examples'], c: 'c1' }], cap: 'We need learning when nobody can write the rules: there is no expert (Mars), the expert cannot explain it (speech), things change (routing), or it must adapt to each user.' },
         html: `
 <p><b>Machine learning</b> = programming computers to <b>optimise a performance criterion using example data or past experience</b>.</p>
 <p>Normal programming: a human writes the rules. ML: we give examples, and the computer <b>finds the rules</b> (builds a <b>model</b>).</p>
@@ -30,19 +30,19 @@ window.GUIDE = {
   <tr><td>It must <b>adapt to individual cases</b></td><td>User biometrics</td></tr>
 </table>
 <p>Counter-example: <b>payroll</b>. The rules are known and fixed → just program it; no learning needed.</p>
-<div class="callout"><b>💡 Key idea:</b> learning builds a <b>general model</b> from <b>particular examples</b>. Data is cheap and abundant; knowledge is expensive and scarce. The model is a good and useful <i>approximation</i> of the data.</div>
+<div class="callout"><b>Key idea:</b> learning builds a <b>general model</b> from <b>particular examples</b>. Data is cheap and abundant; knowledge is expensive and scarce. The model is a good and useful <i>approximation</i> of the data.</div>
 <p><b>Statistics</b> does the inference from a sample; <b>computer science</b> provides efficient algorithms to solve the optimisation and to represent and evaluate the model.</p>`,
         check: { q: 'Which task does NOT need machine learning?', o: ['Calculating payroll with fixed rules', 'Recognising speech', 'Adapting to a user\'s fingerprint', 'Routing in a changing network'], why: 'Payroll rules are known and fixed — program them directly.' },
       },
       {
         t: 'Learning associations (basket analysis)',
         key: 'An association rule "X → Y" is measured by <b>P(Y | X)</b>: of the baskets that have X, what share also have Y?',
-        fig: { type: 'boxes', t: '10 baskets that contain a computer', rows: [{ cells: [['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻🖱️', 'c1'], ['💻', 'mute'], ['💻', 'mute'], ['💻', 'mute']] }], cap: '7 of the 10 also have a mouse, so P(mouse | computer) = 7/10 = 0.7. That is <b>not</b> the same as P(computer | mouse).' },
+        fig: { type: 'boxes', t: '10 baskets that contain a computer', rows: [{ cells: [['', 'c1'], ['', 'c1'], ['', 'c1'], ['', 'c1'], ['', 'c1'], ['', 'c1'], ['', 'c1'], ['', 'mute'], ['', 'mute'], ['', 'mute']] }], cap: '7 of the 10 also have a mouse, so P(mouse | computer) = 7/10 = 0.7. That is <b>not</b> the same as P(computer | mouse).' },
         html: `
 <p>A shop wants to know: <i>"people who buy X also buy Y"</i>. This is an <b>association rule</b>, measured by a conditional probability:</p>
 <p style="text-align:center"><b>P(Y | X) = (# baskets with X and Y) / (# baskets with X)</b></p>
 <p><b>Example:</b> 10 baskets contain a computer; 7 of those also contain a mouse → P(mouse | computer) = 7/10 = <b>0.7</b>.</p>
-<div class="callout warn"><b>⚠ Trap:</b> P(Y | X) ≠ P(X | Y). Most people buying a computer buy a mouse, but most people buying a mouse did not buy a computer.</div>`,
+<div class="callout warn"><b>Trap:</b> P(Y | X) ≠ P(X | Y). Most people buying a computer buy a mouse, but most people buying a mouse did not buy a computer.</div>`,
         lab: { href: 'w1/basket.html', todo: [
           'Load the <b>Computer shop</b> baskets.',
           'Click the cell (X = computer, Y = mouse) and read P(mouse | computer).',
@@ -81,7 +81,7 @@ window.GUIDE = {
       {
         t: 'Unsupervised and reinforcement learning',
         key: 'There are three kinds of learning, depending on what the data gives you: the <b>answer</b> (supervised), <b>nothing</b> (unsupervised) or a <b>delayed reward</b> (reinforcement).',
-        fig: { type: 'compare', cols: [{ icon: '👩‍🏫', t: 'Supervised', pts: ['input + correct output', 'learn input → output', 'credit scoring, car price'], c: 'c0' }, { icon: '🔍', t: 'Unsupervised', pts: ['input only', 'find structure / groups', 'customer segments'], c: 'c1' }, { icon: '🎮', t: 'Reinforcement', pts: ['reward after many actions', 'learn a policy', 'games, robot in a maze'], c: 'c2' }] },
+        fig: { type: 'compare', cols: [{ icon: '', t: 'Supervised', pts: ['input + correct output', 'learn input → output', 'credit scoring, car price'], c: 'c0' }, { icon: '', t: 'Unsupervised', pts: ['input only', 'find structure / groups', 'customer segments'], c: 'c1' }, { icon: '', t: 'Reinforcement', pts: ['reward after many actions', 'learn a policy', 'games, robot in a maze'], c: 'c2' }] },
         html: `
 <table class="t">
   <tr><th>Kind</th><th>What the data gives</th><th>Goal</th><th>Examples</th></tr>
@@ -89,7 +89,7 @@ window.GUIDE = {
   <tr><td><b>Unsupervised</b></td><td>Input only, <b>no output</b></td><td>Find structure: "what normally happens"</td><td><b>Clustering</b>: customer segmentation, colour quantisation, motifs in bioinformatics</td></tr>
   <tr><td><b>Reinforcement</b></td><td>A <b>delayed reward</b> after a sequence of actions</td><td>Learn a <b>policy</b> (which action in which state)</td><td>Game playing, a robot in a maze</td></tr>
 </table>
-<div class="callout"><b>💡 Analogy:</b> supervised = a teacher marks every answer. Unsupervised = no teacher, you find groups yourself. Reinforcement = you only learn at the end of a chess game whether you won.</div>`,
+<div class="callout"><b>Analogy:</b> supervised = a teacher marks every answer. Unsupervised = no teacher, you find groups yourself. Reinforcement = you only learn at the end of a chess game whether you won.</div>`,
         check: { q: 'A robot learns to leave a maze; it only gets a reward when it reaches the exit. This is…', o: ['reinforcement learning', 'supervised learning', 'clustering', 'association learning'], why: 'A delayed reward for a sequence of actions → reinforcement learning (learn a policy).' },
       },
     ],
@@ -136,7 +136,7 @@ window.GUIDE = {
 </ul>
 <p>Every h between S and G is <b>consistent</b> with the data. Together they form the <b>version space</b> (Mitchell, 1997).</p>
 <p>Which one should we choose? The one with the <b>largest margin</b> — the distance from the boundary to the nearest training instances. It is the safest for new data, because a small change in a new point won't flip its class.</p>
-<div class="callout"><b>💡 Analogy:</b> S is a tight belt, G is the biggest belt that still fits, the max-margin choice is "in the middle", leaving room on both sides.</div>`,
+<div class="callout"><b>Analogy:</b> S is a tight belt, G is the biggest belt that still fits, the max-margin choice is "in the middle", leaving room on both sides.</div>`,
         lab: { href: 'w2/hypothesis.html', todo: [
           'Load <b>Slide cars A–E</b>. Drag a rectangle and read the error table (which cars are FP / FN).',
           'Click <b>S</b>, then <b>G</b>, and see the version space between them.',
@@ -218,7 +218,7 @@ window.GUIDE = {
       {
         t: 'The three dimensions of a supervised learner',
         key: 'Every supervised method is three choices: <b>Model</b> (what shape), <b>Loss</b> (how wrong), <b>Optimisation</b> (how to fix it).',
-        fig: { type: 'flow', items: [['📐', 'Model g(x | θ)', 'e.g. a line, θ = {w₁, w₀}', 'c0'], ['📏', 'Loss E(θ | X)', 'e.g. squared error', 'c4'], ['🔧', 'Optimise θ* = argmin E', 'e.g. least squares, gradient descent', 'c1']] },
+        fig: { type: 'flow', items: [['', 'Model g(x | θ)', 'e.g. a line, θ = {w₁, w₀}', 'c0'], ['', 'Loss E(θ | X)', 'e.g. squared error', 'c4'], ['', 'Optimise θ* = argmin E', 'e.g. least squares, gradient descent', 'c1']] },
         html: `
 <p>Every supervised learning method is defined by three choices:</p>
 <ol>
@@ -226,7 +226,7 @@ window.GUIDE = {
   <li><b>Loss function</b>: E(θ | X) = Σₜ L(rᵗ, g(xᵗ | θ)) — how we measure error (e.g. squared error).</li>
   <li><b>Optimisation procedure</b>: θ* = argmin_θ E(θ | X) — how we find the best θ (e.g. least squares, gradient descent).</li>
 </ol>
-<div class="callout"><b>💡 Memory hook:</b> <b>M</b>odel, <b>L</b>oss, <b>O</b>ptimise — "what shape, how wrong, how to fix".</div>`,
+<div class="callout"><b>Memory hook:</b> <b>M</b>odel, <b>L</b>oss, <b>O</b>ptimise — "what shape, how wrong, how to fix".</div>`,
         check: { q: 'θ* = argmin E(θ | X) describes which dimension?', o: ['The optimisation procedure', 'The model', 'The loss function', 'The test set'], why: 'Finding the θ that minimises the loss = optimisation.' },
       },
     ],
@@ -258,12 +258,12 @@ window.GUIDE = {
   <li><b>Visualisation</b> in 2-D or 3-D.</li>
   <li>Removes <b>irrelevant</b> and <b>redundant</b> features.</li>
 </ul>
-<div class="callout"><b>💡 Lecture quote:</b> "More useful information is better, not necessarily more features."</div>`,
+<div class="callout"><b>Lecture quote:</b> "More useful information is better, not necessarily more features."</div>`,
       },
       {
         t: 'Feature selection vs feature extraction',
         key: '<b>Selection selects</b>: it keeps some of the original features. <b>Extraction transforms</b>: it builds new features out of combinations of the old ones.',
-        fig: { type: 'compare', vs: true, cols: [{ icon: '✂️', t: 'Feature selection', pts: ['keep k of the d original features', 'e.g. keep {GPA, study hours}', 'subset selection (forward / backward)', '✅ easy to interpret'], c: 'c0' }, { icon: '🧪', t: 'Feature extraction', pts: ['make k new features', 'e.g. z₁ = 0.6·height + 0.8·weight', 'PCA, LDA, FA, MDS', '❌ what does z₁ mean?'], c: 'c3' }] },
+        fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Feature selection', pts: ['keep k of the d original features', 'e.g. keep {GPA, study hours}', 'subset selection (forward / backward)', 'easy to interpret'], c: 'c0' }, { icon: '', t: 'Feature extraction', pts: ['make k new features', 'e.g. z₁ = 0.6·height + 0.8·weight', 'PCA, LDA, FA, MDS', 'what does z₁ mean?'], c: 'c3' }] },
         html: `
 <table class="t">
   <tr><th></th><th>Feature selection</th><th>Feature extraction</th></tr>
@@ -272,7 +272,7 @@ window.GUIDE = {
   <tr><td>Methods</td><td>Subset selection (forward / backward search)</td><td>PCA, LDA, FA, MDS</td></tr>
   <tr><td>Interpretability</td><td>Easy — original features</td><td>Harder — what does "z₁" mean?</td></tr>
 </table>
-<div class="callout"><b>💡 Lecture line:</b> "Feature selection <b>selects</b>. Feature extraction <b>transforms</b>."</div>
+<div class="callout"><b>Lecture line:</b> "Feature selection <b>selects</b>. Feature extraction <b>transforms</b>."</div>
 <h3>Other extraction methods (know one line each)</h3>
 <ul>
   <li><b>LDA</b> — maximises separation between known <b>classes</b> (supervised).</li>
@@ -284,7 +284,7 @@ window.GUIDE = {
       {
         t: 'Subset selection: forward and backward search',
         key: 'Trying all 2ᵈ subsets is impossible, so we go <b>greedily</b>: add (forward) or remove (backward) <b>one feature at a time</b>, as long as the validation error improves.',
-        fig: { type: 'flow', t: 'Forward search (illustrative numbers)', items: [['∅', 'Start: F = { }', 'E = 0.40', 'mute'], ['➕', 'add GPA', 'E = 0.25 ✓ best', 'c1'], ['➕', 'add study hours', 'E = 0.18 ✓', 'c1'], ['➕', 'add age?', 'E = 0.19 ✗ worse', 'c4'], ['🛑', 'Stop', 'F = {GPA, study hours}', 'c0']], cap: 'Greedy is not guaranteed to find the best subset.' },
+        fig: { type: 'flow', t: 'Forward search (illustrative numbers)', items: [['∅', 'Start: F = { }', 'E = 0.40', 'mute'], ['', 'add GPA', 'E = 0.25 ✓ best', 'c1'], ['', 'add study hours', 'E = 0.18 ✓', 'c1'], ['', 'add age?', 'E = 0.19 ✗ worse', 'c4'], ['', 'Stop', 'F = {GPA, study hours}', 'c0']], cap: 'Greedy is not guaranteed to find the best subset.' },
         html: `
 <p>With d features there are <b>2ᵈ</b> possible subsets — with d = 30 that's over a billion. Too many to try, so we search <b>greedily</b> using the <b>validation error E</b>.</p>
 <h3>Forward search</h3>
@@ -295,7 +295,7 @@ window.GUIDE = {
 </ol>
 <h3>Backward search</h3>
 <p>Start with <b>all</b> features and <b>remove</b> one at a time, as long as removing lowers (or doesn't raise) E.</p>
-<div class="callout warn"><b>⚠ Greedy = not guaranteed optimal.</b> And an irrelevant feature can lower the validation error a tiny bit just by fitting noise — so require a minimum improvement ε.</div>`,
+<div class="callout warn"><b>Greedy = not guaranteed optimal.</b> And an irrelevant feature can lower the validation error a tiny bit just by fitting noise — so require a minimum improvement ε.</div>`,
         lab: { href: 'w3/subset.html', todo: [
           'Run <b>forward search</b> step by step and note the order in which features are added.',
           'Run <b>backward search</b> and compare.',
@@ -317,7 +317,7 @@ window.GUIDE = {
 </ol>
 <p>So PCA <b>rotates the axes</b>. The <b>explained variance ratio</b> says what share of the total variance each PC keeps, e.g. PC1 = 92%, PC2 = 8% → one dimension keeps 92% of the information.</p>
 <p>In sklearn: <code>PCA(n_components=2).fit_transform(X)</code> takes Iris from (150, 4) to (150, 2); <code>explained_variance_ratio_</code> gives each PC's share.</p>
-<div class="callout warn"><b>⚠ Two traps (Project Task 3):</b><br>1. <b>Scale first.</b> If height is in cm and weight in grams, the weight numbers are huge and dominate the variance.<br>2. <b>PCA is unsupervised</b>: it ignores the labels, so the highest-variance direction is not guaranteed to be the best for classification.</div>`,
+<div class="callout warn"><b>Two traps (Project Task 3):</b><br>1. <b>Scale first.</b> If height is in cm and weight in grams, the weight numbers are huge and dominate the variance.<br>2. <b>PCA is unsupervised</b>: it ignores the labels, so the highest-variance direction is not guaranteed to be the best for classification.</div>`,
         lab: { href: 'w3/pca.html', todo: [
           'Dataset <b>Height &amp; weight</b>: rotate the direction w and watch Var(z) change. Click <b>Snap to PC1</b>.',
           'Click <b>w = (0.6, 0.8) — slide 7</b> and look at the explained variance bars.',
@@ -343,7 +343,7 @@ window.GUIDE = {
       {
         t: 'Classes vs clusters; parametric vs nonparametric',
         key: '<b>Classes</b> are given (labels exist). <b>Clusters</b> are found (no labels). Clustering groups <b>rows</b> (instances); dimensionality reduction groups <b>columns</b> (features).',
-        fig: { type: 'compare', vs: true, cols: [{ icon: '🏷️', t: 'Supervised: classes', pts: ['X = {xᵗ, rᵗ}', 'K classes are given'], c: 'c0' }, { icon: '🫧', t: 'Unsupervised: clusters', pts: ['X = {xᵗ}', 'k clusters are found'], c: 'c1' }] },
+        fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Supervised: classes', pts: ['X = {xᵗ, rᵗ}', 'K classes are given'], c: 'c0' }, { icon: '', t: 'Unsupervised: clusters', pts: ['X = {xᵗ}', 'k clusters are found'], c: 'c1' }] },
         html: `
 <table class="t">
   <tr><th></th><th>Supervised</th><th>Unsupervised</th></tr>
@@ -351,7 +351,7 @@ window.GUIDE = {
   <tr><td>Groups</td><td><b>Classes</b> Cᵢ, i = 1…K, <b>given</b></td><td><b>Clusters</b> Gᵢ, i = 1…k, <b>found</b></td></tr>
 </table>
 <p><b>Parametric</b> learning assumes a predefined form of the mapping function (e.g. a Gaussian); <b>nonparametric</b> makes no such assumption.</p>
-<div class="callout"><b>💡 Don't confuse:</b> dimensionality reduction groups <b>features</b> (correlations, columns); clustering groups <b>instances</b> (similarities, rows).</div>`,
+<div class="callout"><b>Don't confuse:</b> dimensionality reduction groups <b>features</b> (correlations, columns); clustering groups <b>instances</b> (similarities, rows).</div>`,
       },
       {
         t: 'k-means: assign, update, repeat',
@@ -388,7 +388,7 @@ window.GUIDE = {
       {
         t: 'Soft clustering with EM',
         key: 'k-means says "this point is in A". EM says "this point is <b>70% A, 30% B</b>". Each cluster is a Gaussian bell curve.',
-        fig: [{ type: 'compare', vs: true, cols: [{ icon: '🧱', t: 'Hard: k-means', pts: ['each point in exactly one cluster', 'point x → A (100%)'], c: 'c0' }, { icon: '☁️', t: 'Soft: EM', pts: ['each point in every cluster with a probability', 'point x → A 70%, B 30%'], c: 'c3' }] }, { type: 'flow', items: [['🎲', 'Start', 'random Gaussians', 'mute'], ['E', 'E-step', 'probability of each cluster for each point', 'c2'], ['M', 'M-step', 're-fit each μ and σ², weighted', 'c1'], ['↺', 'Repeat', 'until it converges', 'c0']] }],
+        fig: [{ type: 'compare', vs: true, cols: [{ icon: '', t: 'Hard: k-means', pts: ['each point in exactly one cluster', 'point x → A (100%)'], c: 'c0' }, { icon: '', t: 'Soft: EM', pts: ['each point in every cluster with a probability', 'point x → A 70%, B 30%'], c: 'c3' }] }, { type: 'flow', items: [['', 'Start', 'random Gaussians', 'mute'], ['E', 'E-step', 'probability of each cluster for each point', 'c2'], ['M', 'M-step', 're-fit each μ and σ², weighted', 'c1'], ['↺', 'Repeat', 'until it converges', 'c0']] }],
         html: `
 <p>k-means is <b>hard</b> clustering: each point belongs to exactly <b>one</b> cluster. <b>EM</b> (Expectation-Maximisation) gives <b>soft</b> clustering: each point belongs to <b>every</b> cluster with some probability (e.g. 70% A, 30% B).</p>
 <p>Each cluster is a <b>Gaussian</b> (bell curve) with mean μᵢ and variance σᵢ².</p>
@@ -398,7 +398,7 @@ window.GUIDE = {
   <li><b>M-step</b>: re-fit each Gaussian's μᵢ and σᵢ² using all points, <b>weighted by those probabilities</b>.</li>
   <li>Repeat until it converges.</li>
 </ol>
-<div class="callout"><b>💡 Link:</b> k-means is like EM where each probability is forced to 0 or 1.</div>`,
+<div class="callout"><b>Link:</b> k-means is like EM where each probability is forced to 0 or 1.</div>`,
         lab: { href: 'w4/em.html', todo: [
           'Load <b>Two clear groups</b>, click <b>Random Gaussians</b>, then alternate <b>E-step</b> and <b>M-step</b>.',
           'Click a point between the groups to see its probabilities.',
@@ -449,7 +449,7 @@ window.GUIDE = {
   <li><b>Check the clusters are meaningful</b> to a person.</li>
   <li>The project also uses the <b>silhouette score</b> (higher = points are closer to their own cluster than to others).</li>
 </ul>
-<div class="callout warn"><b>⚠ Trap:</b> "choose the k with the lowest reconstruction error" is wrong — that would always be k = N (every point its own cluster, error 0).</div>`,
+<div class="callout warn"><b>Trap:</b> "choose the k with the lowest reconstruction error" is wrong — that would always be k = N (every point its own cluster, error 0).</div>`,
         check: { q: 'Why can\'t we simply choose the k with the lowest reconstruction error?', o: ['Error keeps falling as k grows, reaching 0 at k = N', 'Reconstruction error is undefined for k > 2', 'Error rises with k', 'k-means does not compute an error'], why: 'More centres always fit better; use the elbow instead.' },
       },
     ],
@@ -470,7 +470,7 @@ window.GUIDE = {
       {
         t: 'What a decision tree is',
         key: 'A decision tree is a <b>flowchart of questions</b>. Inner nodes ask about one attribute, branches are the answers, and leaves give the prediction.',
-        fig: { type: 'graph', t: 'The Play Tennis tree', w: 700, h: 280, nodes: { o: [350, 40, 'Outlook?', 'c0'], h: [130, 150, 'Humidity?', 'c0'], y1: [350, 150, '✅ Yes', 'c1'], w: [570, 150, 'Wind?', 'c0'], n1: [60, 250, '❌ No', 'c4'], y2: [200, 250, '✅ Yes', 'c1'], n2: [500, 250, '❌ No', 'c4'], y3: [640, 250, '✅ Yes', 'c1'] }, edges: [['o', 'h', 'sunny'], ['o', 'y1', 'overcast'], ['o', 'w', 'rain'], ['h', 'n1', 'high'], ['h', 'y2', 'normal'], ['w', 'n2', 'strong'], ['w', 'y3', 'weak']] },
+        fig: { type: 'graph', t: 'The Play Tennis tree', w: 700, h: 280, nodes: { o: [350, 40, 'Outlook?', 'c0'], h: [130, 150, 'Humidity?', 'c0'], y1: [350, 150, 'Yes', 'c1'], w: [570, 150, 'Wind?', 'c0'], n1: [60, 250, 'No', 'c4'], y2: [200, 250, 'Yes', 'c1'], n2: [500, 250, 'No', 'c4'], y3: [640, 250, 'Yes', 'c1'] }, edges: [['o', 'h', 'sunny'], ['o', 'y1', 'overcast'], ['o', 'w', 'rain'], ['h', 'n1', 'high'], ['h', 'y2', 'normal'], ['w', 'n2', 'strong'], ['w', 'y3', 'weak']] },
         html: `
 <p>A decision tree is a flowchart of questions:</p>
 <ul>
@@ -499,7 +499,7 @@ window.GUIDE = {
 </ul>
 <h3>Play Tennis: 14 days, 9 yes / 5 no</h3>
 <p>𝓘 = −(9/14)·log₂(9/14) − (5/14)·log₂(5/14) = 0.410 + 0.530 = <b>0.940</b></p>
-<div class="callout"><b>💡 Tip for the exam:</b> log₂(x) = ln(x) / ln(2). Remember a few values: 𝓘(½) = 1, 𝓘(9/14) = 0.940, 𝓘(2/5) = 𝓘(3/5) = 0.971.</div>`,
+<div class="callout"><b>Tip for the exam:</b> log₂(x) = ln(x) / ln(2). Remember a few values: 𝓘(½) = 1, 𝓘(9/14) = 0.940, 𝓘(2/5) = 𝓘(3/5) = 0.971.</div>`,
         check: { q: 'A node has 4 "yes" and 4 "no". Its entropy is…', o: ['1', '0', '0.5', '0.940'], why: 'A 50/50 split has the maximum entropy for 2 classes: 1 bit.' },
       },
       {
@@ -545,7 +545,7 @@ window.GUIDE = {
   <tr><td>Trade-off</td><td><b>Faster</b></td><td><b>More accurate</b></td></tr>
 </table>
 <p>Pruning lowers <b>variance</b> → better generalisation. (sklearn's postpruning: <code>ccp_alpha</code>, Project Task 5.)</p>
-<div class="callout"><b>💡 Note:</b> decision trees don't need feature scaling — each split looks at one feature at a time.</div>`,
+<div class="callout"><b>Note:</b> decision trees don't need feature scaling — each split looks at one feature at a time.</div>`,
         lab: { href: 'w5/regtree.html', todo: [
           'Load <b>Slide 15 points</b>. Click the θᵣ presets 0.5, 0.2, 0.05 and count the leaves.',
           'Switch to <b>Noisy curve + test set</b> and set θᵣ ≈ 0: training error → 0, test error goes up.',

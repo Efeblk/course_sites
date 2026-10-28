@@ -58,7 +58,7 @@
       if (!deck.length) {
         card.style.display = 'none';
         $('#done').style.display = '';
-        $('#done').innerHTML = `<h2 style="margin-top:0">Deck cleared 🎉</h2><p>You went through all ${ch.cards.length} cards.</p>
+        $('#done').innerHTML = `<h2 style="margin-top:0">Deck cleared</h2><p>You went through all ${ch.cards.length} cards.</p>
           <a class="btn" href="quiz.html?ch=${n}">Take the quiz →</a>`;
         return;
       }
@@ -67,10 +67,12 @@
       $('#back').textContent = reversed ? term : def;
       $('#front').className = reversed ? '' : 'front-term';
     }
-    function know() { if (!deck.length) return; deck.shift(); known++; render(); }
+    const grade = (c, ok) => CS.srs.grade(CS.srs.cardId(COURSE.id, n, c[0]), ok); // feeds the daily review
+    function know() { if (!deck.length) return; grade(deck.shift(), true); known++; render(); }
     function again() {
       if (!deck.length) return;
       const c = deck.shift();
+      grade(c, false);
       deck.splice(Math.min(deck.length, 3), 0, c); // comes back soon
       render();
     }
