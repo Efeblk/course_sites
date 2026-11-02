@@ -533,7 +533,7 @@ window.GUIDE = {
   /* ================================================================ */
   4: {
     goal: 'Explain what a CDSS is and its types, go from a prediction to an action, calculate and interpret sensitivity, specificity, PPV and NPV, explain why accuracy misleads, tell discrimination from calibration, and describe automation bias, oversight and responsible implementation.',
-    time: '≈ 100 min',
+    time: '≈ 130 min',
     videos: [
       ['clinical decision support systems', 'clinical decision support system CDSS explained'],
       ['the confusion matrix', 'StatQuest confusion matrix'],
@@ -558,14 +558,27 @@ window.GUIDE = {
   <li><b>During treatment planning</b> — compare options, flag contraindications.</li>
   <li><b>After discharge</b> — who needs follow-up or remote monitoring.</li>
 </ul>
-<p>At every stage define: <b>the user, the decision, the time available, and the action the output triggers.</b></p>`,
+<p>At every stage define: <b>the user, the decision, the time available, and the action the output triggers.</b></p>
+<div class="callout"><b>Design question (slide 5):</b> <i>Who sees the output, at what moment, and what are they expected to do differently?</i> If nobody can answer this, the tool is not ready.</div>
+<div class="callout warn"><b>Example (slide 4):</b> a risk score may be useful for <b>prioritising review</b>, but it cannot by itself decide <b>what matters most to a particular patient</b>. AI can organise information, find patterns and estimate risk, but it cannot supply all the clinical context on its own.</div>
+<h3>Lecture guiding question</h3>
+<p><i>"If an AI system recommends a treatment, who should be responsible for the final decision?"</i> Keep it in mind; the answer comes in the governance step: <b>people and the institution, never the algorithm.</b></p>`,
+        check: { q: 'A tool reads a discharged patient\'s record and suggests who should get a follow-up call or remote monitoring. At which workflow stage does this AI enter?', o: ['After discharge', 'Before consultation', 'During assessment', 'During treatment planning'], why: 'Slide 5: after discharge, AI can identify patients who may benefit from follow-up or remote monitoring.' },
       },
       {
         t: 'Clinical decision support systems (CDSS)',
         key: 'A CDSS gives <b>patient-specific</b> help at the moment of a decision: reminders, alerts, risk estimates. It can be <b>rules</b> (knowledge-based) or <b>learned</b> (non-knowledge-based).',
         fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Knowledge-based', pts: ['rules from guidelines and experts', 'IF allergy = penicillin AND order = amoxicillin → alert'], c: 'c0' }, { icon: '', t: 'Non-knowledge-based', pts: ['patterns learned from data (ML)', 'a deterioration risk model'], c: 'c3' }], cap: 'Also: passive (you look it up) vs active (it pops up in the workflow), and patient-facing decision aids.' },
         html: `
-<p>A <b>CDSS</b> gives <b>patient-specific</b> information to support a healthcare decision — reminders, alerts, risk estimates, ranked options. Classic example: the patient has a penicillin allergy → an alert appears before the prescription is completed.</p>
+<p>A <b>CDSS</b> gives <b>patient-specific or context-specific</b> information to support a healthcare decision. Classic example (slide 6): the patient has a documented allergy to a medicine → an alert appears <b>before the order is completed</b>.</p>
+<table class="t">
+  <tr><th>Traditional CDSS uses…</th><th>AI-enabled CDSS may use…</th></tr>
+  <tr><td>rules, thresholds, <b>drug databases</b>, clinical pathways, guideline logic</td><td><b>machine learning</b>, <b>natural language processing</b>, <b>image analysis</b></td></tr>
+</table>
+<p><b>Outputs</b> can be: reminders, alerts, risk estimates, ranked options or explanations.</p>
+<div class="callout warn"><b>Slide 6, last line:</b> a CDSS <b>supports</b> decisions. It does <b>not</b> automatically replace professional judgement <b>or accountability</b>.</div>
+<p><b>CDSS vs predictive model vs "AI" (learning objective 2):</b> a <i>predictive model</i> only estimates a risk. A <i>CDSS</i> is the system that brings information (a rule, a risk estimate, a guideline) to the right person at the decision. A CDSS may contain a predictive model, or no AI at all (simple rules). "AI" is the broad umbrella.</p>
+<h3>Five types (slide 7)</h3>
 <table class="t">
   <tr><th>Type</th><th>How it works</th><th>Example</th></tr>
   <tr><td><b>Knowledge-based</b></td><td>Rules written from guidelines / experts</td><td>"IF allergy = penicillin AND order = amoxicillin THEN alert"</td></tr>
@@ -574,7 +587,16 @@ window.GUIDE = {
   <tr><td><b>Active</b></td><td>Pops up at a point in the workflow</td><td>An interaction alert while prescribing</td></tr>
   <tr><td><b>Patient-facing</b></td><td>Helps patients</td><td>A decision aid app explaining treatment options</td></tr>
 </table>
-<p><b>Strengths:</b> consistency, timely reminders, less reliance on memory, access to evidence. <b>Limitations:</b> outdated rules, poor integration, incomplete records, recommendations that don't fit the patient — and <b>alert fatigue</b>: so many low-value alerts that staff stop paying attention to the important ones.</p>`,
+<p>Different types need <b>different testing, governance and escalation pathways</b>.</p>
+<div class="callout"><b>Trade-off (slide 7):</b> a pop-up may catch a critical interaction, or become one more alert clinicians learn to dismiss.</div>
+<h3>Strengths and limitations (slide 8)</h3>
+<table class="t">
+  <tr><th>Strengths</th><th>Limitations</th></tr>
+  <tr><td>consistency, timely reminders, <b>less reliance on memory</b>, access to relevant evidence</td><td><b>outdated rules</b>, poor integration, incomplete records, recommendations that don't fit the patient</td></tr>
+  <tr><td>supports medication safety, preventive screening, guideline adherence, prioritisation</td><td><b>alert fatigue</b>: frequent low-value alerts reduce attention to important warnings</td></tr>
+</table>
+<div class="callout warn"><b>Usability matters:</b> even a <b>correct</b> alert can fail if it appears <b>too late</b> or is <b>difficult to act on</b>.</div>
+<p><b>"What makes an alert actionable rather than distracting?"</b> (the slide 8 class question) A good answer: it is <b>rare and relevant</b>, it comes <b>at the right moment</b> to the <b>right person</b>, it says <b>why</b>, and it shows a <b>clear next step</b>.</p>`,
         check: { q: 'A system uses rules written from clinical guidelines. It is a…', o: ['knowledge-based CDSS', 'non-knowledge-based CDSS', 'generative AI', 'patient-facing robot'], why: 'Knowledge-based = rules from guidelines/experts. Non-knowledge-based = learned from data.' },
       },
       {
@@ -583,7 +605,12 @@ window.GUIDE = {
         fig: { type: 'flow', t: 'From prediction to action: 6 steps (slide 10)', items: [['', 'Define the target', 'ICU transfer in 24 h', 'c0'], ['', 'Prediction time', 'what was known then?', 'c3'], ['', 'Estimate risk', 'validated model', 'c5'], ['', 'Choose a threshold', 'benefits vs false alarms', 'c2'], ['', 'Connect to a response', 'review, test, treat', 'c4'], ['', 'Measure outcomes', 'does the pathway improve?', 'c1']] },
         html: `
 <p><b>Predictive analytics</b> estimates the likelihood of a future event: deterioration, readmission, complications, falls, missed appointments.</p>
-<div class="callout warn"><b>A prediction estimates risk.</b> It does not prove the event will happen, and it does not explain the cause. The care team still decides what to do.</div>
+<table class="t">
+  <tr><th>Slide 9</th><th>What the lecture lists</th></tr>
+  <tr><td><b>Models</b></td><td>logistic regression, decision trees, gradient boosting, <b>survival analysis</b>, neural networks</td></tr>
+  <tr><td><b>Inputs</b></td><td>demographics, observations (vital signs), diagnoses, medication history, <b>trends over time</b></td></tr>
+</table>
+<div class="callout warn"><b>A prediction estimates risk.</b> It does not prove the event will happen, and it does not explain the cause. <b>Key distinction (slide 9):</b> the model predicts a higher probability of deterioration; the <b>care team</b> still decides what action is appropriate.</div>
 <p>From prediction to action — 6 steps (slide 10):</p>
 <ol>
   <li><b>Define the target</b> — what event, in which population, over what time? ("ICU transfer within 24 h, adult ward patients")</li>
@@ -629,17 +656,30 @@ window.GUIDE = {
       {
         t: 'Thresholds, prevalence and the 99% trap',
         key: 'A <b>lower threshold</b> catches more sick patients but gives more false alarms. And when a condition is <b>rare</b>, "99% accurate" can mean the model finds nobody.',
-        fig: [{ type: 'anim', name: 'threshold', t: 'Moving the alert threshold', cap: 'Illustrative scores for 40 patients.' }, { type: 'boxes', t: 'The 99% trap: 1,000 patients, 10 have it; the model says "no" for everyone', rows: [{ cells: [['990 healthy → "no" ✓', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['10 sick → "no" ✗', 'bad']] }], cap: 'Accuracy 99%, sensitivity 0%. Always look at the confusion matrix.' }],
+        fig: [{ type: 'anim', name: 'threshold', t: 'Moving the alert threshold', cap: 'Illustrative scores for 40 patients.' }, { type: 'boxes', t: 'The 99% trap: 1,000 patients, 10 have it; the model says "no" for everyone', rows: [{ cells: [['990 healthy → "no" ✓', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['', 'ok'], ['10 sick → "no" ✗', 'bad']] }], cap: 'Accuracy 99%, sensitivity 0%. Always look at the confusion matrix.' }, { type: 'bars', t: 'The same model (sensitivity 90%, specificity 90%) in three settings: PPV', max: 100, items: [['prevalence 50%', 90, 'c1', 'PPV 90%'], ['prevalence 10%', 50, 'c2', 'PPV 50%'], ['prevalence 1%', 8.3, 'c4', 'PPV ≈ 8%']], cap: '9 in 10 alerts real → half false → 11 of 12 false. Nothing about the model changed, only how common the condition is. That is why PPV and NPV "depend strongly on prevalence" (slide 12).' }],
         html: `
-<p>A model gives each patient a <b>risk score</b>. A <b>threshold</b> turns the score into an action ("review urgently if score ≥ 55").</p>
+<p>A model gives each patient a <b>risk score</b>. Slide 11: a risk score may be a <b>probability</b>, a <b>ranking</b> or a <b>transformed model output</b>, so always <b>check what it represents</b>. "Score 7" is not "70% risk".</p>
+<p>A <b>threshold</b> turns a continuous score into an <b>action category</b> ("review urgently if score ≥ 55").</p>
 <ul>
   <li><b>Lower threshold</b> → more true cases caught (higher sensitivity) but <b>more false alarms</b>.</li>
   <li><b>Higher threshold</b> → fewer alerts but <b>more missed patients</b>.</li>
   <li>The best threshold depends on <b>clinical consequences, resources (how many alerts staff can handle) and patient preferences</b>. For a rapidly treatable, life-threatening condition you'd choose a <i>lower</i> threshold.</li>
 </ul>
 <h3>Prevalence changes PPV</h3>
-<p><b>Prevalence</b> = how common the condition is. PPV and NPV depend strongly on it: the <i>same model</i> has a much lower PPV where the condition is rare, because most alerts come from the large healthy group.</p>
-<div class="callout warn"><b>Slide 13 — the 99% trap:</b> 1,000 patients, 1% (10 people) have the condition. A model that says "no condition" for <b>everyone</b> is right 990 times = <b>99% accurate</b> — and finds <b>nobody</b>. Sensitivity = 0%. Always look at the confusion matrix, not just accuracy.</div>`,
+<p><b>Prevalence</b> = how common the condition is (the <b>base rate</b>). PPV and NPV depend strongly on it: the <i>same model</i> has a much lower PPV where the condition is rare, because most alerts come from the large healthy group. Sensitivity and specificity do <b>not</b> change with prevalence in the same way; they start from the truth.</p>
+<p>Check it with the bar chart above. 1,000 patients, 1% prevalence: 10 are sick, 990 healthy. The model catches 9 of the 10 (90% sensitivity) but also flags 10% of the 990 healthy = 99 false alarms. PPV = 9 / (9 + 99) ≈ <b>8%</b>. Slide 12: <i>"Always examine the base rate."</i></p>
+<div class="callout warn"><b>Slide 13 — the 99% trap:</b> 1,000 patients, 1% (10 people) have the condition. A model that says "no condition" for <b>everyone</b> is right 990 times = <b>99% accurate</b> — and finds <b>nobody</b>. Sensitivity = 0%. Always look at the confusion matrix, not just accuracy.</div>
+<h3>So what should you evaluate instead? (slide 13)</h3>
+<ul>
+  <li>Sensitivity, specificity, PPV, NPV, <b>calibration</b> and <b>clinical utility</b> (does it actually help patients?).</li>
+  <li>Look at the confusion matrix and ask <b>which type of error creates the greater harm</b>.</li>
+  <li><b>Compare with current practice</b>, and evaluate in the <b>intended population and workflow</b>.</li>
+</ul>
+<table class="t">
+  <tr><th>Mini activity (slide 13)</th><th>Example</th></tr>
+  <tr><td>A <b>false negative</b> is especially dangerous</td><td>missed sepsis, missed stroke, missed heart attack: a treatable patient goes home untreated</td></tr>
+  <tr><td>A <b>false positive</b> also causes harm</td><td>a false cancer alarm: anxiety, unnecessary biopsy, wasted staff time, alert fatigue</td></tr>
+</table>`,
         lab: { href: 'w4/threshold.html', todo: [
           'Start with <b>Ward early warning</b>. Move the <b>alert threshold</b> slider down and up and watch sensitivity, false positives and the alert count change.',
           'Watch the capacity warning: when there are more alerts than the team can review, you get alert fatigue.',
@@ -655,7 +695,7 @@ window.GUIDE = {
         html: `
 <table class="t">
   <tr><th>Concept</th><th>Question</th></tr>
-  <tr><td><b>Discrimination</b> (AUC)</td><td>Does the model <b>rank</b> sicker patients above healthier ones? (separates groups)</td></tr>
+  <tr><td><b>Discrimination</b> (AUC = <i>area under the ROC curve</i>, slide 25)</td><td>Does the model <b>rank</b> sicker patients above healthier ones? (separates groups). AUC 0.5 = coin toss, 1.0 = perfect separation.</td></tr>
   <tr><td><b>Calibration</b></td><td>When it says "20% risk", do ~20 of 100 such patients really have the event?</td></tr>
 </table>
 <div class="callout"><b>Weather analogy:</b> a forecaster who says "70% rain" should see rain on about 70% of those days — that is calibration. A model can rank patients perfectly (good discrimination) and still say "40%" when the real risk is 10% (bad calibration).</div>
@@ -679,6 +719,7 @@ window.GUIDE = {
         fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'AI brings', pts: ['speed', 'pattern detection', 'consistent calculation'], c: 'c0' }, { icon: '', t: 'Clinicians bring', pts: ['context, examination', 'communication, values', 'experience, ethical judgement'], c: 'c1' }], cap: '<b>Automation bias</b> = trusting the computer too much, even when it is wrong.' },
         html: `
 <p><b>Augmented intelligence</b> = AI <b>extends</b> human capability rather than replacing people. AI brings speed, pattern detection and consistent calculation; clinicians bring context, examination, communication, values, experience and ethical judgement.</p>
+<p>Effective collaboration needs <b>understandable outputs</b>, <b>appropriate trust</b> and the <b>ability to question or override</b> the recommendation. The goal is <b>better decisions and patient outcomes, not maximum automation</b>.</p>
 <div class="callout"><b>Core principle (slide 15):</b> the human is <b>not merely a rubber stamp</b>. Meaningful oversight needs <b>time, information and the authority to disagree</b>.</div>
 <h3>Human-factor errors (slide 16) — exam favourite</h3>
 <table class="t">
@@ -689,7 +730,8 @@ window.GUIDE = {
   <tr><td><b>Alert fatigue</b></td><td>Too many low-value alerts → attention drops</td><td>Clicking "dismiss" without reading</td></tr>
   <tr><td><b>Under-trust</b></td><td>Ignoring useful, correct support</td><td>Dismissing a correct sepsis alert</td></tr>
 </table>
-<p>The goal is <b>calibrated trust</b>: communicate uncertainty, show the relevant evidence, make escalation clear.</p>
+<p>Both directions are a problem: <b>over-reliance</b> weakens independent checking, <b>under-trust</b> makes people ignore useful support. The goal is <b>calibrated trust</b>: communicate uncertainty, show the relevant evidence, make escalation clear.</p>
+<div class="callout"><b>Reflection (slide 16): would a confidence score always help?</b> No, not always. It only helps if users <b>understand what it means</b>. "92% confident" can make people trust a wrong answer even more (more automation bias).</div>
 <div class="callout"><b>Memory hook:</b> <b>commission</b> = you <i>committed</i> an action that was wrong; <b>omission</b> = you <i>omitted</i> (left out) an action.</div>`,
         lab: { href: 'w4/oversight.html', todo: [
           'For each of the 10 cases read the facts first, then the AI output.',
@@ -699,29 +741,128 @@ window.GUIDE = {
         check: { q: 'A doctor does not examine a patient because the AI did not raise an alert, and the patient deteriorates. This is…', o: ['an omission error', 'a commission error', 'under-trust', 'calibration'], why: 'Omission = failing to act because the system did not flag the problem.' },
       },
       {
-        t: 'Explainability, bias, governance and implementation',
-        key: 'Before trusting a tool, ask: can users <b>understand</b> it, is it <b>fair</b> for every group, <b>who is responsible</b>, and is it <b>monitored</b> after go-live?',
-        fig: { type: 'compare', cols: [{ icon: '', t: 'Explainability', pts: ['what the output means and when it may fail', 'associations are not causes'], c: 'c0' }, { icon: '', t: 'Bias and equity', pts: ['check performance by age, sex, ethnicity…'], c: 'c3' }, { icon: '', t: 'Governance', pts: ['responsibility cannot be delegated to an algorithm', 'name who owns the decision and the model'], c: 'c2' }, { icon: '', t: 'Implementation', pts: ['map the workflow, pilot, train users', 'monitor alerts, overrides, subgroups'], c: 'c1' }], cap: 'Key message: evaluate the whole human–AI–workflow system, not the algorithm alone.' },
+        t: 'Explainability, bias and equity',
+        key: 'An explanation must help the user <b>act and doubt</b>, not just look technical. A model can be <b>accurate overall and still unsafe for one group</b>.',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Unhelpful', pts: ['a mysterious red warning', 'no reason, no next step', 'a long list of model weights'], c: 'c4' }, { icon: '', t: 'Helpful (slide 17)', pts: ['"Higher estimated risk based on recent observations"', 'key factors, uncertainty, what to do next'], c: 'c1' }], cap: 'Technical complexity does not guarantee a useful explanation. Test explanations with the people who will use them.' },
         html: `
-<h3>Explainability (slide 17)</h3>
-<p>Users must understand what an output means, what it does <i>not</i> mean and when it may fail. "Higher estimated risk based on recent observations" is better than a mysterious red warning with no next step. Don't present <b>associations as causes</b>.</p>
-<h3>Bias and equity (slide 18)</h3>
-<p>Models can reproduce historical inequalities. Performance may differ by age, sex, ethnicity, disability, language… <b>Measure subgroup performance</b>. A model can be accurate overall and still unsafe for one group.</p>
-<h3>Governance (slide 19)</h3>
-<p><b>Responsibility cannot be delegated to an algorithm.</b> Name who owns the decision, who maintains the model and who responds to incidents. Document intended use, excluded uses, data provenance, model versions and limitations.</p>
-<h3>Implementation (slide 20)</h3>
+<h3>Explainability and communication (slide 17)</h3>
+<p>Users need to understand three things: <b>what an output means</b>, <b>what it does not mean</b>, and <b>when it may fail</b>.</p>
+<p>Possible approaches the lecture lists:</p>
+<ul>
+  <li><b>key contributing factors</b> ("rising heart rate and falling blood pressure"),</li>
+  <li><b>comparable cases</b>,</li>
+  <li><b>uncertainty ranges</b>,</li>
+  <li>a <b>concise rationale</b>.</li>
+</ul>
+<div class="callout warn"><b>Two warnings (exam favourites):</b>
 <ol>
-  <li>Start with a clearly defined clinical problem; involve clinicians, patients, IT, data teams, managers.</li>
-  <li>Map the current workflow.</li>
-  <li>Assess data readiness, evidence, usability, fairness, privacy, security.</li>
-  <li><b>Pilot</b> in a controlled setting; train users; define when to override.</li>
-  <li><b>Monitor</b> uptake, outcomes, subgroups, false alarms, overrides.</li>
-  <li>Set criteria to <b>update, pause or withdraw</b>.</li>
+  <li>Explanations should be <b>tested with intended users</b>; <b>technical complexity does not guarantee</b> a useful explanation.</li>
+  <li>Do <b>not</b> present <b>associations as causes</b>, or an explanation as <b>proof</b> that the recommendation is correct.</li>
+</ol></div>
+<p>Communication with patients should be <b>clear, respectful</b> and appropriate to the decision and context.</p>
+<h3>Bias, equity and patient safety (slide 18)</h3>
+<ul>
+  <li>Models can <b>reproduce historical inequalities</b> in diagnosis, treatment, access and documentation. If a group was under-diagnosed in the past, the training data teaches the model to under-flag them too.</li>
+  <li>Performance may vary by <b>age, sex, ethnicity, disability, language, comorbidity or care setting</b>.</li>
+  <li><b>Measure subgroup performance</b> (where lawful and appropriate) and <b>involve affected communities</b> in evaluation.</li>
+  <li>Ask: <b>who benefits</b>, <b>who bears</b> the false alarms or missed cases, and <b>who may be excluded</b> by the workflow? (E.g. a tool that only works through a smartphone app excludes patients without one.)</li>
+  <li>Safety net: <b>reporting channels, incident review, human escalation</b> and a process to <b>suspend unsafe use</b>.</li>
+</ul>
+<div class="callout"><b>Slide 18's question:</b> <i>Could a model be statistically accurate overall but still unsafe for a particular patient group?</i> <b>Yes.</b> Overall accuracy can hide a group where the model misses most cases.</div>`,
+        check: { q: 'A deterioration model has good overall accuracy, but in patients who do not speak the local language it misses most cases. What does the lecture recommend?', o: ['Measure subgroup performance and involve affected communities; overall accuracy can hide unsafe performance for a group', 'Nothing: good overall accuracy means it is safe for everyone', 'Remove language from the data so the model cannot be biased', 'Show a confidence score so clinicians trust it more'], why: 'Slide 18: performance may vary by language and other characteristics, so measure subgroup performance and ask who bears the missed cases.' },
+      },
+      {
+        t: 'Privacy, accountability and governance',
+        key: '<b>Responsibility cannot be delegated to an algorithm.</b> Someone must be named for the decision, for the model, and for responding when it goes wrong.',
+        fig: { type: 'boxes', t: 'Who owns what? (slide 19)', head: ['Question', 'Needs a named owner'], rows: [{ cells: [['Who owns the <b>clinical decision</b>?', 'c0'], ['the clinician / care team', 'c0']] }, { cells: [['Who <b>maintains the model</b>?', 'c3'], ['a named team (data science, IT, vendor contract)', 'c3']] }, { cells: [['Who <b>responds to an incident</b>?', 'c4'], ['a defined clinical governance procedure', 'c4']] }], cap: 'The guiding question of the lecture, answered: people and the institution are responsible, not the algorithm.' },
+        html: `
+<p>Slide 19 has five groups of points. Learn them as a checklist:</p>
+<table class="t">
+  <tr><th>Area</th><th>What the lecture says</th></tr>
+  <tr><td><b>Privacy</b></td><td>Use health data under <b>appropriate legal authority</b>, with <b>purpose limitation</b> (only for the stated purpose) and <b>safeguards</b>.</td></tr>
+  <tr><td><b>Accountability</b></td><td>Define <b>who owns the clinical decision</b>, <b>who maintains the model</b> and <b>who responds to an incident</b>.</td></tr>
+  <tr><td><b>Documentation</b></td><td>Document <b>intended use</b>, <b>excluded uses</b>, <b>data provenance</b> (where the data came from), <b>model versions</b> and <b>known limitations</b>.</td></tr>
+  <tr><td><b>Security</b></td><td>Assess <b>cybersecurity</b>, <b>vendor dependencies</b>, <b>access controls</b> and <b>auditability</b> (can we later see who did what?).</td></tr>
+  <tr><td><b>Regulation</b></td><td>Follow applicable regulation and local clinical governance. Requirements <b>depend on intended use and jurisdiction</b> (country).</td></tr>
+</table>
+<div class="callout"><b>Governance principle (slide 19):</b> responsibility <b>cannot be delegated to an algorithm</b>. Institutions need <b>named owners</b> and <b>clear procedures</b>.</div>
+<p><b>Purpose limitation, in plain words:</b> data collected to treat patients should not quietly be reused for something else (e.g. marketing) without a proper legal basis.</p>
+<h3>Selected references (slide 25), in case a question names them</h3>
+<ul>
+  <li><b>WHO (2021)</b>: <i>Ethics and governance of artificial intelligence for health</i>.</li>
+  <li><b>U.S. FDA</b>: <i>Clinical Decision Support Software</i> guidance.</li>
+  <li><b>NIST (2023)</b>: <i>AI Risk Management Framework (AI RMF 1.0)</i>.</li>
+  <li>Sutton et al. (2020), overview of CDSS benefits, risks and strategies; Kelly et al. (2019), challenges for delivering clinical impact with AI.</li>
+</ul>
+<p class="small">For real deployments, check current guidance and the national regulatory framework (slide 25).</p>`,
+        check: { q: 'A hospital documents its AI tool\'s intended use, excluded uses, data provenance, model versions and known limitations. Which slide-19 area is this?', o: ['Documentation for governance', 'Cybersecurity', 'Calibration', 'Purpose limitation'], why: 'Slide 19: document intended use, excluded uses, data provenance, model versions and known limitations.' },
+      },
+      {
+        t: 'Implementation, the case study and responsible success',
+        key: 'Evaluate the <b>complete human–AI–workflow system</b>, not the algorithm in isolation. A brilliant model that clinicians cannot use safely is <b>not a success</b>.',
+        fig: { type: 'flow', t: 'Implementing AI in clinical practice (slide 20)', items: [['', 'Define the problem', 'with clinicians, patients, IT, data teams, managers', 'c0'], ['', 'Map the workflow', 'where could it change a decision?', 'c3'], ['', 'Assess readiness', 'data, evidence, usability, fairness, privacy, security', 'c5'], ['', 'Pilot', 'controlled setting, train users, when to override', 'c2'], ['', 'Monitor', 'uptake, outcomes, subgroups, false alarms, overrides', 'c4'], ['', 'Update / pause / withdraw', 'criteria set in advance', 'c1']] },
+        html: `
+<h3>Implementation in 6 steps (slide 20)</h3>
+<ol>
+  <li>Start with a <b>clearly defined clinical problem</b>; involve <b>clinicians, patients, IT, data teams and managers</b>.</li>
+  <li><b>Map the current workflow</b> and find where the tool could realistically change a decision.</li>
+  <li>Assess <b>data readiness, clinical evidence, usability, fairness, privacy and security</b> <i>before launch</i>.</li>
+  <li><b>Pilot</b> in a controlled setting; <b>train users</b>; specify when to <b>escalate or override</b>.</li>
+  <li><b>Monitor</b> uptake, outcomes, subgroup performance, false alarms, overrides and <b>unintended consequences</b>.</li>
+  <li>Set criteria for <b>updating, pausing or withdrawing</b> the system.</li>
 </ol>
-<h3>Case study: early warning (slides 21–22)</h3>
-<p>A pilot gives many alerts; some patients deteriorate without an alert, others are false alarms. What do you recommend? A defensible answer: <b>pause expansion</b>, investigate failure modes (missing/delayed data, threshold, staffing, who is missed) and <b>redesign the workflow</b> — don't decide from accuracy alone.</p>
-<div class="callout"><b>Key message (slide 23):</b> evaluate the complete <b>human–AI–workflow system</b>, not the algorithm in isolation.</div>`,
-        check: { q: 'If an AI system recommends a treatment, who is responsible for the final decision?', o: ['The clinicians and institution — responsibility cannot be delegated to an algorithm', 'The algorithm', 'The software vendor only', 'Nobody, if the model was validated'], why: 'Slide 19: responsibility cannot be delegated to an algorithm; institutions need named owners and clear procedures.' },
+<div class="callout"><b>Success measure (slide 20):</b> a technically impressive model that clinicians <b>cannot use safely</b> is <b>not</b> a successful clinical intervention.</div>
+<h3>Case study: early warning for deterioration (slides 21–22)</h3>
+<p>The model analyses vital signs, lab results and history, gives a risk score <b>every hour</b> and alerts the ward team. In the pilot: <b>many alerts</b>, some patients <b>deteriorate without an alert</b>, other alerts are <b>false</b>. Your task: continue, redesign, expand or pause?</p>
+<table class="t">
+  <tr><th>Question group</th><th>What to ask</th></tr>
+  <tr><td><b>Data &amp; model</b></td><td>Were inputs available <b>at the time of prediction</b>? Are observations missing or delayed? Was it <b>externally validated</b>?</td></tr>
+  <tr><td><b>Threshold &amp; workflow</b></td><td>How many alerts can the team <b>safely review</b>? Which cases need urgent escalation? Is there a <b>clear response protocol</b>?</td></tr>
+  <tr><td><b>Safety &amp; equity</b></td><td><b>Who is missed</b>? Are errors concentrated in any group? How are overrides and adverse events reviewed?</td></tr>
+</table>
+<div class="callout warn"><b>Defensible answer (slide 22):</b> <b>pause expansion</b> while investigating failure modes and <b>redesigning the workflow</b>. Use evidence, patient safety, workflow and monitoring. <b>Avoid deciding from accuracy alone.</b></div>
+<h3>What does responsible success look like? (slide 23)</h3>
+<ol>
+  <li>It <b>improves a defined outcome compared with usual care</b>.</li>
+  <li>Benefits are meaningful <b>for patients</b>, not only convenient for the organisation.</li>
+  <li>Performance is acceptable across the population <b>and relevant subgroups</b>.</li>
+  <li>Clinicians understand the tool's <b>role, limitations and escalation procedure</b>.</li>
+  <li>Errors and unintended effects are <b>detected, reported and acted upon</b>.</li>
+  <li>It <b>stays useful</b> as practice, populations and data change.</li>
+</ol>
+<div class="callout"><b>Exit ticket (slide 24):</b> name <b>one benefit</b>, <b>one risk</b> and <b>one safeguard</b>. Example: benefit = earlier detection of deterioration; risk = alert fatigue; safeguard = a pilot with a capacity-based threshold and monitoring of overrides.</div>`,
+        check: { q: 'An AI tool saves the hospital money but gives no benefit to patients and works poorly for older adults. According to slide 23, is it a responsible success?', o: ['No: benefits must be meaningful for patients and performance acceptable across relevant subgroups', 'Yes, because it saves money', 'Yes, if the overall AUC is high', 'Yes, if a clinician signs every output'], why: 'Slide 23: benefits must be meaningful for patients, not only convenient for the organisation, and performance must be acceptable in subgroups.' },
+      },
+      {
+        t: 'Exam checklist: every slide in one line',
+        key: 'If you can say the line next to each slide <b>without looking</b>, you are ready for the week 4 questions. Cover the right column and test yourself.',
+        html: `
+<p>The slide numbers are the numbers printed on the slides. The shorter "Week 5" deck uses the same numbers; it only leaves out slides 3, 21–23 and 25.</p>
+<table class="t">
+  <tr><th>Slide</th><th>Topic</th><th>The line to remember</th></tr>
+  <tr><td>2</td><td>Guiding question</td><td>Who is responsible for the final decision? <b>People and the institution, not the algorithm.</b></td></tr>
+  <tr><td>4</td><td>Clinical decision-making</td><td>More than a diagnosis; uncertainty is unavoidable; value = <b>improves a decision</b>, not just a prediction.</td></tr>
+  <tr><td>5</td><td>Workflow</td><td>Before consultation / during assessment / after tests / treatment planning / after discharge. Define <b>user, decision, time, action</b>.</td></tr>
+  <tr><td>6</td><td>CDSS</td><td>Patient- or context-specific info; rules, drug databases… or ML, NLP, image analysis; <b>supports, does not replace judgement or accountability</b>. Allergy alert example.</td></tr>
+  <tr><td>7</td><td>Types</td><td><b>Knowledge-based</b> (rules) / <b>non-knowledge-based</b> (learned) / <b>passive</b> (when sought) / <b>active</b> (pops up) / <b>patient-facing</b>.</td></tr>
+  <tr><td>8</td><td>Strengths, limits</td><td>Consistency, less reliance on memory vs outdated rules, poor integration; <b>alert fatigue</b>; a correct alert fails if too late or hard to act on.</td></tr>
+  <tr><td>9</td><td>Predictive analytics</td><td>Estimates likelihood of a future event; logistic regression … survival analysis; <b>does not prove it or explain the cause</b>.</td></tr>
+  <tr><td>10</td><td>Prediction → action</td><td>Target → prediction time → validated risk → threshold → response → measure the pathway. Failure: <b>score without a response pathway</b>.</td></tr>
+  <tr><td>11</td><td>Risk scores, thresholds</td><td>Score may be probability, ranking or transformed output. <b>Lower threshold = more true cases + more false positives.</b></td></tr>
+  <tr><td>12</td><td>Sens, spec, PPV, NPV</td><td>Sens/spec start from the truth; PPV/NPV from the flag. <b>PPV and NPV depend on prevalence.</b></td></tr>
+  <tr><td>13</td><td>Accuracy misleads</td><td>1% of 1,000: "no for everyone" = <b>99% accurate, finds nobody</b>. Ask which error is more harmful.</td></tr>
+  <tr><td>14</td><td>Calibration, validation</td><td><b>Discrimination</b> = separates; <b>calibration</b> = probabilities match rates; internal vs <b>external</b> validation; <b>data leakage</b>.</td></tr>
+  <tr><td>15</td><td>Augmented intelligence</td><td>Extends humans, not maximum automation; oversight = <b>time, information, authority to disagree</b>; not a rubber stamp.</td></tr>
+  <tr><td>16</td><td>Human factors</td><td>Automation bias; <b>commission</b> (followed wrong advice) vs <b>omission</b> (no alert → no action); alert fatigue; calibrated trust.</td></tr>
+  <tr><td>17</td><td>Explainability</td><td>Factors, comparable cases, uncertainty, rationale; test with users; <b>associations are not causes</b>.</td></tr>
+  <tr><td>18</td><td>Bias, equity</td><td>Reproduces historical inequalities; <b>measure subgroups</b>; who benefits, who bears errors; suspend unsafe use.</td></tr>
+  <tr><td>19</td><td>Privacy, governance</td><td>Legal authority, <b>purpose limitation</b>; named owners; document intended/excluded use, versions; cybersecurity; <b>responsibility cannot be delegated</b>.</td></tr>
+  <tr><td>20</td><td>Implementation</td><td>Problem → workflow → readiness → <b>pilot</b> → <b>monitor</b> → update/pause/withdraw.</td></tr>
+  <tr><td>21–22</td><td>Case study</td><td>Many alerts, some missed: <b>pause expansion, investigate, redesign</b>; not accuracy alone.</td></tr>
+  <tr><td>23</td><td>Responsible success</td><td>Better than usual care, benefits patients, works in subgroups, understood, errors acted on, stays useful. <b>Evaluate the whole human–AI–workflow system.</b></td></tr>
+  <tr><td>25</td><td>Glossary</td><td><b>AUC</b> = area under the ROC curve; automation bias = undue reliance on automated advice; WHO 2021, FDA CDS, NIST AI RMF 1.0.</td></tr>
+</table>
+<div class="callout"><b>Exam tactic for this course:</b> the wrong options often use <i>absolute</i> words: "always", "never", "guarantees", "replaces", "automatically". The lecture's answers are almost always the careful ones: <i>supports</i>, <i>estimates</i>, <i>depends on</i>, <i>requires oversight</i>.</div>`,
       },
     ],
   },
