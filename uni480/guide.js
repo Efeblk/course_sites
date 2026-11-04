@@ -148,6 +148,51 @@ window.GUIDE = {
         ] },
         check: { q: 'A vendor says: "Our AI will automatically cut your costs and remove diagnostic errors." According to the lecture…', o: ['Both claims are things AI cannot guarantee', 'Both are true if the model is accurate', 'Cost savings are guaranteed, error removal is not', 'Error removal is guaranteed, cost savings are not'], why: 'Slide 14 lists automatic cost reduction and the end of human error/responsibility among things AI cannot guarantee.' },
       },
+      {
+        t: 'In class (10 Oct): what Dr. Arsan stressed',
+        key: 'Her own words for the most important outcome of the lecture: <b>successful AI depends on more than an algorithm</b>. It needs reliable input, the right environment, a well-defined decision process, useful actions and meaningful evaluation.',
+        fig: { type: 'flow', t: 'The three questions she said the course will ask again and again', items: [['', 'What problem are we trying to solve?', 'start with the problem', 'c0'], ['', 'How can AI contribute?', 'is AI the right tool?', 'c3'], ['', 'How will we know it improved healthcare?', 'measure it', 'c1']] },
+        html: `
+<p class="small">From the recording of the first content lecture. These are points she said out loud or repeated; the slides alone don't show the emphasis.</p>
+<h3>1. "This is not an engineering class"</h3>
+<p>AI is studied from the side of <b>healthcare management, decision making, patient safety, efficiency</b> and the <b>responsibilities</b> of professionals and managers. Expect questions about decisions and responsibility more than about algorithms.</p>
+<h3>2. "With the resources they have"</h3>
+<p>She stressed this phrase in the key question. Resources (doctors, nurses, beds, opening hours of diagnostic units, money) are <b>scarce</b>. AI can help use <b>existing</b> resources more intelligently, but it <b>cannot create beds</b>, cannot create qualified professionals and cannot remove the hospital's fundamental costs.</p>
+<h3>3. The emergency department forecast example</h3>
+<p>An AI forecasts ED demand from past attendance, seasons and local events. The system <b>does not solve the staffing problem by itself</b>; it gives information. The result still depends on the <b>quality of the prediction</b>, <b>staff availability</b>, the <b>budget</b> and the <b>manager's ability to turn information into action</b>.</p>
+<div class="callout warn"><b>Limitation she named:</b> historical patterns cannot explain every future event (a major accident, an unexpected outbreak). So <b>predictions should inform planning without replacing operational flexibility</b>.</div>
+<h3>4. Should AI decide without human approval? "Oh, no."</h3>
+<p>The question is not only whether AI can make a recommendation. Ask: <b>who is responsible for interpreting it</b>, <b>what evidence supports it</b>, <b>what happens when it is wrong</b>, and <b>can a qualified person challenge or override it?</b> Her own approach: identify a <b>specific operational need</b> → check whether AI is <b>appropriate</b> for it → <b>test under controlled conditions</b>.</p>
+<h3>5. Is every chatbot AI? No.</h3>
+<p>A chatbot that answers "what are the opening hours?" with <b>predefined answers</b> to selected options is <b>not necessarily AI</b>. A system that <b>interprets natural-language questions</b> and generates answers uses AI.</p>
+<h3>6. Looking intelligent is not being intelligent</h3>
+<ul>
+  <li>An AI can give an answer that <i>appears</i> intelligent without human <b>experience, emotions, intention, intuition or awareness</b>.</li>
+  <li>The <b>Turing Test</b> is <b>not proof</b> that a machine is conscious or understands. Its historical importance: it framed machine intelligence in terms of <b>observable behaviour</b>. Her example: a digital assistant may sound natural but does not understand a patient's <b>anxiety</b> about a procedure.</li>
+  <li><b>Associated</b> is not <b>caused</b>; a high-risk prediction is <b>not a statement that the bad outcome will definitely happen</b>.</li>
+</ul>
+<h3>7. History details she added</h3>
+<ul>
+  <li>Turing (mathematician and computer scientist) published his paper in <b>1950</b>. He <b>never used the term "artificial intelligence"</b>.</li>
+  <li><b>John McCarthy</b> ("father of AI") was particularly important in establishing the term at <b>Dartmouth 1956</b>.</li>
+  <li>Three definitions on the slide: (a) "the study of how to make computers do things which, at the moment, people do better"; (b) <b>McCarthy</b>: "the science and engineering of making intelligent machines, especially intelligent computer programs" — she pointed out it has <b>no human comparison</b> in it; (c) making a computer, robot or software think intelligently, <b>in a similar manner to intelligent humans</b>.</li>
+  <li>Early AI (1950s–70s): games, puzzles, logic symbols, maths theorems: <b>narrow, well-defined tasks</b>. Chess has clear rules; a hospital does not.</li>
+  <li><b>Rule-based systems</b>: e.g. flag a lab result outside the reference range. Good when rules are clear; they <b>struggle with ambiguity, many exceptions and change</b>.</li>
+  <li><b>Lesson of the AI winters for managers:</b> enthusiasm can become disconnected from real performance. A vendor demo on <b>selected cases</b> is not enough: does it work on <b>our</b> patients, fit our <b>workflow</b>, can staff <b>use</b> it, do outcomes <b>justify the cost</b>?</li>
+</ul>
+<h3>8. Agents, with her examples</h3>
+<table class="t">
+  <tr><th>Part</th><th>Her point</th></tr>
+  <tr><td>Agent</td><td>A <b>thermostat</b> senses temperature and acts on heating without "understanding" the room.</td></tr>
+  <tr><td>Sensors</td><td>Physical: cameras, microphones, temperature detectors. <b>Software: databases, electronic records, monitoring platforms.</b></td></tr>
+  <tr><td>Actuators</td><td>Physical: a robot arm. <b>Software: sending an alert, updating a schedule, presenting a recommendation.</b> Generating an alert is <b>not</b> the same as starting a clinical intervention; autonomy must fit the application.</td></tr>
+  <tr><td>Environment</td><td>Everything the agent interacts with. A system <b>cannot be evaluated apart from its context</b>: a scheduler that works in a small clinic may fail in a large hospital.</td></tr>
+  <tr><td>Agent function</td><td>How what it perceives is <b>mapped to an action</b> (high demand predicted → recommend extra capacity / warn the manager).</td></tr>
+  <tr><td>Performance measure</td><td>Choose indicators carefully. Only <b>appointment utilisation</b> → it fills every slot with no time for complex cases. Only <b>waiting time</b> → it may ignore whether care is appropriate. Use a <b>balanced set</b>: operations, clinical quality, safety, patient experience, fairness, finance.</td></tr>
+</table>
+<div class="callout"><b>Her closing example:</b> the forecast is accurate, but managers get it <b>too late</b> to change staffing → little benefit. Or it is on time but <b>systematically underestimates</b> one patient group → investigate and improve or reconsider. Before buying, ask: what information does it receive, what environment does it work in, how does it choose actions, <b>what is it permitted to do</b>, and how is performance measured?</div>`,
+        check: { q: 'A hospital judges its AI scheduling system only by appointment utilisation. What risk did the lecturer point out?', o: ['It may fill every slot and leave no time for complex cases or delays; a balanced set of measures is needed', 'None: utilisation is the best single measure', 'The system will stop working', 'Waiting times will automatically fall to zero'], why: 'Lecture, 10 Oct: a single indicator distorts behaviour. Use operational, quality, safety, patient experience, fairness and financial measures together.' },
+      },
     ],
   },
 
@@ -341,6 +386,87 @@ window.GUIDE = {
   <li><b>Human oversight</b> — can a person check and override it?</li>
 </ol>`,
         check: { q: 'Which step comes directly after "Validate" in the lifecycle?', o: ['Implement', 'Develop', 'Assess data', 'Define need'], why: 'Define need → assess data → develop → validate → implement → monitor.' },
+      },
+      {
+        t: 'In class (17 Oct): what Dr. Arsan stressed',
+        key: 'Different AI systems <b>do not work the same way and do not have the same limits</b>. A system that predicts risk has <b>not diagnosed</b>, a system that drafts a summary has <b>not verified</b> it, and a system that marks a region has <b>not judged its clinical meaning</b>.',
+        fig: { type: 'flow', t: 'The four stages she walked through (and what can go wrong)', items: [['', 'Patient', 'a person, not just numbers', 'c0'], ['', 'Data', 'may be incomplete, old, biased', 'c3'], ['', 'AI system', 'finds patterns, predicts', 'c5'], ['', 'Care team', 'interprets and decides', 'c1']] },
+        html: `
+<p class="small">From the recording of the 17 Oct lecture (first half of the AI technologies deck). She said: <i>"I try to add many questions almost every slide … I believe that it will help you in your exam."</i> So the slide questions are worth answering.</p>
+<h3>1. Patient → data → AI system → care team</h3>
+<ul>
+  <li><b>Patient</b>: a person with symptoms, history, circumstances and preferences. Data always shows <b>only part</b> of the situation.</li>
+  <li><b>Data</b>: symptoms, diagnoses, lab values, images, monitoring signals, notes. Can be incomplete, inconsistent or recorded at different times: <b>a lab result from last month is not today's condition</b>.</li>
+  <li><b>AI system</b>: estimates risk, flags an abnormality, extracts from a note, drafts a document. It does not give a complete explanation of the patient.</li>
+  <li><b>Care team</b>: interprets the output and decides what action, <b>if any</b>, is appropriate.</li>
+</ul>
+<table class="t">
+  <tr><th>What can go wrong (the pair-discussion question)</th><th>Result</th></tr>
+  <tr><td>Patient information is incomplete</td><td>the model gets an inaccurate picture</td></tr>
+  <tr><td>Data contains systematic bias ("we are the ones who feed the system")</td><td>it performs differently across patient groups</td></tr>
+  <tr><td>Output is misunderstood</td><td><b>a probability is mistaken for a diagnosis</b></td></tr>
+  <tr><td>Too many alerts</td><td>important warnings are overlooked</td></tr>
+  <tr><td>Responsibility not defined by the organisation</td><td><b>staff assume someone else is monitoring the system</b></td></tr>
+</table>
+<h3>2. Three capabilities you must not confuse</h3>
+<table class="t">
+  <tr><th>Capability</th><th>Does</th><th>Does NOT</th></tr>
+  <tr><td><b>Classification</b></td><td>assigns an observation to a category (an image → one of several classes)</td><td>—</td></tr>
+  <tr><td><b>Prediction</b></td><td>estimates an outcome, e.g. likelihood of a future event</td><td>high deterioration risk ≠ <b>diagnosis of the cause</b></td></tr>
+  <tr><td><b>Recommendation</b></td><td>suggests an option from the available information</td><td>a drafted discharge summary ≠ <b>verified as correct</b></td></tr>
+</table>
+<p>AI is an <b>umbrella term</b> (perception, prediction, language processing, planning). In healthcare it is used in clinical care, diagnostic support, patient communication, research, administration and population health, <b>and</b> in operations: scheduling, inventory, staffing, documentation, infection surveillance.</p>
+<p><b>Families work together.</b> Her discharge-instructions example: <b>NLP</b> collects information from the record → <b>generative AI</b> writes a clear draft → a <b>search system</b> finds approved hospital guidelines → a <b>healthcare professional checks</b> the result.</p>
+<div class="callout warn"><b>"We need AI because other hospitals use it."</b> Her answer: <i>"What exactly do you want to improve?"</i> <b>The right starting point is a problem, not the technology.</b> And for any transformation, <b>sustaining it afterwards</b> (embedding the tool) is the "golden key" to success.</div>
+<h3>3. Machine learning, with her examples</h3>
+<ul>
+  <li>Writing every rule by hand is hard because patients differ → ML is given <b>examples</b> and finds patterns itself.</li>
+  <li>30-day readmission: during training the model <b>adjusts its internal settings to reduce its error</b>. It <b>does not know the future</b>; it uses past patterns to estimate.</li>
+  <li><b>Four stages:</b> input data (age, labs, vital signs, diagnoses, history) → train → output (prediction, probability, risk score or category) → <b>use in practice and keep checking</b>, because patient groups, procedures and the way data are recorded change. A model that worked last year may not work today.</li>
+  <li><b>Supervised</b> = known answers (labels): readmitted yes/no; expert-labelled images. <b>Unsupervised</b> = no answers, finds groups (frequent visitors, similar condition combinations); <b>groups may have no medical meaning, people must examine them</b>. <b>Reinforcement</b> = trial and error with feedback (appointment strategies in a <b>simulated</b> hospital); <b>you cannot let it experiment on real patients</b>; simulation and careful testing first.</li>
+</ul>
+<table class="t">
+  <tr><th>Where ML can help (slide 9)</th><th>Her example and caution</th></tr>
+  <tr><td><b>Early warning</b></td><td>trends in heart rate, blood pressure, temperature, breathing rate → an <b>additional signal</b>; it does not always predict deterioration</td></tr>
+  <tr><td><b>Operations</b></td><td>forecast demand, e.g. the flu season in Sept–Oct → order supplies, vaccines, medicines in time</td></tr>
+  <tr><td><b>Personalisation</b></td><td>which patient groups benefit from which approach; careful: <b>a model's recommendation is not automatically the best treatment for an individual</b></td></tr>
+  <tr><td><b>Public health</b></td><td>patterns across populations, changes in demand; consider <b>data quality and limits</b></td></tr>
+</table>
+<p><b>Her summary:</b> an AI system should not just produce a prediction; it should help people make better decisions <b>without creating unnecessary work or new risk</b>.</p>
+<h3>4. Her numbers for "accuracy is not the whole story"</h3>
+<ul>
+  <li><b>Sensitivity:</b> 100 really have the condition, 90 identified → <b>90%</b> (10 missed).</li>
+  <li><b>Specificity:</b> 100 don't have it, 80 correctly cleared → <b>80%</b> (20 wrongly flagged).</li>
+  <li><b>PPV:</b> 100 positive alerts, 20 really have it → <b>20%</b>: many false positives, a lot of checking work.</li>
+  <li><b>Calibration:</b> model says 20% for a large group of similar cases → about 20% should have the outcome.</li>
+</ul>
+<div class="callout"><b>"Which system is better?"</b> No answer without more information: the condition, the <b>consequences of each mistake</b>, available resources and the purpose. If missing a case is very harmful, prefer the system that finds more cases <b>but make sure staff can manage the alerts</b>. That is the <b>trade-off</b>.</div>
+<h3>5. Deep learning and ML vs DL</h3>
+<ul>
+  <li>DL = a type of ML with <b>artificial neural networks with many layers</b>. "Neural" = connected units; loosely inspired by the brain, <b>not the same as a human brain</b>.</li>
+  <li><b>Early layers</b> learn simple patterns (lines, shapes, colours, textures); <b>later layers</b> combine them into complex ones.</li>
+  <li>Limits: needs <b>a large amount of suitable data</b> (labelling costs time and money); <b>hard to explain</b> ("black box"); good training performance <b>does not guarantee</b> performance at another hospital; <b>not automatically better</b> than other ML.</li>
+  <li>When you hear "deep learning", don't stop at the name: ask <b>what it is trained to do, what data it uses, how it performs, how the hospital checks it</b>.</li>
+  <li><b>Structured data</b> = clear fields (age, blood pressure, labs, previous visits). A <b>feature</b> = a piece of information that helps the model predict. Traditional ML: experts often <b>design the features</b>; DL <b>learns features</b> from images, audio, text.</li>
+  <li><b>Interpretability</b> = how easily people understand the reasons behind an output. She called it "probably the most important one". But <b>even an explanation must be checked</b>: a simple explanation is not always complete or correct.</li>
+</ul>
+<h3>6. NLP, with her examples</h3>
+<ul>
+  <li>Works on written text, and on speech <b>after it has been converted to text</b>.</li>
+  <li><b>Negation</b>: "shortness of breath, but <b>denies</b> chest pain" (no, not, denies). <b>Time</b>: "fever <b>last week</b>" ≠ fever today. <b>Uncertainty</b>: "the doctor is <b>considering</b> pneumonia" ≠ has pneumonia.</li>
+  <li>NLP is <b>not perfect</b>: it can miss a detail, misunderstand a sentence or connect things that should stay separate. <b>"The word is not enough; meaning depends on context."</b></li>
+</ul>
+<table class="t">
+  <tr><th>NLP use</th><th>The check she insisted on</th></tr>
+  <tr><td>Clinical documentation</td><td>a professional <b>must review the result before it becomes part of the medical record</b></td></tr>
+  <tr><td>Information extraction</td><td>check that it found the right information and understood the context</td></tr>
+  <tr><td>Search &amp; coding</td><td>checked by trained staff, especially when errors affect <b>reporting or payment</b></td></tr>
+  <tr><td>Patient communication</td><td>routes messages to the right team, but a "simple" message may hide an <b>urgent</b> problem: clear rules for urgent messages</td></tr>
+  <tr><td>Research</td><td>a system summary <b>does not replace reading</b> important research</td></tr>
+  <tr><td>Safety monitoring</td><td>finds <b>"possible signals"</b> (e.g. a medication problem); it <b>does not prove</b> the medication caused it; experts investigate</td></tr>
+</table>
+<div class="callout"><b>Her rule:</b> automated extraction can be useful, but <b>the level of checking should depend on the importance of the information and the risk of a mistake</b>.</div>`,
+        check: { q: 'According to the lecturer, how much checking should automated NLP extraction get?', o: ['It depends on the importance of the information and the risk of a mistake', 'None, once the system is installed', 'Always exactly the same amount for every task', 'Only research summaries need checking'], why: 'Lecture, 17 Oct: "the level of checking should depend on the importance of the information and the risk of a mistake."' },
       },
     ],
   },
@@ -832,6 +958,86 @@ window.GUIDE = {
 </ol>
 <div class="callout"><b>Exit ticket (slide 24):</b> name <b>one benefit</b>, <b>one risk</b> and <b>one safeguard</b>. Example: benefit = earlier detection of deterioration; risk = alert fatigue; safeguard = a pilot with a capacity-based threshold and monitoring of overrides.</div>`,
         check: { q: 'An AI tool saves the hospital money but gives no benefit to patients and works poorly for older adults. According to slide 23, is it a responsible success?', o: ['No: benefits must be meaningful for patients and performance acceptable across relevant subgroups', 'Yes, because it saves money', 'Yes, if the overall AUC is high', 'Yes, if a clinician signs every output'], why: 'Slide 23: benefits must be meaningful for patients, not only convenient for the organisation, and performance must be acceptable in subgroups.' },
+      },
+      {
+        t: 'In class (24 Oct): what Dr. Arsan stressed',
+        key: '<b>Supporting a decision and making a decision are not the same.</b> "The key phrase is <b>to support</b>." A prediction estimates <b>what may happen</b>; a decision determines <b>what should be done</b>.',
+        fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Prediction', pts: ['estimates what may happen', '"higher risk of readmission"', 'a likelihood, not a certainty'], c: 'c3' }, { icon: '', t: 'Decision', pts: ['determines what should be done', 'uses the prediction + context + patient preferences', 'made by people'], c: 'c1' }], cap: 'Her example: an older patient with a high readmission risk may value independence, fewer hospital visits or care at home. Those preferences decide what intervention is appropriate.' },
+        html: `
+<p class="small">From the recording of the 24 Oct lecture. She covered this deck up to <b>slide 14</b> (calibration and validation) and said the rest, plus one more topic, would come on 31 Oct. She said: <i>"in your midterm, I will mention this concept as <b>CDSS</b>. Don't forget."</i></p>
+<h3>1. Her opening case: chest discomfort in a busy ED</h3>
+<p>A 52-year-old, no high blood pressure, chest discomfort for an hour; the ED is busy. An AI says <i>"may require urgent assessment"</i>. Follow it immediately? Ignore it? <b>Use it as an additional source of information while making your own clinical judgment</b> — that is the course's answer.</p>
+<h3>2. Who makes clinical decisions</h3>
+<ul>
+  <li><b>Doctors</b>: the most likely diagnosis, extra tests, treatment, stay or discharge (and when discharge is safe).</li>
+  <li><b>Nurses</b>: monitoring, prioritisation, escalation, patient care.</li>
+  <li><b>Managers</b>: resources, staffing, patient flow, service quality.</li>
+</ul>
+<p><b>Two patients, same symptoms</b> (shortness of breath, high blood pressure): one has heart disease, the other a lung condition; one takes many medicines, the other just had surgery. So clinical decision-making is <b>interpreting information in context</b>, <b>more than recognising a pattern</b>. It balances <b>evidence, time, risk, resources and the consequences of action or inaction</b> (not acting is also an option).</p>
+<h3>3. Workflow</h3>
+<ul>
+  <li>Think of the <b>patient's journey</b>: <b>several smaller applications</b>, not one large AI that controls everything.</li>
+  <li>During assessment, AI does <b>not</b> independently diagnose; it helps the clinician see information that might be <b>overlooked</b>.</li>
+  <li>After tests: e.g. <b>an image analysis system flags a scan that needs urgent attention</b>.</li>
+  <li>Three questions before implementing: <b>who will use the output, at what moment will it appear, what is the user expected to do differently?</b></li>
+</ul>
+<div class="callout"><b>Her manager's lesson:</b> AI implementation is <b>not just a technological challenge</b>; it is a <b>workflow design and management challenge</b>.</div>
+<h3>4. CDSS details she added</h3>
+<ul>
+  <li>Simple CDSS has existed <b>for many years</b>: predefined rules and guidelines, "like an <b>SOP</b>" (standard operating procedure), medication databases, thresholds.</li>
+  <li>The allergy alert <b>does not need a sophisticated AI model</b>; it just compares the prescription with the record.</li>
+  <li>Output forms with her examples: <b>reminder</b> → a preventive screening is due; <b>alert</b> → a dangerous drug interaction; <b>risk estimate</b> → the patient needs closer observation. <b>Not every recommendation has the same level of importance.</b></li>
+  <li><b>Knowledge-based</b> = explicit, predefined rules (e.g. a lab result above a threshold → alert). <b>Non-knowledge-based</b> = learned from historical data (observations, diagnoses, labs, outcomes); <b>no human wrote a single rule in advance</b>.</li>
+  <li><b>Passive</b> = a clinical reference tool you open; it <b>does not interrupt</b>. <b>Active</b> = it interrupts during prescribing. <b>Patient-facing</b> = accessible language, supports engagement, needs very careful design.</li>
+  <li><b>Alert fatigue</b>: like the hundreds of phone notifications we get every day; we start missing the important ones.</li>
+  <li><b>Strengths:</b> consistency (a computer applies the same rule <b>without getting tired or forgetting</b>), timely reminders (<b>human memory is imperfect</b> under pressure).</li>
+  <li><b>Limitations:</b> an outdated rule; an incomplete record; <b>a medication list that does not reflect what the patient actually takes</b>; a model trained on a <b>different population</b>. <b>Poor integration</b> = a separate application, entering the same information again, navigating several screens. A warning that arrives <b>after</b> the decision is correct but useless.</li>
+</ul>
+<table class="t">
+  <tr><th>Actionable alert (her definition)</th><th>Distracting alert</th></tr>
+  <tr><td><b>relevant</b> to the current situation, <b>understandable</b> to the user, <b>connected to a realistic next step</b></td><td><b>irrelevant, repetitive, poorly timed or too vague</b></td></tr>
+</table>
+<div class="callout warn"><b>"Technical accuracy is only part of effective decision support."</b> Relevance, timing, usability and the ability to respond are <b>equally important</b>.</div>
+<h3>5. Predictive analytics details</h3>
+<ul>
+  <li>The key word is <b>likelihood</b>. A model does not say what <i>will</i> happen with certainty.</li>
+  <li>Output can be a <b>probability</b>, a <b>numerical risk score</b> or a <b>category (low / medium / high)</b>.</li>
+  <li><b>Prediction ≠ explanation</b> — she called this "the most important part". An association may reflect other factors or the way the data were collected.</li>
+  <li><b>Logistic regression</b>: estimates the probability of a <b>binary outcome</b> (event yes/no in a period). <b>Decision trees</b>: a <b>sequence of decision rules</b> that divides observations into groups.</li>
+  <li><b>A sophisticated model is not automatically a trustworthy model.</b> Ask how it was developed, validated, whether it is calibrated, and whether it works in your population.</li>
+  <li>Define the target precisely: what counts as deterioration (ICU admission? emergency intervention? a change in observations?), which patients (adults? children?).</li>
+  <li>Evaluate the whole pathway: did outcomes improve? were problems found earlier? <b>did unnecessary tests increase? did it create delays elsewhere?</b> Compare with a <b>baseline or comparison group</b>. <b>"Prediction is only the beginning."</b></li>
+</ul>
+<h3>6. Scores, thresholds and errors</h3>
+<ul>
+  <li><b>A score of 80 in one system is not the same risk as 80 in another</b>: one may use percentages, another an internal scale.</li>
+  <li><b>False positive</b> = flagged, but does not experience the outcome. <b>False negative</b> = needs intervention, but not flagged.</li>
+  <li><b>"There is no universal threshold."</b> It depends on clinical consequences, available resources, <b>the reliability of the model</b> and the patient's preferences and circumstances.</li>
+</ul>
+<h3>7. Her numbers (learn these, they may come back)</h3>
+<table class="t">
+  <tr><th>Measure</th><th>Her example</th><th>Result</th></tr>
+  <tr><td>Sensitivity</td><td>100 truly have it, 90 flagged</td><td><b>90%</b> (10 false negatives)</td></tr>
+  <tr><td>Specificity</td><td>100 don't have it, 95 correctly negative</td><td><b>95%</b> (5 false positives)</td></tr>
+  <tr><td>PPV</td><td>100 flagged, 30 truly have it</td><td><b>30%</b></td></tr>
+  <tr><td>NPV</td><td>900 not flagged, 891 truly don't have it</td><td><b>99%</b></td></tr>
+  <tr><td>Accuracy trap</td><td>1% of 1,000 (10 patients), "nobody has it"</td><td><b>99% accurate</b>, finds 0</td></tr>
+  <tr><td>Calibration</td><td>model says 20% readmission for a group</td><td>~20% should be readmitted</td></tr>
+</table>
+<ul>
+  <li><b>Sensitivity matters most</b> when missing a case could cause a dangerous delay. <b>Specificity matters</b> when false alarms cause unnecessary investigation, anxiety and workload.</li>
+  <li>Sensitivity and specificity describe performance <b>relative to whether the condition is really present</b>. Predictive values describe <b>what a positive or negative result means for the person who receives it</b>.</li>
+  <li><b>Prevalence</b> = the proportion of a population with a condition <b>at a given time or within a defined period</b>.</li>
+  <li><b>Accuracy</b> = the proportion of classifications that are correct; inadequate when outcomes are <b>highly imbalanced</b>.</li>
+  <li><b>"What matters is that you can explain the consequences of the errors rather than simply naming them."</b> (She skipped the confusion matrix details as "kind of detail".)</li>
+</ul>
+<h3>8. Validation and generalisation</h3>
+<ul>
+  <li><b>Internal validation</b>: within the development process. <b>External validation</b>: different data: another <b>hospital, city, time period or population</b>.</li>
+  <li>Why external validation: hospitals differ in <b>patient population, clinical practice, procedures, equipment, staffing and documentation systems</b>. A model from a large specialist hospital may perform differently in a smaller hospital, or after treatment protocols change.</li>
+  <li><b>Generalisation</b> = the ability of a model to perform appropriately <b>beyond the data and circumstances it was developed in</b>.</li>
+</ul>`,
+        check: { q: 'In the lecturer\'s chest-discomfort example, the AI says the patient "may require urgent assessment". What is the course\'s answer?', o: ['Use it as an additional source of information while making your own clinical judgment', 'Follow it immediately, the AI has more data', 'Ignore it until you have examined the patient', 'Let the AI decide, because the ED is busy'], why: 'Lecture, 24 Oct: supporting a decision and making a decision are not the same. AI supports; the clinician decides.' },
       },
       {
         t: 'Exam checklist: every slide in one line',
