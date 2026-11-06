@@ -659,7 +659,7 @@ window.GUIDE = {
   /* ================================================================ */
   4: {
     goal: 'Explain what a CDSS is and its types, go from a prediction to an action, calculate and interpret sensitivity, specificity, PPV and NPV, explain why accuracy misleads, tell discrimination from calibration, and describe automation bias, oversight and responsible implementation.',
-    time: '≈ 130 min',
+    time: '≈ 150 min',
     videos: [
       ['clinical decision support systems', 'clinical decision support system CDSS explained'],
       ['the confusion matrix', 'StatQuest confusion matrix'],
@@ -964,7 +964,7 @@ window.GUIDE = {
         key: '<b>Supporting a decision and making a decision are not the same.</b> "The key phrase is <b>to support</b>." A prediction estimates <b>what may happen</b>; a decision determines <b>what should be done</b>.',
         fig: { type: 'compare', vs: true, cols: [{ icon: '', t: 'Prediction', pts: ['estimates what may happen', '"higher risk of readmission"', 'a likelihood, not a certainty'], c: 'c3' }, { icon: '', t: 'Decision', pts: ['determines what should be done', 'uses the prediction + context + patient preferences', 'made by people'], c: 'c1' }], cap: 'Her example: an older patient with a high readmission risk may value independence, fewer hospital visits or care at home. Those preferences decide what intervention is appropriate.' },
         html: `
-<p class="small">From the recording of the 24 Oct lecture. She covered this deck up to <b>slide 14</b> (calibration and validation) and said the rest, plus one more topic, would come on 31 Oct. She said: <i>"in your midterm, I will mention this concept as <b>CDSS</b>. Don't forget."</i></p>
+<p class="small">From the recording of the 24 Oct lecture. She covered this deck up to <b>slide 14</b> (calibration and validation); she went through the rest on 5 Nov (next step). She said: <i>"in your midterm, I will mention this concept as <b>CDSS</b>. Don't forget."</i></p>
 <h3>1. Her opening case: chest discomfort in a busy ED</h3>
 <p>A 52-year-old, no high blood pressure, chest discomfort for an hour; the ED is busy. An AI says <i>"may require urgent assessment"</i>. Follow it immediately? Ignore it? <b>Use it as an additional source of information while making your own clinical judgment</b> — that is the course's answer.</p>
 <h3>2. Who makes clinical decisions</h3>
@@ -1040,8 +1040,98 @@ window.GUIDE = {
         check: { q: 'In the lecturer\'s chest-discomfort example, the AI says the patient "may require urgent assessment". What is the course\'s answer?', o: ['Use it as an additional source of information while making your own clinical judgment', 'Follow it immediately, the AI has more data', 'Ignore it until you have examined the patient', 'Let the AI decide, because the ED is busy'], why: 'Lecture, 24 Oct: supporting a decision and making a decision are not the same. AI supports; the clinician decides.' },
       },
       {
+        t: 'In class (5 Nov): the last lecture before the midterm',
+        key: '<b>"The value of AI depends on whether it improves a decision, not simply whether it produces a prediction."</b> A correct prediction that reaches the wrong person, or has no response attached, is a <b>system that failed operationally</b>.',
+        fig: { type: 'flow', t: 'Her readmission / deterioration story: where AI projects break', items: [['', 'Model works in testing', 'the hospital is excited', 'c1'], ['', 'Goes into daily practice', 'alerts reach the team', 'c3'], ['', 'Nobody defined the response', 'nurse? tests? transfer?', 'c4'], ['', 'More workload', 'no better outcomes', 'bad']], cap: '"Knowing that a problem may happen is useful only if you can do something about it."' },
+        html: `
+<p class="small">From the recording of the 5 Nov lecture, the last one before the midterm. She called it <b>"a summary class"</b> and went fast through the rest of the clinical decision-making deck (slides 4–20). She repeated CDSS <b>because "a few of your friends have a confusion about this concept"</b>. She also said the small questions next to the slides "can be a great example" for the midterm, though she will not necessarily ask them.</p>
+<h3>1. Uncertainty and the patient as a person</h3>
+<ul>
+  <li>Her example: two possible diagnoses, one <b>harmless</b>, one <b>life-threatening</b>, and the evidence does not separate them. <b>Uncertainty can be reduced, never removed</b>, and the physician must still decide now.</li>
+  <li>Why AI helps here: the human mind has <b>limited cognitive capacity</b>; we cannot process every piece of data at once. AI is better at <b>recognising patterns</b> across thousands of cases. "It is the most important value we get from AI."</li>
+  <li>But: the system recommends a treatment, and the patient says they had <b>severe side effects</b> from it before, or refuses it for <b>quality-of-life</b> reasons. Follow the recommendation automatically? <b>No.</b> "The patient is not simply a collection of laboratory values."</li>
+</ul>
+<h3>2. Workflow: who, when, what</h3>
+<ul>
+  <li>Before consultation: summarise a <b>5-year, multi-hospital</b> record. The summary must be accurate: a wrong medication history can lead to a wrong decision.</li>
+  <li><b>Differential diagnosis</b> = considering several possible explanations for a symptom (her example: <b>fatigue</b>). AI suggests possibilities; the physician judges whether they make sense.</li>
+  <li>After tests: flag a concerning scan for the <b>radiology team</b>. Treatment planning: drug interactions, comparing options. After discharge: follow-up, e.g. <b>is an elderly patient taking their pills on time?</b></li>
+  <li><b>The most important point of the slide:</b> at every stage define <b>who receives the information, when, and what they are expected to do</b>. An alert sent to someone <b>not responsible</b> for the patient = correct prediction, failed system. Designing this is <b>the hospital managers' responsibility</b>.</li>
+</ul>
+<h3>3. CDSS again (she said she will not ask you to list the types)</h3>
+<ul>
+  <li>Purpose: give professionals the opportunity to make <b>more informed decisions</b>. CDSS <b>existed before modern machine learning</b>: rules, thresholds, medication databases, the allergy warning. "It is not a new method."</li>
+  <li><b>Knowledge-based</b>: guidelines, protocols, expert knowledge (lab value above a threshold → reminder). Advantage: <b>the logic is clear</b>. Weakness: struggles with <b>complicated patients</b> or situations the guideline does not cover.</li>
+  <li><b>Non-knowledge-based</b>: learns patterns from data (combinations of vital signs before deterioration). <b>Only as good as the data</b>: incomplete, biased or unrepresentative data → unreliable recommendations.</li>
+  <li><b>Passive</b>: the doctor opens a guideline database. <b>Active</b>: a <b>pop-up</b> when prescribing an interacting drug; "it acts by itself". <b>Patient-facing</b>: helps patients prepare questions before a visit. Risk: patients may <b>misunderstand a risk estimate as a definite diagnosis</b>.</li>
+</ul>
+<h3>4. Predictive analytics: the key word is "estimate"</h3>
+<ul>
+  <li>"A predictive model <b>does not know the future</b>." It finds patterns in existing data and uses them to estimate what may happen.</li>
+  <li>Readmission example: inputs such as age, previous admissions, diagnosis, medication history. Readmission causes: complications, poor follow-up, medication problems, managing at home.</li>
+  <li>A prediction <b>does not tell you which intervention</b> is right; that depends on the patient.</li>
+  <li><b>Prediction ≠ causation</b>: a variable linked to readmission does not necessarily <i>cause</i> it. A prediction can still be useful.</li>
+  <li>From prediction to action: define the target <b>precisely (deterioration within 6 hours, 24 hours or 7 days?)</b> → what is known at prediction time → validated model → threshold → <b>connect to a response</b>.</li>
+</ul>
+<h3>5. Thresholds: her 10% → 5% example</h3>
+<ul>
+  <li>A score of <b>20%</b> alone does not say what to do. A <b>threshold translates the output into an action category</b>.</li>
+  <li>Hospital rule: alert above <b>10%</b>; below → routine monitoring, above → extra review.</li>
+  <li>Lower it to <b>5%</b>: more patients get alerts, <b>fewer cases missed</b>, but <b>more false positives</b> (flagged high-risk, event does not happen) → unnecessary tests and monitoring.</li>
+  <li>Her manager's point: staff time is limited. Spending it on false alarms can mean missing something urgent. Put <b>the right people in the right place at the right time</b>.</li>
+</ul>
+<h3>6. Augmented intelligence ("one of my favourite concepts")</h3>
+<ul>
+  <li>AI <b>extends and strengthens human capabilities</b> rather than simply automating them. <b>Automation</b> = moving tasks from humans to machines. <b>Augmentation</b> = helping humans do their tasks better.</li>
+  <li>AI: analyses thousands of cases, calculates probabilities, suggests diagnoses. Physician: <b>physical examination, communication, patient concerns, social circumstances, the broader clinical context</b>.</li>
+  <li><b>Her navigation-app analogy:</b> the app recommends a route, but the road is closed because of an emergency it cannot see. Would you follow it blindly? No. Clinicians must be able to <b>understand, question and override</b> AI.</li>
+  <li><b>Meaningful human oversight</b> needs access to relevant information, understanding of the system's limitations, and the ability to <b>reject</b> its recommendation.</li>
+  <li>The goal is <b>not to maximise automation</b>; it is to improve decisions and patient outcomes.</li>
+</ul>
+<h3>7. Automation bias, alert fatigue, calibrated trust</h3>
+<ul>
+  <li><b>Automation bias</b> = excessive trust in automated recommendations; we stop evaluating independently. Worst case: the physician has <b>contradictory evidence but ignores it because the AI seems confident</b>. The data may be outdated, invalid, misleading or biased.</li>
+  <li><b>Commission error</b>: following an incorrect recommendation. <b>Omission error</b>: a usually reliable monitor misses a deteriorating patient; no alert → nobody checks. ("I'm not going to ask, but it is quite important to know.")</li>
+  <li><b>Alert fatigue</b>: too many low-value notifications → less responsive. <b>Both excessive trust and excessive dismissal are dangerous.</b></li>
+  <li><b>Calibrated trust</b> = trust the system when its capabilities and limitations justify it, while keeping appropriate <b>skepticism</b>. Not "always trust", not "never trust" ("a very outdated idea").</li>
+  <li>A system showing <b>"95% confidence"</b> may be read as "95% chance the recommendation is correct". <b>Numbers can create a false sense of certainty.</b> So <b>user training</b> comes first, then use.</li>
+</ul>
+<h3>8. Explainability</h3>
+<table class="t">
+  <tr><th>Not helpful</th><th>Helpful</th></tr>
+  <tr><td>"<b>High risk</b>" — of what? over what period? based on what? what next?</td><td>"Higher estimated risk of <b>deterioration</b> based on <b>recent changes in vital signs and lab results</b>. Consider <b>urgent clinical review</b>."</td></tr>
+</table>
+<ul>
+  <li>"The best explanation is <b>not necessarily the most complicated</b> one. <b>Simple is the best.</b>"</li>
+  <li>An explanation shows which variables <b>contributed</b> to a prediction; it does <b>not prove they caused</b> the outcome.</li>
+</ul>
+<h3>9. Bias, privacy and governance</h3>
+<ul>
+  <li>Historical records: some groups had <b>less testing, less access to specialists</b>, different treatment; the model learns these patterns. Bias can differ by age, gender, ethnicity, disability, language, setting.</li>
+  <li><b>A model can perform well overall and poorly for a subgroup.</b> "Could a model be statistically accurate overall but unsafe for a particular group? <b>Absolutely.</b>" Safety needs more than one metric.</li>
+  <li>Ask <b>who benefits, who bears the wrong predictions, who is excluded</b>, <b>during development</b>, not after a problem.</li>
+  <li>External vendor: who maintains the model, who updates it, who investigates incidents, who protects data? <b>"These responsibilities cannot simply disappear into a contract with a technology company."</b></li>
+  <li>Document: intended use, limitations, development data, <b>model version</b>, incident procedure. Define who <b>owns the clinical decision</b>, who <b>maintains</b> the technology, who has <b>authority to suspend</b> it.</li>
+  <li>Data, practice and patient populations change → a good model can become <b>less reliable over time</b> → ongoing monitoring; procedures to update, review and <b>withdraw</b>.</li>
+  <li>Final decision responsibility: "<b>cannot simply be the algorithm</b>"; it sits within the organisation and its professional and legal framework.</li>
+</ul>
+<h3>10. Her closing scenario: a vendor knocks on your door</h3>
+<p>"We have an excellent, highly accurate, innovative ML system." <b>Buy it immediately? "I hope not."</b></p>
+<ol>
+  <li><b>First question: what clinical problem are we trying to solve?</b> (high readmission, long ED waits, medication errors)</li>
+  <li>Involve <b>stakeholders</b>: clinicians, nurses, patients, IT, data specialists, managers. Excellent from the developer's view can be <b>difficult for daily users</b>.</li>
+  <li>Understand the <b>current workflow</b>; find where it could realistically improve decisions.</li>
+  <li>Assess <b>data readiness, clinical evidence, usability, fairness, privacy, security</b>.</li>
+  <li><b>Pilot</b> in a controlled setting first ("I like pilot studies"): real conditions, find problems before a broader rollout.</li>
+  <li><b>Train users</b>: what it does, what it does not, when to question or override.</li>
+  <li><b>Monitor</b>: are clinicians using it, are outcomes improving, do some groups have problems, <b>how often alerts are ignored</b>, unexpected consequences.</li>
+</ol>`,
+        check: { q: 'A vendor offers your hospital a "highly accurate, innovative" AI system. According to the lecturer, what should the manager ask first?', o: ['What clinical problem are we trying to solve?', 'How fast can it be installed across the whole hospital?', 'Which machine-learning algorithm does it use?', 'How much more accurate is it than its competitors?'], why: 'Lecture, 5 Nov: technology should respond to a clearly defined problem. Then stakeholders, workflow, readiness, a pilot, training and monitoring.' },
+      },
+      {
         t: 'Exam checklist: every slide in one line',
         key: 'If you can say the line next to each slide <b>without looking</b>, you are ready for the week 4 questions. Cover the right column and test yourself.',
+        fig: { type: 'stack', t: 'The five ideas she repeated in every lecture', items: [['5. People own the decision', 'not the algorithm, not the vendor contract', 'c4'], ['4. Measure the whole system', 'subgroups, workflow, outcomes, not accuracy alone', 'c2'], ['3. A prediction needs a response', 'who receives it, when, what they do', 'c5'], ['2. Estimate, not certainty', 'likelihood; association is not cause', 'c3'], ['1. AI supports, people decide', 'CDSS = more informed decisions', 'c1']], cap: 'Most wrong options break one of these five.' },
         html: `
 <p>The slide numbers are the numbers printed on the slides. The shorter "Week 5" deck uses the same numbers; it only leaves out slides 3, 21–23 and 25.</p>
 <table class="t">
