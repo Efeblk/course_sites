@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mock midterm</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .mq { margin: 22px 0; }
+    .mq .quiz-q { margin-bottom: 6px; }
+    .mq.ok .quiz-q::after { content: "  correct"; color: var(--ok); font-size: .8rem; font-family: var(--mono); }
+    .mq.no .quiz-q::after { content: "  wrong"; color: var(--bad); font-size: .8rem; font-family: var(--mono); }
+    .mq.skip .quiz-q::after { content: "  not answered"; color: var(--warn); font-size: .8rem; font-family: var(--mono); }
+    #bar-row { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 8px 0; border-bottom: 1px solid var(--line); }
+  </style>
+</head>
+<body data-root="..">
+  <main>
+    <div class="mono small muted">UNI480 — mock midterm</div>
+    <h1 style="font-size:2.6rem;margin-top:4px">Deneme vize sınavı</h1>
+    <p class="lead">A guess at the real exam, written the way a model would write one from the four slide decks and Dr. Arsan's recorded lectures. It is not the real exam; the real questions may differ.</p>
+    <div class="callout small">Nasıl kullanılır: bir form seç, bütün soruları cevapla, sonra <b>Submit</b>'e bas. Cevaplar sona kadar gösterilmez, gerçek sınav gibi. Şıklar her açılışta karışır. Sonuçta her sorunun Türkçe açıklaması ve slayt numarası çıkar. Form A ve Form B farklı sorular; ikisini de çöz.</div>
+    <div class="row" id="forms"></div>
+    <div id="bar-row" class="row" style="display:none">
+      <span class="tag" id="count"></span>
+      <span class="tag" id="clock"></span>
+      <button class="primary" id="submit-top">Submit</button>
+    </div>
+    <div id="result"></div>
+    <div id="exam"></div>
+  </main>
+  <script src="data.js"></script>
+  <script src="mock.js"></script>
+  <script>
+    document.body.dataset.course = COURSE.id;
+    document.body.dataset.title = 'Mock midterm';
+    document.body.dataset.activity = 'mock-midterm';
+  </script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { el, shuffle } = CS;
+    const TOPIC = { W1: 'Week 1 · Introduction', W2: 'Week 2 · AI technologies', W3: 'Week 3 · Healthcare data', CDM: 'Week 4 · Clinical decision-making' };
+    const L = 'ABCDE';
+
+    // Split every topic alternately into Form A and Form B so both forms cover all weeks.
+    const seen = {};
+    const all = MOCK.map((m) => { seen[m.t] = (seen[m.t] || 0) + 1; return { ...m, form: seen[m.t] % 2 ? 'A' : 'B' }; });
+    const FORMS = [
+      ['A', 'Form A', all.filter((m) => m.form === 'A')],
+      ['B', 'Form B', all.filter((m) => m.form === 'B')],
+      ['all', 'Both forms', all],
+    ];
+
+    const exam = document.getElementById('exam');
+    const result = document.getElementById('result');
+    const barRow = document.getElementById('bar-row');
+    const count = document.getElementById('count');
+    const clock = document.getElementById('clock');
+    let items, picks, started, timer, done;
+
+    const formsRow = document.getElementById('forms');
+    for (const [key, label, list] of FORMS)
+      formsRow.append(el('button', { class: key === 'A' ? 'primary' : '', onclick: () => start(key) }, `${label} (${list.length} questions)`));
+
+    function start(key) {
+      const list = FORMS.find((f) => f[0] === key)[2];
+      // Keep weeks in order like a printed exam, but shuffle within each week and shuffle options.
+      items = Object.keys(TOPIC).flatMap((t) => shuffle(list.filter((m) => m.t === t)))
+        .map((m) => ({ ...m, opts: shuffle(m.o.map((text, i) => ({ text, right: i === 0 }))) }));
+      picks = new Array(items.length).fill(null);
+      done = false;
+      result.replaceChildren();
+      started = Date.now();
+      clearInterval(timer);
+      timer = setInterval(tick, 1000);
+      barRow.style.display = '';
+      render();
+      tick();
+      exam.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function tick() {
+      const s = Math.floor((Date.now() - started) / 1000);
+      clock.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} elapsed`;
+      count.textContent = `${picks.filter((p) => p !== null).length} / ${items.length} answered`;
+    }
+
+    function render() {
+      let lastTopic = null;
+      const nodes = [];
+      items.forEach((m, qi) => {
+        if (m.t !== lastTopic) { nodes.push(el('h2', {}, TOPIC[m.t])); lastTopic = m.t; }
+        const pick = picks[qi];
+        const status = !done ? '' : pick === null ? 'skip' : m.opts[pick].right ? 'ok' : 'no';
+        const buttons = m.opts.map((o, k) => {
+          let cls = 'opt';
+          if (!done && pick === k) cls += ' sel';
+          if (done && o.right) cls += ' right';
+          if (done && pick === k && !o.right) cls += ' wrong';
+          return el('button', {
+            class: cls, disabled: done,
+            onclick: () => { picks[qi] = k; render(); tick(); },
+          }, `${L[k]}) ${o.text}`);
+        });
+        nodes.push(el('div', { class: `mq ${status}`, id: `q${qi}` },
+          el('div', { class: 'quiz-q' }, `${qi + 1}. ${m.q}`),
+          buttons,
+          done ? el('div', { class: `callout small ${status === 'ok' ? 'ok' : 'bad'}` }, m.why) : null));
+      });
+      if (!done) nodes.push(el('button', { class: 'primary', style: { marginTop: '10px' }, onclick: submit }, 'Submit'));
+      exam.replaceChildren(...nodes);
+    }
+
+    function submit() {
+      const blank = picks.filter((p) => p === null).length;
+      if (blank && !confirm(`${blank} question(s) not answered. Submit anyway?`)) return;
+      done = true;
+      clearInterval(timer);
+      const mins = Math.round((Date.now() - started) / 60000);
+      const score = items.filter((m, i) => picks[i] !== null && m.opts[picks[i]].right).length;
+      const pct = Math.round((score / items.length) * 100);
+      CS.progress?.recordScore?.('mock-midterm', score, items.length);
+      const rows = Object.keys(TOPIC).map((t) => {
+        const idx = items.map((m, i) => i).filter((i) => items[i].t === t);
+        const ok = idx.filter((i) => picks[i] !== null && items[i].opts[picks[i]].right).length;
+        return el('tr', {}, el('td', {}, TOPIC[t]), el('td', {}, `${ok} / ${idx.length}`),
+          el('td', {}, idx.length ? `${Math.round((ok / idx.length) * 100)}%` : ''));
+      });
+      render();
+      result.replaceChildren(el('div', { class: 'panel' },
+        el('h2', {}, `${score} / ${items.length} (${pct}%) in ${mins} min`),
+        el('p', {}, pct >= 85 ? 'Çok iyi. Yanlışların açıklamalarını oku, sonra diğer formu çöz.'
+          : pct >= 65 ? 'İyi. Aşağıda en düşük haftanın sorularını ve açıklamalarını oku, sonra diğer formu çöz.'
+          : 'Özet sayfasında en düşük haftayı tekrar oku, sonra bu formu yeniden çöz (şıklar karışacak).'),
+        el('table', { class: 't' }, el('tr', {}, el('th', {}, 'Topic'), el('th', {}, 'Correct'), el('th', {}, '')), rows),
+        el('div', { class: 'row', style: { marginTop: '12px' } },
+          el('a', { class: 'btn', href: 'ozet.html' }, 'Türkçe özet'),
+          el('button', { onclick: () => start(items.length === all.length ? 'all' : items[0].form) }, 'Retake (reshuffled)'))));
+      barRow.style.display = 'none';
+      result.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('submit-top').onclick = () => submit();
+    const autoForm = new URLSearchParams(location.search).get('form');
+    if (FORMS.some((f) => f[0] === autoForm)) start(autoForm);
+  </script>
+</body>
+</html>
