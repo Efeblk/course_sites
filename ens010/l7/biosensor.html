@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build a Biosensor · ENS010</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .q { margin: 10px 0 4px; font-family: var(--serif); font-size: 1.08rem; }
+    .row button.right { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--panel)); }
+    .row button.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--panel)); }
+    .sl { display: grid; grid-template-columns: 200px 1fr 90px; gap: 10px; align-items: center; margin: 6px 0; }
+    .sl input { width: 100%; }
+    #plot { width: 100%; display: block; }
+  </style>
+</head>
+<body data-root="../.." data-course="ens010" data-chapter="7" data-title="Build a Biosensor" data-activity="l7-biosensor">
+  <main>
+    <h1>Build a Biosensor</h1>
+    <p class="lead">A biosensor = a <b>receptor</b> that recognizes the <b>analyte</b> by lock and key + a <b>transducer</b> that turns the binding into a readable signal. Build three, then tune their performance.</p>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Part 1 · Choose the receptor (lock and key)</h3>
+      <div id="p1"></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0">Part 2 · Choose the transducer (slide 8)</h3>
+      <div id="p2"></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0">Part 3 · Performance parameters (slides 9–10)</h3>
+      <div class="sl"><span>Sensitivity (slope)</span><input type="range" id="sens" min="0.05" max="0.3" step="0.01" value="0.3"><code id="sensV"></code></div>
+      <div class="sl"><span>Response time</span><input type="range" id="resp" min="0.1" max="4" step="0.1" value="0.3"><code id="respV"></code></div>
+      <div class="sl"><span>Limit of detection</span><input type="range" id="lod" min="2" max="60" step="1" value="5"><code id="lodV"></code></div>
+      <svg id="plot" viewBox="0 0 680 250"></svg>
+      <div id="p3"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    function mcq(box, items, onDone) {
+      let i = 0, score = 0;
+      const next = () => {
+        if (i >= items.length) { fill(box, el('p', {}, `${score} / ${items.length} right.`)); onDone?.(score, items.length); return; }
+        const [q, opts, right, why] = items[i];
+        fill(box, el('p', { class: 'q' }, `${i + 1}. ${q}`), el('div', { class: 'row' }, CS.shuffle(opts).map((o) => el('button', { onclick: (e) => {
+          const ok = o === right; if (ok) score++;
+          [...box.querySelectorAll('.row button')].forEach((b) => { b.disabled = true; if (b.textContent === right) b.classList.add('right'); });
+          if (!ok) e.target.classList.add('wrong');
+          box.append(el('div', { class: 'callout small ' + (ok ? 'ok' : 'bad') }, why), el('button', { class: 'primary', onclick: () => { i++; next(); } }, 'Next'));
+        } }, o))));
+      };
+      next();
+    }
+    mcq($('#p1'), [
+      ['Analyte: an antigen on the surface of a virus.', ['Antibody', 'Antigen', 'Thermistor', 'Gold nanoparticle'], 'Antibody', 'Antibody/antigen is a lock-and-key pair. The antigen is the analyte, never the receptor.'],
+      ['Analyte: glucose in the blood (a substrate).', ['Enzyme', 'Antibody', 'Electrode', 'Graphene'], 'Enzyme', 'Enzyme/substrate is the classic lock and key (e.g. glucose oxidase in glucose sensors).'],
+      ['Analyte: a DNA sequence of a pathogen.', ['Complementary nucleic acid (ssDNA)', 'Enzyme', 'Thermistor', 'Optical fiber'], 'Complementary nucleic acid (ssDNA)', 'A single strand pairs only with its complementary strand.'],
+      ['Which of these is NOT a receptor (biocatalyst)?', ['Thermal transducer', 'Enzyme', 'Antibody', 'Cell'], 'Thermal transducer', 'Receptors: enzyme, antibody, nucleic acid, cell. A transducer converts the signal; it does not recognize the analyte.'],
+      ['What holds the antibodies firmly on the electronic transducer (layer 1)?', ['A 2D nanomaterial such as a graphene nanosheet', 'The analyte', 'A gamma camera', 'A radio-frequency pulse'], 'A 2D nanomaterial such as a graphene nanosheet', 'Nanofibers, functionalized NPs and 2D nanomaterials stabilize the bioreceptors on the transducer.'],
+    ]);
+    mcq($('#p2'), [
+      ['When the antibody binds, electrons flow and a current proportional to the reaction appears.', ['Amperometric', 'Calorimetric / thermal', 'Optical', 'Piezo-electric'], 'Amperometric', 'Amperometric = the current produced in proportion to the bioreaction.'],
+      ['The enzyme reaction releases heat; the temperature rises slightly.', ['Calorimetric / thermal', 'Amperometric', 'Optical', 'Potentiometric'], 'Calorimetric / thermal', 'Calorimetric / thermal = the amount of heat produced or absorbed (a thermistor).'],
+      ['The binding makes a dye glow; the light intensity changes.', ['Optical', 'Amperometric', 'Calorimetric / thermal', 'Impedance'], 'Optical', 'Optical = changes in light intensity when a specific reaction happens.'],
+      ['The reaction changes the electric potential at the electrode.', ['Potentiometric', 'Amperometric', 'Optical', 'Thermistor'], 'Potentiometric', 'In the table: potentiometric = change in potential; amperometric = change in current.'],
+      ['The bound mass changes how a crystal vibrates.', ['Piezo-electric', 'Optical', 'Amperometric', 'Calorimetric'], 'Piezo-electric', 'Mechanical transducer: piezo-electric = change in mass vibrations.'],
+    ], (s, n) => CS.progress.recordScore?.('l7-biosensor', s, n));
+
+    function plot() {
+      const sens = Number($('#sens').value), tau = Number($('#resp').value), lod = Number($('#lod').value);
+      $('#sensV').textContent = sens.toFixed(2); $('#respV').textContent = tau + ' min'; $('#lodV').textContent = lod + ' u';
+      // left: signal vs concentration; right: signal vs time after the analyte is added
+      const L = (c) => 30 + c * 2.8, LY = (s) => 220 - s * 6;
+      let a = '', ref = '';
+      for (let c = 0; c <= 100; c += 2) { const s = c < lod ? 0.5 : 0.5 + sens * (c - lod) * (100 / (100 - lod)) * 1; a += `${c ? 'L' : 'M'}${L(c)},${LY(Math.min(s, 31))}`; ref += `${c ? 'L' : 'M'}${L(c)},${LY(0.5 + 0.3 * c)}`; }
+      const R = (t) => 380 + t * 28, RY = (s) => 220 - s * 18;
+      let b = '';
+      for (let t = 0; t <= 10; t += 0.1) { const s = 4.5 + 3.7 * (1 - Math.exp(-t / (tau / 3))); b += `${t ? 'L' : 'M'}${R(t)},${RY(s)}`; }
+      $('#plot').innerHTML = `
+        <text x="30" y="16" font-size="12" fill="var(--muted)">signal vs analyte concentration</text>
+        <line x1="30" y1="220" x2="310" y2="220" stroke="var(--line-2)"/><line x1="30" y1="20" x2="30" y2="220" stroke="var(--line-2)"/>
+        <rect x="30" y="20" width="${L(lod) - 30}" height="200" fill="var(--f-c4)" fill-opacity=".1"/>
+        <text x="${L(lod) + 4}" y="40" font-size="11" fill="var(--f-c4)">LOD ${lod}</text>
+        <path d="${ref}" fill="none" stroke="var(--f-c1)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <path d="${a}" fill="none" stroke="var(--f-c0)" stroke-width="2.5"/>
+        <text x="300" y="238" text-anchor="end" font-size="11" fill="var(--muted)">concentration →</text>
+        <text x="380" y="16" font-size="12" fill="var(--muted)">signal vs time after analyte added</text>
+        <line x1="380" y1="220" x2="665" y2="220" stroke="var(--line-2)"/><line x1="380" y1="20" x2="380" y2="220" stroke="var(--line-2)"/>
+        <line x1="380" y1="${RY(8.2)}" x2="665" y2="${RY(8.2)}" stroke="var(--muted)" stroke-dasharray="4 4"/>
+        <path d="${b}" fill="none" stroke="var(--f-c2)" stroke-width="2.5"/>
+        <text x="660" y="238" text-anchor="end" font-size="11" fill="var(--muted)">time (min) →</text>`;
+      const msgs = [
+        sens >= 0.22 ? 'Steep line: <b>good sensitivity</b>, the signal follows the concentration sharply (dashed green = the "good" sensor of slide 10).' : 'Flat line: <b>poor sensitivity</b>, a big change in concentration barely moves the signal.',
+        tau <= 0.6 ? 'It settles in seconds: <b>good response time</b>.' : `It needs about ${tau} minutes to reach a stable value: <b>poor response time</b> (the blue sensor on slide 10 needed 4).`,
+        lod <= 8 ? 'It sees very low concentrations: <b>low limit of detection</b>, which is what early diagnosis needs.' : 'Everything left of the shaded band is invisible to it: a <b>high limit of detection</b> finds the disease late. LOD is the MINIMUM detectable concentration.',
+      ];
+      fill($('#p3'), el('ul', {}, msgs.map((m) => el('li', { html: m }))),
+        el('p', { class: 'small muted' }, 'Not shown here: selectivity (ignoring look-alike molecules), accuracy (same sample → same signal), durability (keeping the signal over time), cost and ease of use.'));
+    }
+    ['sens', 'resp', 'lod'].forEach((id) => $('#' + id).addEventListener('input', plot));
+    plot();
+  </script>
+</body>
+</html>

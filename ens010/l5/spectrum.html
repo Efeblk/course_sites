@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Radiation and Invasiveness · ENS010</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .spec { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; margin: 10px 0; }
+    .spec button { padding: 10px 4px; font-size: .8rem; line-height: 1.2; white-space: normal; min-height: 64px; }
+    .spec button.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--panel)); }
+    .spec button.no { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, var(--panel)); }
+    .wave { height: 26px; width: 100%; display: block; }
+    .tech { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+    .tcard { border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; background: var(--bg); }
+    .tcard h4 { margin: 0 0 4px; font-family: var(--display); font-size: 1.1rem; }
+    .tcard .row { gap: 6px; margin-top: 8px; }
+    .tcard.ok { border-color: var(--ok); }
+    .tcard.no { border-color: var(--bad); }
+    .pro { color: var(--ok); } .con { color: var(--bad); }
+    .tcard ul { margin: 4px 0 0 16px; padding: 0; font-size: .84rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="ens010" data-chapter="5" data-title="Radiation and Invasiveness" data-activity="l5-spectrum">
+  <main>
+    <h1>Radiation and Invasiveness</h1>
+    <p class="lead">An imaging technique is <b>invasive</b> if it uses <b>ionizing</b> radiation, which has enough energy to break molecular bonds in our cells. Sort the spectrum first, then the techniques.</p>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Part 1 · Click each radiation: ionizing or not? (slide 13)</h3>
+      <svg class="wave" viewBox="0 0 900 26" preserveAspectRatio="none" id="wave"></svg>
+      <div class="spec" id="spec"></div>
+      <div class="row"><span class="small muted">Your answer for the selected radiation:</span><button id="nonion">Non-ionizing (safe)</button><button id="ion">Ionizing (harmful)</button></div>
+      <p id="smsg"></p>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Part 2 · Invasive or non-invasive? (Lecture 5, slide 12)</h3>
+      <div class="tech" id="tech"></div>
+      <p id="tmsg"></p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const RAD = [['Power lines', 0, '50 Hz'], ['AM/FM radio, TV', 0, 'kHz–MHz'], ['Mobile network', 0, 'GHz'], ['Satellite', 0, 'GHz'], ['TV remote (IR)', 0, '430 THz'], ['Visible light', 0, '750 THz'], ['Ultraviolet', 1, 'PHz'], ['X-rays', 1, 'EHz'], ['Gamma rays', 1, '300 EHz']];
+    const got = {};
+    let sel = 0;
+    let w = ''; for (let x = 0; x <= 900; x += 2) { const f = 0.01 + (x / 900) ** 3 * 0.6; w += `${x ? 'L' : 'M'}${x},${13 + 9 * Math.sin(x * f)}`; }
+    $('#wave').innerHTML = `<path d="${w}" fill="none" stroke="var(--f-c3)" stroke-width="1.5"/><line x1="600" y1="0" x2="600" y2="26" stroke="var(--bad)" stroke-dasharray="3 3"/>`;
+    function spec() {
+      fill($('#spec'), RAD.map(([n, ion, f], i) => el('button', { class: (i === sel ? 'active ' : '') + (got[i] == null ? '' : got[i] ? 'ok' : 'no'), onclick: () => { sel = i; spec(); } }, n, el('div', { class: 'small muted' }, f))));
+      const done = Object.keys(got).length, right = Object.values(got).filter(Boolean).length;
+      if (done === RAD.length) $('#smsg').innerHTML = `<b>${right} / ${RAD.length}</b> right. Everything up to visible light is <b>non-ionizing</b>: it cannot ionize our cells, so we live with it all day. From <b>ultraviolet</b> on (UV, X-rays, gamma rays) radiation is <b>ionizing</b>: it can break molecular bonds.`;
+    }
+    const answer = (ion) => {
+      const right = RAD[sel][1] === ion; got[sel] = right;
+      $('#smsg').innerHTML = right ? `Right: ${RAD[sel][0]} is ${ion ? 'ionizing' : 'non-ionizing'}.` : `No: ${RAD[sel][0]} is ${RAD[sel][1] ? 'ionizing (high energy, breaks bonds)' : 'non-ionizing (not enough energy to ionize cells)'}.`;
+      sel = Math.min(sel + 1, RAD.length - 1); spec();
+    };
+    $('#nonion').onclick = () => answer(0); $('#ion').onclick = () => answer(1);
+    spec();
+
+    const TECH = [
+      ['MRI', 0, 'magnetic field + radio waves', ['high spatial resolution', 'no tissue penetration limit'], ['relatively low sensitivity', 'high cost', 'long imaging time']],
+      ['Ultrasound', 0, 'high-frequency sound', ['high sensitivity', 'real-time', 'low cost'], ['poor resolution', 'operator-dependent analysis']],
+      ['Optical imaging', 0, 'visible / near-infrared light', ['high sensitivity', 'real-time', 'cost effective'], ['low spatial resolution', 'small penetration depth']],
+      ['CT', 1, 'X-rays', ['high spatial resolution', 'strong penetration depth'], ['radiation risk']],
+      ['PET', 1, 'gamma rays (positron annihilation)', ['unlimited penetration depth', 'high sensitivity'], ['poor spatial resolution', 'radiation risk']],
+      ['SPECT', 1, 'gamma rays (Tc-99m)', ['unlimited penetration depth', 'high sensitivity'], ['poor spatial resolution', 'radiation risk']],
+    ];
+    const pick = {};
+    function tech() {
+      fill($('#tech'), TECH.map(([n, inv, rad, pro, con], i) => el('div', { class: 'tcard ' + (pick[i] == null ? '' : pick[i] === inv ? 'ok' : 'no') },
+        el('h4', {}, n),
+        pick[i] == null ? el('div', { class: 'small muted' }, 'uses: ?') : [
+          el('div', { class: 'small' }, 'uses: ', el('b', {}, rad), ' → ', el('b', { class: inv ? 'con' : 'pro' }, inv ? 'invasive' : 'non-invasive')),
+          el('ul', {}, pro.map((p) => el('li', { class: 'pro' }, p)), con.map((c) => el('li', { class: 'con' }, c)))],
+        pick[i] == null ? el('div', { class: 'row' }, el('button', { class: 'chip', onclick: () => { pick[i] = 0; tech(); } }, 'non-invasive'), el('button', { class: 'chip', onclick: () => { pick[i] = 1; tech(); } }, 'invasive')) : null)));
+      const n = Object.keys(pick).length, right = Object.entries(pick).filter(([i, v]) => TECH[i][1] === v).length;
+      $('#tmsg').innerHTML = n === TECH.length ? `<b>${right} / ${TECH.length}</b>. The safe ones (MRI, ultrasound, optical) often lack resolution or sensitivity; the sharp, deep ones use radiation. That trade-off is why no single technique is used for everything, and why nanomaterial contrast agents matter.` : '';
+      if (n === TECH.length) CS.progress.recordScore?.('l5-spectrum', right, TECH.length);
+    }
+    tech();
+  </script>
+</body>
+</html>

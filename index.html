@@ -39,6 +39,7 @@
         coe025: 'Fall 25-26 · Weeks 1–4',
         coe305: 'Fall 2026-27 · Weeks 1–5',
         uni480: 'Fall 2026-27 · Weeks 1–4',
+        ens010: 'Fall 2026-27 · Lectures 1–7',
       };
       const rows = [], info = await CS.loadCourses();
       for (const [dir, { C, G, U }] of Object.entries(info)) {
@@ -52,7 +53,7 @@
             const st = CS.testStatus(C.id, ch.n);
             const ok = st.v === 'confirmed' || st.v === 'yes';
             return el('li', {}, el('a', { href: `${dir}/learn.html?ch=${ch.n}` },
-              el('span', { class: 'ln' }, `${U === 'Week' ? 'W' : 'Ch'}${ch.n}`),
+              el('span', { class: 'ln' }, `${{ Week: 'W', Lecture: 'L' }[U] || 'Ch'}${ch.n}`),
               el('span', { class: 'lt' }, ch.title),
               el('span', { class: 'ls' + (ok || d >= tot ? ' done' : '') }, ok ? st.label : d >= tot ? 'read' : d ? `${d} / ${tot}` : '')));
           }))));

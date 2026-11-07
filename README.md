@@ -35,6 +35,11 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
     vision tasks across hospitals, verifying an AI draft, data-quality inspector, interoperability ("1.8"),
     threshold & alert lab, calibration at a new hospital, human-oversight trainer
   - 25 games, a quiz and flashcards per week, driven by `uni480/data.js`
+- **ENS010 — Nanoscience and Engineering** (`ens010/`): Lectures 1–7 (one unit = one lecture, numbered like the slides)
+  - 6 labs (`ens010/lN/*.html`): nano ruler, surface atom lab, shrink a bulk material (0D/1D/2D, quantum),
+    radiation and invasiveness, choose the imaging technique, build a biosensor
+  - 23 games, a quiz and flashcards per lecture, driven by `ens010/data.js`
+  - `ozet.html` (Turkish midterm summary with English terms) and `mock.html` (mock midterm with written questions)
 
 ## Layout
 
@@ -61,7 +66,7 @@ assets/js/ml.js       seeded RNG, least squares, entropy, colors (COE305, UNI480
 <course>/data.js      all content for a course: takeaways, quizzes, cards, games (sets window.COURSE)
 <course>/guide.js     step-by-step guided lessons per chapter (sets window.GUIDE)
 <course>/{index,learn,test,quiz,cards,game}.html   generic hub + engines (?ch=N / ?id=game); identical in every course folder
-coe303/chN/, coe025/wN/, coe305/wN/, uni480/wN/   custom simulations per chapter / week
+coe303/chN/, coe025/wN/, coe305/wN/, uni480/wN/, ens010/lN/   custom simulations per chapter / week / lecture
 materials/            raw course files — local only, gitignored (copyrighted)
 ```
 

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose the Imaging Technique · ENS010</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .case { font-family: var(--serif); font-size: 1.12rem; }
+    .techs { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 10px 0; }
+    .techs button { padding: 10px 6px; }
+    .techs button.right { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--panel)); }
+    .techs button.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--panel)); }
+    .card2 { border: 1px solid var(--line); border-left: 4px solid var(--f-c3); border-radius: 4px; padding: 10px 14px; background: var(--bg); margin-top: 10px; }
+    .card2 dt { font-weight: 700; margin-top: 6px; }
+    .card2 dd { margin: 0 0 2px 0; }
+  </style>
+</head>
+<body data-root="../.." data-course="ens010" data-chapter="6" data-title="Choose the Imaging Technique" data-activity="l6-imaging">
+  <main>
+    <h1>Choose the Imaging Technique</h1>
+    <p class="lead">Each case needs one imaging technique. Choose, then read how it works, whether it is invasive, its pros and cons, and how a nanomaterial improves it. The point is the trade-off, not one perfect answer.</p>
+
+    <div class="panel">
+      <div class="row"><span class="tag" id="prog"></span><span class="tag" id="score"></span></div>
+      <p class="case" id="case"></p>
+      <div class="techs" id="techs"></div>
+      <div id="out"></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Explore any technique</h3>
+      <div class="row" id="all"></div>
+      <div id="explore"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const T = {
+      MRI: { inv: false, how: 'A strong magnetic field aligns the hydrogen protons of water; a radio-frequency pulse knocks them out of line; when it stops they realign and release energy, which a coil detects. A computer turns the energies into a 3D image.', pro: 'high spatial resolution, no tissue penetration limit', con: 'relatively low sensitivity, high cost, long imaging time', nano: 'Magnetic NPs (SPIO, Mn oxide, Gd oxide, FePt) as biocompatible contrast agents; NP carriers encapsulate, stabilize and target the agent → lower toxicity and side effects. Keep the magnetism.' },
+      PET: { inv: true, how: 'A positron-emitting radiotracer (¹⁸F, ¹²⁴I, ¹¹¹In, ⁶⁴Cu) is injected. Each positron annihilates with an electron into two 511 keV gamma rays in opposite directions, caught by a gamma camera.', pro: 'unlimited penetration depth, high sensitivity', con: 'poor spatial resolution, radiation risk, expensive', nano: 'NPs carry the PET radiotracer to the target site so gamma rays are not produced all over the body.' },
+      SPECT: { inv: true, how: 'A gamma-emitting radioisotope (technetium-99m) emits 141 keV gamma rays directly; a gamma camera shows its biodistribution. No positron needed.', pro: 'unlimited penetration depth, high sensitivity, shows function', con: 'poor spatial resolution, radiation risk, expensive', nano: 'NPs target the radioisotope to the organ of interest instead of everywhere.' },
+      CT: { inv: true, how: 'X-rays pass through the body from many angles; the computer reconstructs the structures.', pro: 'high spatial resolution, strong penetration depth, shows anatomy', con: 'radiation risk (X-rays are ionizing)', nano: 'PEG-coated gold NPs work as a CT contrast agent (slide 16, lecture 5: CT angiogram of a rat heart).' },
+      Photoacoustic: { inv: false, how: '1 A laser pulse illuminates the tissue. 2 Excited electrons relax and release the energy as heat. 3 Thermal expansion sends a thermoacoustic wave to an ultrasound transducer.', pro: 'anatomical + functional + molecular contrast in one modality, several centimeters deep', con: 'needs good light absorbers in the tissue', nano: 'Plasmonic NPs (Au NPs, Ag NPs, SWNT): superior light absorption and optimized light-to-acoustic conversion.' },
+      Ultrasound: { inv: false, how: 'A probe sends high-frequency sound and receives the echo from tissues. The deeper it goes, the weaker the echo.', pro: 'high sensitivity, real-time, low cost', con: 'poor resolution, operator-dependent analysis, weak echo from deep tissue', nano: 'Micro/nano-bubbles (the only clinical US agent): volumetric oscillation → strong nonlinear acoustic response → better signal-to-noise. Nano-bubbles could reach every tissue.' },
+      Optical: { inv: false, how: 'Light (often near-infrared) and a glowing probe such as ICG; the camera records the fluorescence. Minimally invasive because the probe is injected.', pro: 'high sensitivity, real-time, cost effective, sees early metabolic changes', con: 'low spatial resolution, small penetration depth', nano: 'Nano-sized probes: gold NPs, upconversion NPs (NIR in, UV/visible out), quantum dots (high quantum yield, low photobleaching).' },
+    };
+    const CASES = [
+      ['A pregnant patient needs a quick, cheap, real-time look at the baby. Any ionizing radiation must be avoided.', ['Ultrasound'], 'Sound only, real-time, low cost, non-invasive.'],
+      ['A tumour in the brain must be measured precisely to calculate the drug dose. No radiation if possible, high spatial resolution needed.', ['MRI'], 'High spatial resolution without ionizing radiation; a SPIO contrast agent sharpens the tumour edge.'],
+      ['A cancer patient: the doctor wants to see where in the whole body tissue takes up a lot of glucose (FDG).', ['PET'], 'FDG is labelled with ¹⁸F, a positron emitter; PET sees it at any depth. Invasive, but the sensitivity is worth it here.'],
+      ['How well is blood flowing to the heart muscle? The tracer is technetium-99m.', ['SPECT'], 'Tc-99m is the SPECT gamma emitter; SPECT shows function (blood flow).'],
+      ['A surgeon wants to see blood vessels light up during an operation on the surface of an organ, in real time.', ['Optical'], 'Fluorescence imaging with ICG or nano probes: real-time and sensitive, but only near the surface.'],
+      ['A researcher wants anatomical, functional and molecular contrast together, a few centimeters deep, using laser light and gold nanoparticles.', ['Photoacoustic'], 'Laser in, sound out; plasmonic gold NPs boost absorption and light-to-sound conversion.'],
+      ['The team needs a sharp picture of the anatomy and, in the same session, how the organ functions.', ['SPECT', 'CT'], 'Multimodal imaging: a hybrid SPECT/CT scan. CT gives anatomy, SPECT gives function. (Either answer counts; the best is both.)'],
+    ];
+    let k = 0, score = 0;
+    function card(n) {
+      const t = T[n];
+      return el('dl', { class: 'card2' },
+        el('dt', {}, n, ' · ', el('span', { style: { color: t.inv ? 'var(--bad)' : 'var(--ok)' } }, t.inv ? 'invasive (ionizing radiation)' : 'non-invasive')),
+        el('dt', {}, 'How it works'), el('dd', {}, t.how),
+        el('dt', {}, 'Pros / cons'), el('dd', {}, el('span', { style: { color: 'var(--ok)' } }, t.pro), ' · ', el('span', { style: { color: 'var(--bad)' } }, t.con)),
+        el('dt', {}, 'What nanomaterials add'), el('dd', {}, t.nano));
+    }
+    function show() {
+      const [txt, ok, why] = CASES[k];
+      $('#prog').textContent = `case ${k + 1} / ${CASES.length}`;
+      $('#score').textContent = `score ${score}`;
+      $('#case').textContent = txt;
+      fill($('#out'));
+      fill($('#techs'), Object.keys(T).map((n) => el('button', { onclick: (e) => {
+        const right = ok.includes(n);
+        if (right) score++;
+        [...$('#techs').children].forEach((b) => { b.disabled = true; if (ok.includes(b.textContent)) b.classList.add('right'); });
+        if (!right) e.target.classList.add('wrong');
+        fill($('#out'), el('div', { class: 'callout small ' + (right ? 'ok' : 'bad') }, right ? 'Good choice. ' : `Better: ${ok.join(' + ')}. `, why), card(n),
+          el('button', { class: 'primary', style: { marginTop: '10px' }, onclick: () => { k++; if (k < CASES.length) show(); else done(); } }, k + 1 < CASES.length ? 'Next case' : 'Finish'));
+      } }, n)));
+    }
+    function done() {
+      CS.progress.recordScore?.('l6-imaging', score, CASES.length);
+      fill($('#techs'));
+      $('#case').textContent = `Done: ${score} / ${CASES.length}.`;
+      fill($('#out'), el('p', {}, 'Remember the pattern: the safe techniques (MRI, ultrasound, optical) often lack resolution or sensitivity; PET, SPECT and CT see deep or sharp but use ionizing radiation. Nanomaterials improve each one as contrast agents or as carriers that target existing agents.'),
+        el('button', { onclick: () => { k = 0; score = 0; show(); } }, 'Again'));
+    }
+    show();
+    fill($('#all'), Object.keys(T).map((n) => el('button', { class: 'chip', onclick: () => fill($('#explore'), card(n)) }, n)));
+  </script>
+</body>
+</html>

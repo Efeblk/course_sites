@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Surface Atom Lab · ENS010</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    #cluster, #melt { width: 100%; display: block; }
+    .stats { display: flex; gap: 1px; flex-wrap: wrap; background: var(--line); border: 1px solid var(--line); margin: 10px 0; }
+    .sl { display: grid; grid-template-columns: 170px 1fr 80px; gap: 10px; align-items: center; margin: 8px 0; }
+    .sl input { width: 100%; }
+  </style>
+</head>
+<body data-root="../.." data-course="ens010" data-chapter="3" data-title="Surface Atom Lab" data-activity="l3-surface">
+  <main>
+    <h1>Surface Atom Lab</h1>
+    <p class="lead">Why does size matter? Because as a particle shrinks, more and more of its atoms sit on the <b>surface</b>. Surface atoms have fewer neighbours, so they react and melt more easily. Peel off shells and watch.</p>
+
+    <div class="cols">
+      <div class="panel">
+        <h3 style="margin-top:0">A full-shell cluster (slide 5 table)</h3>
+        <div class="sl"><span>Number of shells</span><input type="range" id="shells" min="0" max="5" step="1" value="5"><code id="shv"></code></div>
+        <svg id="cluster" viewBox="0 0 360 300"></svg>
+        <p class="small muted">A 2D cut through the cluster. Coral = surface atoms (unsaturated: some bonds free); blue = inner atoms (saturated: every bond used).</p>
+      </div>
+      <div class="panel">
+        <div class="stats" id="stats"></div>
+        <div id="msg"></div>
+        <table class="t" id="tbl"></table>
+        <p class="small muted">Numbers from the table on slide 5 (Lecture 3). The lecturer said the table itself is not examined; the trend is.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Melting point of gold vs particle size (slide 7)</h3>
+      <div class="sl"><span>Particle diameter</span><input type="range" id="d" min="1.5" max="50" step="0.5" value="50"><code id="dv"></code></div>
+      <svg id="melt" viewBox="0 0 640 240"></svg>
+      <p id="mmsg"></p>
+      <p class="small muted">Curve shape as on the slide (bulk gold melts at about 1064 °C). Values are approximate and only illustrate the trend.</p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    // slide 5: shells → total atoms, surface atoms, inner atoms, surface/inner ratio, surface %
+    const T = { 1: [13, 12, 1, 12, 92.3], 2: [55, 42, 13, 3.2, 76.4], 3: [147, 92, 55, 1.67, 62.6], 4: [309, 162, 147, 1.1, 52.4], 5: [561, 252, 309, 0.82, 44.9], 7: [923, 362, 561, 0.65, 39.2] };
+    const ROWS = [1, 2, 3, 4, 5, 7]; // the slide's rows (it skips 6)
+
+    function cluster(n) {
+      const svg = $('#cluster'), cx = 180, cy = 150, r = 10, out = [];
+      for (let ring = 0; ring <= n; ring++) {
+        const count = ring === 0 ? 1 : ring * 6;
+        for (let k = 0; k < count; k++) {
+          const a = (2 * Math.PI * k) / count;
+          const x = cx + ring * 2 * r * Math.cos(a) * 1.0, y = cy + ring * 2 * r * Math.sin(a) * 1.0;
+          const surf = ring === n;
+          out.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r - 1}" fill="${surf ? 'var(--f-c4)' : 'var(--f-c0)'}" fill-opacity="${surf ? 0.8 : 0.55}"/>`);
+        }
+      }
+      svg.innerHTML = out.join('');
+    }
+
+    function show() {
+      const n = ROWS[Number($('#shells').value)], [tot, s, i, ratio, pct] = T[n];
+      $('#shv').textContent = n;
+      cluster(n);
+      fill($('#stats'),
+        el('div', { class: 'stat' }, el('b', {}, tot), el('span', {}, 'total atoms')),
+        el('div', { class: 'stat' }, el('b', {}, s), el('span', {}, 'surface atoms')),
+        el('div', { class: 'stat' }, el('b', {}, i), el('span', {}, 'inner atoms')),
+        el('div', { class: 'stat' }, el('b', {}, ratio), el('span', {}, 'surface / inner')),
+        el('div', { class: 'stat' }, el('b', {}, pct + '%'), el('span', {}, 'atoms at the surface')));
+      fill($('#msg'), el('div', { class: 'callout small ' + (ratio > 1 ? 'warn' : '') },
+        ratio > 1
+          ? `Surface atoms now OUTNUMBER inner atoms (ratio ${ratio} > 1). This is the nano regime: surface-related properties such as reactivity and melting point dominate over bulk properties.`
+          : `Most atoms are still inside (ratio ${ratio} < 1). Keep shrinking: the share of surface atoms climbs fast.`));
+      fill($('#tbl'), el('tr', {}, ['shells', 'atoms', 'surface', 'inner', 'ratio', 'surface %'].map((h) => el('th', {}, h))),
+        [1, 2, 3, 4, 5, 7].map((k) => el('tr', { style: k === n ? { fontWeight: 700 } : {} }, [k, ...T[k]].map((v) => el('td', {}, v)))));
+    }
+    $('#shells').addEventListener('input', show);
+    show();
+
+    /* melting curve: illustrative T(d) = 1064 · (1 − 3/d), floored */
+    const Tm = (d) => Math.max(200, 1064 * (1 - 2.6 / d));
+    function melt() {
+      const d = Number($('#d').value), X = (v) => 50 + (v / 50) * 570, Y = (t) => 210 - ((t - 200) / 900) * 190;
+      let path = '';
+      for (let v = 1.5; v <= 50; v += 0.5) path += `${v === 1.5 ? 'M' : 'L'}${X(v).toFixed(1)},${Y(Tm(v)).toFixed(1)}`;
+      $('#dv').textContent = d + ' nm';
+      $('#melt').innerHTML = `
+        <line x1="50" y1="210" x2="625" y2="210" stroke="var(--line-2)"/><line x1="50" y1="15" x2="50" y2="210" stroke="var(--line-2)"/>
+        <line x1="50" y1="${Y(1064)}" x2="625" y2="${Y(1064)}" stroke="var(--muted)" stroke-dasharray="5 4"/>
+        <text x="620" y="${Y(1064) - 6}" text-anchor="end" font-size="11" fill="var(--muted)">bulk gold ≈ 1064 °C</text>
+        ${[0, 10, 20, 30, 40, 50].map((v) => `<text x="${X(v)}" y="228" text-anchor="middle" font-size="11" fill="var(--muted)">${v}</text>`).join('')}
+        ${[200, 400, 600, 800, 1000].map((t) => `<text x="44" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${t}</text>`).join('')}
+        <path d="${path}" fill="none" stroke="var(--f-c2)" stroke-width="2.5"/>
+        <circle cx="${X(d)}" cy="${Y(Tm(d))}" r="7" fill="var(--f-c4)"/>
+        <text x="${X(d) + (d > 40 ? -10 : 10)}" y="${Y(Tm(d)) + 20}" text-anchor="${d > 40 ? 'end' : 'start'}" font-size="12" fill="var(--text)">${Math.round(Tm(d))} °C</text>`;
+      $('#mmsg').innerHTML = d > 20
+        ? 'Large particle: few surface atoms, melting point close to bulk gold.'
+        : d > 5 ? 'Getting smaller: more surface atoms with unsaturated bonds, so the particle starts melting at a lower temperature.'
+        : '<b>A few nanometers:</b> most atoms are on the surface, they need much less energy to move, and the melting point has dropped by hundreds of degrees.';
+    }
+    $('#d').addEventListener('input', melt);
+    melt();
+  </script>
+</body>
+</html>

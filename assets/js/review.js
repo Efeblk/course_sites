@@ -19,7 +19,7 @@
     for (const q of ch.quiz || []) push({ ...at, id: srs.qId(C.id, ch.n, q.q), kind: 'q', q: q.q, opts: q.options, right: q.answer, why: q.explain });
   }
   const chKey = (it) => `${it.c}:${it.n}`;
-  const where = (it) => `${it.code} · ${it.unit === 'Week' ? 'Week' : 'Ch'} ${it.n}`;
+  const where = (it) => `${it.code} · ${it.unit === 'Chapter' ? 'Ch' : it.unit} ${it.n}`;
   const lessonHref = (it) => `${it.c}/learn.html?ch=${it.n}${it.step != null ? `&step=${it.step}` : ''}`;
 
   /* chapters you have started: a lesson step done, a test taken, or anything already answered */

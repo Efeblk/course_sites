@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shrink a Bulk Material · ENS010</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sl { display: grid; grid-template-columns: 40px 1fr 90px; gap: 10px; align-items: center; margin: 8px 0; }
+    .sl input { width: 100%; }
+    .sl b { font-family: var(--mono); font-size: 1.1rem; }
+    #view { width: 100%; height: 260px; display: block; }
+    .verdict { font-family: var(--display); font-size: 1.7rem; margin: 4px 0 2px; }
+    .zone { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: .8rem; font-weight: 600; margin-right: 6px; }
+    .z-bulk { background: color-mix(in srgb, var(--f-c0) 18%, transparent); color: var(--f-c0); }
+    .z-nano { background: color-mix(in srgb, var(--f-c2) 20%, transparent); color: var(--f-c2); }
+    .z-q { background: color-mix(in srgb, var(--f-c4) 20%, transparent); color: var(--f-c4); }
+    button.chip.right { border-color: var(--ok); color: var(--ok); }
+    button.chip.wrong { border-color: var(--bad); color: var(--bad); }
+    table.t td.on { font-weight: 700; background: color-mix(in srgb, var(--f-c2) 14%, transparent); }
+  </style>
+</head>
+<body data-root="../.." data-course="ens010" data-chapter="4" data-title="Shrink a Bulk Material" data-activity="l4-shrink">
+  <main>
+    <h1>Shrink a Bulk Material</h1>
+    <p class="lead">Every object has three dimensions. Shrink them one by one and watch the name change. The number in "2D, 1D, 0D" counts the dimensions that are still <b>free</b> (above 100 nm), not the nano ones.</p>
+
+    <div class="panel">
+      <div class="row"><span class="small muted">Presets:</span>
+        <button class="chip" data-p="1e6,1e6,1e6">bulk block</button>
+        <button class="chip" data-p="5000,5000,0.34">graphene sheet</button>
+        <button class="chip" data-p="5000,20,20">carbon nanotube</button>
+        <button class="chip" data-p="30,20,15">nanoparticle</button>
+        <button class="chip" data-p="500,500,500">500 nm powder</button>
+        <button class="chip" data-p="1e6,1e6,5">5 nm film</button>
+        <button class="chip" data-p="3,3,3">quantum dot</button>
+      </div>
+      <div class="sl"><b>X</b><input type="range" id="x" min="0" max="6" step="0.01"><code id="xv"></code></div>
+      <div class="sl"><b>Y</b><input type="range" id="y" min="0" max="6" step="0.01"><code id="yv"></code></div>
+      <div class="sl"><b>Z</b><input type="range" id="z" min="0" max="6" step="0.01"><code id="zv"></code></div>
+      <p class="small muted">Sliders are logarithmic: 1 nm on the left, 1 mm on the right. Orange line = 100 nm, coral line = 10 nm.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <svg id="view" viewBox="0 0 420 260"></svg>
+      </div>
+      <div class="panel">
+        <div class="small muted">This material is a…</div>
+        <div class="verdict" id="verdict"></div>
+        <div id="zones"></div>
+        <p id="why"></p>
+        <table class="t" id="tbl"></table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Check yourself</h3>
+      <div id="quiz"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill, shuffle } = CS;
+    const S = { x: 6, y: 6, z: 6 };
+    const nm = (v) => Math.pow(10, v);
+    const fmt = (n) => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + ' mm' : n >= 1000 ? (n / 1000).toFixed(n >= 1e4 ? 0 : 1) + ' µm' : n >= 10 ? Math.round(n) + ' nm' : n.toFixed(1) + ' nm';
+
+    function classify(d) {
+      const nano = d.filter((v) => v <= 100).length, q = d.filter((v) => v <= 10).length;
+      const nanoName = ['Bulk material', '2D nanomaterial', '1D nanomaterial', '0D nanomaterial'][nano];
+      const nanoAlso = ['all dimensions above 100 nm', 'nano-plate / coating / layer / film / sheet', 'nano-wire / rod / fiber / tube', 'nanoparticle'][nano];
+      const qName = ['', 'Quantum well', 'Quantum wire', 'Quantum dot'][q];
+      return { nano, q, nanoName, nanoAlso, qName };
+    }
+
+    function draw() {
+      const d = [nm(S.x), nm(S.y), nm(S.z)];
+      for (const k of ['x', 'y', 'z']) { $('#' + k).value = S[k]; $('#' + k + 'v').textContent = fmt(nm(S[k])); }
+      const c = classify(d);
+      // a simple 3D box: each side drawn on a log scale so 1 nm and 1 mm both fit
+      const L = (v) => 6 + (Math.log10(v) / 6) * 130;
+      const w = L(d[0]), h = L(d[2]), dep = L(d[1]) * 0.55;
+      const ox = 200 - w / 2 - dep / 2, oy = 125 + (h + dep * 0.5) / 2;
+      const col = c.q ? 'var(--f-c4)' : c.nano ? 'var(--f-c2)' : 'var(--f-c0)';
+      const P = (pts) => pts.map((p) => p.join(',')).join(' ');
+      const front = [[ox, oy], [ox + w, oy], [ox + w, oy - h], [ox, oy - h]];
+      const top = [[ox, oy - h], [ox + w, oy - h], [ox + w + dep, oy - h - dep * 0.5], [ox + dep, oy - h - dep * 0.5]];
+      const side = [[ox + w, oy], [ox + w + dep, oy - dep * 0.5], [ox + w + dep, oy - h - dep * 0.5], [ox + w, oy - h]];
+      const svg = $('#view');
+      svg.innerHTML = `
+        <polygon points="${P(side)}" fill="${col}" fill-opacity=".35" stroke="${col}"/>
+        <polygon points="${P(top)}" fill="${col}" fill-opacity=".22" stroke="${col}"/>
+        <polygon points="${P(front)}" fill="${col}" fill-opacity=".5" stroke="${col}"/>
+        <text x="${ox + w / 2}" y="${oy + 18}" text-anchor="middle" font-size="12" fill="var(--muted)">X ${fmt(d[0])}</text>
+        <text x="${ox + w + dep + 6}" y="${oy - h / 2 - dep / 2}" font-size="12" fill="var(--muted)">Z ${fmt(d[2])}</text>
+        <text x="${ox + dep / 2 - 6}" y="${oy - h - dep * 0.5 - 6}" font-size="12" fill="var(--muted)">Y ${fmt(d[1])}</text>`;
+      $('#verdict').textContent = c.qName || c.nanoName;
+      $('#verdict').style.color = col;
+      fill($('#zones'),
+        el('span', { class: 'zone ' + (c.nano ? 'z-nano' : 'z-bulk') }, c.nano ? 'nanomaterial' : 'not a nanomaterial'),
+        c.q ? el('span', { class: 'zone z-q' }, 'quantum material') : null,
+        el('span', { class: 'small muted' }, `${3 - c.nano} free dimension${3 - c.nano === 1 ? '' : 's'} (above 100 nm)`));
+      const small = ['X', 'Y', 'Z'].filter((k, i) => d[i] <= 100);
+      let why = c.nano === 0
+        ? `None of the three dimensions is in 1–100 nm, so the definition of a nanomaterial is not met.${Math.min(...d) < 1000 ? ' It is still "nano" in mathematics (below 1000 nm), but its properties are bulk properties.' : ''}`
+        : `${small.join(' and ')} ${small.length === 1 ? 'is' : 'are'} in 1–100 nm, so it is a nanomaterial (at least one dimension). ${3 - c.nano} dimension${3 - c.nano === 1 ? ' is' : 's are'} still free, so it is <b>${c.nanoName}</b>: ${c.nanoAlso}.`;
+      if (c.q) why += ` ${c.q} dimension${c.q > 1 ? 's are' : ' is'} below 10 nm, so it is also a <b>quantum material</b>: a ${c.qName.toLowerCase()}. Every quantum material is a nanomaterial too.`;
+      $('#why').innerHTML = why;
+      const rows = [['', 'one small dim.', 'two small dims.', 'three small dims.'],
+        ['nano (< 100 nm)', 'nano-film (2D)', 'nano-wire (1D)', 'nanoparticle (0D)'],
+        ['quantum (< 10 nm)', 'quantum well', 'quantum wire', 'quantum dot']];
+      fill($('#tbl'), rows.map((r, i) => el('tr', {}, r.map((t, j) => el(i ? 'td' : 'th', { class: i && j && ((i === 1 && c.nano === j && !c.q) || (i === 2 && c.q === j)) ? 'on' : '' }, t)))));
+    }
+
+    for (const k of ['x', 'y', 'z']) $('#' + k).addEventListener('input', (e) => { S[k] = Number(e.target.value); draw(); });
+    $$('[data-p]').forEach((b) => b.addEventListener('click', () => { const [x, y, z] = b.dataset.p.split(',').map(Number); Object.assign(S, { x: Math.log10(x), y: Math.log10(y), z: Math.log10(z) }); draw(); }));
+    draw();
+
+    /* quick self-check with random objects */
+    const OBJ = [[5000, 5000, 15], [5000, 30, 30], [40, 30, 20], [800, 600, 400], [1e6, 1e6, 6], [2e4, 7, 8], [4, 3, 2], [1e5, 50, 50], [200, 150, 120], [60, 1e4, 1e4]];
+    const NAMES = ['Bulk material', '2D nanomaterial', '1D nanomaterial', '0D nanomaterial', 'Quantum well', 'Quantum wire', 'Quantum dot'];
+    let score = 0, asked = 0;
+    function ask() {
+      const d = OBJ[Math.floor(Math.random() * OBJ.length)], c = classify(d), right = c.qName || c.nanoName;
+      fill($('#quiz'),
+        el('p', {}, `An object measures ${d.map(fmt).join(' × ')}. What is it?`),
+        el('div', { class: 'row' }, NAMES.map((n) => el('button', { class: 'chip', onclick: (e) => {
+          asked++; if (n === right) score++;
+          $$('#quiz button').forEach((b) => (b.disabled = true));
+          e.target.classList.add(n === right ? 'right' : 'wrong');
+          $('#quiz').append(el('p', { class: 'small' }, n === right ? 'Right. ' : `Not quite: it is a ${right.toLowerCase()}. `, `${c.nano} dimension(s) below 100 nm${c.q ? `, ${c.q} below 10 nm` : ''}. Score ${score}/${asked}.`),
+            el('button', { onclick: ask }, 'Next object'));
+          if (asked >= 5 && score >= 4) CS.progress.recordScore?.('l4-shrink', score, asked);
+        } }, n))));
+    }
+    ask();
+  </script>
+</body>
+</html>

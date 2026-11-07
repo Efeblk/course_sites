@@ -18,6 +18,7 @@
     coe025: { code: 'COE025', unit: 'Week' },
     coe305: { code: 'COE305', unit: 'Week' },
     uni480: { code: 'UNI480', unit: 'Week' },
+    ens010: { code: 'ENS010', unit: 'Lecture' },
   };
   const course = COURSES[body.dataset.course];
   const unit = course ? course.unit : 'Chapter';
@@ -147,7 +148,7 @@
     const all = await loadCourses(), out = [];
     const add = (kind, title, text, where, href, w) => out.push({ kind, title, text, where, href: `${root}/${href}`, w, n: norm(title + ' ' + text), nt: norm(title) });
     for (const [dir, { C, G, U }] of Object.entries(all)) {
-      const u = U === 'Week' ? 'Week' : 'Ch', code = C.code;
+      const u = U === 'Chapter' ? 'Ch' : U, code = C.code;
       for (const ch of C.chapters) {
         const g = G[ch.n], at = `${code} · ${u} ${ch.n}`;
         add('Lesson', ch.title, ch.summary, `${code} · ${U} ${ch.n}`, g ? `${dir}/learn.html?ch=${ch.n}` : `${dir}/index.html#ch${ch.n}`, 4);

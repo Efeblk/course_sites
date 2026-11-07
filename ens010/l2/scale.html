@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nano Ruler · ENS010</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .conv { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .conv label { display: block; font-size: .8rem; color: var(--muted); }
+    .conv input { width: 100%; font-family: var(--mono); font-size: 1.05rem; padding: 6px 8px; }
+    #ruler { width: 100%; display: block; }
+    .steps { font-family: var(--mono); font-size: .9rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="ens010" data-chapter="2" data-title="Nano Ruler" data-activity="l2-scale">
+  <main>
+    <h1>Nano Ruler</h1>
+    <p class="lead">"Nano" is only a prefix: one billionth. Convert between units, then put real objects on one ruler to feel how small 1–100 nm is.</p>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Unit converter (slide 6)</h3>
+      <div class="conv">
+        <div><label>meters (m)</label><input id="m" data-f="1"></div>
+        <div><label>millimeters (mm)</label><input id="mm" data-f="1e-3"></div>
+        <div><label>micrometers (µm)</label><input id="um" data-f="1e-6"></div>
+        <div><label>nanometers (nm)</label><input id="nm" data-f="1e-9"></div>
+        <div><label>angstroms (Å)</label><input id="A" data-f="1e-10"></div>
+      </div>
+      <p class="small muted">Type in any box. The slide's question: "Can you convert 100 nm to µm and Å?"</p>
+      <div class="row"><button class="chip" data-nm="100">100 nm</button><button class="chip" data-nm="1">1 nm</button><button class="chip" data-nm="1000">1 µm</button><button class="chip" data-nm="0.7">fullerene 0.7 nm</button><button class="chip" data-nm="0.1">1 Å</button></div>
+      <div class="steps" id="steps"></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">One logarithmic ruler (slides 7–8)</h3>
+      <svg id="ruler" viewBox="0 0 900 230"></svg>
+      <div class="row"><button id="shrink">Earth → football → fullerene</button></div>
+      <p id="smsg"></p>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$ } = CS;
+    const boxes = $$('.conv input');
+    const show = (meters, from) => {
+      for (const b of boxes) if (b !== from) b.value = fmt(meters / Number(b.dataset.f));
+      const nm = meters / 1e-9;
+      $('#steps').innerHTML = `${fmt(nm)} nm × 10⁻³ = <b>${fmt(nm / 1000)} µm</b> &nbsp;·&nbsp; ${fmt(nm)} nm × 10 = <b>${fmt(nm * 10)} Å</b> &nbsp;·&nbsp; ${fmt(nm)} nm × 10⁻⁹ = <b>${fmt(meters)} m</b>`;
+    };
+    function fmt(v) {
+      if (!isFinite(v)) return '';
+      if (v === 0) return '0';
+      const a = Math.abs(v);
+      if (a >= 1e-3 && a < 1e7) return String(Number(v.toPrecision(6)));
+      const e = Math.floor(Math.log10(a)), m = v / Math.pow(10, e);
+      return `${Number(m.toPrecision(4))}e${e}`;
+    }
+    boxes.forEach((b) => b.addEventListener('input', () => { const v = Number(b.value); if (isFinite(v)) show(v * Number(b.dataset.f), b); }));
+    $$('[data-nm]').forEach((b) => b.addEventListener('click', () => { const m = Number(b.dataset.nm) * 1e-9; show(m); $('#nm').value = fmt(Number(b.dataset.nm)); }));
+    $('#nm').value = '100'; show(100e-9, $('#nm'));
+
+    // objects in nm (slide 8)
+    const OBJ = [['glucose', 0.9, 'c0'], ['fullerene C60', 0.7, 'c4'], ['protein', 5, 'c0'], ['DNA (width)', 2.5, 'c0'], ['quantum dot', 6, 'c4'], ['liposome', 80, 'c4'], ['virus', 100, 'c0'], ['cell', 1e4, 'c1'], ['salt grain', 3e5, 'c1'], ['tennis ball', 6.7e7, 'c1'], ['football', 2.2e8, 'c2']];
+    const X = (nm) => 40 + ((Math.log10(nm) + 1) / 10) * 820; // 0.1 nm … 1e9 nm
+    function ruler(hl) {
+      let s = `<rect x="${X(1)}" y="40" width="${X(100) - X(1)}" height="120" fill="var(--f-c4)" fill-opacity=".1"/>
+        <text x="${(X(1) + X(100)) / 2}" y="34" text-anchor="middle" font-size="12" fill="var(--f-c4)">1–100 nm: nanomaterials</text>
+        <line x1="40" y1="170" x2="860" y2="170" stroke="var(--line-2)"/>`;
+      for (let e = -1; e <= 9; e++) s += `<line x1="${X(10 ** e)}" y1="165" x2="${X(10 ** e)}" y2="175" stroke="var(--muted)"/><text x="${X(10 ** e)}" y="192" text-anchor="middle" font-size="11" fill="var(--muted)">10${e < 0 ? '⁻¹' : e === 0 ? '⁰' : ['', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'][e]}</text>`;
+      s += `<text x="860" y="214" text-anchor="end" font-size="11" fill="var(--muted)">nanometers (log scale)</text>`;
+      OBJ.forEach(([n, v, c], i) => {
+        const y = 60 + (i % 5) * 22, on = !hl || hl.includes(n);
+        s += `<circle cx="${X(v)}" cy="${y}" r="5" fill="var(--f-${c})" opacity="${on ? 1 : 0.25}"/><text x="${X(v) + 8}" y="${y + 4}" font-size="11.5" fill="var(--text)" opacity="${on ? 1 : 0.3}">${n}</text>`;
+      });
+      $('#ruler').innerHTML = s;
+    }
+    ruler();
+    $('#shrink').addEventListener('click', async () => {
+      $('#smsg').innerHTML = 'Earth: 1.27 × 10⁷ m. Divide by <b>10 million</b>…';
+      ruler(['football']); await CS.sleep(1600);
+      $('#smsg').innerHTML = '…and you get a football (0.22 m). Divide by <b>1 billion</b>…';
+      ruler(['fullerene C60']); await CS.sleep(1600);
+      $('#smsg').innerHTML = '…and you get a <b>fullerene C60</b>, 0.7 nm. You can hold the football; you cannot see the fullerene. That is why nanotechnology needs electron and atomic-force microscopes.';
+    });
+  </script>
+</body>
+</html>
