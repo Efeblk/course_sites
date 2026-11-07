@@ -41,7 +41,7 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
   - 23 games, a quiz and flashcards per lecture, driven by `ens010/data.js`
   - `ozet.html` (Turkish midterm summary with English terms) and `mock.html` (mock midterm with written questions)
   - `videos.html`: narrated English study videos, one per lecture, scripted in `ens010/video.js` and built by
-    `tools/video/build.py` (headless Chrome frames + edge-tts speech + ffmpeg) into `materials/ENS010/video/` (local only)
+    `tools/video/build.py` (motion recorded frame by frame from headless Chrome under a fake clock via Playwright + edge-tts speech + ffmpeg) into `materials/ENS010/video/` (local only)
 
 ## Layout
 

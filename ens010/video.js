@@ -7,7 +7,8 @@
  *           fig?: <figs.js figure>,                drawn on the right (or full width without pts)
  *           anim?: 'name',                         an anims.js animation; beat b shows its scene b
  *           ex?: 'exam note (HTML)',               shown on the last beat
- *           say: ['narration for beat 0', ...] }   one beat per sentence group; each beat is one still image
+ *           say: ['narration for beat 0', ...] }   one beat per sentence group; each sentence is one shot
+ *                                                   whose motion (bullet in, anim step, caption) is recorded
  */
 window.VIDEO = [
   /* ================================================================ */

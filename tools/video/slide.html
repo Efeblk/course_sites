@@ -5,38 +5,47 @@
   <title>video frame</title>
   <link rel="stylesheet" href="../../assets/css/style.css">
   <style>
-    /* One 1280×720 video frame. tools/video/build.py screenshots this page with ?c=<course>&v=<video>&s=<scene>&b=<beat>&k=<sentence> (or &title=1). */
+    /* One 1280×720 video shot. tools/video/build.py opens this page with ?c=<course>&v=<video>&s=<scene>&b=<beat>&k=<sentence>
+       (or &title=1) under a fake clock: the page first shows the state just before this sentence, then __go() plays the
+       motion into it and the build records it frame by frame. Add &auto=1 to watch the motion in a normal browser. */
     html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: var(--bg); }
     header.topbar, footer, .page-foot, .back-row { display: none !important; }
     main { max-width: none !important; margin: 0 !important; padding: 0 !important; }
-    .slide { box-sizing: border-box; width: 1280px; height: 720px; padding: 44px 64px 0; display: flex; flex-direction: column; }
-    .kick { font-family: var(--mono); font-size: 17px; color: var(--muted); }
+    .slide { position: relative; box-sizing: border-box; width: 1280px; height: 720px; padding: 44px 64px 0; display: flex; flex-direction: column; }
+    .prog { position: absolute; top: 0; left: 0; right: 0; height: 5px; background: color-mix(in srgb, var(--text) 8%, transparent); }
+    .prog i { display: block; height: 100%; width: 0; background: var(--accent); }
+    .kick { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 17px; color: var(--muted); }
     .slide h1 { font-size: 46px; margin: 6px 0 22px; line-height: 1.1; }
     .body { flex: 1; display: grid; gap: 40px; align-items: start; min-height: 0; }
     .body.two { grid-template-columns: 1fr 1.15fr; }
     .body.one { grid-template-columns: 1fr; }
     ul.pts { margin: 4px 0 0; padding-left: 28px; font-size: 27px; line-height: 1.38; }
-    ul.pts li { margin: 0 0 12px; }
+    ul.pts li { margin: 0 0 12px; padding: 0 8px; margin-left: -8px; border-radius: 4px; }
     ul.pts li.off { visibility: hidden; }
+    ul.pts li.past { opacity: .5; }
     .figwrap figure.fig { margin: 0; }
     .body.two .figwrap { zoom: 1.12; }
     .body.one .figwrap { zoom: 1.4; max-width: 830px; margin: 0 auto; width: 100%; }
     .body.one .figwrap.anim { zoom: 1; max-width: 860px; }
-    .fig, .fig * { animation: none !important; transition: none !important; }
     .fig-t::before { content: none !important; }
     .a-cap, .a-ticks, .a-count, .a-play, .a-speed, figure.f-anim-fig button, figure.f-anim-fig select { display: none !important; }
     .ex { font-size: 21px; margin: 0 0 12px; visibility: hidden; }
     .ex.on { visibility: visible; }
-    .cap { box-sizing: border-box; height: 112px; margin: 0 -64px; padding: 16px 64px; background: color-mix(in srgb, var(--text) 88%, transparent); color: var(--bg); font-size: 25px; line-height: 1.35; display: flex; align-items: center; }
+    .cap { position: relative; box-sizing: border-box; height: 112px; margin: 0 -64px; padding: 16px 64px; background: color-mix(in srgb, var(--text) 88%, transparent); color: var(--bg); font-size: 25px; line-height: 1.35; display: flex; align-items: center; overflow: hidden; }
+    .cap .ln { display: block; }
+    .cap .ln.old { position: absolute; left: 64px; right: 64px; }
     .titlecard { box-sizing: border-box; width: 1280px; height: 720px; padding: 0 100px; display: flex; flex-direction: column; justify-content: center; }
     .titlecard .kick { font-size: 22px; }
     .titlecard h1 { font-size: 72px; margin: 14px 0 22px; }
-    .titlecard .rule { width: 120px; height: 4px; background: var(--accent); }
+    .titlecard h1 span { display: inline-block; white-space: pre; }
+    .titlecard .rule { width: 120px; height: 4px; background: var(--accent); transform-origin: left; }
   </style>
 </head>
 <body data-root="../..">
   <main id="frame"></main>
   <script>
+    // nothing autoplays or builds itself on scroll here: this page drives every motion itself
+    window.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
     const P = new URLSearchParams(location.search), course = P.get('c') || 'ens010';
     document.body.dataset.course = course;
     for (const src of [`../../${course}/data.js`, `../../${course}/video.js`]) document.write(`<script src="${src}"><\/script>`);
@@ -50,31 +59,113 @@
     const { el, fill } = CS;
     const V = window.VIDEO.find((v) => v.id === P.get('v'));
     const frame = document.getElementById('frame');
-    const sentences = (t) => t.match(/[^.!?]+[.!?]+(\s|$)/g)?.map((s) => s.trim()) || [t];
+    const sentences = (t) => t.match(/[^.!?]+[.!?]+(\s|$)/g)?.map((x) => x.trim()) || [t];
+    const EASE = 'cubic-bezier(.2,.7,.2,1)';
+    const mv = (n, kf, delay = 0, dur = 500, easing = EASE) => n && n.animate(kf, { duration: dur, delay, easing, fill: 'both' });
+    const rise = (n, delay, y = 18, dur = 550) => mv(n, [{ opacity: 0, transform: `translateY(${y}px)` }, { opacity: 1, transform: 'none' }], delay, dur);
+    const slideIn = (n, delay, dur = 520) => mv(n, [{ opacity: 0, transform: 'translateX(-26px)' }, { opacity: 1, transform: 'none' }], delay, dur);
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    let go = () => {};
 
     if (P.get('title')) {
-      fill(frame, el('div', { class: 'titlecard' },
-        el('div', { class: 'kick' }, `${window.COURSE.code} · ${window.COURSE.name}`),
-        el('h1', {}, V.title),
-        el('div', { class: 'rule' })));
+      const words = V.title.split(/(\s+)/).filter(Boolean).map((w) => el('span', {}, w));
+      const kick = el('div', { class: 'kick' }, `${window.COURSE.code} · ${window.COURSE.name}`), rule = el('div', { class: 'rule' });
+      fill(frame, el('div', { class: 'titlecard' }, kick, el('h1', {}, words), rule));
+      go = () => {
+        mv(kick, [{ opacity: 0, transform: 'translateX(-18px)' }, { opacity: 1, transform: 'none' }], 0, 550);
+        words.forEach((w, i) => rise(w, 150 + i * 65, 38, 700));
+        mv(rule, [{ transform: 'scaleX(0)' }, { transform: 'none' }], 450 + words.length * 30, 850);
+      };
     } else {
-      const s = Number(P.get('s')), b = Number(P.get('b')), k = Number(P.get('k') || 0);
-      const sc = V.scenes[s], last = b === sc.say.length - 1;
-      const shown = sc.pts ? Math.max(0, sc.pts.length - (sc.say.length - 1 - b)) : 0;
+      const si = Number(P.get('s')), b = Number(P.get('b')), k = Number(P.get('k') || 0);
+      const sc = V.scenes[si], nb = sc.say.length;
+      const mode = b === 0 && k === 0 ? 'enter' : k === 0 ? 'beat' : 'line';
+      const shownAt = (beat) => (sc.pts ? Math.max(0, sc.pts.length - (nb - 1 - beat)) : 0);
+      const frac = (s2, b2) => (s2 + (b2 + 1) / V.scenes[s2].say.length) / V.scenes.length;
+      const fromFrac = mode === 'line' ? frac(si, b) : mode === 'beat' ? frac(si, b - 1) : si ? frac(si - 1, V.scenes[si - 1].say.length - 1) : 0;
+      const pb = mode === 'beat' ? b - 1 : b; // the beat shown before __go()
+      const prevLine = mode === 'line' ? sentences(sc.say[b])[k - 1] : mode === 'beat' ? sentences(sc.say[b - 1]).pop() : '';
+
       let fig = null;
       if (sc.anim) fig = el('div', { class: 'figwrap anim' }, CS.figure({ type: 'anim', name: sc.anim }));
       else if (sc.fig) fig = el('div', { class: 'figwrap' }, CS.figure(sc.fig));
-      fig?.querySelectorAll('.fig.pre').forEach((n) => n.classList.replace('pre', 'in'));
+      const lis = (sc.pts || []).map((t) => el('li', { html: t }));
+      const mark = (beat) => lis.forEach((li, i) => { const n = shownAt(beat); li.className = i >= n ? 'off' : i < n - 1 ? 'past' : ''; });
+      mark(mode === 'enter' ? b : pb);
+      const bar = el('i', { style: { width: `${fromFrac * 100}%` } });
+      const kick = el('div', { class: 'kick' }, el('span', {}, sc.k || V.title), el('span', {}, `${String(si + 1).padStart(2, '0')} / ${String(V.scenes.length).padStart(2, '0')}`));
+      const h1 = el('h1', { html: sc.h });
+      const ex = sc.ex ? el('div', { class: 'callout warn ex' + (pb === nb - 1 && mode !== 'enter' ? ' on' : ''), html: sc.ex }) : null;
+      const line = el('span', { class: 'ln' }, mode === 'enter' ? sentences(sc.say[0])[0] : prevLine);
+      const cap = el('div', { class: 'cap' }, line);
       fill(frame, el('div', { class: 'slide' },
-        el('div', { class: 'kick' }, sc.k || V.title),
-        el('h1', { html: sc.h }),
-        el('div', { class: 'body ' + (sc.pts && fig ? 'two' : 'one') },
-          sc.pts ? el('ul', { class: 'pts' }, sc.pts.map((t, i) => el('li', { class: i < shown ? '' : 'off', html: t }))) : null,
-          fig),
-        sc.ex ? el('div', { class: 'callout warn ex' + (last ? ' on' : ''), html: sc.ex }) : null,
-        el('div', { class: 'cap' }, sentences(sc.say[b])[k])));
-      if (sc.anim) setTimeout(() => frame.querySelectorAll('.a-tick')[b]?.click(), 400);
+        el('div', { class: 'prog' }, bar), kick, h1,
+        el('div', { class: 'body ' + (sc.pts && fig ? 'two' : 'one') }, sc.pts ? el('ul', { class: 'pts' }, lis) : null, fig),
+        ex, cap));
+      const tick = (i) => fig?.querySelectorAll('.a-tick')[i]?.click();
+      // the state before this sentence; the build fast-forwards the clock so the animation reaches it
+      if (mode !== 'enter') { fig?.querySelectorAll('.fig.pre').forEach((n) => n.classList.replace('pre', 'in')); tick(pb); }
+
+      const swapCaption = (text) => {
+        const old = cap.querySelector('.ln');
+        old.style.top = `${old.offsetTop}px`;
+        old.classList.add('old');
+        const nu = el('span', { class: 'ln' }, text);
+        cap.append(nu);
+        mv(old, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-22px)' }], 0, 200, 'ease-in');
+        rise(nu, 190, 18, 420);
+      };
+      const toBar = (delay, dur) => mv(bar, [{ width: `${fromFrac * 100}%` }, { width: `${frac(si, b) * 100}%` }], delay, dur);
+      const showEx = (delay) => { if (!ex || b !== nb - 1 || ex.classList.contains('on')) return; ex.classList.add('on'); mv(ex, [{ opacity: 0, transform: 'translateY(14px) scale(.98)' }, { opacity: 1, transform: 'none' }], delay, 520); };
+
+      go = () => {
+        const text = sentences(sc.say[b])[k];
+        if (mode === 'enter') {
+          toBar(0, 900);
+          rise(kick, 0, 10, 450);
+          rise(h1, 80, 24, 650);
+          lis.forEach((li, i) => { if (li.className !== 'off') slideIn(li, 320 + i * 110); });
+          if (fig) {
+            rise(fig, 260, 18, 650);
+            setTimeout(() => fig.querySelectorAll('.fig.pre').forEach((n) => n.classList.replace('pre', 'in')), 260);
+          }
+          showEx(700);
+          mv(cap, [{ transform: 'translateY(100%)' }, { transform: 'none' }], 120, 520);
+          line.textContent = text;
+          rise(line, 360, 14, 420);
+        } else if (mode === 'beat') {
+          toBar(0, 700);
+          const was = lis.map((li) => li.className);
+          mark(b);
+          lis.forEach((li, i) => {
+            if (was[i] === 'off' && li.className !== 'off') {
+              slideIn(li, 60);
+              mv(li, [{ backgroundColor: `color-mix(in srgb, ${accent} 22%, transparent)` }, { backgroundColor: 'transparent' }], 420, 1500, 'ease-out');
+            } else if (was[i] === '' && li.className === 'past') mv(li, [{ opacity: 1 }, { opacity: 0.5 }], 0, 450);
+          });
+          tick(b);
+          showEx(320);
+          swapCaption(text);
+        } else swapCaption(text);
+      };
     }
+    window.__ready = true;
+    window.__go = () => go();
+    // virtual time for CSS and Web Animations: each animation runs on the (fake) clock from the moment it is first seen
+    window.__seek = () => {
+      const now = performance.now();
+      let busy = false;
+      for (const a of document.getAnimations()) {
+        if (a.__done) continue;
+        if (a.__b == null) { a.__b = now; a.pause(); }
+        a.currentTime = now - a.__b;
+        const end = a.effect?.getComputedTiming().endTime;
+        if (Number.isFinite(end) && now - a.__b < end) busy = true;
+      }
+      return busy;
+    };
+    window.__settle = () => { for (const a of document.getAnimations()) { a.__done = true; try { a.finish(); } catch (e) { a.cancel(); } } };
+    if (P.get('auto')) setTimeout(() => window.__go(), 600);
   </script>
 </body>
 </html>
