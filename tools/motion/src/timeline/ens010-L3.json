@@ -1,0 +1,144 @@
+{
+ "id": "ens010-L3",
+ "title": "Lecture 3 \u00b7 Why size matters",
+ "fps": 30,
+ "dur": 3729,
+ "scenes": [
+  {
+   "id": "scale",
+   "from": 18,
+   "dur": 786,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 130,
+     "audio": "audio/4dfde89708730891.mp3",
+     "text": "Why does a nanomaterial behave differently from the same material in bulk?"
+    },
+    {
+     "from": 140,
+     "dur": 262,
+     "audio": "audio/cd1022fa201257bb.mp3",
+     "text": "A bulk material is anything we can see and feel: powdery, granular or lumpy. Even a millimeter powder is still bulk."
+    },
+    {
+     "from": 413,
+     "dur": 200,
+     "audio": "audio/cf72746c6865eff4.mp3",
+     "text": "Grind it into microparticles. You can no longer see them one by one, but their properties barely change."
+    },
+    {
+     "from": 623,
+     "dur": 136,
+     "audio": "audio/734306696ec44beb.mp3",
+     "text": "Only around one hundred nanometers do the properties really start to change."
+    }
+   ]
+  },
+  {
+   "id": "surface",
+   "from": 804,
+   "dur": 1255,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 56,
+     "audio": "audio/ad7031aec9096da0.mp3",
+     "text": "The reason is the surface."
+    },
+    {
+     "from": 67,
+     "dur": 379,
+     "audio": "audio/878ca3645ba721ac.mp3",
+     "text": "Cut a cube into smaller cubes. The volume stays the same, but the surface keeps growing. Nanomaterials have a very high surface area to volume ratio, in square meters per cubic meter."
+    },
+    {
+     "from": 457,
+     "dur": 221,
+     "audio": "audio/b6d35d09351b41e3.mp3",
+     "text": "Now look at the atoms. In a cluster of nine hundred and twenty-three atoms, thirty-nine percent sit on the surface."
+    },
+    {
+     "from": 688,
+     "dur": 186,
+     "audio": "audio/1ca1a778a8644800.mp3",
+     "text": "Three hundred and nine atoms: fifty-two percent. Fifty-five atoms: seventy-six percent."
+    },
+    {
+     "from": 884,
+     "dur": 161,
+     "audio": "audio/87351a06fa556417.mp3",
+     "text": "And in a cluster of thirteen atoms, ninety-two percent of the atoms are on the surface."
+    },
+    {
+     "from": 1056,
+     "dur": 172,
+     "audio": "audio/e0b0b99656457230.mp3",
+     "text": "So at the nano scale, surface-related properties begin to dominate over bulk properties."
+    }
+   ]
+  },
+  {
+   "id": "melting",
+   "from": 2060,
+   "dur": 893,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 86,
+     "audio": "audio/79c038a8cf7f09f7.mp3",
+     "text": "Take the melting point, a physical property."
+    },
+    {
+     "from": 96,
+     "dur": 184,
+     "audio": "audio/2a0dae392add0a7c.mp3",
+     "text": "Atoms melt when they have enough energy to overcome the forces holding them in fixed positions."
+    },
+    {
+     "from": 291,
+     "dur": 241,
+     "audio": "audio/9ab1fbb268ab8436.mp3",
+     "text": "An atom inside is held by neighbours on every side. A surface atom touches fewer atoms. It has unsaturated bonds."
+    },
+    {
+     "from": 543,
+     "dur": 135,
+     "audio": "audio/746cb6fa16c1a627.mp3",
+     "text": "So surface atoms need less energy to move, and they melt first."
+    },
+    {
+     "from": 688,
+     "dur": 178,
+     "audio": "audio/a600f14e4b45385f.mp3",
+     "text": "A nanoparticle is mostly surface, so it melts at a lower temperature than the bulk material."
+    }
+   ]
+  },
+  {
+   "id": "categories",
+   "from": 2952,
+   "dur": 728,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 165,
+     "audio": "audio/18ca0dd94bee3088.mp3",
+     "text": "Almost every property changes. The exam wants each category with its example."
+    },
+    {
+     "from": 175,
+     "dur": 292,
+     "audio": "audio/f57ae7594e83433e.mp3",
+     "text": "Physical: melting point. Chemical: reactivity. Electrical: conductivity. Mechanical: strength. Optical: light emission."
+    },
+    {
+     "from": 477,
+     "dur": 224,
+     "audio": "audio/ead970d3461ece31.mp3",
+     "text": "And the trap he warned about: reactivity is chemical, not physical. The physical example is the melting point."
+    }
+   ]
+  }
+ ]
+}

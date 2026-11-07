@@ -1,0 +1,32 @@
+{
+  "id": "ens010-L3",
+  "title": "Lecture 3 · Why size matters",
+  "scenes": [
+    { "id": "scale", "lines": [
+      "Why does a nanomaterial behave differently from the same material in bulk?",
+      "A bulk material is anything we can see and feel: powdery, granular or lumpy. Even a millimeter powder is still bulk.",
+      "Grind it into microparticles. You can no longer see them one by one, but their properties barely change.",
+      "Only around one hundred nanometers do the properties really start to change."
+    ]},
+    { "id": "surface", "lines": [
+      "The reason is the surface.",
+      "Cut a cube into smaller cubes. The volume stays the same, but the surface keeps growing. Nanomaterials have a very high surface area to volume ratio, in square meters per cubic meter.",
+      "Now look at the atoms. In a cluster of nine hundred and twenty-three atoms, thirty-nine percent sit on the surface.",
+      "Three hundred and nine atoms: fifty-two percent. Fifty-five atoms: seventy-six percent.",
+      "And in a cluster of thirteen atoms, ninety-two percent of the atoms are on the surface.",
+      "So at the nano scale, surface-related properties begin to dominate over bulk properties."
+    ]},
+    { "id": "melting", "lines": [
+      "Take the melting point, a physical property.",
+      "Atoms melt when they have enough energy to overcome the forces holding them in fixed positions.",
+      "An atom inside is held by neighbours on every side. A surface atom touches fewer atoms. It has unsaturated bonds.",
+      "So surface atoms need less energy to move, and they melt first.",
+      "A nanoparticle is mostly surface, so it melts at a lower temperature than the bulk material."
+    ]},
+    { "id": "categories", "lines": [
+      "Almost every property changes. The exam wants each category with its example.",
+      "Physical: melting point. Chemical: reactivity. Electrical: conductivity. Mechanical: strength. Optical: light emission.",
+      "And the trap he warned about: reactivity is chemical, not physical. The physical example is the melting point."
+    ]}
+  ]
+}
