@@ -85,9 +85,9 @@
     A.step('<b>Step 3.</b> The heated spot <b>expands</b> abruptly (thermal expansion) and sends out a <b>thermoacoustic wave</b>…',
       { heat: { s: 1.5, o: 0.4 }, w1: { o: 1, s: 2.4 }, beam: { o: 0.25 }, stage: { text: '3 · thermal expansion → thermoacoustic wave' } }, { dur: 1100 });
     A.step('…which travels out and is detected by an <b>ultrasound transducer</b>. Light in, <b>sound out</b>: that is how PAI differs from ultrasound.',
-      { w1: { s: 5, o: 0 }, w2: { o: 1, s: 4 }, tr: { fill: 'solid' } }, { dur: 1300, fx: ['tr'] });
+      { w1: { s: 3.4, o: 0 }, w2: { o: 1, s: 2.8 }, tr: { fill: 'solid' } }, { dur: 1300, fx: ['tr'] });
     A.step('Plasmonic nanoparticles (<b>Au, Ag, SWNT</b>) absorb light far better and convert it to sound efficiently, so the signal and the image get much stronger.',
-      { w2: { s: 5, o: 0 }, np: { r: 12 }, stage: { text: 'anatomy + function + molecules, several cm deep' } }, { dur: 900 });
+      { w2: { s: 3.6, o: 0 }, np: { r: 12 }, stage: { text: 'anatomy + function + molecules, several cm deep' } }, { dur: 900 });
   });
 
   /* ---------- L7: inside a biosensor ---------- */
@@ -105,7 +105,7 @@
     A.box('td', { tx: 410, ty: 170, w: 150, h: 220, text: 'transducer', sub: 'waiting', c: 'c0', fill: 'ghost' });
     A.line('wire', { x1: 486, y1: 170, x2: 525, y2: 170, c: 'mute', head: true });
     A.box('out', { tx: 600, ty: 170, w: 130, h: 80, text: '', sub: 'signal', c: 'c2', fill: 'ghost' });
-    A.text('val', { tx: 600, ty: 176, num: 0, fmt: (v) => `${v.toFixed(1)} µA`, size: 18, weight: 700, mono: true });
+    A.text('val', { tx: 600, ty: 160, num: 0, fmt: (v) => `${v.toFixed(1)} µA`, size: 18, weight: 700, mono: true });
 
     A.step('A biosensor has a <b>receptor</b> (here antibodies, Y), held on a <b>transducer</b> by a nanomaterial layer (graphene). Around it: the <b>analyte</b> we want, and other look-alike molecules.');
     A.step('<b>Lock and key</b>: each target antigen binds an antibody. The other molecules do not fit. Ignoring them is <b>selectivity</b>.',

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <title>video frame</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    /* One 1280×720 video frame. tools/video/build.py screenshots this page with ?c=<course>&v=<video>&s=<scene>&b=<beat>&k=<sentence> (or &title=1). */
+    html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: var(--bg); }
+    header.topbar, footer, .page-foot, .back-row { display: none !important; }
+    main { max-width: none !important; margin: 0 !important; padding: 0 !important; }
+    .slide { box-sizing: border-box; width: 1280px; height: 720px; padding: 44px 64px 0; display: flex; flex-direction: column; }
+    .kick { font-family: var(--mono); font-size: 17px; color: var(--muted); }
+    .slide h1 { font-size: 46px; margin: 6px 0 22px; line-height: 1.1; }
+    .body { flex: 1; display: grid; gap: 40px; align-items: start; min-height: 0; }
+    .body.two { grid-template-columns: 1fr 1.15fr; }
+    .body.one { grid-template-columns: 1fr; }
+    ul.pts { margin: 4px 0 0; padding-left: 28px; font-size: 27px; line-height: 1.38; }
+    ul.pts li { margin: 0 0 12px; }
+    ul.pts li.off { visibility: hidden; }
+    .figwrap figure.fig { margin: 0; }
+    .body.two .figwrap { zoom: 1.12; }
+    .body.one .figwrap { zoom: 1.4; max-width: 830px; margin: 0 auto; width: 100%; }
+    .body.one .figwrap.anim { zoom: 1; max-width: 860px; }
+    .fig, .fig * { animation: none !important; transition: none !important; }
+    .fig-t::before { content: none !important; }
+    .a-cap, .a-ticks, .a-count, .a-play, .a-speed, figure.f-anim-fig button, figure.f-anim-fig select { display: none !important; }
+    .ex { font-size: 21px; margin: 0 0 12px; visibility: hidden; }
+    .ex.on { visibility: visible; }
+    .cap { box-sizing: border-box; height: 112px; margin: 0 -64px; padding: 16px 64px; background: color-mix(in srgb, var(--text) 88%, transparent); color: var(--bg); font-size: 25px; line-height: 1.35; display: flex; align-items: center; }
+    .titlecard { box-sizing: border-box; width: 1280px; height: 720px; padding: 0 100px; display: flex; flex-direction: column; justify-content: center; }
+    .titlecard .kick { font-size: 22px; }
+    .titlecard h1 { font-size: 72px; margin: 14px 0 22px; }
+    .titlecard .rule { width: 120px; height: 4px; background: var(--accent); }
+  </style>
+</head>
+<body data-root="../..">
+  <main id="frame"></main>
+  <script>
+    const P = new URLSearchParams(location.search), course = P.get('c') || 'ens010';
+    document.body.dataset.course = course;
+    for (const src of [`../../${course}/data.js`, `../../${course}/video.js`]) document.write(`<script src="${src}"><\/script>`);
+  </script>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/figs.js"></script>
+  <script src="../../assets/js/anim.js"></script>
+  <script>document.write(`<script src="../../${P.get('c') || 'ens010'}/anims.js"><\/script>`);</script>
+  <script>
+    document.documentElement.dataset.theme = 'light';
+    const { el, fill } = CS;
+    const V = window.VIDEO.find((v) => v.id === P.get('v'));
+    const frame = document.getElementById('frame');
+    const sentences = (t) => t.match(/[^.!?]+[.!?]+(\s|$)/g)?.map((s) => s.trim()) || [t];
+
+    if (P.get('title')) {
+      fill(frame, el('div', { class: 'titlecard' },
+        el('div', { class: 'kick' }, `${window.COURSE.code} · ${window.COURSE.name}`),
+        el('h1', {}, V.title),
+        el('div', { class: 'rule' })));
+    } else {
+      const s = Number(P.get('s')), b = Number(P.get('b')), k = Number(P.get('k') || 0);
+      const sc = V.scenes[s], last = b === sc.say.length - 1;
+      const shown = sc.pts ? Math.max(0, sc.pts.length - (sc.say.length - 1 - b)) : 0;
+      let fig = null;
+      if (sc.anim) fig = el('div', { class: 'figwrap anim' }, CS.figure({ type: 'anim', name: sc.anim }));
+      else if (sc.fig) fig = el('div', { class: 'figwrap' }, CS.figure(sc.fig));
+      fig?.querySelectorAll('.fig.pre').forEach((n) => n.classList.replace('pre', 'in'));
+      fill(frame, el('div', { class: 'slide' },
+        el('div', { class: 'kick' }, sc.k || V.title),
+        el('h1', { html: sc.h }),
+        el('div', { class: 'body ' + (sc.pts && fig ? 'two' : 'one') },
+          sc.pts ? el('ul', { class: 'pts' }, sc.pts.map((t, i) => el('li', { class: i < shown ? '' : 'off', html: t }))) : null,
+          fig),
+        sc.ex ? el('div', { class: 'callout warn ex' + (last ? ' on' : ''), html: sc.ex }) : null,
+        el('div', { class: 'cap' }, sentences(sc.say[b])[k])));
+      if (sc.anim) setTimeout(() => frame.querySelectorAll('.a-tick')[b]?.click(), 400);
+    }
+  </script>
+</body>
+</html>

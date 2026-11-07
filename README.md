@@ -40,6 +40,8 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
     radiation and invasiveness, choose the imaging technique, build a biosensor
   - 23 games, a quiz and flashcards per lecture, driven by `ens010/data.js`
   - `ozet.html` (Turkish midterm summary with English terms) and `mock.html` (mock midterm with written questions)
+  - `videos.html`: narrated English study videos, one per lecture, scripted in `ens010/video.js` and built by
+    `tools/video/build.py` (headless Chrome frames + edge-tts speech + ffmpeg) into `materials/ENS010/video/` (local only)
 
 ## Layout
 

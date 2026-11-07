@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study videos</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .vid { margin: 26px 0 34px; }
+    .vid video { width: 100%; max-width: 960px; display: block; border: 1px solid var(--line); border-radius: var(--radius); background: #000; }
+    .vid h2 { margin: 0 0 8px; }
+    .speeds { margin: 6px 0 0; }
+  </style>
+</head>
+<body data-root="..">
+  <main>
+    <div class="mono small muted">ENS010 — study videos</div>
+    <h1 style="font-size:2.6rem;margin-top:4px">Study videos</h1>
+    <p class="lead">One narrated video per lecture, in English like the course and the exam. Every sentence is also shown as a caption. About 24 minutes in total.</p>
+    <div class="callout small">The video files are built locally by <code>tools/video/build.py</code> into <code>materials/ENS010/video/</code>. They are not in the GitHub repo (too large), so they play only on this computer. If a player stays black, run the build script once.</div>
+    <nav class="row toc" id="toc"></nav>
+    <div id="list"></div>
+  </main>
+  <script src="data.js"></script>
+  <script src="video.js"></script>
+  <script>
+    document.body.dataset.course = COURSE.id;
+    document.body.dataset.title = 'Study videos';
+    document.body.dataset.activity = 'videos';
+  </script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { el } = CS;
+    const dir = `../materials/${COURSE.code}/video/`;
+    const all = [...VIDEO, { id: 'all', title: 'Everything in one video' }];
+    const toc = document.getElementById('toc'), list = document.getElementById('list');
+    all.forEach((v, i) => {
+      toc.append(el('a', { href: `#${v.id}` }, el('b', {}, String(i + 1).padStart(2, '0')), v.title.split(' · ').pop()));
+      const video = el('video', { controls: true, preload: 'metadata', src: `${dir}${COURSE.code}-${v.id}.mp4` });
+      list.append(el('section', { class: 'vid', id: v.id },
+        el('h2', {}, v.title),
+        video,
+        el('div', { class: 'row speeds small' }, el('span', { class: 'muted' }, 'Speed:'),
+          [0.85, 1, 1.25, 1.5].map((r) => el('button', { class: 'chip', onclick: () => { video.playbackRate = r; video.play(); } }, `${r}×`)),
+          v.scenes ? el('span', { class: 'muted' }, `${v.scenes.length} scenes`) : null)));
+    });
+    if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  </script>
+</body>
+</html>
