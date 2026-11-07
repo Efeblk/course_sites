@@ -110,14 +110,15 @@ def duration(p):
 
 def clip(u):
     img, aud = frame_path(u), speech_path(u[2])
-    p = cache / f"c_{h(img.name, aud.name, u[3], u[4])}.mp4"
+    p = cache / f"c_{h(img.name, aud.name, u[3], u[4], 'yuv420p')}.mp4"
     if p.exists():
         return p
     d = duration(aud) + u[3]
-    vf = 'format=yuv420p' + (f',fade=t=in:st=0:d=0.3:color={BG}' if u[4] else '')
+    # yuv420p must come last (fade would switch back to 4:4:4, which Firefox-based browsers cannot play)
+    vf = (f'fade=t=in:st=0:d=0.3:color={BG},' if u[4] else '') + 'format=yuv420p'
     subprocess.run(['ffmpeg', '-y', '-v', 'error', '-loop', '1', '-framerate', '30', '-i', str(img), '-i', str(aud),
                     '-vf', vf, '-af', f'apad=pad_dur={u[3]}', '-t', f'{d:.3f}',
-                    '-c:v', 'libx264', '-preset', 'veryfast', '-tune', 'stillimage', '-crf', '22', '-r', '30',
+                    '-c:v', 'libx264', '-preset', 'veryfast', '-tune', 'stillimage', '-crf', '22', '-r', '30', '-pix_fmt', 'yuv420p', '-profile:v', 'high',
                     '-c:a', 'aac', '-b:a', '128k', '-ar', '48000', '-ac', '2', str(p)], check=True)
     return p
 
