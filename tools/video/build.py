@@ -142,10 +142,22 @@ with ThreadPoolExecutor(4) as ex:
 by_video = {}
 for u, c in zip(units, clips):
     by_video.setdefault(u[0], []).append(c)
+def webm(mp4):
+    # VP9/Opus copy: Firefox-based browsers play it without relying on the OS's H.264 decoder
+    subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', str(mp4), '-c:v', 'libvpx-vp9', '-deadline', 'realtime', '-cpu-used', '8',
+                    '-row-mt', '1', '-b:v', '0', '-crf', '36', '-c:a', 'libopus', '-b:a', '96k', str(mp4.with_suffix('.webm'))], check=True)
+
+
+done = []
 for vid, cs in by_video.items():
     dest = out / f'{CODE}-{vid}.mp4'
     concat(cs, dest)
+    done.append(dest)
     print(f'{dest.name}  {duration(dest) / 60:.1f} min')
 if not only:
     concat([c for cs in by_video.values() for c in cs], out / f'{CODE}-all.mp4')
+    done.append(out / f'{CODE}-all.mp4')
     print(f'{CODE}-all.mp4  {duration(out / f"{CODE}-all.mp4") / 60:.1f} min')
+with ThreadPoolExecutor(3) as ex:
+    list(ex.map(webm, done))
+print('webm copies ready')

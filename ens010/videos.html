@@ -36,10 +36,18 @@
     const toc = document.getElementById('toc'), list = document.getElementById('list');
     all.forEach((v, i) => {
       toc.append(el('a', { href: `#${v.id}` }, el('b', {}, String(i + 1).padStart(2, '0')), v.title.split(' · ').pop()));
-      const video = el('video', { controls: true, preload: 'metadata', src: `${dir}${COURSE.code}-${v.id}.mp4` });
+      const base = `${dir}${COURSE.code}-${v.id}`;
+      const msg = el('div', { class: 'callout bad small', style: { display: 'none' } });
+      // WebM (VP9) first: Firefox/Zen decode it themselves; MP4 (H.264) as the fallback
+      const sources = [el('source', { src: `${base}.webm`, type: 'video/webm' }), el('source', { src: `${base}.mp4`, type: 'video/mp4' })];
+      const video = el('video', { controls: true, preload: 'metadata' }, sources);
+      sources[1].addEventListener('error', () => {
+        msg.style.display = '';
+        msg.textContent = `Could not load ${new URL(base + '.mp4', location.href).href.replace(/^file:\/\/\//, '')} (or .webm). Open this page from the course_sites folder that contains materials/${COURSE.code}/video/, or run tools/video/build.py.`;
+      });
       list.append(el('section', { class: 'vid', id: v.id },
         el('h2', {}, v.title),
-        video,
+        video, msg,
         el('div', { class: 'row speeds small' }, el('span', { class: 'muted' }, 'Speed:'),
           [0.85, 1, 1.25, 1.5].map((r) => el('button', { class: 'chip', onclick: () => { video.playbackRate = r; video.play(); } }, `${r}×`)),
           v.scenes ? el('span', { class: 'muted' }, `${v.scenes.length} scenes`) : null)));
