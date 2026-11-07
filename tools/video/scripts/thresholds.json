@@ -1,0 +1,16 @@
+{ "voice": "af_heart", "speed": 1.0, "gap": 0.35,
+  "beats": [
+  {"id": "ward",     "text": "Picture a hospital ward at night. Every patient is connected to monitors."},
+  {"id": "model",    "text": "An AI model reads their vital signs and lab results, and turns them into one number: the estimated chance of getting worse in the next twenty-four hours."},
+  {"id": "estimate", "text": "That number is an estimate. Not a diagnosis.", "pause": 0.6},
+  {"id": "zoom",     "text": "Now zoom out to a thousand patients, sorted by that estimated risk."},
+  {"id": "groups",   "text": "Nine hundred of them will be fine. A hundred will deteriorate. And the two groups overlap.", "pause": 0.5},
+  {"id": "thr10",    "text": "A threshold turns the score into an action. Set it at ten percent, and everyone to the right sends an alert to the nurse."},
+  {"id": "res10",    "text": "We catch most of the patients who will deteriorate, with about twenty false alarms."},
+  {"id": "lower",    "text": "Now, lower the threshold to five percent.", "hold": 2.4},
+  {"id": "res5",     "text": "We catch almost everyone. But false alarms jump to around four hundred and fifty.", "pause": 0.6},
+  {"id": "fatigue",  "text": "And here is the problem. With that many alerts, people stop reacting."},
+  {"id": "missed",   "text": "The one alert that really mattered gets swiped away with all the others. That is alert fatigue.", "pause": 0.7},
+  {"id": "tradeoff", "text": "So there is no universal threshold. It is a trade-off between missed patients and false alarms."},
+  {"id": "depends",  "text": "And the right balance depends on the consequences, the staff, the model, and the patient.", "pause": 1.2}
+]}

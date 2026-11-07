@@ -1,0 +1,16 @@
+{ "voice": "af_heart", "speed": 1.0, "gap": 0.35,
+  "beats": [
+  {"id": "same",   "text": "Here is one AI model. It catches ninety percent of sick patients, and correctly clears ninety percent of healthy ones. Let's use it on three different populations.", "pause": 0.3},
+  {"id": "p50",    "text": "First, a population where half the people have the disease. Five hundred out of a thousand."},
+  {"id": "p50r",   "text": "The model raises four hundred and fifty true alarms, and fifty false ones. So when it says alarm, it is right ninety percent of the time. That is the P P V.", "pause": 0.4},
+  {"id": "p10",    "text": "Now a population where only ten percent are sick. One hundred people."},
+  {"id": "p10r",   "text": "It catches ninety of them. But nine hundred healthy people means ninety false alarms. P P V drops to fifty percent. A coin flip.", "pause": 0.4},
+  {"id": "p1",     "text": "And now a rare condition. Just one percent. Ten people."},
+  {"id": "p1r",    "text": "It catches nine. But it also raises ninety-nine false alarms. Only about eight percent of its alarms are real.", "pause": 0.5},
+  {"id": "lesson", "text": "Same model. Same sensitivity, same specificity. But the rarer the condition, the lower the P P V. That is prevalence at work.", "pause": 0.8},
+  {"id": "trap",   "text": "Now, one more trap. Take that rare condition again: ten sick people in a thousand."},
+  {"id": "lazy",   "text": "Imagine a lazy model that simply says: nobody is sick.", "pause": 0.3},
+  {"id": "acc",    "text": "It is right nine hundred and ninety times out of a thousand. Ninety-nine percent accurate!", "pause": 0.3},
+  {"id": "sens0",  "text": "And it found nobody. Sensitivity: zero.", "pause": 0.5},
+  {"id": "end",    "text": "So on imbalanced data, accuracy can fool you. Always ask what happens to the patients the model gets wrong.", "pause": 1.0}
+]}

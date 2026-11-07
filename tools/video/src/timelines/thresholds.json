@@ -1,0 +1,84 @@
+{
+ "fps": 30,
+ "total": 2200,
+ "beats": {
+  "ward": {
+   "start": 18,
+   "dur": 131,
+   "file": "vo/thresholds/ward.wav",
+   "text": "Picture a hospital ward at night. Every patient is connected to monitors."
+  },
+  "model": {
+   "start": 159,
+   "dur": 279,
+   "file": "vo/thresholds/model.wav",
+   "text": "An AI model reads their vital signs and lab results, and turns them into one number: the estimated chance of getting worse in the next twenty-four hours."
+  },
+  "estimate": {
+   "start": 449,
+   "dur": 83,
+   "file": "vo/thresholds/estimate.wav",
+   "text": "That number is an estimate. Not a diagnosis."
+  },
+  "zoom": {
+   "start": 560,
+   "dur": 125,
+   "file": "vo/thresholds/zoom.wav",
+   "text": "Now zoom out to a thousand patients, sorted by that estimated risk."
+  },
+  "groups": {
+   "start": 696,
+   "dur": 154,
+   "file": "vo/thresholds/groups.wav",
+   "text": "Nine hundred of them will be fine. A hundred will deteriorate. And the two groups overlap."
+  },
+  "thr10": {
+   "start": 876,
+   "dur": 209,
+   "file": "vo/thresholds/thr10.wav",
+   "text": "A threshold turns the score into an action. Set it at ten percent, and everyone to the right sends an alert to the nurse."
+  },
+  "res10": {
+   "start": 1095,
+   "dur": 136,
+   "file": "vo/thresholds/res10.wav",
+   "text": "We catch most of the patients who will deteriorate, with about twenty false alarms."
+  },
+  "lower": {
+   "start": 1241,
+   "dur": 74,
+   "file": "vo/thresholds/lower.wav",
+   "text": "Now, lower the threshold to five percent."
+  },
+  "res5": {
+   "start": 1325,
+   "dur": 147,
+   "file": "vo/thresholds/res5.wav",
+   "text": "We catch almost everyone. But false alarms jump to around four hundred and fifty."
+  },
+  "fatigue": {
+   "start": 1500,
+   "dur": 120,
+   "file": "vo/thresholds/fatigue.wav",
+   "text": "And here is the problem. With that many alerts, people stop reacting."
+  },
+  "missed": {
+   "start": 1631,
+   "dur": 156,
+   "file": "vo/thresholds/missed.wav",
+   "text": "The one alert that really mattered gets swiped away with all the others. That is alert fatigue."
+  },
+  "tradeoff": {
+   "start": 1818,
+   "dur": 163,
+   "file": "vo/thresholds/tradeoff.wav",
+   "text": "So there is no universal threshold. It is a trade-off between missed patients and false alarms."
+  },
+  "depends": {
+   "start": 1991,
+   "dur": 147,
+   "file": "vo/thresholds/depends.wav",
+   "text": "And the right balance depends on the consequences, the staff, the model, and the patient."
+  }
+ }
+}

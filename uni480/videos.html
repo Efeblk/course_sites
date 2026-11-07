@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UNI480 — Explainer videos · Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .vid { margin: 40px 0 0; }
+    .vid h2 { margin: 0 0 4px; }
+    .vid video { display: block; width: 100%; max-width: 960px; aspect-ratio: 16 / 9; height: auto; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); margin: 12px 0 8px; }
+    .vid p { max-width: 720px; margin: 0; }
+  </style>
+</head>
+<body data-root="..">
+  <main>
+    <div class="mono small muted">UNI480 — explainer videos</div>
+    <h1 style="font-size:2.6rem;margin-top:4px">Five short videos on Week 4</h1>
+    <p class="lead">Each one explains a single idea from AI in clinical decision-making as a small animated story, in about a minute and a half. They are in English, like the exam.</p>
+    <nav class="row toc">
+      <a href="#thresholds"><b>01</b>Thresholds</a>
+      <a href="#matrix"><b>02</b>Confusion matrix</a>
+      <a href="#prevalence"><b>03</b>Prevalence &amp; accuracy</a>
+      <a href="#action"><b>04</b>Prediction to action</a>
+      <a href="#trust"><b>05</b>Augmented intelligence</a>
+    </nav>
+
+    <section class="vid" id="thresholds">
+      <h2>Thresholds and alert fatigue</h2>
+      <div class="small muted">1:13</div>
+      <video controls preload="none" poster="video/thresholds.jpg" src="video/thresholds.mp4"></video>
+      <p>A model scores every patient on a ward. Lowering the alert threshold from 10% to 5% catches 14 more real cases but adds about 430 false alarms, until the one alert that mattered gets swiped away. There is no universal threshold.</p>
+    </section>
+
+    <section class="vid" id="matrix">
+      <h2>The confusion matrix</h2>
+      <div class="small muted">1:46</div>
+      <video controls preload="none" poster="video/matrix.jpg" src="video/matrix.mp4"></video>
+      <p>200 patients sort themselves into true and false positives and negatives. Sensitivity and specificity read down the columns (the truth); PPV and NPV read across the rows (what the model said).</p>
+    </section>
+
+    <section class="vid" id="prevalence">
+      <h2>Prevalence, PPV and the 99% accuracy trap</h2>
+      <div class="small muted">1:31</div>
+      <video controls preload="none" poster="video/prevalence.jpg" src="video/prevalence.mp4"></video>
+      <p>The same model on three populations: PPV falls from 90% to 50% to 8% as the condition gets rarer. Then a model that says “nobody is sick” is 99% accurate and finds no one.</p>
+    </section>
+
+    <section class="vid" id="action">
+      <h2>From prediction to action</h2>
+      <div class="small muted">1:31</div>
+      <video controls preload="none" poster="video/action.jpg" src="video/action.mp4"></video>
+      <p>The lecturer's story of an alert that nobody owns, then the six steps: define the target, use only data available at prediction time, validate, choose a threshold, link it to a response, measure the whole process.</p>
+    </section>
+
+    <section class="vid" id="trust">
+      <h2>Augmented intelligence and trust</h2>
+      <div class="small muted">1:30</div>
+      <video controls preload="none" poster="video/trust.jpg" src="video/trust.mp4"></video>
+      <p>The navigation analogy, automation versus augmentation, automation bias, commission and omission errors, under-trust, calibrated trust, and what makes human oversight meaningful.</p>
+    </section>
+
+    <div class="callout" style="margin-top:44px">Then check yourself with the <a href="mock.html">mock midterm</a>, or read the <a href="ozet.html">Türkçe özet</a>.</div>
+  </main>
+  <script src="data.js"></script>
+  <script>document.body.dataset.course = COURSE.id;</script>
+  <script src="../assets/js/common.js"></script>
+</body>
+</html>

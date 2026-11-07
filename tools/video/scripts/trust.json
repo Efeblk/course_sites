@@ -1,0 +1,16 @@
+{ "voice": "af_heart", "speed": 1.0, "gap": 0.35,
+  "beats": [
+  {"id": "nav",     "text": "You are driving, and your navigation app suggests a route."},
+  {"id": "closed",  "text": "But there is an emergency ahead, and the road is closed. The app cannot see it. You can."},
+  {"id": "override","text": "So you do not follow it blindly. You take another road. That is what a clinician must be able to do with AI: understand it, question it, and override it.", "pause": 0.5},
+  {"id": "aug",     "text": "This is augmented intelligence. Automation hands the work to the machine. Augmentation helps the human do the work better."},
+  {"id": "brings",  "text": "The AI brings speed, pattern detection and consistent calculation. The clinician brings the examination, communication, values, and ethical judgment.", "pause": 0.5},
+  {"id": "dial",    "text": "So how much should you trust the AI? Picture a dial."},
+  {"id": "over",    "text": "Turn it all the way up, and you get automation bias: accepting the suggestion just because it looks confident, even when your own evidence disagrees."},
+  {"id": "comm",    "text": "That leads to commission errors: doing something wrong, because the system suggested it."},
+  {"id": "omit",    "text": "And omission errors: failing to act, because the system did not warn you.", "pause": 0.3},
+  {"id": "under",   "text": "Turn it all the way down, and you get under-trust: ignoring support that was correct and useful."},
+  {"id": "calib",   "text": "The goal is in the middle. Calibrated trust: trust that matches what the system can really do, with healthy scepticism.", "pause": 0.5},
+  {"id": "over2",   "text": "And for that, oversight has to be meaningful. The clinician needs time, the right information, and the authority to disagree. Not a rubber stamp.", "pause": 0.5},
+  {"id": "end",     "text": "AI supports. People decide.", "pause": 1.2}
+]}

@@ -1,0 +1,84 @@
+{
+ "fps": 30,
+ "total": 2691,
+ "beats": {
+  "nav": {
+   "start": 18,
+   "dur": 96,
+   "file": "vo/trust/nav.wav",
+   "text": "You are driving, and your navigation app suggests a route."
+  },
+  "closed": {
+   "start": 125,
+   "dur": 157,
+   "file": "vo/trust/closed.wav",
+   "text": "But there is an emergency ahead, and the road is closed. The app cannot see it. You can."
+  },
+  "override": {
+   "start": 292,
+   "dur": 284,
+   "file": "vo/trust/override.wav",
+   "text": "So you do not follow it blindly. You take another road. That is what a clinician must be able to do with AI: understand it, question it, and override it."
+  },
+  "aug": {
+   "start": 601,
+   "dur": 223,
+   "file": "vo/trust/aug.wav",
+   "text": "This is augmented intelligence. Automation hands the work to the machine. Augmentation helps the human do the work better."
+  },
+  "brings": {
+   "start": 835,
+   "dur": 300,
+   "file": "vo/trust/brings.wav",
+   "text": "The AI brings speed, pattern detection and consistent calculation. The clinician brings the examination, communication, values, and ethical judgment."
+  },
+  "dial": {
+   "start": 1160,
+   "dur": 91,
+   "file": "vo/trust/dial.wav",
+   "text": "So how much should you trust the AI? Picture a dial."
+  },
+  "over": {
+   "start": 1262,
+   "dur": 281,
+   "file": "vo/trust/over.wav",
+   "text": "Turn it all the way up, and you get automation bias: accepting the suggestion just because it looks confident, even when your own evidence disagrees."
+  },
+  "comm": {
+   "start": 1553,
+   "dur": 144,
+   "file": "vo/trust/comm.wav",
+   "text": "That leads to commission errors: doing something wrong, because the system suggested it."
+  },
+  "omit": {
+   "start": 1708,
+   "dur": 124,
+   "file": "vo/trust/omit.wav",
+   "text": "And omission errors: failing to act, because the system did not warn you."
+  },
+  "under": {
+   "start": 1851,
+   "dur": 172,
+   "file": "vo/trust/under.wav",
+   "text": "Turn it all the way down, and you get under-trust: ignoring support that was correct and useful."
+  },
+  "calib": {
+   "start": 2034,
+   "dur": 214,
+   "file": "vo/trust/calib.wav",
+   "text": "The goal is in the middle. Calibrated trust: trust that matches what the system can really do, with healthy scepticism."
+  },
+  "over2": {
+   "start": 2274,
+   "dur": 270,
+   "file": "vo/trust/over2.wav",
+   "text": "And for that, oversight has to be meaningful. The clinician needs time, the right information, and the authority to disagree. Not a rubber stamp."
+  },
+  "end": {
+   "start": 2569,
+   "dur": 60,
+   "file": "vo/trust/end.wav",
+   "text": "AI supports. People decide."
+  }
+ }
+}

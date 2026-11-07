@@ -1,0 +1,16 @@
+{ "voice": "af_heart", "speed": 1.0, "gap": 0.35,
+  "beats": [
+  {"id": "hook",   "text": "A hospital buys a model that predicts which patients will deteriorate. In testing, it works beautifully.", "pause": 0.3},
+  {"id": "live",   "text": "Then it goes live on the wards, and the alerts start coming in."},
+  {"id": "who",    "text": "But nobody decided who should respond. Should the nurse check the patient? Should a doctor order a test? Should someone call the intensive care team?"},
+  {"id": "bounce", "text": "So the alert bounces around. Everyone sees it. No one owns it.", "pause": 0.3},
+  {"id": "result", "text": "The result: more work for the staff, and no better outcomes for the patients. Knowing that a problem may happen is useful only if you can do something about it.", "pause": 0.6},
+  {"id": "six",    "text": "Prediction is only the beginning. Here are six steps from prediction to action."},
+  {"id": "s1",     "text": "One. Define the target exactly. Deterioration within six hours? Twenty-four hours? Seven days?"},
+  {"id": "s2",     "text": "Two. Use only the information that exists at the moment of prediction. Peeking at data from the future is called leakage, and it makes results look unrealistically good."},
+  {"id": "s3",     "text": "Three. Estimate the risk with a validated model. A model that worked in another hospital still needs testing in yours."},
+  {"id": "s4",     "text": "Four. Choose a threshold. That decides who gets an alert."},
+  {"id": "s5",     "text": "Five. Link the alert to a response. Who does what, and how fast? For example: the nurse reviews the patient within thirty minutes."},
+  {"id": "s6",     "text": "Six. Measure the whole process. Did patient outcomes improve? Did unnecessary tests go up?", "pause": 0.5},
+  {"id": "end",    "text": "A good prediction with no response plan is just noise. The value comes from the decision it improves.", "pause": 1.0}
+]}

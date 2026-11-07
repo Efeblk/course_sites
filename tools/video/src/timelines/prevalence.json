@@ -1,0 +1,84 @@
+{
+ "fps": 30,
+ "total": 2724,
+ "beats": {
+  "same": {
+   "start": 18,
+   "dur": 312,
+   "file": "vo/prevalence/same.wav",
+   "text": "Here is one AI model. It catches ninety percent of sick patients, and correctly clears ninety percent of healthy ones. Let's use it on three different populations."
+  },
+  "p50": {
+   "start": 349,
+   "dur": 159,
+   "file": "vo/prevalence/p50.wav",
+   "text": "First, a population where half the people have the disease. Five hundred out of a thousand."
+  },
+  "p50r": {
+   "start": 519,
+   "dur": 299,
+   "file": "vo/prevalence/p50r.wav",
+   "text": "The model raises four hundred and fifty true alarms, and fifty false ones. So when it says alarm, it is right ninety percent of the time. That is the P P V."
+  },
+  "p10": {
+   "start": 840,
+   "dur": 124,
+   "file": "vo/prevalence/p10.wav",
+   "text": "Now a population where only ten percent are sick. One hundred people."
+  },
+  "p10r": {
+   "start": 975,
+   "dur": 253,
+   "file": "vo/prevalence/p10r.wav",
+   "text": "It catches ninety of them. But nine hundred healthy people means ninety false alarms. P P V drops to fifty percent. A coin flip."
+  },
+  "p1": {
+   "start": 1251,
+   "dur": 109,
+   "file": "vo/prevalence/p1.wav",
+   "text": "And now a rare condition. Just one percent. Ten people."
+  },
+  "p1r": {
+   "start": 1371,
+   "dur": 214,
+   "file": "vo/prevalence/p1r.wav",
+   "text": "It catches nine. But it also raises ninety-nine false alarms. Only about eight percent of its alarms are real."
+  },
+  "lesson": {
+   "start": 1611,
+   "dur": 253,
+   "file": "vo/prevalence/lesson.wav",
+   "text": "Same model. Same sensitivity, same specificity. But the rarer the condition, the lower the P P V. That is prevalence at work."
+  },
+  "trap": {
+   "start": 1898,
+   "dur": 152,
+   "file": "vo/prevalence/trap.wav",
+   "text": "Now, one more trap. Take that rare condition again: ten sick people in a thousand."
+  },
+  "lazy": {
+   "start": 2061,
+   "dur": 102,
+   "file": "vo/prevalence/lazy.wav",
+   "text": "Imagine a lazy model that simply says: nobody is sick."
+  },
+  "acc": {
+   "start": 2183,
+   "dur": 158,
+   "file": "vo/prevalence/acc.wav",
+   "text": "It is right nine hundred and ninety times out of a thousand. Ninety-nine percent accurate!"
+  },
+  "sens0": {
+   "start": 2360,
+   "dur": 84,
+   "file": "vo/prevalence/sens0.wav",
+   "text": "And it found nobody. Sensitivity: zero."
+  },
+  "end": {
+   "start": 2470,
+   "dur": 199,
+   "file": "vo/prevalence/end.wav",
+   "text": "So on imbalanced data, accuracy can fool you. Always ask what happens to the patients the model gets wrong."
+  }
+ }
+}

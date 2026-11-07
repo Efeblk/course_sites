@@ -1,0 +1,16 @@
+{ "voice": "af_heart", "speed": 1.0, "gap": 0.35,
+  "beats": [
+  {"id": "intro", "text": "Two hundred patients come into a clinic. One hundred really have the disease. One hundred are healthy."},
+  {"id": "scan",  "text": "An AI model checks each of them, and says one of two things: alarm, or no alarm.", "pause": 0.4},
+  {"id": "tp",    "text": "Of the hundred sick patients, the model raises the alarm for ninety. Those are true positives."},
+  {"id": "fn",    "text": "It misses ten. They are sick, but the model stayed quiet. False negatives. These are the dangerous ones.", "pause": 0.3},
+  {"id": "tn",    "text": "Of the hundred healthy patients, ninety-five get no alarm. True negatives."},
+  {"id": "fp",    "text": "And five get an alarm they did not need. False positives.", "pause": 0.4},
+  {"id": "grid",  "text": "That is the confusion matrix. The columns are the truth. The rows are what the model said.", "pause": 0.5},
+  {"id": "sens",  "text": "Sensitivity looks down the sick column. Of everyone who is truly sick, how many did we catch? Ninety out of a hundred. Ninety percent."},
+  {"id": "spec",  "text": "Specificity looks down the healthy column. Of everyone who is truly healthy, how many did the model clear? Ninety-five percent.", "pause": 0.3},
+  {"id": "ppv",   "text": "P P V reads across the alarm row. When the model raises an alarm, how often is the patient really sick? Ninety out of ninety-five. About ninety-five percent."},
+  {"id": "npv",   "text": "And N P V reads across the no-alarm row. When the model stays quiet, how often is the patient really healthy? Ninety-five out of a hundred and five. About ninety percent.", "pause": 0.5},
+  {"id": "tip",   "text": "Here is the trick to remember. Sensitivity and specificity start from the truth. P P V and N P V start from what the model said.", "pause": 0.5},
+  {"id": "cost",  "text": "Which one matters most depends on the cost of each mistake. If missing a sick patient is dangerous, you need high sensitivity. If false alarms waste time and cause worry, look at specificity and P P V.", "pause": 1.0}
+]}

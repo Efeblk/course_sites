@@ -1,0 +1,84 @@
+{
+ "fps": 30,
+ "total": 2715,
+ "beats": {
+  "hook": {
+   "start": 18,
+   "dur": 194,
+   "file": "vo/action/hook.wav",
+   "text": "A hospital buys a model that predicts which patients will deteriorate. In testing, it works beautifully."
+  },
+  "live": {
+   "start": 231,
+   "dur": 98,
+   "file": "vo/action/live.wav",
+   "text": "Then it goes live on the wards, and the alerts start coming in."
+  },
+  "who": {
+   "start": 340,
+   "dur": 251,
+   "file": "vo/action/who.wav",
+   "text": "But nobody decided who should respond. Should the nurse check the patient? Should a doctor order a test? Should someone call the intensive care team?"
+  },
+  "bounce": {
+   "start": 601,
+   "dur": 117,
+   "file": "vo/action/bounce.wav",
+   "text": "So the alert bounces around. Everyone sees it. No one owns it."
+  },
+  "result": {
+   "start": 738,
+   "dur": 268,
+   "file": "vo/action/result.wav",
+   "text": "The result: more work for the staff, and no better outcomes for the patients. Knowing that a problem may happen is useful only if you can do something about it."
+  },
+  "six": {
+   "start": 1034,
+   "dur": 136,
+   "file": "vo/action/six.wav",
+   "text": "Prediction is only the beginning. Here are six steps from prediction to action."
+  },
+  "s1": {
+   "start": 1180,
+   "dur": 189,
+   "file": "vo/action/s1.wav",
+   "text": "One. Define the target exactly. Deterioration within six hours? Twenty-four hours? Seven days?"
+  },
+  "s2": {
+   "start": 1379,
+   "dur": 307,
+   "file": "vo/action/s2.wav",
+   "text": "Two. Use only the information that exists at the moment of prediction. Peeking at data from the future is called leakage, and it makes results look unrealistically good."
+  },
+  "s3": {
+   "start": 1696,
+   "dur": 220,
+   "file": "vo/action/s3.wav",
+   "text": "Three. Estimate the risk with a validated model. A model that worked in another hospital still needs testing in yours."
+  },
+  "s4": {
+   "start": 1926,
+   "dur": 99,
+   "file": "vo/action/s4.wav",
+   "text": "Four. Choose a threshold. That decides who gets an alert."
+  },
+  "s5": {
+   "start": 2035,
+   "dur": 239,
+   "file": "vo/action/s5.wav",
+   "text": "Five. Link the alert to a response. Who does what, and how fast? For example: the nurse reviews the patient within thirty minutes."
+  },
+  "s6": {
+   "start": 2285,
+   "dur": 172,
+   "file": "vo/action/s6.wav",
+   "text": "Six. Measure the whole process. Did patient outcomes improve? Did unnecessary tests go up?"
+  },
+  "end": {
+   "start": 2482,
+   "dur": 178,
+   "file": "vo/action/end.wav",
+   "text": "A good prediction with no response plan is just noise. The value comes from the decision it improves."
+  }
+ }
+}

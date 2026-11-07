@@ -1,0 +1,84 @@
+{
+ "fps": 30,
+ "total": 3177,
+ "beats": {
+  "intro": {
+   "start": 18,
+   "dur": 175,
+   "file": "vo/matrix/intro.wav",
+   "text": "Two hundred patients come into a clinic. One hundred really have the disease. One hundred are healthy."
+  },
+  "scan": {
+   "start": 203,
+   "dur": 154,
+   "file": "vo/matrix/scan.wav",
+   "text": "An AI model checks each of them, and says one of two things: alarm, or no alarm."
+  },
+  "tp": {
+   "start": 380,
+   "dur": 175,
+   "file": "vo/matrix/tp.wav",
+   "text": "Of the hundred sick patients, the model raises the alarm for ninety. Those are true positives."
+  },
+  "fn": {
+   "start": 566,
+   "dur": 189,
+   "file": "vo/matrix/fn.wav",
+   "text": "It misses ten. They are sick, but the model stayed quiet. False negatives. These are the dangerous ones."
+  },
+  "tn": {
+   "start": 774,
+   "dur": 136,
+   "file": "vo/matrix/tn.wav",
+   "text": "Of the hundred healthy patients, ninety-five get no alarm. True negatives."
+  },
+  "fp": {
+   "start": 920,
+   "dur": 106,
+   "file": "vo/matrix/fp.wav",
+   "text": "And five get an alarm they did not need. False positives."
+  },
+  "grid": {
+   "start": 1049,
+   "dur": 161,
+   "file": "vo/matrix/grid.wav",
+   "text": "That is the confusion matrix. The columns are the truth. The rows are what the model said."
+  },
+  "sens": {
+   "start": 1235,
+   "dur": 249,
+   "file": "vo/matrix/sens.wav",
+   "text": "Sensitivity looks down the sick column. Of everyone who is truly sick, how many did we catch? Ninety out of a hundred. Ninety percent."
+  },
+  "spec": {
+   "start": 1495,
+   "dur": 236,
+   "file": "vo/matrix/spec.wav",
+   "text": "Specificity looks down the healthy column. Of everyone who is truly healthy, how many did the model clear? Ninety-five percent."
+  },
+  "ppv": {
+   "start": 1750,
+   "dur": 324,
+   "file": "vo/matrix/ppv.wav",
+   "text": "P P V reads across the alarm row. When the model raises an alarm, how often is the patient really sick? Ninety out of ninety-five. About ninety-five percent."
+  },
+  "npv": {
+   "start": 2084,
+   "dur": 330,
+   "file": "vo/matrix/npv.wav",
+   "text": "And N P V reads across the no-alarm row. When the model stays quiet, how often is the patient really healthy? Ninety-five out of a hundred and five. About ninety percent."
+  },
+  "tip": {
+   "start": 2439,
+   "dur": 260,
+   "file": "vo/matrix/tip.wav",
+   "text": "Here is the trick to remember. Sensitivity and specificity start from the truth. P P V and N P V start from what the model said."
+  },
+  "cost": {
+   "start": 2724,
+   "dur": 397,
+   "file": "vo/matrix/cost.wav",
+   "text": "Which one matters most depends on the cost of each mistake. If missing a sick patient is dangerous, you need high sensitivity. If false alarms waste time and cause worry, look at specificity and P P V."
+  }
+ }
+}
