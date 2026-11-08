@@ -1,0 +1,175 @@
+{
+ "id": "coe025-W6a",
+ "title": "Week 6, part 1 \u00b7 Token classification",
+ "fps": 30,
+ "dur": 4845,
+ "scenes": [
+  {
+   "id": "contract",
+   "from": 18,
+   "dur": 997,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 219,
+     "audio": "audio/f531f686ab92a259.mp3",
+     "text": "Week six: token classification. Every token gets its own label, and we read structure back from the labels."
+    },
+    {
+     "from": 229,
+     "dur": 211,
+     "audio": "audio/0b9e6e37dd331ea6.mp3",
+     "text": "Ada visits Paris. For parts of speech: proper noun, verb, proper noun, punctuation."
+    },
+    {
+     "from": 451,
+     "dur": 253,
+     "audio": "audio/54a6f698a2837c3c.mp3",
+     "text": "For named entities: B person, outside, B location, outside. Same tokens, two different tasks."
+    },
+    {
+     "from": 715,
+     "dur": 255,
+     "audio": "audio/07a7ca5226b2b481.mp3",
+     "text": "Why is this harder than labeling a whole text? The labels must fit together, entities have boundaries, and they are judged as spans."
+    }
+   ]
+  },
+  {
+   "id": "bio",
+   "from": 1015,
+   "dur": 828,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 122,
+     "audio": "audio/4452e75fd914911a.mp3",
+     "text": "B I O has rules. I must continue a span of the same type."
+    },
+    {
+     "from": 133,
+     "dur": 284,
+     "audio": "audio/2ef249e14a75d1ad.mp3",
+     "text": "O followed by I person is invalid: there is no person to continue. B organization followed by I person is invalid: the type changes."
+    },
+    {
+     "from": 427,
+     "dur": 159,
+     "audio": "audio/de586a9a56f6b051.mp3",
+     "text": "But B person, B person is valid: two people standing next to each other."
+    },
+    {
+     "from": 597,
+     "dur": 204,
+     "audio": "audio/afa0e60d8f6e94ed.mp3",
+     "text": "One flat B I O layer cannot hold nested entities, like a location inside a university name."
+    }
+   ]
+  },
+  {
+   "id": "tasks",
+   "from": 1843,
+   "dur": 972,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 171,
+     "audio": "audio/888a645c3ea77b8a.mp3",
+     "text": "The same output shape solves many tasks. The task is defined by what the label means."
+    },
+    {
+     "from": 182,
+     "dur": 203,
+     "audio": "audio/87e177cb17c82584.mp3",
+     "text": "Chunking marks phrases: B noun phrase, I noun phrase. Inside a noun phrase can be an adjective."
+    },
+    {
+     "from": 395,
+     "dur": 250,
+     "audio": "audio/f6c29f5ab285e5dd.mp3",
+     "text": "Slot filling: fly from Boston to Paris. Boston is the departure, Paris is the arrival, although both are places."
+    },
+    {
+     "from": 656,
+     "dur": 289,
+     "audio": "audio/aa563a9b3a58fa87.mp3",
+     "text": "Punctuation restoration labels what to insert after each word. And Turkish evlerden needs a whole bundle: noun, plural, ablative."
+    }
+   ]
+  },
+  {
+   "id": "subword",
+   "from": 2815,
+   "dur": 802,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 159,
+     "audio": "audio/e26db77ff8e75f28.mp3",
+     "text": "A transformer splits words into subword pieces, so the labels must be aligned."
+    },
+    {
+     "from": 170,
+     "dur": 143,
+     "audio": "audio/0dd4707440699e13.mp3",
+     "text": "Ada and Washington, two people. Washington becomes wash plus ington."
+    },
+    {
+     "from": 323,
+     "dur": 209,
+     "audio": "audio/87ab85882f1dc808.mp3",
+     "text": "With the first-piece policy, the first piece of each word gets the word's label. Everything else gets minus one hundred."
+    },
+    {
+     "from": 543,
+     "dur": 233,
+     "audio": "audio/80a506449573b978.mp3",
+     "text": "Minus one hundred means ignore this position in the loss. O is different: it is a real label that the model learns."
+    }
+   ]
+  },
+  {
+   "id": "eval",
+   "from": 3617,
+   "dur": 1180,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 178,
+     "audio": "audio/f384fcdad49c5b35.mp3",
+     "text": "Now evaluation. A hundred tokens: ninety outside, ten inside entities."
+    },
+    {
+     "from": 188,
+     "dur": 185,
+     "audio": "audio/0c96676ca80df1b3.mp3",
+     "text": "Predict outside everywhere and you get ninety percent accuracy, but you found zero entities."
+    },
+    {
+     "from": 384,
+     "dur": 163,
+     "audio": "audio/ec211e3c1c603046.mp3",
+     "text": "So entities are scored as exact spans: the same boundaries and the same type."
+    },
+    {
+     "from": 558,
+     "dur": 154,
+     "audio": "audio/b99f0d6988b42c1f.mp3",
+     "text": "Gold: Ada, and New York. The prediction finds Ada, and only York."
+    },
+    {
+     "from": 722,
+     "dur": 202,
+     "audio": "audio/c1b997d41b342a4a.mp3",
+     "text": "York has the right type but the wrong boundary. It is one false positive, and New York is one false negative."
+    },
+    {
+     "from": 935,
+     "dur": 217,
+     "audio": "audio/8e3458e21f5908c3.mp3",
+     "text": "One true positive, one false positive, one false negative: F1 is two over four, one half."
+    }
+   ]
+  }
+ ]
+}

@@ -76,6 +76,7 @@ materials/            raw course files — local only, gitignored (copyrighted)
 
 The recipe is in [`tools/motion/README.md`](tools/motion/README.md). Videos are narrated explainers made with Remotion,
 with drawn scenes that move with the voice and no slides or captions. Follow it for every new course video.
+Made so far: ENS010 lectures 2–7 and COE025 weeks 1, 2, 3, 4 and 6 (`<course>/videos.html` plays them).
 `tools/video/` is the older slide-and-caption pipeline. It is kept only for reference.
 
 ## Adding a chapter

@@ -72,6 +72,8 @@ from the script.
   - text and labels: `Rise` (text that rises in), `Tag` (pill label), `T` (static text), `StageHeading` (serif scene title);
   - drawn parts: `Draw` (a stroke that draws itself), `Arrow`, `Card`, `Mark` (tick or cross);
   - objects: `Atom`, `hexAtoms`/`hexXY`, `Thermometer`, `Body` (a human silhouette), `sup` (exponents).
+- Text-heavy courses (NLP, COE025) also use `src/coe025/kit.tsx`: `Chip` (token or label chip), `rowX` (centre a row
+  of chips), `Count` (a number that counts up), `Bar`, `Typed` (maths that types itself), `shake` and `win` (fade in/out).
 - Use the palette `C` only, on the warm paper background. Accents are blue, orange, red, teal, green and purple. Use
   no emoji. Plain marks such as ✓, ✗, → and × are fine.
 - Text should be at least 26 px, with no more than about 6 words per label. A scene may have a serif heading at the top.

@@ -1,0 +1,35 @@
+{
+  "id": "coe025-W4",
+  "title": "Week 4 · Parts of speech and named entities",
+  "scenes": [
+    { "id": "pos", "lines": [
+      "Week four moves from one label per text to one label per word.",
+      "Part-of-speech tagging gives every word its grammatical role in this sentence.",
+      "Book that flight: book is a verb. Hand me that book: book is a noun. The tag depends on context.",
+      "Back can even be five things: an adjective, a noun, a verb, a particle or an adverb."
+    ]},
+    { "id": "classes", "lines": [
+      "Open classes gain new words every day: nouns, verbs, adjectives, adverbs. Selfie, to google.",
+      "Closed classes almost never change: determiners, pronouns, prepositions, conjunctions, auxiliaries.",
+      "Universal Dependencies has seventeen tags in total."
+    ]},
+    { "id": "ambig", "lines": [
+      "Only a small share of word types is ambiguous, but those are the common words.",
+      "Take book book book cat dog. One of three types is ambiguous, but three of five tokens are.",
+      "The simplest tagger gives each word its most frequent tag from training. It ignores context, so book a flight comes out wrong.",
+      "Better taggers combine three clues: the word itself, its neighbours, and its shape, like a suffix or a capital letter. A clue is not a rule: friendly ends in l y and is an adjective."
+    ]},
+    { "id": "ner", "lines": [
+      "Named entity recognition finds names of things: people, organizations, locations, geo-political entities.",
+      "It is harder than part-of-speech tagging for two reasons.",
+      "First, segmentation: United Airlines Holding is one entity of three words.",
+      "Second, type ambiguity: Washington can be a person, a team, a place or a state, and only the context decides."
+    ]},
+    { "id": "bio", "lines": [
+      "To label entities word by word, we use B I O. B begins an entity, I is inside it, O is outside.",
+      "Jane, B person. Villanueva, I person. Of, O. United, B organization.",
+      "With n entity types, B I O needs two n plus one tags. Three types give seven.",
+      "I O uses n plus one tags, but cannot separate two people standing next to each other. B I O E S adds end and single, for four n plus one."
+    ]}
+  ]
+}

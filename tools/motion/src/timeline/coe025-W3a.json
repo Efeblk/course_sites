@@ -1,0 +1,175 @@
+{
+ "id": "coe025-W3a",
+ "title": "Week 3, part 1 \u00b7 Classical classifiers by hand",
+ "fps": 30,
+ "dur": 5000,
+ "scenes": [
+  {
+   "id": "corpus",
+   "from": 18,
+   "dur": 919,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 229,
+     "audio": "audio/e14df22f8421c273.mp3",
+     "text": "Week three works everything out by hand on one tiny corpus. Learn these numbers: the exam has no calculator."
+    },
+    {
+     "from": 239,
+     "dur": 221,
+     "audio": "audio/fbb5b51c05b19d81.mp3",
+     "text": "Two positive reviews: good good movie, and good movie. Two negative reviews: bad bad movie, and bad movie."
+    },
+    {
+     "from": 471,
+     "dur": 176,
+     "audio": "audio/a7eeb583214257dd.mp3",
+     "text": "Four documents, three word types, ten tokens, and five tokens in each class."
+    },
+    {
+     "from": 658,
+     "dur": 234,
+     "audio": "audio/dd0b26a39af54205.mp3",
+     "text": "Fit the vocabulary and the I D F on the training set only. Calling fit on the test set leaks it into your features."
+    }
+   ]
+  },
+  {
+   "id": "nb",
+   "from": 937,
+   "dur": 1185,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 238,
+     "audio": "audio/d95aa3043eb8a283.mp3",
+     "text": "Naive Bayes uses two different denominators. The prior counts documents: two out of four, so zero point five."
+    },
+    {
+     "from": 249,
+     "dur": 252,
+     "audio": "audio/be991ebe7c833a38.mp3",
+     "text": "The word probabilities count tokens, with add-one smoothing: count plus one, over five tokens plus three word types."
+    },
+    {
+     "from": 511,
+     "dur": 94,
+     "audio": "audio/10d831a3f4ad518c.mp3",
+     "text": "Good in the positive class: three plus one over eight, one half. Good in the negative class: one over eight."
+    },
+    {
+     "from": 615,
+     "dur": 328,
+     "audio": "audio/1b98d2b42919ec21.mp3",
+     "text": "Now classify good movie. Positive: one half, times one half, times three eighths. Negative: one half, times one eighth, times three eighths."
+    },
+    {
+     "from": 954,
+     "dur": 204,
+     "audio": "audio/d80e0776a7a54ba2.mp3",
+     "text": "Divide by the sum: positive gets zero point eight. That is the model's probability, not its accuracy."
+    }
+   ]
+  },
+  {
+   "id": "lr",
+   "from": 2122,
+   "dur": 1178,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 276,
+     "audio": "audio/29a8538b56f70af1.mp3",
+     "text": "Logistic regression. Features good and bad are two and zero, weights zero point eight and minus one, bias minus zero point four."
+    },
+    {
+     "from": 286,
+     "dur": 198,
+     "audio": "audio/268fca9eea20ca5e.mp3",
+     "text": "z is zero point eight times two, plus zero, minus zero point four: one point two."
+    },
+    {
+     "from": 495,
+     "dur": 168,
+     "audio": "audio/bf68c400a6ed6f01.mp3",
+     "text": "The sigmoid of one point two is about zero point seven seven, so predict positive."
+    },
+    {
+     "from": 673,
+     "dur": 187,
+     "audio": "audio/c136af2635c008e3.mp3",
+     "text": "Training uses cross-entropy, and its gradient is simply p minus y, times x."
+    },
+    {
+     "from": 871,
+     "dur": 280,
+     "audio": "audio/6a2029b86a732a2c.mp3",
+     "text": "Here that is zero point seven seven minus one, times two, so the weight goes up. And when every feature is zero, the bias still learns."
+    }
+   ]
+  },
+  {
+   "id": "svm",
+   "from": 3300,
+   "dur": 942,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 205,
+     "audio": "audio/6101c43857e2d750.mp3",
+     "text": "The SVM scores f of x equals good minus bad, and multiplies by the label to get the margin."
+    },
+    {
+     "from": 216,
+     "dur": 239,
+     "audio": "audio/ceab75490c90ccf0.mp3",
+     "text": "A negative review with good one and bad two: f is minus one, the label is minus one, so the margin is one."
+    },
+    {
+     "from": 465,
+     "dur": 199,
+     "audio": "audio/7302669807d60d7a.mp3",
+     "text": "The hinge loss is the larger of zero and one minus the margin. Margin one gives loss zero."
+    },
+    {
+     "from": 674,
+     "dur": 240,
+     "audio": "audio/fc89b08628ef9944.mp3",
+     "text": "A positive review with score zero point five is on the right side, but inside the margin, so it still costs zero point five."
+    }
+   ]
+  },
+  {
+   "id": "negation",
+   "from": 4242,
+   "dur": 710,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 94,
+     "audio": "audio/5dcc3dca136b842c.mp3",
+     "text": "Where do these classifiers fail? Word order."
+    },
+    {
+     "from": 104,
+     "dur": 248,
+     "audio": "audio/63f299c7b5cf031e.mp3",
+     "text": "With unigrams, not good has the word good with a positive weight, so z is plus zero point four: positive. Wrong."
+    },
+    {
+     "from": 362,
+     "dur": 249,
+     "audio": "audio/d0d7f7ee5c99e04d.mp3",
+     "text": "Add the bigram not good as its own feature with weight minus one point two, and z drops to minus zero point eight: negative."
+    },
+    {
+     "from": 622,
+     "dur": 61,
+     "audio": "audio/67ab8aa41826c185.mp3",
+     "text": "Changing the classifier does not help. Only a representation that keeps the order can."
+    }
+   ]
+  }
+ ]
+}

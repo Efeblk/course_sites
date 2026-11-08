@@ -1,0 +1,224 @@
+{
+ "id": "coe025-W3b",
+ "title": "Week 3, part 2 \u00b7 From embeddings to BERT",
+ "fps": 30,
+ "dur": 7042,
+ "scenes": [
+  {
+   "id": "embed",
+   "from": 18,
+   "dur": 1099,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 138,
+     "audio": "audio/3de7d914f1e80db4.mp3",
+     "text": "Part two: what each neural step fixed, and where it still fails."
+    },
+    {
+     "from": 148,
+     "dur": 207,
+     "audio": "audio/ae2657e027eca0d3.mp3",
+     "text": "An embedding table turns a word I D into a learned row of numbers. The I D itself carries no meaning."
+    },
+    {
+     "from": 365,
+     "dur": 289,
+     "audio": "audio/3a2272149d228b5c.mp3",
+     "text": "Word2Vec learns the rows from raw text. CBOW predicts the center word from its neighbours. Skip-gram predicts the neighbours from the center."
+    },
+    {
+     "from": 665,
+     "dur": 201,
+     "audio": "audio/6719b7ee0f187911.mp3",
+     "text": "FastText builds a word from character pieces, so a rare Turkish form like evler still gets a vector."
+    },
+    {
+     "from": 876,
+     "dur": 195,
+     "audio": "audio/9481e9a8e196613f.mp3",
+     "text": "But averaging word vectors loses order again: dog bites man and man bites dog have the same mean."
+    }
+   ]
+  },
+  {
+   "id": "cnn",
+   "from": 1117,
+   "dur": 855,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 120,
+     "audio": "audio/bc482e803bd94028.mp3",
+     "text": "A CNN slides a small filter over windows of words."
+    },
+    {
+     "from": 130,
+     "dur": 282,
+     "audio": "audio/1faaeeedf750abfd.mp3",
+     "text": "Each window: multiply, add up, and apply ReLU. Not very gives two, very good gives one, good today gives zero."
+    },
+    {
+     "from": 423,
+     "dur": 190,
+     "audio": "audio/8ceb6f14263c9ba3.mp3",
+     "text": "Seven tokens with a width of three give seven minus three plus one: five windows."
+    },
+    {
+     "from": 623,
+     "dur": 204,
+     "audio": "audio/d4012f115e1df06d.mp3",
+     "text": "Max pooling keeps only the strongest response, zero point nine five, and throws away where it was."
+    }
+   ]
+  },
+  {
+   "id": "rnn",
+   "from": 1971,
+   "dur": 1509,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 142,
+     "audio": "audio/d3150d78a9cb0988.mp3",
+     "text": "An RNN reads one token at a time and carries a hidden state forward."
+    },
+    {
+     "from": 152,
+     "dur": 274,
+     "audio": "audio/bcc4c190bea3ca7f.mp3",
+     "text": "Because the state depends on order, one then minus one ends negative, and minus one then one ends positive. A mean could not tell them apart."
+    },
+    {
+     "from": 436,
+     "dur": 308,
+     "audio": "audio/15bd096fdd0a46ca.mp3",
+     "text": "The problem: training multiplies many derivatives. Twenty factors of zero point five vanish to almost nothing. Twenty factors of one point five explode."
+    },
+    {
+     "from": 755,
+     "dur": 397,
+     "audio": "audio/39962efc58268adf.mp3",
+     "text": "An LSTM adds gates and a cell. The new cell keeps zero point eight of the old one and writes zero point two five of the candidate: zero point four minus zero point one, so zero point three."
+    },
+    {
+     "from": 1162,
+     "dur": 320,
+     "audio": "audio/0b84cbae5e0c9af4.mp3",
+     "text": "A BiLSTM reads both ways and joins them: two hundred fifty-six plus two hundred fifty-six gives five hundred twelve features, for the same number of tokens."
+    }
+   ]
+  },
+  {
+   "id": "attention",
+   "from": 3480,
+   "dur": 1258,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 122,
+     "audio": "audio/6c5de1ef55d764f1.mp3",
+     "text": "Attention lets every token look at every other token directly."
+    },
+    {
+     "from": 132,
+     "dur": 361,
+     "audio": "audio/6f6d6a805a5d76aa.mp3",
+     "text": "Scores zero, log two, zero. Softmax: exponentiate to one, two, one, and divide by four. The weights are a quarter, a half, a quarter."
+    },
+    {
+     "from": 504,
+     "dur": 158,
+     "audio": "audio/16caed9e3f43d12f.mp3",
+     "text": "The output mixes the value vectors with those weights: one, two point five."
+    },
+    {
+     "from": 673,
+     "dur": 253,
+     "audio": "audio/7ca4fbaa0fa62227.mp3",
+     "text": "Padding gets a score of minus infinity, so its weight becomes zero, and the rest are renormalized to one third and two thirds."
+    },
+    {
+     "from": 937,
+     "dur": 294,
+     "audio": "audio/619bf430b758009f.mp3",
+     "text": "Scores are divided by the square root of d k, so the softmax does not get too sharp. For BERT base that is the square root of sixty-four: eight."
+    }
+   ]
+  },
+  {
+   "id": "bert",
+   "from": 4739,
+   "dur": 1031,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 132,
+     "audio": "audio/622bbad0f2a6024e.mp3",
+     "text": "BERT is a stack of these attention blocks that reads in both directions."
+    },
+    {
+     "from": 142,
+     "dur": 170,
+     "audio": "audio/5d1b4f44a2d6b7f1.mp3",
+     "text": "Each input position adds three vectors: token, segment and position."
+    },
+    {
+     "from": 323,
+     "dur": 281,
+     "audio": "audio/c2bec4166b6ab455.mp3",
+     "text": "It is pretrained by hiding a word, the film was mask, and predicting it. If the right word gets probability one quarter, the loss is log four."
+    },
+    {
+     "from": 614,
+     "dur": 106,
+     "audio": "audio/17457aebcfe24d12.mp3",
+     "text": "Then a small head is fine-tuned on labeled reviews."
+    },
+    {
+     "from": 730,
+     "dur": 274,
+     "audio": "audio/9900bc252131411e.mp3",
+     "text": "Its limit: a fixed length. Cut a long review at one hundred twenty-eight tokens, and the decisive ending is gone before attention can see it."
+    }
+   ]
+  },
+  {
+   "id": "metrics",
+   "from": 5770,
+   "dur": 1225,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 267,
+     "audio": "audio/4ee8defa89d8ef3f.mp3",
+     "text": "Finally, measure it properly. Thirty true positives, five false positives, ten false negatives, fifty-five true negatives."
+    },
+    {
+     "from": 278,
+     "dur": 207,
+     "audio": "audio/143d433e72f2a549.mp3",
+     "text": "Precision: thirty out of thirty-five predicted positives. Recall: thirty out of forty real positives."
+    },
+    {
+     "from": 495,
+     "dur": 261,
+     "audio": "audio/aa1b1bfad7de69d0.mp3",
+     "text": "F1 is two T P over two T P plus F P plus F N: sixty over seventy-five, zero point eight."
+    },
+    {
+     "from": 767,
+     "dur": 230,
+     "audio": "audio/4f33cc913b017f13.mp3",
+     "text": "Macro F1 averages the class scores: zero point eight and zero point eight eight give zero point eight four."
+    },
+    {
+     "from": 1007,
+     "dur": 191,
+     "audio": "audio/7d13721e81d3ad5d.mp3",
+     "text": "And always check the majority baseline: always negative already gets sixty percent accuracy."
+    }
+   ]
+  }
+ ]
+}

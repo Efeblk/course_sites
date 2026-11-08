@@ -1,0 +1,163 @@
+{
+ "id": "coe025-W2",
+ "title": "Week 2 \u00b7 Text classification",
+ "fps": 30,
+ "dur": 4504,
+ "scenes": [
+  {
+   "id": "task",
+   "from": 18,
+   "dur": 794,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 207,
+     "audio": "audio/2ce70e9cafea8f17.mp3",
+     "text": "Week two: text classification. A function takes a text and returns one label from a fixed set."
+    },
+    {
+     "from": 218,
+     "dur": 243,
+     "audio": "audio/fc8c4c2cd0df4ecb.mp3",
+     "text": "Spam or ham is binary. Sports, politics or tech is multi-class. Sentiment is the classic example."
+    },
+    {
+     "from": 471,
+     "dur": 296,
+     "audio": "audio/04c8b618260eac65.mp3",
+     "text": "Every project follows the same loop: data, then features, then a model, then predictions, then evaluation, and back to the data."
+    }
+   ]
+  },
+  {
+   "id": "nb",
+   "from": 812,
+   "dur": 1033,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 186,
+     "audio": "audio/f3036dd79ec954e1.mp3",
+     "text": "Method one: Naive Bayes. It asks which class is most likely to have produced these words."
+    },
+    {
+     "from": 196,
+     "dur": 156,
+     "audio": "audio/f8e1eb03042c0b3e.mp3",
+     "text": "It multiplies the class prior by the probability of each word given the class."
+    },
+    {
+     "from": 362,
+     "dur": 207,
+     "audio": "audio/e00398c8f889ae83.mp3",
+     "text": "Naive means it assumes the words are independent once the class is known. Not good is just not, plus good."
+    },
+    {
+     "from": 579,
+     "dur": 253,
+     "audio": "audio/d3103d1c9a2b55f4.mp3",
+     "text": "If a word never appeared with a class, its probability is zero, and the whole product becomes zero. Add-one smoothing fixes that."
+    },
+    {
+     "from": 843,
+     "dur": 163,
+     "audio": "audio/37a163b441cf168c.mp3",
+     "text": "It is generative, fast, and works with very little data. That makes it the baseline."
+    }
+   ]
+  },
+  {
+   "id": "lr",
+   "from": 1845,
+   "dur": 938,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 158,
+     "audio": "audio/bed4d9d7c14814db.mp3",
+     "text": "Method two: logistic regression. Despite the name, it is a classifier."
+    },
+    {
+     "from": 169,
+     "dur": 258,
+     "audio": "audio/6895729379c5e0cb.mp3",
+     "text": "It adds up weighted features into one score z, then a sigmoid squeezes z into a probability between zero and one."
+    },
+    {
+     "from": 438,
+     "dur": 232,
+     "audio": "audio/4b2d8f86a72c777c.mp3",
+     "text": "Positive weights push toward the positive class, negative weights push away. Above zero point five, predict positive."
+    },
+    {
+     "from": 680,
+     "dur": 231,
+     "audio": "audio/052ad17d72c911b7.mp3",
+     "text": "It is discriminative: it learns the boundary directly. Its weights are easy to read, but the boundary is a straight line."
+    }
+   ]
+  },
+  {
+   "id": "svm",
+   "from": 2783,
+   "dur": 758,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 87,
+     "audio": "audio/7dcd4a9ece054521.mp3",
+     "text": "Method three: the support vector machine."
+    },
+    {
+     "from": 98,
+     "dur": 212,
+     "audio": "audio/a1d6f8296f18a7b7.mp3",
+     "text": "Many lines can separate two classes. The SVM picks the one with the widest margin to the nearest points."
+    },
+    {
+     "from": 321,
+     "dur": 204,
+     "audio": "audio/19d5531434074f68.mp3",
+     "text": "Those nearest points are the support vectors. A kernel lets it bend the boundary when the data is not linear."
+    },
+    {
+     "from": 535,
+     "dur": 196,
+     "audio": "audio/d2701543159942d4.mp3",
+     "text": "It is strong in high dimensions, but slow on very large data, and its score is not a probability."
+    }
+   ]
+  },
+  {
+   "id": "features",
+   "from": 3541,
+   "dur": 915,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 82,
+     "audio": "audio/329a28004be157d7.mp3",
+     "text": "The model only sees the features you give it."
+    },
+    {
+     "from": 93,
+     "dur": 301,
+     "audio": "audio/0edfd108d6f700e7.mp3",
+     "text": "Statistical features: length, exclamation marks, capital letters. Lexical features: bag of words, TF-IDF, n-grams."
+    },
+    {
+     "from": 404,
+     "dur": 235,
+     "audio": "audio/81b4869b97cfca4c.mp3",
+     "text": "Linguistic features: parts of speech and sentiment lexicons. Domain features: spam words or emoticons."
+    },
+    {
+     "from": 650,
+     "dur": 238,
+     "audio": "audio/6a313d9b1df5e5f3.mp3",
+     "text": "The project plan: start with Naive Bayes as a baseline, then logistic regression, then an SVM if time allows."
+    }
+   ]
+  }
+ ]
+}

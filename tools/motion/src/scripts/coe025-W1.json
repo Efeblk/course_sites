@@ -1,0 +1,45 @@
+{
+  "id": "coe025-W1",
+  "title": "Week 1 · Turning text into numbers",
+  "scenes": [
+    { "id": "numbers", "lines": [
+      "Week one asks one question: why do we turn text into numbers at all?",
+      "Because a model can only compute with numbers. It cannot read the word good.",
+      "So every method in this course is a way of turning text into numbers, and each one keeps something and loses something.",
+      "For every method, ask three things: what problem does it fix, what goes in and comes out, and where does it still fail."
+    ]},
+    { "id": "tokens", "lines": [
+      "Step one is tokenization: split the text into tokens. A token can be a word, a piece of a word, or punctuation.",
+      "Don't becomes do plus n apostrophe t.",
+      "A word-level vocabulary has a problem: a word it never saw in training is out of vocabulary.",
+      "Subword tokenizers fix this. Unhappiness is split into pieces the model already knows.",
+      "B P E merges the most frequent pairs and is used by G P T. WordPiece marks continuation pieces with two hashes and is used by BERT."
+    ]},
+    { "id": "bow", "lines": [
+      "Now give each word a column. One-hot: a vector as long as the vocabulary, with a single one.",
+      "Bag of words adds them up: it counts how often each word appears.",
+      "But it forgets the order. Dog bites man and man bites dog get exactly the same vector.",
+      "N-grams bring back some local order: New York becomes one feature, and not good becomes one feature."
+    ]},
+    { "id": "tfidf", "lines": [
+      "Counts treat every word the same. TF-IDF down-weights words that appear everywhere.",
+      "I D F is the log of N over d f. N is the number of documents, d f is how many documents contain the word.",
+      "Four reviews. Good appears in two of them, so its I D F is log of four over two, about zero point six nine.",
+      "Movie appears in all four. Log of four over four is zero: it does not tell the documents apart.",
+      "The weight is count times I D F. Good twice in one review gives about one point three nine. It is a weight, not a sentiment and not a probability."
+    ]},
+    { "id": "embed", "lines": [
+      "One-hot vectors are all equally far apart. Cat is as far from dog as from car.",
+      "Dense embeddings give each word fifty to three hundred learned numbers, so similar meanings land close together.",
+      "The famous example: king minus man plus woman lands near queen.",
+      "Word2Vec and GloVe are static: bank gets one vector, whether it is a river bank or a bank loan.",
+      "Contextual models like BERT give each occurrence its own vector, built from the words around it."
+    ]},
+    { "id": "tool", "lines": [
+      "Last idea: when is a large language model the wrong tool?",
+      "For a spam filter, the lecture compared an L L M with Naive Bayes. The accuracy gap was small: ninety-nine point two versus ninety-eight point five percent.",
+      "But the L L M costs about thirty thousand dollars a month, and Naive Bayes under ten. It takes a hundred to a thousand milliseconds, Naive Bayes under ten.",
+      "Add privacy, interpretability and hallucinations. Don't use a bulldozer to crack a chestnut: start with a cheap baseline."
+    ]}
+  ]
+}

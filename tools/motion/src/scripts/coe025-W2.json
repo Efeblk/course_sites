@@ -1,0 +1,36 @@
+{
+  "id": "coe025-W2",
+  "title": "Week 2 · Text classification",
+  "scenes": [
+    { "id": "task", "lines": [
+      "Week two: text classification. A function takes a text and returns one label from a fixed set.",
+      "Spam or ham is binary. Sports, politics or tech is multi-class. Sentiment is the classic example.",
+      "Every project follows the same loop: data, then features, then a model, then predictions, then evaluation, and back to the data."
+    ]},
+    { "id": "nb", "lines": [
+      "Method one: Naive Bayes. It asks which class is most likely to have produced these words.",
+      "It multiplies the class prior by the probability of each word given the class.",
+      "Naive means it assumes the words are independent once the class is known. Not good is just not, plus good.",
+      "If a word never appeared with a class, its probability is zero, and the whole product becomes zero. Add-one smoothing fixes that.",
+      "It is generative, fast, and works with very little data. That makes it the baseline."
+    ]},
+    { "id": "lr", "lines": [
+      "Method two: logistic regression. Despite the name, it is a classifier.",
+      "It adds up weighted features into one score z, then a sigmoid squeezes z into a probability between zero and one.",
+      "Positive weights push toward the positive class, negative weights push away. Above zero point five, predict positive.",
+      "It is discriminative: it learns the boundary directly. Its weights are easy to read, but the boundary is a straight line."
+    ]},
+    { "id": "svm", "lines": [
+      "Method three: the support vector machine.",
+      "Many lines can separate two classes. The SVM picks the one with the widest margin to the nearest points.",
+      "Those nearest points are the support vectors. A kernel lets it bend the boundary when the data is not linear.",
+      "It is strong in high dimensions, but slow on very large data, and its score is not a probability."
+    ]},
+    { "id": "features", "lines": [
+      "The model only sees the features you give it.",
+      "Statistical features: length, exclamation marks, capital letters. Lexical features: bag of words, TF-IDF, n-grams.",
+      "Linguistic features: parts of speech and sentiment lexicons. Domain features: spam words or emoticons.",
+      "The project plan: start with Naive Bayes as a baseline, then logistic regression, then an SVM if time allows."
+    ]}
+  ]
+}
