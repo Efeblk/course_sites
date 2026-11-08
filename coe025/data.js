@@ -13,7 +13,7 @@ window.COURSE = window.COE025 = {
   name: 'Natural Language Processing',
   term: 'Fall 25-26',
   lecturer: 'Asst. Prof. Yiğit Bekir Kaya',
-  examFormat: 'Midterm in Week 5. Four team projects (5 students each).',
+  examFormat: 'Midterm on 9 November, all weeks: multiple choice + two open-ended questions, no calculator. Four team projects (5 students each).',
   textbooks: [
     'Jurafsky & Martin — Speech and Language Processing, 3rd ed. draft (web.stanford.edu/~jurafsky/slp3/)',
     'Manning, Raghavan & Schütze — Introduction to Information Retrieval (nlp.stanford.edu/IR-book/)',

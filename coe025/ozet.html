@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COE025 — Vize özeti (Türkçe) · Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>table.t { margin: 8px 0 18px; } table.t td { vertical-align: top; } h2 { margin-top: 44px; } .ex { border-left: 4px solid var(--warn); } .f { font-family: var(--mono); font-size: .92rem; }</style>
+</head>
+<body data-root="..">
+  <main>
+    <div class="mono small muted">COE025 — vize özeti</div>
+    <h1 style="font-size:2.6rem;margin-top:4px">Vize özeti: Türkçe anlatım, İngilizce terimler</h1>
+    <p class="lead">Vize <b>9 Kasım</b>. Bütün haftalar dahil. Format: çoktan seçmeli + <b>iki açık uçlu</b> soru (her biri yarım sayfa). Yarısı yöntemleri anlama ve karşılaştırma, yarısı uygulama: <b>hesap makinesi yok</b>, sayılar kolay. Bazı formüller kâğıtta verilir ama hepsi değil. Sonucun ne anlama geldiğini bilmezsen formül işe yaramaz.</p>
+    <nav class="row toc">
+      <a href="#nasil"><b>00</b>Nasıl çalışmalı</a>
+      <a href="#w1"><b>01</b>NLP fundamentals</a>
+      <a href="#w2"><b>02</b>Text classification</a>
+      <a href="#w3"><b>03</b>Counts → BERT</a>
+      <a href="#w4"><b>04</b>POS &amp; NER</a>
+      <a href="#w6"><b>06</b>Token classification</a>
+      <a href="#formul"><b>07</b>Formül kâğıdı</a>
+      <a href="#acik"><b>08</b>Açık uçlu cevap kalıbı</a>
+    </nav>
+
+    <div class="callout"><b>Hocanın üç sorusu</b>, her yöntem için: (1) önceki yöntemin <b>çözemediği hangi problemi</b> çözüyor? (2) <b>ne girer, ne çıkar</b>? (3) <b>nerede hâlâ başarısız</b>? Aşağıdaki tabloların her satırı bu üç sütunla yazıldı. Bir satırı kapatıp kendi cümlelerinle söyleyebiliyorsan hazırsın.</div>
+
+    <h2 id="nasil">Bu gece ne yapmalı</h2>
+    <ol>
+      <li>Bu sayfayı baştan sona oku (40 dk). Her tabloda satırları kapat, üç soruyu kendin cevapla.</li>
+      <li><a href="drill.html">Hesap pratiği</a>: her kartı kâğıtta çöz, sonra <b>New numbers</b> ile bir kez daha (hocanın tavsiyesi: "change one number and solve it again").</li>
+      <li><a href="mock.html">Deneme vize</a> Form A, süre tut. Yanlışların açıklamasını oku. Sonra Form B.</li>
+      <li>Açık uçlular için bölüm 08'deki kalıbı kullanarak iki cevap yaz, model cevapla karşılaştır.</li>
+      <li>Vakit kalırsa haftaların <a href="index.html">guided lesson</a>'larındaki zayıf adımlara dön.</li>
+    </ol>
+
+    <!-- ================= W1 ================= -->
+    <h2 id="w1">Week 1 — NLP fundamentals: metni neden sayıya çeviriyoruz?</h2>
+    <p>Bilgisayar sadece sayılarla hesap yapar. Bu yüzden her NLP yöntemi önce metni sayıya çevirir; yöntemler <b>neyi koruduğu ve neyi kaybettiği</b> ile ayrılır. Tarih: kurallar (ELIZA, 1966) → istatistik (n-gram, HMM) → derin öğrenme (Word2Vec, LSTM) → Transformer/LLM (BERT, GPT) → bugün: doğru aracı seçmek.</p>
+    <table class="t">
+      <tr><th>Yöntem</th><th>Neyi çözer</th><th>Girdi → çıktı</th><th>Nerede başarısız</th></tr>
+      <tr><td><b>Tokenization</b></td><td>Metni atomik birimlere böler (corpus → document → token)</td><td>Ham metin → token listesi ("don't" → do + n't)</td><td>Kelime bazlı sözlükte yeni kelime = <b>OOV</b></td></tr>
+      <tr><td><b>Subword</b> (BPE, WordPiece, SentencePiece)</td><td>OOV: bilinmeyen kelimeyi bilinen parçalara böler</td><td>Kelime → parçalar (BPE: sık çiftleri birleştir, GPT; WordPiece: ##, BERT)</td><td>Parçalar anlam birimi değil; bir kelime birçok pozisyon tutar</td></tr>
+      <tr><td><b>One-hot</b></td><td>Her kelimeye bir sayısal kimlik</td><td>Kelime → sözlük boyutunda vektör, tek 1</td><td>Tüm kelimeler birbirine eşit uzak, benzerlik yok; çok boyutlu</td></tr>
+      <tr><td><b>Bag of words</b></td><td>Dokümanı sabit uzunlukta vektöre çevirir</td><td>Doküman → kelime sayıları</td><td><b>Sırayı kaybeder</b>: dog bites man = man bites dog</td></tr>
+      <tr><td><b>TF-IDF</b></td><td>Her yerde geçen kelimeleri ("the", "movie") bastırır</td><td>Doküman → count × ln(N/df) ağırlıkları</td><td>Hâlâ sıra yok; ağırlık duygu skoru veya olasılık değil</td></tr>
+      <tr><td><b>N-grams</b></td><td>Yerel sırayı geri getirir ("New York", "not good")</td><td>Ardışık n token = bir özellik</td><td>Sözlük büyür, seyrekleşir; "not very good" içinde "not good" yok</td></tr>
+      <tr><td><b>Dense embeddings</b> (Word2Vec, GloVe, FastText)</td><td>Benzer anlam → yakın vektör (king − man + woman ≈ queen)</td><td>Kelime ID → 50–300 boyutlu vektör (tablodan satır)</td><td><b>Statik</b>: "bank" her cümlede aynı vektör</td></tr>
+      <tr><td><b>Contextual</b> (ELMo, BERT, GPT)</td><td>Aynı kelimenin farklı anlamları</td><td>Cümle → her token için bağlama göre vektör</td><td>Pahalı, uzunluk sınırı</td></tr>
+    </table>
+    <p><b>Model ailesi:</b> BERT = encoder-only (anlama: sınıflandırma, NER, QA). GPT = decoder-only (üretim). T5/BART = encoder-decoder (çeviri, özet).</p>
+    <div class="callout ex"><b>LLM ne zaman yanlış araç?</b> "Don't use a bulldozer to crack a chestnut." Spam örneği: LLM ≈ $30.000/ay, 100–1000 ms; Naive Bayes &lt; $10/ay, &lt; 10 ms; doğruluk 99.2% vs 98.5%. Ayrıca açıklanabilirlik, gizlilik (veri dışarı gider), az etiketli veriyle özelleştirme, halüsinasyon. Karar: önce ucuz baseline, LLM'i sadece gerekirse.</div>
+
+    <!-- ================= W2 ================= -->
+    <h2 id="w2">Week 2 — Text classification: f(text) → label</h2>
+    <p>Bir dokümana önceden tanımlı bir etiket: sentiment, spam/ham, topic, intent… Pipeline: <b>Data → Features → Model → Prediction → Evaluation</b> → veriye geri dön. Klasik yöntemler önce: hızlı, yorumlanabilir, az veriyle çalışır, güçlü baseline.</p>
+    <table class="t">
+      <tr><th>Yöntem</th><th>Nasıl karar verir</th><th>Girdi → çıktı</th><th>Nerede başarısız</th></tr>
+      <tr><td><b>Naive Bayes</b> (generative)</td><td>P(c) × ∏ P(word|c) en büyük sınıf</td><td>Kelime sayıları → sınıf (+ posterior)</td><td>"Naive" = kelimeler bağımsız varsayımı; korelasyonlu kelimeler kanıtı iki kez sayar. Smoothing yoksa görülmemiş kelime çarpımı 0 yapar</td></tr>
+      <tr><td><b>Logistic regression</b> (discriminative)</td><td>p = σ(w·x + b), eşik 0.5</td><td>Özellik vektörü → P(pozitif)</td><td>Doğrusal sınır; adındaki "regression"a rağmen sınıflandırıcı</td></tr>
+      <tr><td><b>SVM</b></td><td>Maksimum margin'li hiper düzlem, işaret = sınıf</td><td>Özellik vektörü → skor f(x), işareti</td><td>Büyük veride yavaş, ölçeklemeye duyarlı; skor olasılık değil. Kernel trick doğrusal olmayan sınır için</td></tr>
+    </table>
+    <p><b>Feature engineering:</b> istatistiksel (uzunluk, "!", büyük harf oranı), sözcüksel (BoW, TF-IDF, n-gram, karakter n-gram), dilbilimsel (POS, sözlükler, varlıklar), alana özgü (spam kelimeleri, emoji). Proje önerisi: <b>NB baseline → LR → zaman kalırsa SVM</b>.</p>
+
+    <!-- ================= W3 ================= -->
+    <h2 id="w3">Week 3 — Counts'tan BERT'e (study deck, 110 slayt)</h2>
+    <h3>Klasik kısım: aynı özellikler, üç öğrenme mekanizması</h3>
+    <p>Oyuncak corpus: d1 "good good movie" (+), d2 "good movie" (+), d3 "bad bad movie" (−), d4 "bad movie" (−). 4 doküman, 3 kelime tipi, 10 token, her sınıfta 5 token.</p>
+    <ul>
+      <li><b>TF-IDF:</b> idf = ln(N/df): good ln 2, bad ln 2, movie ln 1 = 0. d1 good = 2 × ln 2 ≈ 1.386. "good" 10 kez geçse df hâlâ 2. scikit-learn varsayılanı farklı: ln((1+N)/(1+df)) + 1 ve L2 normalizasyon; bu yüzden kütüphane sayıları farklı çıkar.</li>
+      <li><b>Leakage:</b> vectorizer'ı (sözlük + IDF) <b>sadece train</b> üzerinde fit et; valid/test için transform. Test'te fit_transform = sızıntı. Bilinmeyen kelimenin sütunu yok; tamamen bilinmeyen doküman sıfır vektör olur.</li>
+      <li><b>Naive Bayes:</b> prior = <b>doküman</b> sayısı (2/4), likelihood = <b>token</b> sayısı. Add-one: (count + 1)/(5 + 3) → good|+ = 4/8 = .5, bad|+ = 1/8, movie = 3/8. Log uzayında: score(c) = ln P(c) + Σ n ln P(t|c); "good movie" → + : −2.367 vs − : −3.753, pozitif kazanır. Posterior .09375/.1171875 = <b>0.8</b> (model olasılığı, doğruluk değil).</li>
+      <li><b>Logistic regression:</b> z = w·x + b = 0.8×2 − 0.4 = 1.2, p = σ(1.2) ≈ .769. Odds = eᶻ, z = log-odds. Loss = −[y ln p + (1−y) ln(1−p)]. Gradyan <b>(p − y)x</b>, bias gradyanı p − y. Güncelleme w ← w − η g (0.8 → 0.846). x = 0 olsa bile bias öğrenir.</li>
+      <li><b>SVM:</b> f = good − bad, m = y f(x). Hinge = max(0, 1 − m): m ≥ 1 → 0; 0 &lt; m &lt; 1 doğru ama ceza; m &lt; 0 yanlış. Amaç ½||w||² + C Σ Lᵢ; büyük C ihlali daha çok cezalar. Uzaklık = |f|/||w||; margin genişliği 2/||w||.</li>
+      <li><b>Negation:</b> unigram "not good"u pozitif okuyabilir (z = +0.4). Bigram "not good" −1.2 ağırlıkla z = −0.8 → negatif. Sınıflandırıcıyı değiştirmek eksik özelliği düzeltmez.</li>
+    </ul>
+    <h3>Nöral kısım: her adım neyi düzeltti?</h3>
+    <table class="t">
+      <tr><th>Yöntem</th><th>Neyi çözer</th><th>Girdi → çıktı</th><th>Nerede başarısız</th></tr>
+      <tr><td><b>Embedding table</b></td><td>Kelimeye öğrenilmiş yoğun vektör</td><td>ID → E[ID] satırı (B×L → B×L×d)</td><td>Tek başına kelimeleri birleştirmez; frozen vs fine-tune ayrı deney</td></tr>
+      <tr><td><b>Word2Vec</b></td><td>Etiketsiz metinden vektör öğrenir</td><td>CBOW: [love, movie] → this; skip-gram: this → (this, love), (this, movie)</td><td>Statik; softmax tüm sözlüğü puanlar (negative sampling bunu ucuzlatır)</td></tr>
+      <tr><td><b>GloVe</b></td><td>Global co-occurrence sayıları</td><td>X[i,j] → w·u + b + c ≈ ln X</td><td>Statik</td></tr>
+      <tr><td><b>FastText</b></td><td>Nadir/görülmemiş kelime biçimleri (Türkçe çekimler)</td><td>&lt;evler&gt; → &lt;ev, evl, vle, ler, er&gt;</td><td>Yazım benzerliği yanıltabilir, hash çakışmaları</td></tr>
+      <tr><td><b>Mean pooling</b></td><td>Değişken uzunluk → tek vektör</td><td>Vektörlerin ortalaması</td><td>Sırayı kaybeder: dog bites man = man bites dog</td></tr>
+      <tr><td><b>CNN</b></td><td>Yerel kelime pencerelerini (n-gram benzeri) öğrenir</td><td>Pencere × filtre → ReLU → max/mean pooling; L − k + 1 pencere</td><td>Pooling pozisyonu atar; uzak ilişkiler dar pencereyi aşar</td></tr>
+      <tr><td><b>RNN</b></td><td>Sıra: h[t] = tanh(Wx x[t] + Wh h[t−1] + b)</td><td>Token token → son durum</td><td><b>Vanishing</b> (0.5²⁰ ≈ 10⁻⁶) / <b>exploding</b> (1.5²⁰ ≈ 3325) gradyan; clipping sadece patlamayı kontrol eder</td></tr>
+      <tr><td><b>LSTM</b></td><td>Daha uzun hafıza: kapılar f, i, o ve hücre c</td><td>c = f·c_old + i·g (0.4 − 0.1 = 0.30), h = o·tanh(c)</td><td>Mükemmel hafıza garantisi yok; sıralı, paralel değil</td></tr>
+      <tr><td><b>BiLSTM</b></td><td>Sağ bağlamı da kullanır</td><td>256 + 256 = 512 özellik, uzunluk aynı</td><td>Gelecek tokenları ister (streaming olmaz); output[:, −1] backward için yanlış</td></tr>
+      <tr><td><b>Padding / mask</b></td><td>Farklı uzunlukları dikdörtgen batch yapar</td><td>Mask [1,1,1,0,0], uzunluklar [5,3]</td><td>PAD kendiliğinden yok sayılmaz; mask/uzunluk/packing gerekir</td></tr>
+      <tr><td><b>Attention / Transformer</b></td><td>Her token diğerlerine doğrudan, paralel bakar</td><td>softmax(QKᵀ/√dₖ)V; [0, ln 2, 0] → [.25, .5, .25] → z = [1, 2.5]</td><td>T² ikili (uzunluk 2× → 4× maliyet), sabit giriş uzunluğu (truncation), mask gerekir</td></tr>
+      <tr><td><b>BERT</b></td><td>Önceden eğitilmiş, iki yönlü bağlamsal encoder</td><td>token + segment + position (toplam, genişlik d); [CLS] … [SEP]; MLM, sonra sınıflandırma head'i ile fine-tune</td><td>128 token sınırı sondaki kanıtı kesebilir; head ve label map ayrıca doğrulanır</td></tr>
+    </table>
+    <p><b>Detaylar:</b> √dₖ ile bölme skor varyansını 1'de tutar (BERT-base 768/12 = 64, √64 = 8). Mask −∞: [0, ln 2, −∞] → [1/3, 2/3, 0]. Causal decoder geleceği bloklar; BERT iki yönlü. Layer norm: [1.5, 2.5] → μ 2, σ² 0.25 → [−1, 1]. MLM loss: p = 0.25 → ln 4 ≈ 1.386. eval() katman davranışını değiştirir, no_grad() gradyanı kapatır.</p>
+    <h3>Değerlendirme</h3>
+    <p>TP 30, FN 10, FP 5, TN 55 → P = 30/35 ≈ .857, R = 30/40 = .75, <b>F1 = 2TP/(2TP+FP+FN) = 60/75 = 0.8</b> (harmonik ortalama, aritmetik değil). Negatif sınıf F1 = .88 → macro-F1 = .84, support-ağırlıklı .848, accuracy .85, hep-negatif baseline .60. Train → fit, validation → seç, test → bir kez. Eşik ağırlığı değil kararı değiştirir.</p>
+
+    <!-- ================= W4 ================= -->
+    <h2 id="w4">Week 4 — POS &amp; NER (Jurafsky &amp; Martin; 6. haftanın kaynağı)</h2>
+    <ul>
+      <li><b>POS tagging:</b> x₁…xₙ → y₁…yₙ, kelime başına bir etiket; bir <b>belirsizlik giderme</b> işi. "Book that flight" VERB, "that book" NOUN. "back": ADJ, NOUN, VERB, PART, ADV.</li>
+      <li><b>Open class</b> (NOUN, VERB, ADJ, ADV, INTJ) yeni üye alır; <b>closed class</b> (DET, PRON, ADP, CCONJ, AUX, PART) sabit. UD tagset 17 etiket.</li>
+      <li>Kelime <b>tiplerinin ~%15</b>'i belirsiz ama bunlar sık kelimeler, bu yüzden <b>token'ların ~%60</b>'ı belirsiz. Most-frequent-tag baseline ~%92 (bilinmeyen → NOUN), iyi tagger'lar ~%97. (6. hafta hocası: %97'yi koşulsuz genel gerçek gibi tekrarlama.)</li>
+      <li>Bilgi kaynakları: kelimenin önceliği ("will" genelde AUX), komşu kelimeler, morfoloji/şekil (-ly, un-, büyük harf).</li>
+      <li><b>NER:</b> PER, ORG, LOC, GPE (+ tarih, para). POS'tan zor: <b>segmentasyon</b> (sınırlar) ve <b>tip belirsizliği</b> (Washington). Şemalar: IO n+1, <b>BIO 2n+1</b>, BIOES 4n+1. IO iki komşu aynı tip varlığı ayıramaz.</li>
+    </ul>
+
+    <!-- ================= W6 ================= -->
+    <h2 id="w6">Week 6 — Token classification, HMM, CRF</h2>
+    <p><b>Neden tüm metni etiketlemekten zor?</b> Çıktı tek etiket değil, <b>hizalı bir etiket dizisi</b>. Etiketler birbirine uymalı (BIO kuralları), NER sınırlar + tip ister ve <b>span</b> olarak değerlendirilir; subword'ler kelimelere geri hizalanmalı.</p>
+    <table class="t">
+      <tr><th>Konu</th><th>Bilmen gereken</th></tr>
+      <tr><td>Görevler</td><td>POS, NER, chunking (B-NP I-NP, tam parse değil), slot filling (Boston → departure), morfoloji (evlerden → NOUN; Number=Plur; Case=Abl), noktalama geri yükleme (kelimeden sonra ne gelir). Görev etiketin anlamıyla tanımlanır, mimariyle değil.</td></tr>
+      <tr><td>BIO</td><td>B başlatır, I <b>aynı tipi</b> sürdürür, O dışarıda. O I-PER ve B-ORG I-PER geçersiz; B-PER B-PER geçerli (iki kişi). 3 tip → 7 etiket.</td></tr>
+      <tr><td>Subword</td><td>[CLS] Ada Wash ##ington [SEP] → −100, B-PER, B-PER, −100, −100. <b>−100 = loss'ta yok say</b>; O gerçek etiket.</td></tr>
+      <tr><td>Değerlendirme</td><td>90 O + 10 entity, hep O → %90 accuracy, %0 recall. Exact match = aynı sınır + aynı tip. 3 gold, 4 tahmin, 2 eşleşme → P .5, R .667, F1 4/7 ≈ .571. Ada / New York vs Ada / York → F1 0.5.</td></tr>
+      <tr><td>Pipeline hataları</td><td>Yanlış hizalama, train/test'te aynı doküman, yanlış label map (id2label kaydet), kesilmiş varlık.</td></tr>
+    </table>
+    <table class="t">
+      <tr><th>Yöntem</th><th>Neyi çözer</th><th>Neyi modeller / girdi → çıktı</th><th>Nerede başarısız</th></tr>
+      <tr><td><b>HMM</b></td><td>Komşu etiketleri modeller (bağımsız token kararları BIO'yu bozabilir)</td><td>Ortak P(X,Y) = π(y₁)·b(y₁,x₁)·a(y₁,y₂)·b(y₂,x₂); emisyon = <b>P(kelime | etiket)</b>. Viterbi O(TK²). Eğitim: say ve normalize et</td><td>Emisyon tek kelimeyi görür; büyük harf, ek, komşu kelime gibi örtüşen ipuçlarını eklemek zor. Sıfır sayım → smoothing</td></tr>
+      <tr><td><b>Linear-chain CRF</b></td><td>Zengin, örtüşen özellikler + etiket uyumu tek koşullu modelde</td><td>P(Y|X) = exp(S)/Z, S = unary + transition; Z = tüm dizilerin toplamı. Viterbi = max, Z = sum. Loss = ln Z − S(gold)</td><td>Etiketli veri ister; Z eğitimi pahalı; öğrenilmiş sonlu skor geçerli BIO'yu garanti etmez (−∞ gerekir)</td></tr>
+      <tr><td><b>Neural tagger</b></td><td>Girdi kanıtını kendisi öğrenir (elle özellik yok)</td><td>hᵢ → zᵢ = W hᵢ + b → softmax (token başına argmax) veya CRF</td><td>Bağlamsal encoder geçerli BIO'yu garanti etmez; softmax komşu etiketleri puanlamaz</td></tr>
+    </table>
+    <p><b>"can fish" sayıları:</b> HMM yolları NN .0432, NV .0504, <b>VN .1344</b>, VV .0168, toplam .2448, VN posterior ≈ .549 (0.1344 joint, posterior değil!). Viterbi: fish/N = max(.24×.3, .28×.8)×.6 = .1344 ← V. CRF: unary tek başına NV seçer; a(V,N) = ln 8 eklenince ağırlıklar 2, 4, 8, 2, Z = 16, P(VN) = .5, loss = ln 2 ≈ .6931. Softmax: (ln 1, ln 2, ln 1) → (.25, .5, .25) → B-PER; logits (2,5,3) = 30 skor.</p>
+
+    <!-- ================= formulas ================= -->
+    <h2 id="formul">Formül kâğıdı (sonucun anlamıyla)</h2>
+    <table class="t">
+      <tr><th>Formül</th><th>Sonuç ne demek</th></tr>
+      <tr><td class="f">idf = ln(N/df); w = count × idf</td><td>Dokümanı ne kadar ayırt ettiği; olasılık değil</td></tr>
+      <tr><td class="f">P(t|c) = (n + 1)/(tokens(c) + |V|)</td><td>Sınıfın bu kelimeyi üretme olasılığı (smoothing'li)</td></tr>
+      <tr><td class="f">score(c) = ln P(c) + Σ n ln P(t|c)</td><td>Daha büyük (daha az negatif) kazanır</td></tr>
+      <tr><td class="f">p = σ(z) = 1/(1 + e⁻ᶻ); z = ln(p/(1−p))</td><td>z ≥ 0 ⇔ p ≥ 0.5; z = log-odds</td></tr>
+      <tr><td class="f">∂L/∂w = (p − y)x; ∂L/∂b = p − y</td><td>Negatif gradyan → ağırlık artar</td></tr>
+      <tr><td class="f">m = y f(x); hinge = max(0, 1 − m)</td><td>m ≥ 1 güvenli; skor olasılık değil</td></tr>
+      <tr><td class="f">softmax: exp(sⱼ)/Σ exp(sₖ)</td><td>Satır 1'e toplanır; mask −∞ → 0</td></tr>
+      <tr><td class="f">Attention = softmax(QKᵀ/√dₖ)V</td><td>Value vektörlerinin ağırlıklı karışımı; açıklama değil</td></tr>
+      <tr><td class="f">c = f·c_old + i·g; h = o·tanh(c)</td><td>Tut + yaz; önce tanh</td></tr>
+      <tr><td class="f">L − k + 1; BiLSTM 2H; B×L×K</td><td>Pencere sayısı; özellik genişliği; skor sayısı</td></tr>
+      <tr><td class="f">P = TP/(TP+FP); R = TP/(TP+FN); F1 = 2TP/(2TP+FP+FN)</td><td>Uyarıların güvenilirliği; kapsama; harmonik ortalama</td></tr>
+      <tr><td class="f">P(X,Y) = π·b·a·b (HMM)</td><td>Joint ağırlık; posterior için P(X)'e böl</td></tr>
+      <tr><td class="f">P(Y|X) = exp(S)/Z; loss = ln Z − S(gold)</td><td>Tüm dizilere göre normalize; decode için Z gerekmez</td></tr>
+    </table>
+
+    <!-- ================= open-ended ================= -->
+    <h2 id="acik">Açık uçlu cevap kalıbı (yarım sayfa)</h2>
+    <p>Hoca: "give your verdict, then justify it with the underlying mechanism". İngilizce şu sırayla yaz:</p>
+    <ol>
+      <li><b>Verdict</b> (1 cümle): "I would choose X / The answer is Y, because …"</li>
+      <li><b>Mechanism</b> (2–3 cümle): X neye bakar, ne girer, ne çıkar, formülün <i>anlamı</i>.</li>
+      <li><b>Why not the alternative</b> (1–2 cümle): önceki yöntem neyi çözemiyordu.</li>
+      <li><b>Limit</b> (1 cümle): X nerede hâlâ başarısız, nasıl test edersin (held-out split, per-class F1, baseline).</li>
+    </ol>
+    <div class="callout ex"><b>Olası sorular:</b> HMM vs CRF (NER için); Naive Bayes vs logistic regression vs SVM; BoW → embedding → RNN/LSTM → Transformer gelişimi; neden accuracy yerine span F1; spam için LLM mi klasik model mi; uzun metinde BERT truncation; padding ve mask neden gerekli; leakage nasıl önlenir. Model cevaplar <a href="mock.html">deneme vizede</a>.</div>
+  </main>
+  <script src="../assets/js/common.js"></script>
+</body>
+</html>
