@@ -9,12 +9,15 @@
     h2 { margin-top: 52px; padding-top: 10px; border-top: 2px solid var(--text); }
     table.t { margin: 8px 0 14px; width: 100%; }
     table.t td, table.t th { vertical-align: top; }
-    /* one-glance table */
-    table.map td:first-child { font-family: var(--mono); font-size: .8rem; color: var(--muted); white-space: nowrap; }
-    table.map tr.wk td { font-family: var(--sans); font-weight: 600; color: var(--text); padding-top: 16px; font-size: .9rem; }
-    table.map td.a { transition: filter .15s; }
-    table.map.hide td.a { filter: blur(6px); cursor: pointer; user-select: none; }
-    table.map.hide td.a.open { filter: none; }
+    /* self-test tables */
+    table.hide td.a { filter: blur(6px); cursor: pointer; user-select: none; }
+    table.hide td.a.open { filter: none; }
+    td.a { transition: filter .15s; }
+    table.q3t td:first-child { font-weight: 600; }
+    table.q3t td { font-size: .93rem; }
+    table.q3t tr.wk td { font-family: var(--mono); font-size: .78rem; font-weight: 400; color: var(--muted); padding-top: 16px; }
+    h3.wkh { margin: 34px 0 0; font-family: var(--mono); font-size: .85rem; font-weight: 400; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line-2); padding-bottom: 4px; }
+    .bad-c { color: var(--bad); } .ok-c { color: var(--ok); }
     .hot { color: var(--bad); font-family: var(--mono); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
     /* calculation cards */
     .xp { padding: 18px 0 4px; }
@@ -59,70 +62,209 @@
     ul.traps s { text-decoration-color: var(--bad); }
     details.more { margin: 12px 0; border-top: 1px solid var(--line); padding-top: 8px; }
     details.more > summary { cursor: pointer; font-weight: 600; }
-    @media (max-width: 640px) { table.map td:first-child, table.map th:first-child { display: none; } table.map td, table.map th { padding: 7px 6px; } ol.steps > li { grid-template-columns: 26px minmax(0, 1fr); } ol.steps .w { grid-column: 2; } .formula { font-size: 1.1rem; } }
+    @media (max-width: 640px) { table.q3t td, table.q3t th { padding: 6px 5px; font-size: .85rem; } ol.steps > li { grid-template-columns: 26px minmax(0, 1fr); } ol.steps .w { grid-column: 2; } .formula { font-size: 1.1rem; } }
   </style>
 </head>
 <body data-root="..">
   <main>
     <div class="mono small muted">COE025 — vize özeti</div>
     <h1 style="font-size:2.4rem;margin-top:4px">NLP vize özeti</h1>
-    <p class="lead">Sınav 9 Kasım, <b>bütün haftalar</b> (W1, 2, 3, 4, 6). Sınav İngilizce, terimler İngilizce bırakıldı. Sırayla: <a href="#map">tek bakışta tablo</a> → <a href="#calc">elle hesaplar</a> → <a href="#open">2 açık uçlu</a> → <a href="#traps">şık tuzakları</a>.</p>
+    <p class="lead">Sınav 9 Kasım, <b>bütün haftalar</b>: W1, 2, 3, 4, 6. Sayfa hocanın <b>duyurusuna göre</b> sıralandı: önce duyurunun hafta hafta saydığı konular, sonra her yöntem için üç soru, sonra elle hesaplar.</p>
 
-    <div class="callout warn"><b>Hocanın duyurusu:</b>
+    <div class="callout warn"><b>Hocanın duyurusu ("Midterm preparation tips"), Türkçesi:</b>
       <ul style="margin:4px 0 0;padding-left:20px">
-        <li><b>Yarısı anlamak, yarısı uygulamak</b>: yöntemleri açıkla ve karşılaştır + küçük elle hesaplar. Hesap makinesi yok, sayılar kolay.</li>
-        <li>Bazı formüller kâğıtta verilir, hepsi değil. <b>Sonucun ne demek olduğunu</b> bilmen gerekir.</li>
-        <li><b>2 açık uçlu soru</b>, yarım sayfa: önce <b>verdict</b>, sonra <b>mechanism</b>.</li>
-        <li>Her yöntem için 3 soru: <b>neyi düzeltti? ne girer, ne çıkar? nerede başarısız?</b></li>
+        <li><b>Kapsam:</b> slaytlardaki her şey. Duyuruda "weeks 1, 3, and 6" yazıyor ama <b>bütün haftalar</b> (1, 2, 3, 4, 6) soruluyor. Lecture değil <b>study</b> versiyonlarını çalış: çözülmüş örnekler onlarda.</li>
+        <li><b>Yarısı anlamak ve karşılaştırmak, yarısı uygulamak:</b> küçük elle hesaplar ve kısa tasarım kararları. Hesap makinesi yok, sayılar kolay.</li>
+        <li>Bazı formüller kâğıtta verilir, hepsi değil. <i>"A formula alone does not help if you do not know what its result means."</i></li>
+        <li><b>Test + 2 açık uçlu</b> (yarım sayfalık kutu): <i>"give your verdict, then justify it with the underlying mechanism."</i></li>
+        <li><b>Her yöntem için 3 soru:</b> (1) önceki yöntemin çözemediği hangi sorunu çözüyor, (2) ne girer, ne çıkar, (3) nerede hâlâ başarısız. → <a href="#q3">Bölüm 2</a></li>
+        <li><b>Pratik:</b> TF-IDF, Naive Bayes, attention, HMM, precision/recall/F1 örneklerini çözüme bakmadan elle yap, sonra bir sayıyı değiştir. → <a href="#calc">Bölüm 3</a>, <a href="drill.html">Hesap pratiği</a></li>
+        <li><i>"These are examples, not a complete list."</i> Slaytta olup duyuruda adı geçmeyen konu da gelebilir.</li>
       </ul>
     </div>
 
     <nav class="row toc">
-      <a href="#map"><b>1</b>Tek bakışta</a>
-      <a href="#calc"><b>2</b>Hesaplar</a>
-      <a href="#open"><b>3</b>Açık uçlu</a>
-      <a href="#traps"><b>4</b>Tuzaklar</a>
+      <a href="#ann"><b>1</b>Duyurunun konuları</a>
+      <a href="#q3"><b>2</b>3 soru tablosu</a>
+      <a href="#calc"><b>3</b>Hesaplar</a>
+      <a href="#open"><b>4</b>Açık uçlu kalıbı</a>
+      <a href="#traps"><b>5</b>Tuzaklar</a>
       <a href="#extra"><b>+</b>Ek</a>
     </nav>
 
-    <!-- ================= MAP ================= -->
-    <h2 id="map">1. Tek bakışta: 25 soru</h2>
-    <p>Son 10 dakika için. <button id="hideBtn" type="button">Cevapları gizle (kendini test et)</button> <span class="small muted">Gizliyken bir cevaba tıklarsan açılır.</span></p>
-    <table class="t map" id="map-t">
-      <tr><th>#</th><th>Soru</th><th>Kısa cevap</th></tr>
-      <tr class="wk"><td></td><td colspan="2">Week 1: metni sayıya çevirmek</td></tr>
-      <tr><td>1 · W1</td><td>What does each representation keep and lose? <span class="hot" lang="en">duyuruda</span></td><td class="a"><b>one-hot</b>: kimlik, anlam yok, çok uzun · <b>BoW</b>: sayılar, <b>sıra kaybolur</b>, "the" büyük · <b>TF-IDF</b>: sık kelimeyi bastırır, sıra/anlam hâlâ yok · <b>n-gram</b>: yerel sıra ("not good"), sözlük patlar · <b>embedding</b>: anlam (benzer → benzer vektör)</td></tr>
-      <tr><td>2 · W1</td><td>OOV problem, subwords?</td><td class="a">görülmemiş kelime "unknown" olur → <b>bilinen parçalara böl</b> (un + happiness). Bedel: bir kelime = birkaç token → uzunluk sınırı. <b>BPE</b> (GPT), <b>WordPiece</b> ## (BERT), <b>SentencePiece</b> language-agnostic</td></tr>
-      <tr><td>3 · W1</td><td>Static vs contextual embeddings?</td><td class="a">static: kelime başına <b>tek vektör</b> ("bank" hep aynı): Word2Vec, GloVe, FastText · contextual: <b>cümleye göre</b> değişir: ELMo, BERT, GPT</td></tr>
-      <tr><td>4 · W1</td><td>BERT / GPT / T5?</td><td class="a"><b>encoder-only</b> = anlama (classification, NER) · <b>decoder-only</b> = üretim (next word) · <b>encoder-decoder</b> = seq2seq (translation, summarization)</td></tr>
-      <tr><td>5 · W1</td><td>When is an LLM the wrong tool? <span class="hot" lang="en">açık uçlu</span></td><td class="a">spam, 1M e-posta/gün: <b>+0.7 puan accuracy, ~3000× maliyet</b> ($30k vs &lt;$10/ay), 100–1000 ms vs &lt;10 ms; + interpretability, privacy, hallucination</td></tr>
-      <tr class="wk"><td></td><td colspan="2">Week 2–3: metin sınıflandırma</td></tr>
-      <tr><td>6 · W2</td><td>NB vs LR vs SVM?</td><td class="a"><b>NB</b> generative: her sınıfın kelime olasılıklarını çarpar · <b>LR</b> discriminative: ağırlıklı toplam → sigmoid → olasılık · <b>SVM</b>: <b>max margin</b>, işaret = sınıf, skor olasılık değil</td></tr>
-      <tr><td>7 · W2</td><td>Four feature types?</td><td class="a"><b>statistical</b> (uzunluk, "!") · <b>lexical</b> (BoW, TF-IDF, n-gram) · <b>linguistic</b> (POS, lexicon, NE) · <b>domain</b> (spam kelimeleri, emoji)</td></tr>
-      <tr><td>8 · W3</td><td>fit_transform on the test set?</td><td class="a"><b>Hayır.</b> Sözlük ve IDF sadece <b>train'de fit</b>, test'e sadece transform. Yoksa <b>leakage</b>. Ayar validation'da seçilir</td></tr>
-      <tr><td>9 · W3</td><td>Does switching NB → SVM fix "not good"?</td><td class="a"><b>Hayır.</b> Sıra <b>özelliklerde</b> kayboldu. Bigram ya da sırayı okuyan encoder gerekir</td></tr>
-      <tr><td>10 · W3</td><td>What did each step fix? <span class="hot" lang="en">açık uçlu</span></td><td class="a">embedding: anlam → <b>CNN</b>: yerel kalıp → <b>RNN</b>: bütün sıra → <b>LSTM</b>: kapılar, uzun mesafe → <b>Transformer</b>: doğrudan + paralel → <b>BERT</b>: pretrained</td></tr>
-      <tr><td>11 · W3</td><td>RNN vanishing gradient? Clipping?</td><td class="a">sinyal her adımda çarpılır: 0.5<sup>20</sup> ≈ 10<sup>−6</sup>. <b>Clipping sadece exploding'i</b> düzeltir. RNN paralel de değil</td></tr>
-      <tr><td>12 · W3</td><td>Padding, mask, input length? <span class="hot" lang="en">duyuruda</span></td><td class="a">PAD + mask 0; attention'da PAD'e <b>−∞</b>. Kesilen son kısım modele <b>hiç ulaşmaz</b> → daha çok head çözmez; longer context / chunks</td></tr>
-      <tr><td>13 · W3</td><td>Attention averages which vectors?</td><td class="a"><b>Value</b> vektörleri, softmax paylarıyla. √d<sub>k</sub>'ya bölmek softmax'ın sivrileşmesini önler. Maliyet T²</td></tr>
-      <tr><td>14 · W3</td><td>Is base BERT a sentiment classifier?</td><td class="a"><b>Hayır.</b> Eğitilmiş bir <b>head</b> + label mapping gerekir. [CLS] A [SEP] B [SEP]; segment A/B ≠ sınıf</td></tr>
-      <tr><td>15 · W3</td><td>Precision, recall, F1?</td><td class="a">P = <span class="fr"><i>TP</i><i>TP + FP</i></span> · R = <span class="fr"><i>TP</i><i>TP + FN</i></span> · F1 <b>harmonik</b> ortalama, TN yok. Macro = sınıflar eşit</td></tr>
-      <tr class="wk"><td></td><td colspan="2">Week 4 ve 6: her kelimeye bir etiket</td></tr>
-      <tr><td>16 · W4</td><td>How ambiguous is POS?</td><td class="a">types <b>~%15</b>, tokens <b>~%60</b> (sık kelimeler belirsiz). Most-frequent-tag baseline ~%92, iyi tagger ~%97 (koşulsuz tekrarlama)</td></tr>
-      <tr><td>17 · W4–6</td><td>Why is NER harder than POS?</td><td class="a"><b>segmentation</b> (New York = 2 kelime) + <b>type ambiguity</b> (Washington: PER/ORG/LOC/GPE). Span olarak ölçülür</td></tr>
-      <tr><td>18 · W6</td><td>BIO rules, tag counts?</td><td class="a">I-X sadece B-X/I-X'ten sonra: <b>O → I-PER yasak</b>, B-PER → B-PER geçerli. IO <b>n+1</b>, BIO <b>2n+1</b>, BIOES <b>4n+1</b></td></tr>
-      <tr><td>19 · W6</td><td>Nested entities?</td><td class="a">flat BIO <b>gösteremez</b> (bir konum = bir etiket). Büyük model çözmez, sorun temsilde</td></tr>
-      <tr><td>20 · W6</td><td>−100 vs O?</td><td class="a"><b>−100 = loss'ta yok say</b> (özel token, ## parçalar). O = gerçek etiket "isim değil"</td></tr>
-      <tr><td>21 · W6</td><td>Why span F1, not token accuracy? <span class="hot" lang="en">duyuruda</span></td><td class="a">90 O + 10 isim, hep O → <b>accuracy %90, entity recall %0</b>. Exact match = <b>sınır + tür</b> aynı</td></tr>
-      <tr><td>22 · W6</td><td>HMM parts and assumptions? <span class="hot" lang="en">en olası</span></td><td class="a"><b>π</b> start, <b>a</b> transition, <b>b</b> emission = P(kelime | etiket). Etiket sadece öncekine, kelime sadece kendi etiketine bağlı → zengin ipucu eklemek zor</td></tr>
-      <tr><td>23 · W6</td><td>Viterbi vs forward?</td><td class="a"><b>Viterbi = max</b> (en iyi yol) · <b>forward = sum</b> (P(X)). O(TK²) zaman</td></tr>
-      <tr><td>24 · W6</td><td>CRF vs HMM? <span class="hot" lang="en">en olası</span></td><td class="a">CRF doğrudan <b>P(etiketler | kelimeler)</b> → örtüşen ipuçları serbest. Sonlu skorlar geçersiz BIO'yu <b>caydırır, yasaklamaz</b> (−∞ gerekir)</td></tr>
-      <tr><td>25 · W6</td><td>Neural softmax tagger weakness?</td><td class="a">her konum <b>bağımsız argmax</b> → komşu uyumu yok, geçersiz BIO çıkabilir. Çözüm: üstüne CRF / kısıt</td></tr>
+    <!-- ================= ANNOUNCEMENT TOPICS ================= -->
+    <h2 id="ann">1. Duyurunun saydığı konular, hafta hafta</h2>
+    <p>Başlıklar duyurunun <b>kendi cümleleri</b>. Her birinin altında: kısa Türkçe fikir, bir resim ve açık uçlu gelirse kâğıda yazacağın İngilizce cevap (<b>kalın</b> kelimeler puanın geldiği yer).</p>
+
+    <h3 class="wkh">Week 1</h3>
+
+    <div class="xp" id="a-num">
+      <h3>"Why we turn text into numbers at all"</h3>
+      <p class="idea">Modeller sadece <b>sayılarla</b> hesap yapar (çarp, topla, olasılık). Bu yüzden metin önce sayıya çevrilir. Ve çevirme şekli, modelin <b>neyi görebileceğini</b> belirler.</p>
+      <div data-fig="pipe"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p>Models can only compute with <b>numbers</b>: they multiply weights, add scores and compute probabilities. So we first <b>tokenize</b> the text and turn it into a <b>numeric representation</b> (counts, TF-IDF weights or embedding vectors). The representation decides <b>what the model can see</b>: if it loses something, such as word order, <b>no classifier can bring it back</b>.</p>
+      </div>
+    </div>
+
+    <div class="xp" id="a-keep">
+      <h3>"What tokenization, subwords, bag of words, TF-IDF, and embeddings each keep and lose"</h3>
+      <p class="idea">Her yöntem bir öncekinin bir eksiğini kapatıyor ama kendisi de bir şey kaybediyor.</p>
+      <div data-fig="keep"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p><b>Tokenization</b> splits text into tokens; word-level tokens keep whole words, but an unseen word becomes <b>UNK (OOV)</b>. <b>Subwords</b> (BPE, WordPiece) keep unseen words as known pieces (un + happiness), but one word takes <b>several positions</b>, so inputs get longer.</p>
+        <p><b>Bag of words</b> keeps how often each word appears but <b>loses word order</b> ("dog bites man" = "man bites dog") and gives words like "the" big counts. <b>TF-IDF</b> keeps the counts but <b>down-weights words that appear in every document</b> (IDF = ln(N/df) = 0); it still loses order and meaning ("good" and "great" are unrelated columns).</p>
+        <p><b>Embeddings</b> keep <b>meaning</b>: similar words get similar dense vectors (king − man + woman ≈ queen). But <b>static</b> embeddings give a word one vector in every sentence ("bank"), and averaging them loses order again; <b>contextual</b> embeddings (BERT) fix this.</p>
+      </div>
+      <p class="small muted">Ek: one-hot = kimlik verir ama anlam yok, çok uzun. Static: Word2Vec, GloVe, FastText. Contextual: ELMo, BERT, GPT. BERT = encoder (anlama), GPT = decoder (üretme), T5 = encoder-decoder (çeviri, özet).</p>
+    </div>
+
+    <div class="xp" id="a-llm">
+      <h3>"When an LLM is the wrong tool"</h3>
+      <p class="idea">Basit ve çok tekrarlanan bir işte büyük LLM <b>çok pahalı ve yavaş</b>, kazancı ise çok küçük. <i>"Don't use a bulldozer to crack a chestnut."</i></p>
+      <table class="t giv">
+        <tr><th>Spam, günde 1M e-posta</th><th>LLM (GPT-4 API)</th><th>Naive Bayes</th></tr>
+        <tr><td>Maliyet</td><td class="bad-c">≈ $30,000 / ay</td><td class="ok-c">&lt; $10 / ay</td></tr>
+        <tr><td>Gecikme</td><td class="bad-c">100–1000 ms</td><td class="ok-c">&lt; 10 ms</td></tr>
+        <tr><td>Accuracy</td><td>%99.2</td><td>%98.5</td></tr>
+      </table>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p><b>Verdict:</b> for a simple, high-volume task like spam filtering I would <b>not</b> use an LLM; I would use a classical model such as <b>Naive Bayes</b>.</p>
+        <p><b>Why:</b> the accuracy gain is tiny (<b>about 0.7 points</b>) but the LLM costs <b>about 3000×</b> more and is much <b>slower</b> (100–1000 ms vs under 10 ms). A small model is also <b>interpretable</b>, keeps the data <b>private</b> (no external API) and does not <b>hallucinate</b>. An LLM is the right tool for open-ended generation or complex question answering.</p>
+      </div>
+    </div>
+
+    <h3 class="wkh">Week 2–3</h3>
+
+    <div class="xp" id="a-tc">
+      <h3>"What text classification is"</h3>
+      <p class="idea">Bütün metne <b>tek bir etiket</b>: f(metin) → etiket. Sentiment, spam/ham, topic, intent.</p>
+      <div data-fig="tcpipe"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p>Text classification maps a whole text to <b>one label</b> from a fixed set: f(text) → label (sentiment, spam, topic). The pipeline is <b>data → features → model → prediction → evaluation</b>. Features can be <b>statistical</b> (length, "!"), <b>lexical</b> (BoW, TF-IDF, n-grams), <b>linguistic</b> (POS, lexicons) or <b>domain-specific</b> (spam words, emoji). The vocabulary and IDF are <b>fit on the training set only</b>; the test set is only transformed, otherwise we get <b>leakage</b>.</p>
+      </div>
+    </div>
+
+    <div class="xp" id="a-decide">
+      <h3>"How Naive Bayes, logistic regression and SVM decide"</h3>
+      <p class="idea">Üçü de <b>aynı sayıları</b> alır; fark <b>neyi öğrendikleri</b>: <i>"NB learns word likelihoods; logistic regression conditional probabilities; SVM margins."</i></p>
+      <div data-fig="three"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p><b>Naive Bayes</b> is <b>generative</b>: it picks the class with the largest <b>prior × product of word likelihoods</b> P(c)·∏P(w|c). It is fast and a good baseline, but assumes words are <b>independent given the class</b> and needs <b>smoothing</b> for unseen words.</p>
+        <p><b>Logistic regression</b> is <b>discriminative</b>: it learns weights directly and outputs a <b>probability</b> p = σ(w·x + b); positive if p ≥ 0.5. Its boundary is <b>linear</b>.</p>
+        <p><b>SVM</b> chooses the boundary with the <b>maximum margin</b> (hinge loss); the <b>sign</b> of the score gives the class, but the score is <b>not a probability</b>. None of the three recovers <b>word order</b> lost in the features.</p>
+      </div>
+      <p class="small">Hesaplar: <a href="#c-nb">Naive Bayes</a> · <a href="#c-lr">Logistic regression</a> · <a href="#c-svm">SVM</a></p>
+    </div>
+
+    <div class="xp" id="a-chain">
+      <h3>"Why we moved on to embeddings, CNNs, RNNs, LSTMs and Transformers, and what each step fixed"</h3>
+      <p class="idea">Hikâye: her adım bir öncekinin <b>eksiğini</b> kapatıyor. Sağdaki sütunu bilirsen bir sonraki adımı kendin çıkarırsın.</p>
+      <div data-fig="chain"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p><b>BoW / TF-IDF</b> turn text into numbers but <b>lose word order</b>; a different classifier cannot bring it back. <b>Embeddings</b> give similar words similar vectors, but they are <b>static</b> and averaging loses order.</p>
+        <p>A <b>CNN</b> slides a window and learns <b>local patterns</b> ("not very good"), but misses distant relations. An <b>RNN</b> reads in order with a hidden state, but the gradient <b>vanishes</b> over long distances (0.5<sup>20</sup> ≈ 10<sup>−6</sup>). An <b>LSTM</b> adds <b>gates and a cell state</b> to keep information longer, but is still <b>sequential</b>.</p>
+        <p>A <b>Transformer</b> lets every word <b>attend directly</b> to every other word, <b>in parallel</b>. <b>BERT</b> is a <b>pretrained bidirectional encoder</b> fine-tuned with a small head. <b>Limit:</b> cost grows with <b>T²</b> and long inputs are <b>truncated</b>.</p>
+      </div>
+    </div>
+
+    <div class="xp" id="a-pad">
+      <h3>"Practical details such as padding, masks and input length"</h3>
+      <p class="idea">Batch'teki metinler farklı uzunlukta → kısalar <b>PAD</b> ile doldurulur. <b>Mask</b> modele "bu konumlara bakma" der. Modelin bir <b>uzunluk sınırı</b> var; fazlası kesilir.</p>
+      <div data-fig="pad"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p>Texts in a batch have different lengths, so shorter ones are <b>padded</b> to make a rectangular tensor. The <b>mask</b> (1 = real token, 0 = PAD) tells the model to ignore padding: in attention we add <b>−∞</b> to PAD scores before softmax, so they get <b>weight 0</b> ([0, ln 2, PAD] → [1/3, 2/3, 0]). For an RNN we use the real lengths or <b>packing</b>, otherwise "the last column" may be PAD.</p>
+        <p>The model also has a <b>maximum input length</b> (e.g. 128 tokens), and longer texts are <b>truncated</b>. If the deciding part is at the end ("… but the ending ruined it"), the model <b>never sees it</b>, and more attention heads cannot help. Fixes: <b>longer context</b>, <b>document chunks</b>, or an <b>error audit</b>. Subwords make inputs longer, and full attention costs <b>T²</b>.</p>
+      </div>
+    </div>
+
+    <div class="xp" id="a-measure">
+      <h3>"How we measure a classifier"</h3>
+      <p class="idea">Accuracy "kaçını doğru bildin" der ama yanıltabilir. Precision ve recall <b>hangi hatayı</b> yaptığını gösterir. Hep bir <b>baseline</b> ile karşılaştır.</p>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p>We measure on a held-out <b>test set</b> (settings are chosen on the <b>validation</b> set). <b>Accuracy</b> can mislead, so compare it with a <b>baseline</b> (always predicting the majority class: 0.60 in the slide example vs 0.85). <b>Precision</b> = TP/(TP+FP): of what I called positive, how much is positive. <b>Recall</b> = TP/(TP+FN): of the real positives, how many I found. <b>F1</b> is their <b>harmonic mean</b> and ignores TN. <b>Macro</b>-F1 weights every class equally; <b>weighted</b>-F1 by class size. Moving the <b>threshold</b> trades precision for recall without changing the weights.</p>
+      </div>
+      <p class="small">Hesap: <a href="#c-prf">P, R, F1 adım adım</a></p>
+    </div>
+
+    <h3 class="wkh">Week 4 ve 6</h3>
+
+    <div class="xp" id="a-tok">
+      <h3>"What token classification is and why it is harder than labeling a whole text"</h3>
+      <p class="idea">Bütün metne bir etiket yerine <b>her token'a bir etiket</b>. Etiketler birbirine <b>bağlı</b> (O → I-PER olamaz) ve bir isim <b>birden fazla token</b> sürer.</p>
+      <div data-fig="tok"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p>Token classification gives <b>one label per token</b> (POS, NER) instead of one label per text. It is harder because: the labels of <b>neighbours depend on each other</b> (I-PER cannot follow O), so we must choose a whole <b>consistent sequence</b>; the same word can need <b>different labels in different contexts</b> ("book" as verb or noun); entities <b>span several tokens</b>, so boundaries matter; subword tokenizers split words, so labels must be <b>aligned</b> (−100 = ignored in the loss, not O); and evaluation must be done on <b>entity spans</b>, not single tokens.</p>
+      </div>
+    </div>
+
+    <div class="xp" id="a-bio">
+      <h3>"POS, NER and the BIO scheme"</h3>
+      <p class="idea"><b>POS</b>: kelimenin bu cümledeki dilbilgisi rolü. <b>NER</b>: isimleri ve türlerini bulmak. <b>BIO</b>: isimleri token etiketlerine çevirme yolu.</p>
+      <table class="t giv">
+        <tr><th>POS</th><td>"<b>Book</b> that flight" = VERB, "that <b>book</b>" = NOUN. Open class (NOUN, VERB, ADJ…) yeni kelime alır; closed (DET, ADP, PRON…) almaz. Belirsiz: type <b>~%15</b>, token <b>~%60</b>. En sık etiket baseline <b>~%92</b>, iyi tagger ~%97.</td></tr>
+        <tr><th>NER</th><td>PER, ORG, LOC, GPE (+ tarih, para). POS'tan zor: <b>sınır</b> (New York 2 kelime) + <b>tür belirsizliği</b> (Washington: kişi, takım, yer, eyalet).</td></tr>
+        <tr><th>BIO</th><td>B = ilk kelime, I = devamı, O = isim değil. <b>O → I-PER yasak</b>, B-PER → B-PER geçerli. Etiket sayısı: IO n+1, BIO 2n+1, BIOES 4n+1. İç içe (nested) isimler flat BIO ile gösterilemez.</td></tr>
+      </table>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p><b>POS tagging</b> labels each word with its grammatical role <b>in this sentence</b>; it is a disambiguation task because frequent words are ambiguous (about <b>60% of tokens</b>). <b>NER</b> finds names and their types (PER, ORG, LOC, GPE); it is harder than POS because it needs <b>segmentation</b> (multi-word names) and <b>type disambiguation</b> ("Washington"). <b>BIO</b> turns entity spans into one tag per token: <b>B</b> begins an entity, <b>I</b> continues the same type, <b>O</b> is outside; I-X may only follow B-X or I-X. For n types BIO needs <b>2n + 1</b> tags.</p>
+      </div>
+    </div>
+
+    <div class="xp" id="a-choose">
+      <h3>"How HMMs, CRFs and neural taggers choose labels"</h3>
+      <p class="idea">Üçü de her token'a etiket seçer; fark <b>neyi puanladıkları</b> ve <b>komşu etiketlere bakıp bakmadıkları</b>.</p>
+      <div data-fig="taggers"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p>An <b>HMM</b> is generative: it scores a tag sequence by <b>start × emission P(word | tag) × transition P(tag | previous tag)</b> and chooses the best sequence with <b>Viterbi</b> (max); it is trained by counting, needs smoothing, and its emission sees only the current word.</p>
+        <p>A <b>CRF</b> is conditional: <b>P(Y|X) = exp(S)/Z</b>, where S adds <b>unary scores</b> (which can use overlapping features of the whole sentence) and <b>transition scores</b>; it also decodes with Viterbi, and Z is needed only for probabilities and the loss. Finite scores <b>do not forbid illegal BIO</b>; that needs −∞.</p>
+        <p>A <b>neural tagger</b> (BERT/BiLSTM + softmax head) gives each token label scores and takes the <b>argmax at each position independently</b>; it sees the whole sentence but does <b>not score neighbouring labels</b>, so it can output invalid BIO unless a CRF or a constraint is added on top.</p>
+      </div>
+      <p class="small">Hesaplar: <a href="#c-hmm">HMM, Viterbi</a> · <a href="#c-crf">CRF</a> · <a href="#c-soft">Softmax tagger</a></p>
+    </div>
+
+    <div class="xp" id="a-ent">
+      <h3>"Why we evaluate entities differently from tokens"</h3>
+      <p class="idea">Token'ların çoğu O. Hiç isim bulamayan model bile yüksek accuracy alır. Bu yüzden isimler <b>span olarak</b>, sınır + tür tam eşleşirse doğru sayılır.</p>
+      <div data-fig="ent"></div>
+      <div class="write"><span class="lab">Kâğıda yaz</span>
+        <p><b>Verdict:</b> token accuracy is <b>misleading</b> for NER; entities are scored as <b>exact-match spans</b>.</p>
+        <p><b>Mechanism:</b> most tokens are O. With 90 O tokens out of 100, predicting O everywhere gives <b>90% accuracy</b> but <b>0% entity recall</b>. A span counts only if <b>boundaries and type</b> both match: 3 gold, 4 predicted, 2 exact → P 0.5, R 2/3, <b>F1 = 4/7 ≈ 0.57</b>. "Acme" for "Acme Labs" is wrong. <b>Micro</b> averaging favours frequent types; <b>macro</b> weights each type equally.</p>
+      </div>
+      <p class="small">Hesap: <a href="#c-span">Span F1 adım adım</a></p>
+    </div>
+
+    <!-- ================= THREE QUESTIONS ================= -->
+    <h2 id="q3">2. Her yöntem için 3 soru</h2>
+    <p>Duyurunun ana kuralı. Satır satır kendini test et: <button class="hideBtn" type="button" data-t="q3-t">Cevapları gizle</button> <span class="small muted">Gizliyken bir hücreye tıklarsan açılır.</span></p>
+    <table class="t q3t" id="q3-t">
+      <tr><th>Yöntem</th><th>1. Neyi düzeltti?</th><th>2. Ne girer → ne çıkar</th><th>3. Nerede başarısız?</th></tr>
+      <tr class="wk"><td colspan="4">Week 1</td></tr>
+      <tr><td>Subword (BPE, WordPiece)</td><td class="a">OOV: görülmemiş kelime UNK oluyordu</td><td class="a">kelime → bilinen parçalar (un + happiness)</td><td class="a">bir kelime birkaç token → metin uzar</td></tr>
+      <tr><td>One-hot</td><td class="a">kelimeye sayısal kimlik</td><td class="a">kelime → sözlük boyunda 0/1 vektör</td><td class="a">anlam yok, çok uzun</td></tr>
+      <tr><td>Bag of words</td><td class="a">dokümanı sabit uzunlukta vektöre çevirir</td><td class="a">doküman → kelime sayıları</td><td class="a"><b>sıra yok</b>, "the" büyük sayı alır</td></tr>
+      <tr><td>TF-IDF</td><td class="a">her yerde geçen kelimeleri bastırır</td><td class="a">sayılar + df → kelime ağırlıkları</td><td class="a">hâlâ sıra ve anlam yok</td></tr>
+      <tr><td>N-grams</td><td class="a">yerel sıra ("not good", "New York")</td><td class="a">metin → kelime + ikili sayıları</td><td class="a">sözlük patlar, sadece bitişik kelimeler</td></tr>
+      <tr><td>Static embedding</td><td class="a">anlam: benzer kelime → benzer vektör</td><td class="a">kelime → kısa dense vektör (50–300)</td><td class="a">her cümlede aynı vektör ("bank")</td></tr>
+      <tr class="wk"><td colspan="4">Week 2–3</td></tr>
+      <tr><td>Naive Bayes</td><td class="a">sayılardan karara en basit, hızlı yol (baseline)</td><td class="a">kelime sayıları → prior × likelihood skorları</td><td class="a">kelimeler bağımsız varsayımı, smoothing şart, sıra yok</td></tr>
+      <tr><td>Logistic regression</td><td class="a">ağırlıkları doğrudan karar için öğrenir, olasılık verir</td><td class="a">özellikler → p = σ(w·x + b)</td><td class="a">sınır doğrusal, sıra yok</td></tr>
+      <tr><td>SVM</td><td class="a">sınırdan güvenli mesafe (max margin)</td><td class="a">özellikler → skor, işareti = sınıf</td><td class="a">skor olasılık değil, C ayarı, sıra yok</td></tr>
+      <tr><td>CNN</td><td class="a">yerel kalıplar ("not very good")</td><td class="a">kelime vektörleri → pencere puanları → pooling</td><td class="a">uzak ilişkiler; pooling konumu atar</td></tr>
+      <tr><td>RNN</td><td class="a">bütün cümleyi sırayla okur</td><td class="a">kelime + önceki h → yeni h</td><td class="a">vanishing gradient; paralel değil</td></tr>
+      <tr><td>LSTM</td><td class="a">uzun mesafe (kapılar + cell state)</td><td class="a">kelime + h + c → yeni h, c</td><td class="a">hâlâ sıralı ve yavaş</td></tr>
+      <tr><td>Transformer</td><td class="a">her kelime her kelimeye doğrudan, paralel</td><td class="a">Q, K, V → Value'ların ağırlıklı ortalaması</td><td class="a">T² maliyet, uzunluk sınırı → truncation</td></tr>
+      <tr><td>BERT</td><td class="a">pretrained, contextual; az veriyle güçlü</td><td class="a">[CLS] metin [SEP] → token başına 768'lik vektör → head → logits</td><td class="a">yavaş, truncation; head eğitilmeden sınıflandırmaz</td></tr>
+      <tr class="wk"><td colspan="4">Week 4 ve 6</td></tr>
+      <tr><td>En sık etiket baseline</td><td class="a">basit başlangıç (~%92)</td><td class="a">kelime → eğitimdeki en sık etiketi</td><td class="a">bağlama bakmaz: "Book a flight" → NOUN</td></tr>
+      <tr><td>HMM</td><td class="a">komşu etiket uyumu; bütün dizi için en iyi</td><td class="a">kelimeler → etiket dizisi (π, a, b + Viterbi)</td><td class="a">zengin ipucu eklemek zor; görülmemiş = 0 → smoothing</td></tr>
+      <tr><td>CRF</td><td class="a">örtüşen zengin ipuçları + komşu uyumu</td><td class="a">cümle + özellikler → en iyi dizi, P(Y|X)</td><td class="a">sonlu puan geçersiz BIO'yu yasaklamaz; Z pahalı</td></tr>
+      <tr><td>Neural tagger</td><td class="a">ipuçlarını veriden öğrenir, bütün cümleyi görür</td><td class="a">token vektörleri → konum başına etiket skorları</td><td class="a">konumlar bağımsız → geçersiz BIO çıkabilir</td></tr>
     </table>
 
     <!-- ================= CALC ================= -->
-    <h2 id="calc">2. Elle hesaplar</h2>
-    <p>Hepsi study slaytlarındaki örnekler. Her hesap aynı sırada: <b>ne ölçüyor</b> (bir cümle) → <b>formül</b> → <b>resim</b> → <b>adımlar</b> (sağda her adımın anlamı) → <b>sonuç ne demek</b>. Önce adımları kapatıp kendin çöz, sonra <a href="drill.html">Hesap pratiği</a>'nde yeni sayılarla tekrar et.</p>
+    <h2 id="calc">3. Elle hesaplar</h2>
+    <p>Duyuru: <i>"Redo every worked example in the study slides by hand before you look at the solution… Then change one number and solve it again."</i> Hepsi study slaytlarındaki örnekler. Her hesap aynı sırada: <b>ne ölçüyor</b> (bir cümle) → <b>formül</b> → <b>resim</b> → <b>adımlar</b> (sağda her adımın anlamı) → <b>sonuç ne demek</b>. Önce adımları kapatıp kendin çöz, sonra <a href="drill.html">Hesap pratiği</a>'nde yeni sayılarla tekrar et.</p>
     <nav class="row toc small">
       <a href="#c-tfidf">TF-IDF</a><a href="#c-nb">Naive Bayes</a><a href="#c-lr">Logistic reg.</a><a href="#c-svm">SVM</a><a href="#c-cnn">CNN</a><a href="#c-rnn">RNN, LSTM</a><a href="#c-att">Attention</a><a href="#c-prf">P, R, F1</a><a href="#c-bio">POS, BIO</a><a href="#c-span">Span F1</a><a href="#c-hmm">HMM</a><a href="#c-crf">CRF</a><a href="#c-soft">Softmax tagger</a>
     </nav>
@@ -385,43 +527,24 @@
     </div>
 
     <!-- ================= OPEN ================= -->
-    <h2 id="open">3. Açık uçlu: kalıp ve 4 hazır cevap</h2>
-    <div class="callout ok"><b>Yarım sayfa, 4 parça:</b> (1) <b>Verdict</b>, 1 cümle · (2) <b>Mechanism</b>: ne girer, ne çıkar, formül ne demek · (3) <b>Why not the alternative</b> · (4) <b>Limit</b> + nasıl test edersin. <b>Kalın</b> kelimeler puanın geldiği yer; onları bil, cümleyi kendin kur.</div>
-
-    <div class="write"><span class="lab">W1: "Would you use an LLM for spam filtering?"</span>
-      <p><b>Verdict:</b> No. For a simple, high-volume task I would use a classical model such as <b>Naive Bayes</b>.</p>
-      <p><b>Why:</b> the accuracy gain is tiny (<b>about 0.7 points</b>) but the LLM costs <b>about 3000×</b> more (~$30,000 vs under $10 a month for 1M emails a day) and is much slower (<b>100–1000 ms vs under 10 ms</b>). A small model is also <b>interpretable</b>, keeps data <b>private</b> (no external API) and does not <b>hallucinate</b>.</p>
-      <p><b>When an LLM is right:</b> open-ended generation or complex question answering.</p>
-    </div>
-
-    <div class="write"><span class="lab">W3: "Why did we move from bag of words to Transformers?"</span>
-      <p><b>BoW / TF-IDF</b> turn text into numbers but <b>lose word order</b> ("dog bites man" = "man bites dog"); a different classifier cannot bring it back. <b>Embeddings</b> give similar words similar vectors, but they are <b>static</b> and averaging loses order.</p>
-      <p>A <b>CNN</b> learns <b>local patterns</b> ("not very good") but misses distant relations. An <b>RNN</b> reads in order with a hidden state, but the gradient <b>vanishes</b> over long distances (0.5<sup>20</sup> ≈ 10<sup>−6</sup>). An <b>LSTM</b> adds <b>gates and a cell state</b> to keep information longer, but is still <b>sequential</b>.</p>
-      <p>A <b>Transformer</b> lets every word <b>attend directly</b> to every other word, <b>in parallel</b>: softmax(QK<sup>T</sup>/√d<sub>k</sub>)V. <b>BERT</b> is a <b>pretrained bidirectional encoder</b> fine-tuned with a small head. <b>Limit:</b> cost grows with <b>T²</b> and long inputs are <b>truncated</b>.</p>
-    </div>
-
-    <div class="write"><span class="lab">W6: "HMM or CRF for NER?"</span>
+    <h2 id="open">4. Açık uçlu: nasıl yazılır</h2>
+    <div class="callout ok"><b>Yarım sayfa, 4 parça</b> (duyuru: <i>"give your verdict, then justify it with the underlying mechanism"</i>):
+      <ol style="margin:4px 0 0">
+        <li><b>Verdict</b>, 1 cümle: "I would choose X, because …"</li>
+        <li><b>Mechanism</b>, 2–3 cümle: ne girer, ne çıkar, formül/sonuç ne demek.</li>
+        <li><b>Why not the alternative</b>: önceki yöntem neyi çözemiyordu?</li>
+        <li><b>Limit</b>: X nerede hâlâ başarısız, nasıl test edersin (test set, baseline, span F1)?</li>
+      </ol>
+      Hazır cevaplar <a href="#ann">Bölüm 1</a>'de her konunun altında. Soru büyük ihtimalle bir <b>karşılaştırma</b> ya da <b>tasarım kararı</b> olur; örnek:</div>
+    <div class="write"><span class="lab">"HMM or CRF for NER?"</span>
       <p><b>Verdict:</b> a <b>linear-chain CRF</b>, because NER needs rich clues about each word <b>and</b> consistent neighbouring labels.</p>
       <p><b>Mechanism:</b> a CRF models <b>P(Y|X) = exp(S)/Z</b> directly. S adds <b>unary scores</b>, which can use <b>overlapping features</b> (capitals, suffixes, name lists, encoder outputs), and <b>transition scores</b> that reward pairs like B-PER → I-PER. <b>Viterbi (max)</b> finds the best sequence; <b>Z (sum)</b> is only needed for probabilities and the loss.</p>
       <p><b>Why not an HMM:</b> its emission <b>P(word | tag)</b> sees only the current word, so overlapping clues are hard to add.</p>
       <p><b>Limit:</b> finite scores <b>do not guarantee legal BIO</b>, so I set illegal transitions to <b>−∞</b> and evaluate with <b>exact-match span F1</b> on a held-out test set.</p>
     </div>
 
-    <div class="write"><span class="lab">W6: "Why span F1 instead of token accuracy for NER?"</span>
-      <p><b>Verdict:</b> token accuracy is <b>misleading</b>; entities should be scored as <b>exact-match spans</b>.</p>
-      <p><b>Mechanism:</b> most tokens are O. With 90 O tokens out of 100, predicting O everywhere gives <b>90% accuracy</b> but <b>0% entity recall</b>. A span counts only if <b>boundaries and type</b> both match: 3 gold, 4 predicted, 2 exact → P 0.5, R 2/3, <b>F1 = 4/7 ≈ 0.57</b>.</p>
-      <p><b>Limit:</b> "Acme" for "Acme Labs" counts as wrong. <b>Micro</b> favours frequent types, <b>macro</b> weights each type equally, so state which one you use.</p>
-    </div>
-
-    <details class="more"><summary>İki kısa cevap daha: NER vs POS, NB vs LR vs SVM</summary>
-      <div class="write">
-        <p><b>NER vs POS:</b> NER is harder because it solves two problems at once: <b>segmentation</b> (where a name starts and ends, "New York") and <b>type ambiguity</b> (the same name, "Washington", can be PER, ORG, LOC or GPE). It is labelled per token with BIO but <b>evaluated as spans</b>. IO needs n + 1 tags, BIO 2n + 1, BIOES 4n + 1; IO cannot separate two adjacent entities of the same type.</p>
-        <p><b>NB vs LR vs SVM:</b> <b>Naive Bayes</b> is generative: it picks the class with the largest P(c)·∏P(word|c); fast, good baseline, but assumes words are <b>independent given the class</b> and needs <b>smoothing</b>. <b>Logistic regression</b> is discriminative: p = σ(w·x + b), a probability with a <b>linear boundary</b>. <b>SVM</b> picks the <b>maximum-margin</b> boundary; the sign gives the class but the score is <b>not a probability</b>. None of them recovers word order lost in the features.</p>
-      </div>
-    </details>
-
     <!-- ================= TRAPS ================= -->
-    <h2 id="traps">4. Şıkta görürsen: hepsi yanlış</h2>
+    <h2 id="traps">5. Şıkta görürsen: hepsi yanlış</h2>
     <ul class="traps">
       <li><s>Text classification gives one label per token.</s> Bu token classification (W4, W6).</li>
       <li><s>NB is discriminative, LR is generative.</s> Tam tersi. · <s>NB is naive because it needs no training data.</s> Naive = bağımsızlık varsayımı.</li>
@@ -503,16 +626,18 @@
   <script>
     document.body.dataset.course = 'coe025';
     (function () {
-      var t = document.getElementById('map-t'), b = document.getElementById('hideBtn');
-      b.addEventListener('click', function () {
-        var hide = !t.classList.contains('hide');
-        t.classList.toggle('hide', hide);
-        t.querySelectorAll('td.a.open').forEach(function (c) { c.classList.remove('open'); });
-        b.textContent = hide ? 'Cevapları göster' : 'Cevapları gizle (kendini test et)';
-      });
-      t.addEventListener('click', function (e) {
-        var c = e.target.closest('td.a');
-        if (c && t.classList.contains('hide')) c.classList.toggle('open');
+      document.querySelectorAll('.hideBtn').forEach(function (b) {
+        var t = document.getElementById(b.dataset.t);
+        b.addEventListener('click', function () {
+          var hide = !t.classList.contains('hide');
+          t.classList.toggle('hide', hide);
+          t.querySelectorAll('td.a.open').forEach(function (c) { c.classList.remove('open'); });
+          b.textContent = hide ? 'Cevapları göster' : 'Cevapları gizle';
+        });
+        t.addEventListener('click', function (e) {
+          var c = e.target.closest('td.a');
+          if (c && t.classList.contains('hide')) c.classList.toggle('open');
+        });
       });
     })();
   </script>
@@ -523,6 +648,45 @@
   <script>
     (function () {
       const FIGS = {
+        pipe: { type: 'flow', t: 'Metinden karara', items: [['', 'Metin', '"good movie"', 'c3'], ['', 'Tokenization', '[good, movie]', 'c0'], ['', 'Sayılar', 'good 1, bad 0, movie 1', 'c5'], ['', 'Model', 'NB, LR, BERT…', 'c2'], ['', 'Karar', 'positive', 'c1']], cap: 'Model sadece üçüncü kutudan sonrasını görür. Sayılarda olmayan bilgi (örneğin sıra) modele hiç ulaşmaz.' },
+        keep: { type: 'boxes', t: 'Ne tutar, ne kaybeder?', head: ['', 'Tutar', 'Kaybeder'], rows: [
+          { label: 'Tokenization', cells: [['kelimeleri parçalar', 'ok'], ['görülmemiş kelime → UNK', 'bad']] },
+          { label: 'Subwords', cells: [['görülmemiş kelimeyi parça parça (un + happiness)', 'ok'], ['bir kelime birkaç konum → metin uzar', 'bad']] },
+          { label: 'Bag of words', cells: [['her kelimenin kaç kere geçtiği', 'ok'], ['<b>sıra</b> ("dog bites man" = "man bites dog"); "the" çok büyük', 'bad']] },
+          { label: 'TF-IDF', cells: [['sayılar + önem ("the" → 0)', 'ok'], ['hâlâ sıra ve anlam yok (good ≠ great)', 'bad']] },
+          { label: 'Embeddings', cells: [['<b>anlam</b>: benzer kelime → benzer vektör', 'ok'], ['static: "bank" her cümlede aynı; ortalama sırayı kaybeder', 'bad']] },
+        ] },
+        tcpipe: { type: 'flow', t: 'Text classification pipeline', items: [['', 'Data', 'etiketli metinler', 'c3'], ['', 'Features', 'BoW, TF-IDF…', 'c0'], ['', 'Model', 'NB, LR, SVM', 'c2'], ['', 'Prediction', 'tek etiket', 'c1'], ['', 'Evaluation', 'P, R, F1', 'c4']], cap: 'Sonuç kötüyse veriye geri dönülür. Sözlük ve IDF sadece train setinde öğrenilir.' },
+        three: { type: 'compare', cols: [
+          { t: 'Naive Bayes', c: 'c0', pts: ['<b>generative</b>', 'öğrenir: kelime olasılıkları P(w|c)', 'karar: en büyük P(c)·∏P(w|c)', 'zayıf: bağımsızlık varsayımı, smoothing'] },
+          { t: 'Logistic regression', c: 'c1', pts: ['<b>discriminative</b>', 'öğrenir: ağırlıklar w', 'karar: σ(w·x + b) ≥ 0.5', 'çıktı olasılık; sınır doğrusal'] },
+          { t: 'SVM', c: 'c2', pts: ['<b>max margin</b>', 'öğrenir: en geniş boşluklu sınır', 'karar: f(x)\'in işareti', 'skor olasılık değil'] },
+        ] },
+        chain: { type: 'boxes', t: 'Her adım neyi düzeltti?', head: ['', 'Düzeltti', 'Hâlâ eksik'], rows: [
+          { label: 'BoW / TF-IDF', cells: [['metni sayıya çevirdi', 'c0'], ['sıra yok, anlam yok', 'bad']] },
+          { label: 'Embeddings', cells: [['anlam (benzer → benzer)', 'c0'], ['static; ortalama sırayı kaybeder', 'bad']] },
+          { label: 'CNN', cells: [['yerel kalıplar ("not very good")', 'c0'], ['uzak ilişkiler', 'bad']] },
+          { label: 'RNN', cells: [['bütün cümle, sırayla', 'c0'], ['vanishing gradient, paralel değil', 'bad']] },
+          { label: 'LSTM', cells: [['kapılar → uzun mesafe', 'c0'], ['hâlâ sıralı, yavaş', 'bad']] },
+          { label: 'Transformer', cells: [['her kelime her kelimeye, paralel', 'c0'], ['T² maliyet, uzunluk sınırı', 'bad']] },
+          { label: 'BERT', cells: [['pretrained + contextual', 'c1'], ['yavaş, truncation', 'bad']] },
+        ], cap: 'Her satırın kırmızısı, bir alt satırın mavisi.' },
+        pad: { type: 'boxes', t: 'Padding ve mask (batch uzunluğu 5)', rows: [
+          { label: 'cümle 1', cells: [['This', 'c0'], ['movie', 'c0'], ['was', 'c0'], ['very', 'c0'], ['good', 'c0']] },
+          { label: 'mask', cells: [['1', ''], ['1', ''], ['1', ''], ['1', ''], ['1', '']] },
+          { label: 'cümle 2', cells: [['bad', 'c0'], ['film', 'c0'], ['indeed', 'c0'], ['PAD', 'mute'], ['PAD', 'mute']] },
+          { label: 'mask', cells: [['1', ''], ['1', ''], ['1', ''], ['0', 'bad'], ['0', 'bad']] },
+        ], cap: 'Mask 0 olan konum attention\'da −∞ alır → payı 0. Sınırdan uzun metnin sonu ise hiç girmez (truncation).' },
+        tok: { type: 'boxes', t: 'Aynı cümle, token başına iki görev', head: ['', 'Ada', 'visits', 'Paris', '.'], rows: [
+          { label: 'POS', cells: [['PROPN', 'c0'], ['VERB', 'c2'], ['PROPN', 'c0'], ['PUNCT', 'mute']] },
+          { label: 'NER', cells: [['B-PER', 'c3'], ['O', 'mute'], ['B-LOC', 'c1'], ['O', 'mute']] },
+        ], cap: 'Text classification bu cümleye tek etiket verirdi. Burada her token\'ın kendi etiketi var.' },
+        taggers: { type: 'compare', cols: [
+          { t: 'HMM', c: 'c0', pts: ['joint P(kelimeler, etiketler)', 'start × emission × transition', 'Viterbi (max)', '<b>komşu uyumu: evet</b>'] },
+          { t: 'CRF', c: 'c1', pts: ['conditional P(Y | X) = e<sup>S</sup> / Z', 'unary + transition puanları', 'Viterbi (max)', '<b>komşu uyumu: evet</b>'] },
+          { t: 'Neural + softmax', c: 'c2', pts: ['her konum için etiket skorları', 'encoder bütün cümleyi görür', 'her konumda ayrı argmax', '<b>komşu uyumu: hayır</b>'] },
+        ] },
+        ent: { type: 'bars', t: '90 O + 10 isim token, model her yere O diyor', items: [['token accuracy', 90, 'c2', '%90'], ['entity recall', 0.6, 'bad', '%0']], max: 100, cap: 'Aynı model: kâğıt üstünde %90, gerçekte hiç isim bulmamış.' },
         tfidf: { type: 'boxes', t: 'df = kelimenin kaç dokümanda geçtiği', head: ['', 'the', 'cat', 'dog', 'bird'], rows: [
           { label: 'Doc 1', cells: [['the ×2', 'mute'], ['cat', 'c1'], ['', ''], ['', '']] },
           { label: 'Doc 2', cells: [['the ×2', 'mute'], ['', ''], ['dog', 'c0'], ['', '']] },
