@@ -1,0 +1,44 @@
+{
+  "id": "ens010-L7",
+  "title": "Lecture 7 · Biosensors",
+  "scenes": [
+    { "id": "build", "lines": [
+      "Lecture seven: biosensors. Let's build one.",
+      "At the bottom is the transducer. On top, a nanomaterial layer holds the receptors, here antibodies.",
+      "Around them float the analyte we want to detect, and other molecules that look similar.",
+      "The receptor binds its analyte like a lock and key. The look-alike molecules do not fit, and they bounce off. Ignoring them is called selectivity.",
+      "The binding changes something. Here, electrons start to flow.",
+      "The transducer converts that biological signal into a readable electrical signal."
+    ]},
+    { "id": "parts", "lines": [
+      "Learn the parts.",
+      "The receptor, also called the biocatalyst, can be an enzyme, an antibody, a nucleic acid, or a cell.",
+      "The transducer converts the biological signal into a quantifiable, readable signal, usually electrical.",
+      "Now his traps. Is the antigen a receptor? No. The antigen is the analyte.",
+      "Is a thermal transducer a receptor? No. It is a transducer.",
+      "Biosensors work in vivo, inside the body, like a sensor on a pacemaker, or ex vivo, outside the body, like a glucose meter or a health watch."
+    ]},
+    { "id": "nano", "lines": [
+      "Nanomaterials improve two layers of a biosensor.",
+      "In the first layer, nanofibers, functionalized nanoparticles and two-dimensional sheets like graphene stabilize the bioreceptors on the transducer.",
+      "In the second layer, nano-enabled transistors improve the transducer. Carbon nanotubes and graphene stay conductive at tiny sizes.",
+      "So the whole biosensor can shrink. That is what made wearable and implantable sensors possible."
+    ]},
+    { "id": "transducers", "lines": [
+      "He asked you to memorize three transducers, and said he will most probably ask them.",
+      "Amperometric: it measures the current, which is proportional to the bioreaction.",
+      "Calorimetric, or thermal: it measures the heat produced or absorbed.",
+      "Optical: it measures the change in light intensity when a specific reaction happens.",
+      "His own wrong option: an amperometric biosensor measures heat. No. It measures current."
+    ]},
+    { "id": "params", "lines": [
+      "Last, the performance parameters.",
+      "Selectivity: detecting the target analyte in the presence of other interfering species.",
+      "Sensitivity: how sharply the signal changes when the analyte concentration changes.",
+      "Response time: how long the sensor takes to settle at a reliable value.",
+      "Limit of detection: the minimum concentration it can detect. Lower is better, because early diagnosis means finding very small amounts.",
+      "Accuracy means reproducibility and reliability. Durability means keeping the signal over time.",
+      "Two traps. Selectivity is not how sharply the signal changes. That is sensitivity. And the limit of detection is the minimum, never the maximum."
+    ]}
+  ]
+}

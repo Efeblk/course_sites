@@ -1,7 +1,7 @@
 /* ENS010 Lecture 3 · Why size matters. Narration: src/scripts/ens010-L3.json (one cue per line). */
 import React from 'react';
 import {random} from 'remotion';
-import {Atom, C, FONT, Heading, hexAtoms, hexXY, mix, mixColor, pop, prog, Rise, Stage, Tag, Thermometer, useScene} from '../lib';
+import {Arrow, Atom, C, Card, FONT, Heading, hexAtoms, hexXY, Mark, mix, mixColor, pop, prog, Rise, Stage, StageHeading, T, Tag, Thermometer, useScene} from '../lib';
 
 /* ---------- 1. bulk → micro → nano, as a chain of magnifying lenses ---------- */
 const Scale: React.FC = () => {
@@ -259,4 +259,140 @@ const Categories: React.FC = () => {
   );
 };
 
-export const L3Scenes: Record<string, React.FC> = {scale: Scale, surface: Surface, melting: Melting, categories: Categories};
+/* ---------- 5. chemical: catalytic activity ---------- */
+const Catalysis: React.FC = () => {
+  const {f, at} = useScene();
+  const lower = prog(f, at(2, 0.1), 36);
+  const hill = (x: number, peak: number) => {
+    const t = (x - 300) / 1000;
+    const base = mix(720, 800, 1 / (1 + Math.exp(-(t - 0.5) * 12)));
+    return base - (720 - peak) * Math.exp(-(((t - 0.5) / 0.14) ** 2));
+  };
+  const curve = (peak: number) => {
+    let d = '';
+    for (let x = 300; x <= 1300; x += 10) d += `${d ? ' L' : 'M'} ${x} ${hill(x, peak)}`;
+    return d;
+  };
+  const peak = mix(340, 570, lower);
+  const rollStart = at(2, 0.45);
+  const roll = prog(f, rollStart, 40, (t) => t);
+  const bx = f < rollStart ? 380 : mix(380, 1220, roll);
+  const by = hill(bx, peak) - 26;
+  const apps = prog(f, at(3), 20);
+  return (
+    <Stage>
+      <StageHeading start={at(0)} text="Chemical: catalytic activity" />
+      <g opacity={1 - apps * 0.97}>
+        <g opacity={prog(f, at(0, 0.4), 16) * (1 - prog(f, at(1), 16))}>
+          <Atom x={700} y={560} r={140} fill={C.sand} />
+          {[[1120, 480], [1220, 560], [1140, 640], [1260, 680], [1080, 560]].map(([x, y], i) => <Atom key={i} x={x} y={y} r={30} fill={C.orange} />)}
+          <T x={960} y={820} size={32} color={C.mute} weight={500}>depends on size and shape</T>
+        </g>
+        <g opacity={prog(f, at(1), 18)}>
+          <line x1={280} x2={280} y1={260} y2={860} stroke={C.ink} strokeWidth={4} />
+          <T x={240} y={250} size={28} color={C.mute} weight={550}>energy</T>
+          <path d={curve(340)} stroke={C.ink} strokeWidth={6} fill="none" opacity={1 - lower * 0.7} strokeDasharray={lower > 0 ? '14 10' : undefined} />
+          {lower > 0 && <path d={curve(peak)} stroke={C.orange} strokeWidth={7} fill="none" />}
+          <Arrow start={at(1, 0.3)} x1={800} y1={720} x2={800} y2={peak + 14} color={C.red} w={5} dur={10} />
+          <T x={880} y={(720 + peak) / 2 + 10} size={32} weight={700} color={C.red} anchor="start" o={prog(f, at(1, 0.3), 12)}>activation energy</T>
+          <Atom x={bx} y={by} r={26} fill={C.blue} />
+          <Rise start={at(1, 0.6)} x={1560} y={430} size={40} color={C.ink}>activity ∝ 1 / Ea</Rise>
+        </g>
+        <Tag start={at(2, 0.3)} x={1560} y={560} color={C.orange} filled text="smaller → lower Ea" />
+        <Tag start={at(2, 0.6)} x={1560} y={650} color={C.green} text="a better catalyst" />
+      </g>
+      <g opacity={apps}>
+        {['petroleum processing', 'energy conversion', 'pollutant removal'].map((t, i) => <Card key={t} start={at(3, 0.1 + i * 0.12)} x={480 + i * 480} y={520} w={420} h={140} stroke={C.teal}><T y={12} size={34} weight={700}>{t}</T></Card>)}
+        <Tag start={at(3, 0.6)} x={960} y={760} color={C.blue} filled text="same catalyst, nano size" />
+      </g>
+    </Stage>
+  );
+};
+
+/* ---------- 6. electrical, optical, biological ---------- */
+const Others: React.FC = () => {
+  const {f, at} = useScene();
+  const X = [380, 960, 1540];
+  const twist = prog(f, at(1, 0.5), 40);
+  const needle = mix(-120, -50, twist) * (Math.PI / 180);
+  const head = (i: number, t: string, c: string, line: number) => <T x={X[i]} y={300} size={42} weight={750} color={c} o={prog(f, at(line), 14)}>{t}</T>;
+  return (
+    <Stage>
+      <StageHeading start={at(0)} text="Three more categories" />
+      {head(0, 'Electrical', C.orange, 1)}
+      <g opacity={prog(f, at(1), 16)}>
+        <g transform={`translate(${X[0]} 420)`}>
+          <rect x={-160} y={-40} width={320} height={80} rx={40} fill={C.card} stroke={C.ink} strokeWidth={4} />
+          {Array.from({length: 9}, (_, k) => <line key={k} x1={-140 + k * 35} y1={-38} x2={-140 + k * 35 + twist * 28} y2={38} stroke={C.ink} strokeWidth={3} opacity={0.5} />)}
+          <T y={80} size={26} weight={600} color={C.mute}>{twist > 0.5 ? 'carbon nanotube, twisted' : 'carbon nanotube'}</T>
+        </g>
+        <g transform={`translate(${X[0]} 620) scale(0.8)`}>
+          <rect x={-120} y={-80} width={240} height={150} rx={20} fill={C.card} stroke={C.ink} strokeWidth={4} />
+          <path d="M -85 20 A 90 90 0 0 1 85 20" fill="none" stroke={C.line} strokeWidth={10} />
+          <line x1={0} y1={30} x2={Math.cos(needle) * 85} y2={30 + Math.sin(needle) * 85} stroke={C.orange} strokeWidth={6} strokeLinecap="round" />
+        </g>
+        <Rise start={at(1, 0.7)} x={X[0]} y={730} size={26} color={C.mute} weight={500}>conductivity changes</Rise>
+      </g>
+      <g opacity={prog(f, at(2), 16)} transform={`translate(${X[0]} 860)`}>
+        <rect x={-90} y={-50} width={180} height={100} rx={8} fill={C.ink} />
+        {[-60, -20, 20, 60].map((x) => <line key={x} x1={x} x2={x} y1={-50} y2={50} stroke={C.orange} strokeWidth={3} />)}
+        <T y={90} size={26} weight={600}>nanowires: chips keep shrinking</T>
+      </g>
+      {head(1, 'Optical', '#c9a227', 3)}
+      <g opacity={prog(f, at(3), 16)}>
+        <rect x={X[1] - 190} y={420} width={140} height={110} rx={10} fill="#e4b54a" stroke={C.ink} strokeOpacity={0.3} strokeWidth={3} />
+        <T x={X[1] - 120} y={580} size={28} weight={650}>bulk: yellow</T>
+        <rect x={X[1] + 60} y={380} width={120} height={170} rx={20} fill={C.card} stroke={C.ink} strokeWidth={4} />
+        <rect x={X[1] + 64} y={440} width={112} height={106} rx={16} fill={C.red} opacity={prog(f, at(3, 0.3), 20) * 0.8} />
+        <T x={X[1] + 120} y={600} size={28} weight={650} color={C.red}>nano: red</T>
+        <Rise start={at(3, 0.55)} x={X[1]} y={700} size={26} color={C.mute} weight={500}>electrons not free to move</Rise>
+      </g>
+      {head(2, 'Biological', C.teal, 4)}
+      <g opacity={prog(f, at(4), 16)}>
+        <circle cx={X[2]} cy={540} r={150} fill="#f2d4c4" stroke={C.teal} strokeWidth={10} strokeDasharray="4 6" />
+        {[0, 1, 2, 3].map((k) => { const t = prog(f, at(4, 0.15 + k * 0.1), 40); return <Atom key={k} x={X[2] - 260 + t * 240 + k * 10} y={460 + k * 50} r={14} fill={C.orange} />; })}
+        <T x={X[2]} y={740} size={26} weight={600} color={C.mute}>cell membrane · blood-brain barrier</T>
+        <Tag start={at(4, 0.6)} x={X[2]} y={850} color={C.teal} filled text="most important application" />
+      </g>
+    </Stage>
+  );
+};
+
+/* ---------- 7. the definition ---------- */
+const Definition: React.FC = () => {
+  const {f, at} = useScene();
+  const L = (nm: number) => 300 + (Math.log10(nm) / 3) * 1320;
+  const band = prog(f, at(1, 0.5), 30);
+  let curve = '';
+  for (let nm = 1; nm <= 1000; nm *= 1.08) curve += `${curve ? ' L' : 'M'} ${L(nm)} ${880 - 280 / (1 + (nm / 12) ** 1.1)}`;
+  return (
+    <Stage>
+      <StageHeading start={at(0)} text="Definition of a nanomaterial" />
+      <Tag start={at(0, 0.45)} x={960} y={220} color={C.red} filled text="very important · word for word" />
+      <Card start={at(1)} x={960} y={390} w={1500} h={150} stroke={C.blue} sw={5}>
+        <T y={-12} size={38} weight={650}>a material with <tspan fill={C.blue} fontWeight={800}>at least one dimension</tspan></T>
+        <T y={40} size={38} weight={650}>in the nano size regime: <tspan fill={C.orange} fontWeight={800}>1–100 nm</tspan></T>
+      </Card>
+      <g opacity={prog(f, at(1, 0.4), 16)}>
+        <line x1={L(1)} x2={L(1000)} y1={900} y2={900} stroke={C.ink} strokeWidth={4} />
+        <rect x={L(1)} y={888} width={(L(100) - L(1)) * band} height={24} rx={12} fill={C.orange} />
+        {[1, 10, 100, 500, 900].map((n) => <g key={n}><line x1={L(n)} x2={L(n)} y1={885} y2={915} stroke={C.ink} strokeWidth={3} /><T x={L(n)} y={960} size={26}>{n} nm</T></g>)}
+      </g>
+      {[500, 900].map((n, i) => (
+        <g key={n} opacity={prog(f, at(2, 0.25 + i * 0.15), 14) * (1 - prog(f, at(3), 14))}>
+          <Atom x={L(n)} y={790} r={44} fill={C.sand} />
+        </g>
+      ))}
+      <g opacity={prog(f, at(2, 0.4), 14) * (1 - prog(f, at(3), 14))}><T x={(L(500) + L(900)) / 2} y={710} size={28} weight={650} color={C.brown}>500 or 900 nm: still bulk</T></g>
+      <Mark start={at(2, 0.55)} x={(L(500) + L(900)) / 2} y={620} ok={false} size={50} out={at(3)} />
+      <g opacity={prog(f, at(3), 16)}>
+        <path d={curve} stroke={C.orange} strokeWidth={6} fill="none" />
+        <T x={L(3)} y={570} size={28} weight={650} color={C.orange}>surface atoms dominate</T>
+        <line x1={L(100)} x2={L(100)} y1={560} y2={900} stroke={C.orange} strokeWidth={4} strokeDasharray="10 8" />
+        <Tag start={at(3, 0.5)} x={L(100) + 220} y={640} color={C.orange} filled text="nano begins below 100 nm" />
+      </g>
+    </Stage>
+  );
+};
+
+export const L3Scenes: Record<string, React.FC> = {scale: Scale, surface: Surface, categories: Categories, catalysis: Catalysis, melting: Melting, others: Others, definition: Definition};

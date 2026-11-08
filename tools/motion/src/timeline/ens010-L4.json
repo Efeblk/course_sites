@@ -1,0 +1,175 @@
+{
+ "id": "ens010-L4",
+ "title": "Lecture 4 \u00b7 Classification by dimension",
+ "fps": 30,
+ "dur": 4640,
+ "scenes": [
+  {
+   "id": "ways",
+   "from": 18,
+   "dur": 706,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 109,
+     "audio": "audio/849bd5c139cc2a79.mp3",
+     "text": "Lecture four: how do we classify nanomaterials?"
+    },
+    {
+     "from": 120,
+     "dur": 243,
+     "audio": "audio/df46fa7bdc53fb72.mp3",
+     "text": "There are many ways: by origin, composition, phase, dispersion, and more. You do not need to memorize those."
+    },
+    {
+     "from": 373,
+     "dur": 120,
+     "audio": "audio/672a79798a14e930.mp3",
+     "text": "The one he will most probably ask is classification by dimension."
+    },
+    {
+     "from": 503,
+     "dur": 176,
+     "audio": "audio/d971e497906a9641.mp3",
+     "text": "The trick is to count the free dimensions: the ones that are still larger than one hundred nanometers."
+    }
+   ]
+  },
+  {
+   "id": "shrink",
+   "from": 724,
+   "dur": 1247,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 269,
+     "audio": "audio/36eff750f96dcc6c.mp3",
+     "text": "Start with a bulk block. X, Y and Z are all above one hundred nanometers. Three free dimensions: that is bulk, not nano."
+    },
+    {
+     "from": 279,
+     "dur": 266,
+     "audio": "audio/dba3ad41a84b0c3e.mp3",
+     "text": "Shrink Z into the nano range, say fifteen nanometers. Two dimensions are still large, so this is a two-dimensional nanomaterial."
+    },
+    {
+     "from": 556,
+     "dur": 138,
+     "audio": "audio/2d486e6d924ff45f.mp3",
+     "text": "A nano film, a coating, a layer or a sheet, like graphene."
+    },
+    {
+     "from": 704,
+     "dur": 189,
+     "audio": "audio/bb25e8277e870769.mp3",
+     "text": "Now shrink Y as well. Only one long dimension is left: a one-dimensional nanomaterial."
+    },
+    {
+     "from": 903,
+     "dur": 135,
+     "audio": "audio/1a98f11d3604de60.mp3",
+     "text": "A nanowire, a nanorod, a nanofiber or a nanotube."
+    },
+    {
+     "from": 1049,
+     "dur": 171,
+     "audio": "audio/d3beb7cdebfe32e5.mp3",
+     "text": "Shrink X too. Nothing is left free, so it is zero-dimensional: a nanoparticle."
+    }
+   ]
+  },
+  {
+   "id": "quantum",
+   "from": 1971,
+   "dur": 596,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 161,
+     "audio": "audio/82b125e395914d2a.mp3",
+     "text": "Below about ten nanometers, a second change happens. Quantum physics takes over."
+    },
+    {
+     "from": 171,
+     "dur": 112,
+     "audio": "audio/aa92d6f549819dbd.mp3",
+     "text": "One dimension below ten nanometers gives a quantum well."
+    },
+    {
+     "from": 293,
+     "dur": 97,
+     "audio": "audio/b782d9780369d88f.mp3",
+     "text": "Two dimensions below ten: a quantum wire."
+    },
+    {
+     "from": 401,
+     "dur": 168,
+     "audio": "audio/68b2cded37848d06.mp3",
+     "text": "All three below ten: a quantum dot, the smallest particle scientists have made."
+    }
+   ]
+  },
+  {
+   "id": "table",
+   "from": 2567,
+   "dur": 994,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 56,
+     "audio": "audio/e491df147eeb46c6.mp3",
+     "text": "Here is the whole table."
+    },
+    {
+     "from": 67,
+     "dur": 438,
+     "audio": "audio/2d6647c466ad611d.mp3",
+     "text": "One small dimension: a nano film, two-D, or a quantum well. Two small dimensions: a nanowire, one-D, or a quantum wire. Three small dimensions: a nanoparticle, zero-D, or a quantum dot."
+    },
+    {
+     "from": 516,
+     "dur": 240,
+     "audio": "audio/94d4643307ccf80d.mp3",
+     "text": "Now the trap. Two-D does not mean two nano dimensions. It means two large dimensions, and only one nano dimension."
+    },
+    {
+     "from": 767,
+     "dur": 201,
+     "audio": "audio/630692c33900576d.mp3",
+     "text": "And there is no three-D nanomaterial. If nothing is below one hundred nanometers, it is simply bulk."
+    }
+   ]
+  },
+  {
+   "id": "nested",
+   "from": 3561,
+   "dur": 1031,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 152,
+     "audio": "audio/8dcd332aeab55065.mp3",
+     "text": "A quantum material has at least one dimension between one and ten nanometers."
+    },
+    {
+     "from": 162,
+     "dur": 186,
+     "audio": "audio/d74b291034b649df.mp3",
+     "text": "One to ten sits inside one to one hundred. So every quantum material is also a nanomaterial."
+    },
+    {
+     "from": 359,
+     "dur": 275,
+     "audio": "audio/93882dc83a086291.mp3",
+     "text": "But is every nanomaterial a quantum material? No. A fifty nanometer particle is nano, but not quantum. He called this a good midterm question."
+    },
+    {
+     "from": 644,
+     "dur": 359,
+     "audio": "audio/d48faecba8c8f548.mp3",
+     "text": "One last point. In mathematics, nano size means anything below one thousand nanometers. In materials, only one to one hundred counts, because that is where the properties change."
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,212 @@
+{
+ "id": "ens010-L2",
+ "title": "Lecture 2 \u00b7 Introduction to nano",
+ "fps": 30,
+ "dur": 5682,
+ "scenes": [
+  {
+   "id": "converge",
+   "from": 18,
+   "dur": 870,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 156,
+     "audio": "audio/22399cd085d6e6fc.mp3",
+     "text": "Lecture two starts with a question. With so many new technologies, why learn nano?"
+    },
+    {
+     "from": 167,
+     "dur": 191,
+     "audio": "audio/33828d89c36f1cff.mp3",
+     "text": "The answer is convergent science and technology. Almost every new field falls under four areas."
+    },
+    {
+     "from": 368,
+     "dur": 227,
+     "audio": "audio/45c8594b60ea8df6.mp3",
+     "text": "Nano works with atoms. Bio, with genes and cells. Info, with bits. And cogno, with neurons."
+    },
+    {
+     "from": 605,
+     "dur": 238,
+     "audio": "audio/e2cac973f8aae248.mp3",
+     "text": "Together, they aim at one goal: enhancing human performance. Nanomedicine, for example, combines several of them."
+    }
+   ]
+  },
+  {
+   "id": "prefix",
+   "from": 888,
+   "dur": 1022,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 160,
+     "audio": "audio/4137cf8f9c34b3ac.mp3",
+     "text": "Nano is not a material. It is a mathematical prefix, like kilo or milli."
+    },
+    {
+     "from": 170,
+     "dur": 104,
+     "audio": "audio/884b10e514212977.mp3",
+     "text": "It means ten to the minus nine: one billionth."
+    },
+    {
+     "from": 285,
+     "dur": 105,
+     "audio": "audio/cb0489661896963b.mp3",
+     "text": "It comes from the Greek word nanos, which means dwarf."
+    },
+    {
+     "from": 400,
+     "dur": 149,
+     "audio": "audio/d02dd995bbc166cc.mp3",
+     "text": "It works with any unit: a nanometer, a nanosecond, a nanogram."
+    },
+    {
+     "from": 560,
+     "dur": 255,
+     "audio": "audio/03e7241dcdb4dea9.mp3",
+     "text": "Remember the conversions. One nanometer is ten to the minus nine meters, ten to the minus three micrometers, and ten angstroms."
+    },
+    {
+     "from": 825,
+     "dur": 170,
+     "audio": "audio/23319052444b8c33.mp3",
+     "text": "So one hundred nanometers is zero point one micrometers, or one thousand angstroms."
+    }
+   ]
+  },
+  {
+   "id": "scale",
+   "from": 1910,
+   "dur": 770,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 149,
+     "audio": "audio/f3fca3b94f9e5b27.mp3",
+     "text": "How small is that? Shrink the Earth ten million times, and you get a football."
+    },
+    {
+     "from": 160,
+     "dur": 224,
+     "audio": "audio/02fd4f541ce357b7.mp3",
+     "text": "Shrink the football a billion times, and you get a fullerene: a nanomaterial of zero point seven nanometers."
+    },
+    {
+     "from": 394,
+     "dur": 141,
+     "audio": "audio/298077da84787059.mp3",
+     "text": "Nanomaterials are the size of proteins, DNA and viruses."
+    },
+    {
+     "from": 546,
+     "dur": 197,
+     "audio": "audio/a27fda922249187a.mp3",
+     "text": "We cannot see or feel them, so we need tools such as electron microscopes and atomic force microscopes."
+    }
+   ]
+  },
+  {
+   "id": "scitech",
+   "from": 2680,
+   "dur": 1126,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 181,
+     "audio": "audio/c13e7889649d7bfb.mp3",
+     "text": "Now a definition he said he may ask: the difference between nanoscience and nanotechnology."
+    },
+    {
+     "from": 192,
+     "dur": 189,
+     "audio": "audio/b0e6391b8c156eec.mp3",
+     "text": "Nanoscience is the study at the nano-size level. It is theory, on paper or on a computer."
+    },
+    {
+     "from": 392,
+     "dur": 426,
+     "audio": "audio/ee1e61d5ca8936de.mp3",
+     "text": "Nanotechnology is working atom by atom: creating functional materials, devices and systems, controlling matter at one to one hundred nanometers, and exploiting the new properties. It is practice, in the lab."
+    },
+    {
+     "from": 829,
+     "dur": 271,
+     "audio": "audio/b905ac376e6f96a2.mp3",
+     "text": "So in a multiple choice question, words like create, control or lab point to nanotechnology. The word study points to nanoscience."
+    }
+   ]
+  },
+  {
+   "id": "gold",
+   "from": 3806,
+   "dur": 851,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 271,
+     "audio": "audio/ba0fdd6f81d4a350.mp3",
+     "text": "Nano is not new. People used nanoparticles for colour long before anyone knew what they were: the Lycurgus cup, and medieval stained glass."
+    },
+    {
+     "from": 282,
+     "dur": 161,
+     "audio": "audio/f79bfb0634ca3fd0.mp3",
+     "text": "Gold nanoparticles look red, green or orange, depending on their size."
+    },
+    {
+     "from": 454,
+     "dur": 71,
+     "audio": "audio/607d3eb6df874ab6.mp3",
+     "text": "But a gold ring is always yellow."
+    },
+    {
+     "from": 536,
+     "dur": 288,
+     "audio": "audio/726df892e934c578.mp3",
+     "text": "That is the key message of the course. At the nano scale, size and shape change the properties of a material. He will not ask the numbers, only this idea."
+    }
+   ]
+  },
+  {
+   "id": "scurve",
+   "from": 4657,
+   "dur": 978,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 243,
+     "audio": "audio/252db1c31a02124a.mp3",
+     "text": "Nanotechnology is used almost everywhere: medicine, energy, electronics, sensors, coatings and food."
+    },
+    {
+     "from": 253,
+     "dur": 150,
+     "audio": "audio/18c4d5df3713c99e.mp3",
+     "text": "Every technology grows along an S-curve. A slow start with no funding."
+    },
+    {
+     "from": 413,
+     "dur": 116,
+     "audio": "audio/1d6a6f3d12b796ed.mp3",
+     "text": "Rapid growth when investors arrive. And then saturation."
+    },
+    {
+     "from": 540,
+     "dur": 134,
+     "audio": "audio/671eb06413a9c535.mp3",
+     "text": "Textiles, railroads, cars and computers all followed it."
+    },
+    {
+     "from": 684,
+     "dur": 266,
+     "audio": "audio/5f6acc6ce88d3503.mp3",
+     "text": "Nanotechnology is at the beginning of its rapid growth. So, as the lecturer said, it is not late to learn it. It is right on time."
+    }
+   ]
+  }
+ ]
+}

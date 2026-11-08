@@ -163,6 +163,20 @@ export const StageHeading: React.FC<{start: number; text: string; out?: number}>
   <foreignObject x={0} y={0} width={1920} height={200}><Heading {...p} /></foreignObject>
 );
 
+/** simple human silhouette, centre of the torso at (x, y); about 640 * s tall */
+export const Body: React.FC<{x: number; y: number; s?: number; o?: number; fill?: string}> = ({x, y, s = 1, o = 1, fill = C.soft}) => (
+  <g transform={`translate(${x} ${y}) scale(${s})`} opacity={o} fill={fill} stroke={C.ink} strokeOpacity={0.35} strokeWidth={4} strokeLinejoin="round">
+    <path d="M -40 230 L -70 400 L -20 400 L 0 250 L 20 400 L 70 400 L 40 230 Z" />
+    <path d="M -95 -150 L -150 80 L -120 90 L -70 -60 Z M 95 -150 L 150 80 L 120 90 L 70 -60 Z" />
+    <path d="M -95 -160 Q 0 -190 95 -160 L 80 240 Q 0 260 -80 240 Z" />
+    <circle cx={0} cy={-240} r={62} />
+  </g>
+);
+
+/** text with exponents: sup('10^-9 m') -> 10 with a raised -9 (the fonts lack superscript minus and plus) */
+export const sup = (text: string) => text.split(/\^(\S+)/).map((part, i) =>
+  i % 2 ? <tspan key={i} dy="-0.72em" fontSize="62%">{part.replace('-', '−')}</tspan> : <tspan key={i} dy={i ? '0.446em' : undefined}>{part}</tspan>);
+
 const SceneFade: React.FC<{dur: number; children: React.ReactNode}> = ({dur, children}) => {
   const f = useCurrentFrame();
   const o = interpolate(f, [0, 14, dur - 4, dur + 12], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});

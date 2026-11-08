@@ -1,0 +1,45 @@
+{
+  "id": "ens010-L2",
+  "title": "Lecture 2 · Introduction to nano",
+  "scenes": [
+    { "id": "converge", "lines": [
+      "Lecture two starts with a question. With so many new technologies, why learn nano?",
+      "The answer is convergent science and technology. Almost every new field falls under four areas.",
+      "Nano works with atoms. Bio, with genes and cells. Info, with bits. And cogno, with neurons.",
+      "Together, they aim at one goal: enhancing human performance. Nanomedicine, for example, combines several of them."
+    ]},
+    { "id": "prefix", "lines": [
+      "Nano is not a material. It is a mathematical prefix, like kilo or milli.",
+      "It means ten to the minus nine: one billionth.",
+      "It comes from the Greek word nanos, which means dwarf.",
+      "It works with any unit: a nanometer, a nanosecond, a nanogram.",
+      "Remember the conversions. One nanometer is ten to the minus nine meters, ten to the minus three micrometers, and ten angstroms.",
+      "So one hundred nanometers is zero point one micrometers, or one thousand angstroms."
+    ]},
+    { "id": "scale", "lines": [
+      "How small is that? Shrink the Earth ten million times, and you get a football.",
+      "Shrink the football a billion times, and you get a fullerene: a nanomaterial of zero point seven nanometers.",
+      "Nanomaterials are the size of proteins, DNA and viruses.",
+      "We cannot see or feel them, so we need tools such as electron microscopes and atomic force microscopes."
+    ]},
+    { "id": "scitech", "lines": [
+      "Now a definition he said he may ask: the difference between nanoscience and nanotechnology.",
+      "Nanoscience is the study at the nano-size level. It is theory, on paper or on a computer.",
+      "Nanotechnology is working atom by atom: creating functional materials, devices and systems, controlling matter at one to one hundred nanometers, and exploiting the new properties. It is practice, in the lab.",
+      "So in a multiple choice question, words like create, control or lab point to nanotechnology. The word study points to nanoscience."
+    ]},
+    { "id": "gold", "lines": [
+      "Nano is not new. People used nanoparticles for colour long before anyone knew what they were: the Lycurgus cup, and medieval stained glass.",
+      "Gold nanoparticles look red, green or orange, depending on their size.",
+      "But a gold ring is always yellow.",
+      "That is the key message of the course. At the nano scale, size and shape change the properties of a material. He will not ask the numbers, only this idea."
+    ]},
+    { "id": "scurve", "lines": [
+      "Nanotechnology is used almost everywhere: medicine, energy, electronics, sensors, coatings and food.",
+      "Every technology grows along an S-curve. A slow start with no funding.",
+      "Rapid growth when investors arrive. And then saturation.",
+      "Textiles, railroads, cars and computers all followed it.",
+      "Nanotechnology is at the beginning of its rapid growth. So, as the lecturer said, it is not late to learn it. It is right on time."
+    ]}
+  ]
+}

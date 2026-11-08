@@ -1,5 +1,5 @@
-/* ENS010 study videos: one narrated video per lecture, in English (the course and the exam are English).
- * Built by tools/video/build.py into materials/ENS010/video/ (local only, not committed).
+/* ENS010 slide-style video scripts for the OLD pipeline (tools/video/build.py). Superseded: videos.html now plays the
+ * Remotion videos from tools/motion/ (scripts in tools/motion/src/scripts/ens010-*.json). Kept for reference only.
  *
  * VIDEO = [{ id, title, scenes: [scene, ...] }]
  * scene = { h: 'heading', k?: 'kicker',

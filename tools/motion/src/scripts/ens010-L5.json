@@ -1,0 +1,40 @@
+{
+  "id": "ens010-L5",
+  "title": "Lecture 5 · Prevention, radiation, optical imaging",
+  "scenes": [
+    { "id": "health", "lines": [
+      "Lecture five moves to health, the most important application of nanomaterials.",
+      "Nanomaterials are used in all three sectors of health: prevention, diagnosis and treatment.",
+      "This lecture covers prevention, and starts on diagnosis."
+    ]},
+    { "id": "prevent", "lines": [
+      "The prevention slide says: the best way to eliminate the problem is to eliminate the cause.",
+      "Antibacterial, antiviral and antifungal nanoparticles go into masks, gloves, sprays and other personal protective equipment.",
+      "Notice the idea. Nano does not invent new materials here. It uses the same ones, like silver or gold, in nano size. Their higher reactivity kills pathogens better.",
+      "Personal care does the same: zinc oxide and titanium dioxide in sunscreen, and silver nanoparticles in antifungal shampoo and antibacterial textiles.",
+      "His warning: nanomaterials are still new. Their long-term effects, such as genotoxicity, are unknown. Use them with precautions, and with real certificates."
+    ]},
+    { "id": "early", "lines": [
+      "Why early diagnosis? The slide gives three reasons.",
+      "To choose the best therapeutic method, and stop the disease from progressing.",
+      "To increase the effectiveness of the treatment.",
+      "And to avoid wasting excess medical resources.",
+      "There are three categories of diagnostic techniques: imaging, biosensors, and wearable sensors."
+    ]},
+    { "id": "radiation", "lines": [
+      "This next part is a likely written question: ionizing versus non-ionizing radiation.",
+      "Non-ionizing radiation does not have enough energy to ionize our cells. Power lines, radio, mobile networks, infrared and visible light. It is safe.",
+      "Ionizing radiation, which means ultraviolet, X-rays and gamma rays, has enough energy to break molecular bonds. It is harmful.",
+      "So the techniques that use ionizing radiation are invasive. PET and SPECT use gamma rays. CT uses X-rays.",
+      "MRI, ultrasound and optical imaging use none of it. They are non-invasive."
+    ]},
+    { "id": "optical", "lines": [
+      "Optical imaging uses light, which is non-ionizing. It can catch metabolic changes, early markers of disease.",
+      "Its weakness: light does not penetrate deep into the body.",
+      "Fluorescence imaging injects a dye, such as indocyanine green, that glows under near-infrared light. Because it is injected, it is called minimally invasive. But the dye goes everywhere.",
+      "Nanoparticles are better probes. Gold nanoparticles.",
+      "Upconversion nanoparticles: they absorb near-infrared light, which penetrates deep, and emit visible or ultraviolet light.",
+      "And quantum dots, with an excellent quantum yield and low photobleaching."
+    ]}
+  ]
+}

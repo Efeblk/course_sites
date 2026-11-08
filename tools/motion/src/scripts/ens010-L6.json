@@ -1,0 +1,54 @@
+{
+  "id": "ens010-L6",
+  "title": "Lecture 6 · Imaging techniques",
+  "scenes": [
+    { "id": "intro", "lines": [
+      "Lecture six goes through the imaging techniques.",
+      "No technique is perfect. The safe ones often lack resolution or sensitivity, and the deep or sharp ones use radiation.",
+      "So for each technique, ask three questions. How does it work? Is it invasive? And how do nanoparticles improve it?"
+    ]},
+    { "id": "mri", "lines": [
+      "MRI works on the hydrogen protons in the water of our tissues. Each proton spins like a tiny magnet, normally pointing in random directions.",
+      "The strong magnetic field of the scanner lines them up.",
+      "A radio-frequency pulse then pushes them out of line.",
+      "When the pulse is switched off, the protons realign, and they release energy.",
+      "A coil detects that energy. Different tissues release different amounts.",
+      "A computer turns it into an image. No ionizing radiation is used, so MRI is non-invasive."
+    ]},
+    { "id": "mrinano", "lines": [
+      "MRI has relatively low sensitivity, so it uses contrast agents.",
+      "The common one, gadolinium, has two problems. It is toxic, and it spreads everywhere in the body.",
+      "Nanoparticles help in two ways. First, magnetic nanoparticles, such as superparamagnetic iron oxide, S P I O, can themselves be biocompatible contrast agents.",
+      "Second, a nanoparticle can carry the existing agent. Encapsulate it, stabilize it, coat it with a biocompatible polymer, and target it. That decreases toxicity and side effects.",
+      "And one important parameter: after any modification, the magnetic properties must be kept. He said he may ask these two points."
+    ]},
+    { "id": "pet", "lines": [
+      "PET and SPECT both use radioactive tracers and gamma rays. So both are invasive, and both are expensive.",
+      "In PET, the tracer, for example fluorine eighteen, emits a positron.",
+      "The positron meets an electron. They annihilate, and two gamma rays of five hundred eleven kilo electron volts fly out in opposite directions.",
+      "In SPECT, the tracer, technetium ninety-nine m, emits a gamma ray of one hundred forty-one kilo electron volts directly. No positron, no electron.",
+      "The nanoparticle's role: carry the radiotracer to the target, so gamma rays are not produced all over the body."
+    ]},
+    { "id": "pa", "lines": [
+      "Photoacoustic imaging: photo means light, acoustic means sound. He said you should completely describe its three steps.",
+      "Step one. A laser pulse illuminates the tissue.",
+      "Step two. The absorbed light excites electrons. They relax back to the ground state and release the energy as heat.",
+      "Step three. The heated area expands abruptly, and this thermal expansion sends out a thermoacoustic wave.",
+      "An ultrasound transducer detects the wave. Light in, sound out.",
+      "It gives anatomical, functional and molecular contrast in one modality, several centimeters deep. Its contrast agents are plasmonic nanoparticles: gold, silver, and single-walled carbon nanotubes."
+    ]},
+    { "id": "us", "lines": [
+      "Ultrasound uses only sound. A probe sends high-frequency sound and listens for the echo, so it is non-invasive.",
+      "But the further the sound travels, the weaker the echo. Deep tissues are hard to image.",
+      "Its contrast agents are micro and nano bubbles: a gas core inside a shell. They stay inside the blood vessels.",
+      "Hit by ultrasound, the bubbles oscillate. They expand and contract without bursting, and give a strong nonlinear echo that improves the signal-to-noise ratio. He said he may ask this.",
+      "The shells evolved from no shell, which burst easily, to protein, lipid, polymer and hybrid shells."
+    ]},
+    { "id": "multi", "lines": [
+      "Since no technique is perfect, multimodal imaging combines two in one hybrid scan, such as SPECT with CT, or PET with CT.",
+      "CT shows the anatomy: what the structures look like.",
+      "SPECT shows the function: blood flow to the heart, or bone affected by cancer.",
+      "Together, with nanomaterial contrast agents, they give the best diagnosis."
+    ]}
+  ]
+}

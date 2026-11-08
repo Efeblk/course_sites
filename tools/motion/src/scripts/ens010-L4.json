@@ -1,0 +1,38 @@
+{
+  "id": "ens010-L4",
+  "title": "Lecture 4 · Classification by dimension",
+  "scenes": [
+    { "id": "ways", "lines": [
+      "Lecture four: how do we classify nanomaterials?",
+      "There are many ways: by origin, composition, phase, dispersion, and more. You do not need to memorize those.",
+      "The one he will most probably ask is classification by dimension.",
+      "The trick is to count the free dimensions: the ones that are still larger than one hundred nanometers."
+    ]},
+    { "id": "shrink", "lines": [
+      "Start with a bulk block. X, Y and Z are all above one hundred nanometers. Three free dimensions: that is bulk, not nano.",
+      "Shrink Z into the nano range, say fifteen nanometers. Two dimensions are still large, so this is a two-dimensional nanomaterial.",
+      "A nano film, a coating, a layer or a sheet, like graphene.",
+      "Now shrink Y as well. Only one long dimension is left: a one-dimensional nanomaterial.",
+      "A nanowire, a nanorod, a nanofiber or a nanotube.",
+      "Shrink X too. Nothing is left free, so it is zero-dimensional: a nanoparticle."
+    ]},
+    { "id": "quantum", "lines": [
+      "Below about ten nanometers, a second change happens. Quantum physics takes over.",
+      "One dimension below ten nanometers gives a quantum well.",
+      "Two dimensions below ten: a quantum wire.",
+      "All three below ten: a quantum dot, the smallest particle scientists have made."
+    ]},
+    { "id": "table", "lines": [
+      "Here is the whole table.",
+      "One small dimension: a nano film, two-D, or a quantum well. Two small dimensions: a nanowire, one-D, or a quantum wire. Three small dimensions: a nanoparticle, zero-D, or a quantum dot.",
+      "Now the trap. Two-D does not mean two nano dimensions. It means two large dimensions, and only one nano dimension.",
+      "And there is no three-D nanomaterial. If nothing is below one hundred nanometers, it is simply bulk."
+    ]},
+    { "id": "nested", "lines": [
+      "A quantum material has at least one dimension between one and ten nanometers.",
+      "One to ten sits inside one to one hundred. So every quantum material is also a nanomaterial.",
+      "But is every nanomaterial a quantum material? No. A fifty nanometer particle is nano, but not quantum. He called this a good midterm question.",
+      "One last point. In mathematics, nano size means anything below one thousand nanometers. In materials, only one to one hundred counts, because that is where the properties change."
+    ]}
+  ]
+}

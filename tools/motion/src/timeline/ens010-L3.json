@@ -2,7 +2,7 @@
  "id": "ens010-L3",
  "title": "Lecture 3 \u00b7 Why size matters",
  "fps": 30,
- "dur": 3729,
+ "dur": 6708,
  "scenes": [
   {
    "id": "scale",
@@ -79,8 +79,64 @@
    ]
   },
   {
-   "id": "melting",
+   "id": "categories",
    "from": 2060,
+   "dur": 728,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 165,
+     "audio": "audio/18ca0dd94bee3088.mp3",
+     "text": "Almost every property changes. The exam wants each category with its example."
+    },
+    {
+     "from": 175,
+     "dur": 292,
+     "audio": "audio/f57ae7594e83433e.mp3",
+     "text": "Physical: melting point. Chemical: reactivity. Electrical: conductivity. Mechanical: strength. Optical: light emission."
+    },
+    {
+     "from": 477,
+     "dur": 224,
+     "audio": "audio/ead970d3461ece31.mp3",
+     "text": "And the trap he warned about: reactivity is chemical, not physical. The physical example is the melting point."
+    }
+   ]
+  },
+  {
+   "id": "catalysis",
+   "from": 2788,
+   "dur": 974,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 187,
+     "audio": "audio/42966a9d60c1f984.mp3",
+     "text": "Start with a chemical property: catalytic activity. It depends on the size and the shape of the particle."
+    },
+    {
+     "from": 198,
+     "dur": 241,
+     "audio": "audio/271109547d3b94a6.mp3",
+     "text": "A reaction has to climb an energy hill, the activation energy. Catalytic activity is inversely proportional to it."
+    },
+    {
+     "from": 449,
+     "dur": 191,
+     "audio": "audio/f64dd43df40846e6.mp3",
+     "text": "Smaller particles need less activation energy, so they are more active. They are better catalysts."
+    },
+    {
+     "from": 651,
+     "dur": 296,
+     "audio": "audio/4ea48f0c5d6e663c.mp3",
+     "text": "That matters for petroleum processing, energy conversion and removing pollutants. You do not need a new catalyst. Use the same one, in nano size."
+    }
+   ]
+  },
+  {
+   "id": "melting",
+   "from": 3762,
    "dur": 893,
    "cues": [
     {
@@ -116,27 +172,70 @@
    ]
   },
   {
-   "id": "categories",
-   "from": 2952,
-   "dur": 728,
+   "id": "others",
+   "from": 4654,
+   "dur": 1177,
    "cues": [
     {
      "from": 0,
-     "dur": 165,
-     "audio": "audio/18ca0dd94bee3088.mp3",
-     "text": "Almost every property changes. The exam wants each category with its example."
+     "dur": 56,
+     "audio": "audio/0b445bf2a5c2fe12.mp3",
+     "text": "Three more categories."
     },
     {
-     "from": 175,
-     "dur": 292,
-     "audio": "audio/f57ae7594e83433e.mp3",
-     "text": "Physical: melting point. Chemical: reactivity. Electrical: conductivity. Mechanical: strength. Optical: light emission."
+     "from": 67,
+     "dur": 321,
+     "audio": "audio/026a4e700cfb1f4b.mp3",
+     "text": "Electrical: bulk carbon conducts the same whatever its size or twist. A carbon nanotube changes its conductivity with its cross-section, and when it is twisted."
     },
     {
-     "from": 477,
+     "from": 398,
+     "dur": 171,
+     "audio": "audio/c4c245507e8ba58e.mp3",
+     "text": "Nano wires stay conductive even when they are tiny, and that keeps computer chips shrinking."
+    },
+    {
+     "from": 579,
+     "dur": 244,
+     "audio": "audio/2a307c55e9317ed0.mp3",
+     "text": "Optical: bulk gold is yellow, but nano gold is red, because its electrons are not free to move as in bulk gold."
+    },
+    {
+     "from": 834,
+     "dur": 316,
+     "audio": "audio/f4f38dc51d38c474.mp3",
+     "text": "Biological: nanoparticles pass biological barriers, such as the cell membrane and the blood-brain barrier. The lecturer called this the most important application."
+    }
+   ]
+  },
+  {
+   "id": "definition",
+   "from": 5831,
+   "dur": 828,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 142,
+     "audio": "audio/b48ac1c1d0fe4a42.mp3",
+     "text": "Finally, a definition he called very important. Learn it word for word."
+    },
+    {
+     "from": 152,
      "dur": 224,
-     "audio": "audio/ead970d3461ece31.mp3",
-     "text": "And the trap he warned about: reactivity is chemical, not physical. The physical example is the melting point."
+     "audio": "audio/ce5222ab682c2cad.mp3",
+     "text": "A nanomaterial is a material with at least one dimension in the nano size regime: one to one hundred nanometers."
+    },
+    {
+     "from": 387,
+     "dur": 208,
+     "audio": "audio/f5bad8e22208d978.mp3",
+     "text": "Why not up to one thousand? At five hundred or nine hundred nanometers, the material still behaves like bulk."
+    },
+    {
+     "from": 605,
+     "dur": 196,
+     "audio": "audio/5e80713dfb4d14fc.mp3",
+     "text": "Surface atoms start to dominate only below about one hundred nanometers. That is where nano begins."
     }
    ]
   }

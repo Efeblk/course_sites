@@ -1,0 +1,261 @@
+{
+ "id": "ens010-L6",
+ "title": "Lecture 6 \u00b7 Imaging techniques",
+ "fps": 30,
+ "dur": 7811,
+ "scenes": [
+  {
+   "id": "intro",
+   "from": 18,
+   "dur": 623,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 91,
+     "audio": "audio/ddaa826135df9e91.mp3",
+     "text": "Lecture six goes through the imaging techniques."
+    },
+    {
+     "from": 101,
+     "dur": 256,
+     "audio": "audio/c7fcdfe8c9a2a1e1.mp3",
+     "text": "No technique is perfect. The safe ones often lack resolution or sensitivity, and the deep or sharp ones use radiation."
+    },
+    {
+     "from": 368,
+     "dur": 228,
+     "audio": "audio/f8bcfaf514a2d5e0.mp3",
+     "text": "So for each technique, ask three questions. How does it work? Is it invasive? And how do nanoparticles improve it?"
+    }
+   ]
+  },
+  {
+   "id": "mri",
+   "from": 641,
+   "dur": 1085,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 299,
+     "audio": "audio/8188a4b8b50696b8.mp3",
+     "text": "MRI works on the hydrogen protons in the water of our tissues. Each proton spins like a tiny magnet, normally pointing in random directions."
+    },
+    {
+     "from": 309,
+     "dur": 98,
+     "audio": "audio/ca19c5e65de4895c.mp3",
+     "text": "The strong magnetic field of the scanner lines them up."
+    },
+    {
+     "from": 418,
+     "dur": 102,
+     "audio": "audio/5b18c4eb709e838e.mp3",
+     "text": "A radio-frequency pulse then pushes them out of line."
+    },
+    {
+     "from": 530,
+     "dur": 154,
+     "audio": "audio/7ecd450ca1a727a6.mp3",
+     "text": "When the pulse is switched off, the protons realign, and they release energy."
+    },
+    {
+     "from": 695,
+     "dur": 139,
+     "audio": "audio/20406838f2475c09.mp3",
+     "text": "A coil detects that energy. Different tissues release different amounts."
+    },
+    {
+     "from": 844,
+     "dur": 213,
+     "audio": "audio/a5b908db9b8b86ab.mp3",
+     "text": "A computer turns it into an image. No ionizing radiation is used, so MRI is non-invasive."
+    }
+   ]
+  },
+  {
+   "id": "mrinano",
+   "from": 1725,
+   "dur": 1418,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 155,
+     "audio": "audio/370b66d9458bca2d.mp3",
+     "text": "MRI has relatively low sensitivity, so it uses contrast agents."
+    },
+    {
+     "from": 165,
+     "dur": 209,
+     "audio": "audio/2ee41b72d4923d0b.mp3",
+     "text": "The common one, gadolinium, has two problems. It is toxic, and it spreads everywhere in the body."
+    },
+    {
+     "from": 385,
+     "dur": 363,
+     "audio": "audio/020933f698d4446f.mp3",
+     "text": "Nanoparticles help in two ways. First, magnetic nanoparticles, such as superparamagnetic iron oxide, S P I O, can themselves be biocompatible contrast agents."
+    },
+    {
+     "from": 758,
+     "dur": 378,
+     "audio": "audio/91bc77983ff4fb53.mp3",
+     "text": "Second, a nanoparticle can carry the existing agent. Encapsulate it, stabilize it, coat it with a biocompatible polymer, and target it. That decreases toxicity and side effects."
+    },
+    {
+     "from": 1146,
+     "dur": 245,
+     "audio": "audio/1b48c7beb790066f.mp3",
+     "text": "And one important parameter: after any modification, the magnetic properties must be kept. He said he may ask these two points."
+    }
+   ]
+  },
+  {
+   "id": "pet",
+   "from": 3143,
+   "dur": 1304,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 227,
+     "audio": "audio/d6067e531e7c0673.mp3",
+     "text": "PET and SPECT both use radioactive tracers and gamma rays. So both are invasive, and both are expensive."
+    },
+    {
+     "from": 237,
+     "dur": 154,
+     "audio": "audio/eb57885b46f1e74d.mp3",
+     "text": "In PET, the tracer, for example fluorine eighteen, emits a positron."
+    },
+    {
+     "from": 402,
+     "dur": 289,
+     "audio": "audio/1e8fc8305280a7bb.mp3",
+     "text": "The positron meets an electron. They annihilate, and two gamma rays of five hundred eleven kilo electron volts fly out in opposite directions."
+    },
+    {
+     "from": 701,
+     "dur": 341,
+     "audio": "audio/5927cc8a5efc8bda.mp3",
+     "text": "In SPECT, the tracer, technetium ninety-nine m, emits a gamma ray of one hundred forty-one kilo electron volts directly. No positron, no electron."
+    },
+    {
+     "from": 1053,
+     "dur": 224,
+     "audio": "audio/ada9a3f6809e7316.mp3",
+     "text": "The nanoparticle's role: carry the radiotracer to the target, so gamma rays are not produced all over the body."
+    }
+   ]
+  },
+  {
+   "id": "pa",
+   "from": 4447,
+   "dur": 1273,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 233,
+     "audio": "audio/4666b6467b2f7e3f.mp3",
+     "text": "Photoacoustic imaging: photo means light, acoustic means sound. He said you should completely describe its three steps."
+    },
+    {
+     "from": 244,
+     "dur": 109,
+     "audio": "audio/d030df28dccbc04a.mp3",
+     "text": "Step one. A laser pulse illuminates the tissue."
+    },
+    {
+     "from": 363,
+     "dur": 61,
+     "audio": "audio/d1afcb7723458738.mp3",
+     "text": "Step two. The absorbed light excites electrons. They relax back to the ground state and release the energy as heat."
+    },
+    {
+     "from": 435,
+     "dur": 222,
+     "audio": "audio/411d20a3db9c513a.mp3",
+     "text": "Step three. The heated area expands abruptly, and this thermal expansion sends out a thermoacoustic wave."
+    },
+    {
+     "from": 667,
+     "dur": 143,
+     "audio": "audio/5cf76406ee1fb4c7.mp3",
+     "text": "An ultrasound transducer detects the wave. Light in, sound out."
+    },
+    {
+     "from": 820,
+     "dur": 426,
+     "audio": "audio/21ab2b75d3315e4c.mp3",
+     "text": "It gives anatomical, functional and molecular contrast in one modality, several centimeters deep. Its contrast agents are plasmonic nanoparticles: gold, silver, and single-walled carbon nanotubes."
+    }
+   ]
+  },
+  {
+   "id": "us",
+   "from": 5721,
+   "dur": 1282,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 233,
+     "audio": "audio/188367782d8c47b2.mp3",
+     "text": "Ultrasound uses only sound. A probe sends high-frequency sound and listens for the echo, so it is non-invasive."
+    },
+    {
+     "from": 243,
+     "dur": 164,
+     "audio": "audio/cea8ffe484626e7d.mp3",
+     "text": "But the further the sound travels, the weaker the echo. Deep tissues are hard to image."
+    },
+    {
+     "from": 418,
+     "dur": 238,
+     "audio": "audio/677a3fb298122c89.mp3",
+     "text": "Its contrast agents are micro and nano bubbles: a gas core inside a shell. They stay inside the blood vessels."
+    },
+    {
+     "from": 666,
+     "dur": 356,
+     "audio": "audio/4c3108588e3387cf.mp3",
+     "text": "Hit by ultrasound, the bubbles oscillate. They expand and contract without bursting, and give a strong nonlinear echo that improves the signal-to-noise ratio. He said he may ask this."
+    },
+    {
+     "from": 1033,
+     "dur": 222,
+     "audio": "audio/d96238cb421766d6.mp3",
+     "text": "The shells evolved from no shell, which burst easily, to protein, lipid, polymer and hybrid shells."
+    }
+   ]
+  },
+  {
+   "id": "multi",
+   "from": 7003,
+   "dur": 761,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 272,
+     "audio": "audio/8d83a1ce5b83f390.mp3",
+     "text": "Since no technique is perfect, multimodal imaging combines two in one hybrid scan, such as SPECT with CT, or PET with CT."
+    },
+    {
+     "from": 283,
+     "dur": 105,
+     "audio": "audio/45ce46b304eade3f.mp3",
+     "text": "CT shows the anatomy: what the structures look like."
+    },
+    {
+     "from": 398,
+     "dur": 165,
+     "audio": "audio/88301048789eea68.mp3",
+     "text": "SPECT shows the function: blood flow to the heart, or bone affected by cancer."
+    },
+    {
+     "from": 574,
+     "dur": 160,
+     "audio": "audio/5b28fb2051258b9b.mp3",
+     "text": "Together, with nanomaterial contrast agents, they give the best diagnosis."
+    }
+   ]
+  }
+ ]
+}

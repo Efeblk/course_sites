@@ -1,0 +1,211 @@
+{
+ "id": "ens010-L7",
+ "title": "Lecture 7 \u00b7 Biosensors",
+ "fps": 30,
+ "dur": 5621,
+ "scenes": [
+  {
+   "id": "build",
+   "from": 18,
+   "dur": 1135,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 104,
+     "audio": "audio/9ac7f5fb23ca6ba7.mp3",
+     "text": "Lecture seven: biosensors. Let's build one."
+    },
+    {
+     "from": 115,
+     "dur": 222,
+     "audio": "audio/6ae1c1e7f61cc018.mp3",
+     "text": "At the bottom is the transducer. On top, a nanomaterial layer holds the receptors, here antibodies."
+    },
+    {
+     "from": 347,
+     "dur": 154,
+     "audio": "audio/279187f4e0dbe59a.mp3",
+     "text": "Around them float the analyte we want to detect, and other molecules that look similar."
+    },
+    {
+     "from": 512,
+     "dur": 286,
+     "audio": "audio/d28ebcad243c5c4b.mp3",
+     "text": "The receptor binds its analyte like a lock and key. The look-alike molecules do not fit, and they bounce off. Ignoring them is called selectivity."
+    },
+    {
+     "from": 808,
+     "dur": 120,
+     "audio": "audio/77bafcaa690a60fe.mp3",
+     "text": "The binding changes something. Here, electrons start to flow."
+    },
+    {
+     "from": 938,
+     "dur": 170,
+     "audio": "audio/a0a7904d9c9ba5f1.mp3",
+     "text": "The transducer converts that biological signal into a readable electrical signal."
+    }
+   ]
+  },
+  {
+   "id": "parts",
+   "from": 1153,
+   "dur": 1200,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 36,
+     "audio": "audio/8d50397de1be59a6.mp3",
+     "text": "Learn the parts."
+    },
+    {
+     "from": 46,
+     "dur": 233,
+     "audio": "audio/d966a31d4cce9849.mp3",
+     "text": "The receptor, also called the biocatalyst, can be an enzyme, an antibody, a nucleic acid, or a cell."
+    },
+    {
+     "from": 290,
+     "dur": 223,
+     "audio": "audio/ac7fbc6a8297740f.mp3",
+     "text": "The transducer converts the biological signal into a quantifiable, readable signal, usually electrical."
+    },
+    {
+     "from": 523,
+     "dur": 174,
+     "audio": "audio/012338b143552fc3.mp3",
+     "text": "Now his traps. Is the antigen a receptor? No. The antigen is the analyte."
+    },
+    {
+     "from": 708,
+     "dur": 138,
+     "audio": "audio/600a1521fe2f5ec2.mp3",
+     "text": "Is a thermal transducer a receptor? No. It is a transducer."
+    },
+    {
+     "from": 857,
+     "dur": 316,
+     "audio": "audio/f067ec4354cb0bf0.mp3",
+     "text": "Biosensors work in vivo, inside the body, like a sensor on a pacemaker, or ex vivo, outside the body, like a glucose meter or a health watch."
+    }
+   ]
+  },
+  {
+   "id": "nano",
+   "from": 2353,
+   "dur": 929,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 120,
+     "audio": "audio/5a3e2d1c78cdcfe8.mp3",
+     "text": "Nanomaterials improve two layers of a biosensor."
+    },
+    {
+     "from": 131,
+     "dur": 295,
+     "audio": "audio/df83b9dbe61ae7f0.mp3",
+     "text": "In the first layer, nanofibers, functionalized nanoparticles and two-dimensional sheets like graphene stabilize the bioreceptors on the transducer."
+    },
+    {
+     "from": 436,
+     "dur": 280,
+     "audio": "audio/1c8571402a8f2c15.mp3",
+     "text": "In the second layer, nano-enabled transistors improve the transducer. Carbon nanotubes and graphene stay conductive at tiny sizes."
+    },
+    {
+     "from": 727,
+     "dur": 175,
+     "audio": "audio/f31c9deca49c1f16.mp3",
+     "text": "So the whole biosensor can shrink. That is what made wearable and implantable sensors possible."
+    }
+   ]
+  },
+  {
+   "id": "transducers",
+   "from": 3282,
+   "dur": 882,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 156,
+     "audio": "audio/2891c51ce35879fb.mp3",
+     "text": "He asked you to memorize three transducers, and said he will most probably ask them."
+    },
+    {
+     "from": 167,
+     "dur": 153,
+     "audio": "audio/2253b8ba82fef7ec.mp3",
+     "text": "Amperometric: it measures the current, which is proportional to the bioreaction."
+    },
+    {
+     "from": 331,
+     "dur": 146,
+     "audio": "audio/ec97e33720344642.mp3",
+     "text": "Calorimetric, or thermal: it measures the heat produced or absorbed."
+    },
+    {
+     "from": 487,
+     "dur": 166,
+     "audio": "audio/3e9c5049b9521296.mp3",
+     "text": "Optical: it measures the change in light intensity when a specific reaction happens."
+    },
+    {
+     "from": 664,
+     "dur": 191,
+     "audio": "audio/ac76176b6148ade9.mp3",
+     "text": "His own wrong option: an amperometric biosensor measures heat. No. It measures current."
+    }
+   ]
+  },
+  {
+   "id": "params",
+   "from": 4164,
+   "dur": 1410,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 76,
+     "audio": "audio/08859af9ad7c207f.mp3",
+     "text": "Last, the performance parameters."
+    },
+    {
+     "from": 86,
+     "dur": 171,
+     "audio": "audio/4350b2cb5af82eef.mp3",
+     "text": "Selectivity: detecting the target analyte in the presence of other interfering species."
+    },
+    {
+     "from": 268,
+     "dur": 166,
+     "audio": "audio/593b21cfb9d67e39.mp3",
+     "text": "Sensitivity: how sharply the signal changes when the analyte concentration changes."
+    },
+    {
+     "from": 445,
+     "dur": 135,
+     "audio": "audio/f26ba795c44d9e52.mp3",
+     "text": "Response time: how long the sensor takes to settle at a reliable value."
+    },
+    {
+     "from": 590,
+     "dur": 273,
+     "audio": "audio/74f44d67115b2d5f.mp3",
+     "text": "Limit of detection: the minimum concentration it can detect. Lower is better, because early diagnosis means finding very small amounts."
+    },
+    {
+     "from": 873,
+     "dur": 203,
+     "audio": "audio/8257c8714fd26f91.mp3",
+     "text": "Accuracy means reproducibility and reliability. Durability means keeping the signal over time."
+    },
+    {
+     "from": 1087,
+     "dur": 296,
+     "audio": "audio/dee1421ac1dd8890.mp3",
+     "text": "Two traps. Selectivity is not how sharply the signal changes. That is sensitivity. And the limit of detection is the minimum, never the maximum."
+    }
+   ]
+  }
+ ]
+}

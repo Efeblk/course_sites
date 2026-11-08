@@ -2,6 +2,7 @@
 
     python tools/motion/render.py ens010-L4 --check [--scene=shrink]   half-size render + out/<id>-sheet.png
     python tools/motion/render.py ens010-L4 ens010-L6 --out C:/Users/efeba/course_sites/materials/ENS010/video
+    python tools/motion/render.py ens010-L2 ens010-L3 ... --join --out <same dir>    -> ENS010-all.mp4/.webm
 
 --check renders at half size (only one scene with --scene) and writes a contact sheet with one frame near the end of
 every spoken line, so the layout can be checked line by line before the full render. Its frames are also saved as
@@ -14,8 +15,17 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 HERE = Path(__file__).resolve().parent
-args = [a for a in sys.argv[1:] if not a.startswith('--')]
-opt = dict(a[2:].split('=', 1) if '=' in a else (a[2:], '1') for a in sys.argv[1:] if a.startswith('--'))
+args, opt, argv = [], {}, sys.argv[1:]
+while argv:  # ids, --flag, --key=value or --key value
+    a = argv.pop(0)
+    if not a.startswith('--'):
+        args.append(a)
+    elif '=' in a:
+        opt[a[2:a.index('=')]] = a[a.index('=') + 1:]
+    elif a == '--out':
+        opt['out'] = argv.pop(0)
+    else:
+        opt[a[2:]] = '1'
 
 
 def run(cmd, **kw):
@@ -25,6 +35,20 @@ def run(cmd, **kw):
 def remotion(vid, dest, extra=''):
     run(f'npx remotion render src/index.ts {vid} "{dest}" --concurrency=12 --log=error {extra}', shell=True)
 
+
+def out_name(vid):
+    course, _, rest = vid.partition('-')
+    return Path(opt['out']) / f'{course.upper()}-{rest}.mp4'
+
+
+if 'join' in opt:  # --join --out DIR ids...: glue already rendered videos into <CODE>-all.mp4/.webm
+    for ext in ('.mp4', '.webm'):
+        lst = HERE / 'out' / 'join.txt'
+        lst.write_text(''.join(f"file '{out_name(v).with_suffix(ext).as_posix()}'\n" for v in args), encoding='utf-8')
+        dest = out_name(args[0]).with_name(f"{args[0].split('-')[0].upper()}-all{ext}")
+        run(['ffmpeg', '-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', str(lst), '-c', 'copy', str(dest)])
+        print(dest)
+    sys.exit()
 
 for vid in args:
     tl = json.loads((HERE / 'src/timeline' / f'{vid}.json').read_text(encoding='utf-8'))
@@ -55,8 +79,7 @@ for vid in args:
         dest = Path(opt['out'])
         raw = HERE / 'out' / f'{vid}.mp4'
         remotion(vid, raw)
-        course, _, rest = vid.partition('-')
-        mp4 = dest / f'{course.upper()}-{rest}.mp4'
+        mp4 = out_name(vid)
         run(['ffmpeg', '-y', '-v', 'error', '-i', str(raw), '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p',
              '-color_range', 'tv', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '160k', '-ar', '48000', '-movflags', '+faststart', str(mp4)])
         run(['ffmpeg', '-y', '-v', 'error', '-i', str(mp4), '-c:v', 'libvpx-vp9', '-deadline', 'realtime', '-cpu-used', '8', '-row-mt', '1',

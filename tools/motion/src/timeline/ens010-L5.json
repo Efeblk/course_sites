@@ -1,0 +1,187 @@
+{
+ "id": "ens010-L5",
+ "title": "Lecture 5 \u00b7 Prevention, radiation, optical imaging",
+ "fps": 30,
+ "dur": 5441,
+ "scenes": [
+  {
+   "id": "health",
+   "from": 18,
+   "dur": 520,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 156,
+     "audio": "audio/7e8c504c8634250f.mp3",
+     "text": "Lecture five moves to health, the most important application of nanomaterials."
+    },
+    {
+     "from": 167,
+     "dur": 200,
+     "audio": "audio/2c4a6bc931d174ec.mp3",
+     "text": "Nanomaterials are used in all three sectors of health: prevention, diagnosis and treatment."
+    },
+    {
+     "from": 377,
+     "dur": 116,
+     "audio": "audio/48f6ab9055695209.mp3",
+     "text": "This lecture covers prevention, and starts on diagnosis."
+    }
+   ]
+  },
+  {
+   "id": "prevent",
+   "from": 538,
+   "dur": 1528,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 171,
+     "audio": "audio/db2c1a9b061bad7b.mp3",
+     "text": "The prevention slide says: the best way to eliminate the problem is to eliminate the cause."
+    },
+    {
+     "from": 181,
+     "dur": 281,
+     "audio": "audio/c91a108fc6a9ddbf.mp3",
+     "text": "Antibacterial, antiviral and antifungal nanoparticles go into masks, gloves, sprays and other personal protective equipment."
+    },
+    {
+     "from": 472,
+     "dur": 353,
+     "audio": "audio/8ba03f1b61642cb3.mp3",
+     "text": "Notice the idea. Nano does not invent new materials here. It uses the same ones, like silver or gold, in nano size. Their higher reactivity kills pathogens better."
+    },
+    {
+     "from": 836,
+     "dur": 333,
+     "audio": "audio/38ed00711a522151.mp3",
+     "text": "Personal care does the same: zinc oxide and titanium dioxide in sunscreen, and silver nanoparticles in antifungal shampoo and antibacterial textiles."
+    },
+    {
+     "from": 1180,
+     "dur": 321,
+     "audio": "audio/a16256199ff18c13.mp3",
+     "text": "His warning: nanomaterials are still new. Their long-term effects, such as genotoxicity, are unknown. Use them with precautions, and with real certificates."
+    }
+   ]
+  },
+  {
+   "id": "early",
+   "from": 2066,
+   "dur": 715,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 120,
+     "audio": "audio/c389feea8885f624.mp3",
+     "text": "Why early diagnosis? The slide gives three reasons."
+    },
+    {
+     "from": 131,
+     "dur": 139,
+     "audio": "audio/8282b9303c803def.mp3",
+     "text": "To choose the best therapeutic method, and stop the disease from progressing."
+    },
+    {
+     "from": 280,
+     "dur": 87,
+     "audio": "audio/fd7c524fe32c4d2c.mp3",
+     "text": "To increase the effectiveness of the treatment."
+    },
+    {
+     "from": 378,
+     "dur": 101,
+     "audio": "audio/527bb6cedf2696c8.mp3",
+     "text": "And to avoid wasting excess medical resources."
+    },
+    {
+     "from": 489,
+     "dur": 199,
+     "audio": "audio/8cf00bcf44fbacfd.mp3",
+     "text": "There are three categories of diagnostic techniques: imaging, biosensors, and wearable sensors."
+    }
+   ]
+  },
+  {
+   "id": "radiation",
+   "from": 2781,
+   "dur": 1279,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 181,
+     "audio": "audio/5e4135ad6744aefd.mp3",
+     "text": "This next part is a likely written question: ionizing versus non-ionizing radiation."
+    },
+    {
+     "from": 192,
+     "dur": 343,
+     "audio": "audio/1f4483af89cc645e.mp3",
+     "text": "Non-ionizing radiation does not have enough energy to ionize our cells. Power lines, radio, mobile networks, infrared and visible light. It is safe."
+    },
+    {
+     "from": 545,
+     "dur": 280,
+     "audio": "audio/0e02445df3392e8b.mp3",
+     "text": "Ionizing radiation, which means ultraviolet, X-rays and gamma rays, has enough energy to break molecular bonds. It is harmful."
+    },
+    {
+     "from": 836,
+     "dur": 245,
+     "audio": "audio/92f9af18c580d467.mp3",
+     "text": "So the techniques that use ionizing radiation are invasive. PET and SPECT use gamma rays. CT uses X-rays."
+    },
+    {
+     "from": 1091,
+     "dur": 161,
+     "audio": "audio/1edb9478df87e578.mp3",
+     "text": "MRI, ultrasound and optical imaging use none of it. They are non-invasive."
+    }
+   ]
+  },
+  {
+   "id": "optical",
+   "from": 4060,
+   "dur": 1333,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 225,
+     "audio": "audio/25f889710a127ade.mp3",
+     "text": "Optical imaging uses light, which is non-ionizing. It can catch metabolic changes, early markers of disease."
+    },
+    {
+     "from": 235,
+     "dur": 120,
+     "audio": "audio/5e1520153a457150.mp3",
+     "text": "Its weakness: light does not penetrate deep into the body."
+    },
+    {
+     "from": 365,
+     "dur": 381,
+     "audio": "audio/4148c97566b1431b.mp3",
+     "text": "Fluorescence imaging injects a dye, such as indocyanine green, that glows under near-infrared light. Because it is injected, it is called minimally invasive. But the dye goes everywhere."
+    },
+    {
+     "from": 757,
+     "dur": 114,
+     "audio": "audio/f9f62b0d3adf64b0.mp3",
+     "text": "Nanoparticles are better probes. Gold nanoparticles."
+    },
+    {
+     "from": 882,
+     "dur": 266,
+     "audio": "audio/10f0aee41f6e92b3.mp3",
+     "text": "Upconversion nanoparticles: they absorb near-infrared light, which penetrates deep, and emit visible or ultraviolet light."
+    },
+    {
+     "from": 1158,
+     "dur": 148,
+     "audio": "audio/7186b7076ff24efc.mp3",
+     "text": "And quantum dots, with an excellent quantum yield and low photobleaching."
+    }
+   ]
+  }
+ ]
+}

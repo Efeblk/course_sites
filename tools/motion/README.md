@@ -31,6 +31,8 @@ npx tsc --noEmit -p .
 python render.py ens010-L4 --check            # add --scene=<id> to render one scene only
 # 5. final: 1080p, re-encoded to yuv420p H.264 plus a VP9/Opus WebM, named ENS010-L4.mp4/.webm
 python render.py ens010-L4 --out C:/Users/efeba/course_sites/materials/ENS010/video
+# 6. optional: one long video of a whole course, glued from the rendered ones (ENS010-all.mp4/.webm)
+python render.py ens010-L2 ens010-L3 ens010-L4 ens010-L5 ens010-L6 ens010-L7 --join --out C:/Users/efeba/course_sites/materials/ENS010/video
 ```
 
 `npx remotion studio src/index.ts` opens the live preview with a timeline scrubber.
@@ -69,7 +71,7 @@ from the script.
   - motion: `prog`, `pop` (spring), `mix`, `mixColor`;
   - text and labels: `Rise` (text that rises in), `Tag` (pill label), `T` (static text), `StageHeading` (serif scene title);
   - drawn parts: `Draw` (a stroke that draws itself), `Arrow`, `Card`, `Mark` (tick or cross);
-  - objects: `Atom`, `hexAtoms`/`hexXY`, `Thermometer`.
+  - objects: `Atom`, `hexAtoms`/`hexXY`, `Thermometer`, `Body` (a human silhouette), `sup` (exponents).
 - Use the palette `C` only, on the warm paper background. Accents are blue, orange, red, teal, green and purple. Use
   no emoji. Plain marks such as ✓, ✗, → and × are fine.
 - Text should be at least 26 px, with no more than about 6 words per label. A scene may have a serif heading at the top.
@@ -86,4 +88,6 @@ from the script.
 - On Windows, call `npx` through the shell (`shell=True`). Use `python -m pip`, because the plain `pip` belongs to
   msys Python.
 - Rendering at full size takes roughly 0.6 s of wall time per second of video, with 12 workers on this PC.
+- The fonts have no superscript minus or plus, so `10⁻⁹` renders as `10⁹`, which is wrong. Write exponents with
+  `sup('10^-9 m')` instead. ² ³ and ₂ are fine.
 - Always check the contact sheet, and fix any overlaps or clipped labels before the final render.
