@@ -3,299 +3,386 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ENS010 — Vize özeti (Türkçe) · Course Sites</title>
+  <title>ENS010 — Vize özeti: sınav noktaları · Course Sites</title>
   <link rel="stylesheet" href="../assets/css/style.css">
-  <style>table.t { margin: 8px 0 18px; } h2 { margin-top: 44px; } .ex { border-left: 4px solid var(--warn); }</style>
+  <style>
+    h2 { margin-top: 48px; }
+    table.t { margin: 8px 0 18px; }
+    .xp { border-top: 1px solid var(--line); padding: 18px 0 6px; margin-top: 18px; }
+    .xp h3 { margin: 0 0 6px; }
+    .xp .tag { font-family: var(--mono); font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-right: 8px; }
+    .xp .tag.hot { color: var(--bad); }
+    .said { font-style: italic; color: var(--muted); border-left: 2px solid var(--line-2); padding: 2px 0 2px 12px; margin: 8px 0; }
+    .write { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--ok); border-radius: 0 var(--radius) var(--radius) 0; padding: 10px 14px; margin: 10px 0; }
+    .write > .lab, .traps > .lab { display: block; font-family: var(--sans); font-size: .76rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ok); margin-bottom: 4px; }
+    .traps { border-left: 3px solid var(--bad); padding: 6px 14px; margin: 10px 0; }
+    .traps > .lab { color: var(--bad); }
+    .traps ul { margin: 4px 0; padding-left: 18px; }
+    .no { text-decoration: line-through; text-decoration-color: var(--bad); }
+    details.q { border-top: 1px solid var(--line); padding: 8px 0; }
+    details.q summary { cursor: pointer; }
+    details.q p { margin: 6px 0 0; }
+  </style>
 </head>
 <body data-root="..">
   <main>
     <div class="mono small muted">ENS010 — vize özeti</div>
-    <h1 style="font-size:2.6rem;margin-top:4px">Vize özeti: Türkçe anlatım, İngilizce terimler</h1>
-    <p class="lead">Vize 8. haftada, kampüste. Sınav İngilizce: çoğu soru çoktan seçmeli, 1–2 tanesi yazılı (klasik). Hoca kendisi söyledi: sorular <b>sadece slaytlardan ve derste anlattıklarından</b> geliyor. Derste izletilen kısa videolardan, tarihlerden ve "hangi boyut hangi renk" sayılarından soru yok. Terimler sınavda nasıl geçiyorsa öyle bırakıldı.</p>
+    <h1 style="font-size:2.5rem;margin-top:4px">Vize özeti: hocanın "sınavda sorarım" dediği yerler</h1>
+    <p class="lead">Sınav İngilizce, kampüste (yer/saat OIS'te). Format: çoğu <b>multiple choice</b>, 1–2 tane <b>classical</b> (yazılı) soru; hocanın örneği "8 sorudan 6'sı test, 2'si yazılı". Sorular <b>sadece slaytlardan ve kayıtlarda anlattıklarından</b>. 7. derste hoca açıkça şunu dedi: <i>"For each lecture I have mentioned which parts are important… check specifically those parts."</i> Bu sayfa o kısımlar üzerine kurulu.</p>
+
+    <div class="callout"><b>Sayfayı nasıl kullan:</b> her kartta üç parça var. <b>Hocanın sözü</b> (kayıttan aynen), <b>Write this</b> (yazılı soru gelirse kâğıda bunu yaz, İngilizce), <b>Traps</b> (test sorusunda karşına çıkacak yanlış şıklar). Kırmızı <span class="mono small" style="color:var(--bad)">MOST LIKELY</span> etiketi = hoca "büyük ihtimalle soracağım" dedi.</div>
+
     <nav class="row toc">
-      <a href="#l2"><b>02</b>Introduction to nano</a>
-      <a href="#l3"><b>03</b>Why size matters</a>
-      <a href="#l4"><b>04</b>Classification</a>
-      <a href="#l5"><b>05</b>Prevention, radiation, optical</a>
-      <a href="#l6"><b>06</b>Imaging techniques</a>
-      <a href="#l7"><b>07</b>Biosensors</a>
-      <a href="#hoca"><b>08</b>"I may ask you" listesi</a>
-      <a href="#yazili"><b>09</b>Yazılı soru cevapları</a>
+      <a href="#l2"><b>L2</b>Nanoscience vs nanotech</a>
+      <a href="#l3"><b>L3</b>Properties, definition</a>
+      <a href="#l4"><b>L4</b>Dimensions, quantum</a>
+      <a href="#l5"><b>L5</b>Radiation, invasive</a>
+      <a href="#l6"><b>L6</b>MRI, PAI, ultrasound</a>
+      <a href="#l7"><b>L7</b>Biosensors</a>
+      <a href="#bg"><b>+</b>Arka plan</a>
+      <a href="#no"><b>&times;</b>Sorulmayacaklar</a>
+      <a href="#check"><b>?</b>Son kontrol</a>
     </nav>
 
-    <div class="callout"><b>Dersin tek cümlelik özeti:</b> malzeme <b>1–100 nm</b>'ye inince <b>surface atoms</b> (yüzey atomları) baskın hale gelir, bu yüzden neredeyse bütün özellikler değişir. Sağlıkta bu, var olan yöntemleri (maske, MRI, ultrason, biyosensör) <b>yeni bir şey icat etmeden</b> nano boyutlu malzemelerle iyileştirmek demek. Hoca bu cümleyi her derste tekrarladı: <i>"we are not inventing, we are improving"</i>.</div>
-
-    <!-- ================= L1 ================= -->
-    <h2 id="l1">Lecture 1 — Course description (kısaca)</h2>
-    <ul>
-      <li>Not: <b>midterm 50% + final 50%</b>. Ödev, proje, sunum yok.</li>
-      <li>Format: kampüste. "8 soru varsa 6'sı multiple choice, 2'si classical olabilir" (oran örnek, kesin değil).</li>
-      <li>Final normalde sadece vizeden sonraki dersleri kapsar.</li>
-      <li>Kitaplar (Nanostructured Materials, Colloidal Foundations of Nanoscience) <b>isteğe bağlı</b>; sınav için gerekmez.</li>
-    </ul>
+    <h3>Sıralama: neye en çok çalışmalı?</h3>
+    <ol>
+      <li><b>L7 biosensors</b>: üç transducer (amperometric / calorimetric / optical) ve performance parameters. Hoca son derste "en çok sorulabilecek kısımlar bunlar" dedi.</li>
+      <li><b>L4 classification by dimension</b>: "most probably I will ask you something from this slide".</li>
+      <li><b>L6</b>: photoacoustic 3 adım, NPs in MRI iki nokta, bubbles nasıl çalışır, hangisi non-invasive.</li>
+      <li><b>L5</b>: ionizing vs non-ionizing, invasive vs non-invasive.</li>
+      <li><b>L3</b>: nanomaterial tanımı, property kategorileri. <b>L2</b>: nanoscience vs nanotechnology.</li>
+    </ol>
 
     <!-- ================= L2 ================= -->
-    <h2 id="l2">Lecture 2 — Introduction to nano</h2>
-    <h3>Neden nano? Convergent science and technology</h3>
-    <p>Yeni teknolojilerin hepsi şu dört alandan en az birine girer: <b>Nano</b> (atoms), <b>Bio</b> (genes, cells), <b>Info</b> (bits), <b>Cogno</b> (neurons). Kısaltması NBIC. Dördünün ortak amacı <b>enhancing human performance</b>, yani insan performansını artırmak. Nanomedicine gibi alanlar birkaçını birleştirir.</p>
+    <h2 id="l2">Lecture 2 — Introduction</h2>
 
-    <h3>Nano bir prefix (önek)</h3>
-    <p><b>Nano = 10⁻⁹</b>, milyarda bir. Yunanca <i>nanos</i> (cüce) kelimesinden gelir. Sadece uzunluk değil, her birimle kullanılır: nanometer, nanosecond, nanogram.</p>
-    <table class="t">
-      <tr><th>Prefix</th><th>Değer</th><th>Kökeni</th></tr>
-      <tr><td>tera</td><td>10¹²</td><td>teras: monster</td></tr>
-      <tr><td>giga</td><td>10⁹</td><td>gigas: giant</td></tr>
-      <tr><td>mega</td><td>10⁶</td><td>megas: large</td></tr>
-      <tr><td>kilo</td><td>10³</td><td>chilioi: thousand</td></tr>
-      <tr><td>milli</td><td>10⁻³</td><td>milli: thousand</td></tr>
-      <tr><td>micro</td><td>10⁻⁶</td><td>mikros: small</td></tr>
-      <tr><td><b>nano</b></td><td><b>10⁻⁹</b></td><td><b>nanos: dwarf</b></td></tr>
-    </table>
-    <p><b>Dönüşümler:</b> 1 nm = 10⁻⁹ m = 10⁻⁶ mm = 10⁻³ µm. <b>1 Å (angstrom) = 10⁻¹⁰ m</b>, yani 1 nm = 10 Å. Slayttaki soru: <b>100 nm = 0.1 µm = 1000 Å</b>.</p>
-    <p><b>Ne kadar küçük?</b> Dünya'nın çapını 10 milyon kat küçültürsen futbol topu olur; topu 1 milyar kat küçültürsen <b>fullerene C60</b> (0.7 nm) olur. Nanomalzemeler <b>protein, DNA ve virüs</b> boyutundadır. Göremediğimiz için çalışmak zordur; bu yüzden <b>electron microscope</b> ve <b>atomic force microscope</b> gibi araçlar geliştirildi.</p>
-
-    <h3 class="ex">Nanoscience vs nanotechnology (sınav sorusu)</h3>
-    <table class="t">
-      <tr><th>Nanoscience</th><th>Nanotechnology</th></tr>
-      <tr><td><b>The study</b> at the nano-size level. Teori: kâğıt üzerinde, bilgisayarda çalışmak, özellikleri kanıtlamak.</td><td>Working at the molecular level, <b>atom by atom</b>; <b>creation</b> of functional materials, devices and systems; <b>control</b> of matter at 1–100 nm; <b>exploitation</b> of novel properties. Pratik: laboratuvar.</td></tr>
-    </table>
-    <p>Hoca: "midterm'de nanoscience ile nanotechnology farkını sorarsam bu slaytı hatırlayın". Şıkta <i>creation, controlling, working in the lab</i> geçiyorsa → nanotechnology; <i>study</i> geçiyorsa → nanoscience. Enstitülerin adı "Nanoscience <b>and</b> Nanotechnology" çünkü ikisini birden (teori + deney) yapıyorlar.</p>
-
-    <h3>Tarih (sadece fikir; tarih ve sayı sorulmayacak)</h3>
-    <ul>
-      <li>İnsanlar nanomalzemeyi bilmeden binlerce yıl kullandı: mağara resimleri, Mısır saç boyası ve <b>Egyptian blue</b>, <b>Lycurgus cup</b> (Au-Ag nanoparçacık, içinden ışık geçince kırmızı), ortaçağ <b>stained glass</b> (vitray) ve seramikler.</li>
-      <li><b>Feynman 1959</b>: "There's plenty of room at the bottom".</li>
-      <li>Ana fikir: altın yüzük hep sarıdır ama nano boyutta altın <b>boyuta ve şekle göre</b> kırmızı, yeşil, turuncu olur. Gümüşte aynı 100 nm'de küre sarı, prizma kırmızımsıdır. Yani nano ölçekte <b>size and shape change properties</b>.</li>
-    </ul>
-    <h3>Uygulamalar ve S-curve</h3>
-    <p>Nano neredeyse her alanda: sensors, drug delivery, cancer treatment, bio-imaging, fuel cells, batteries, solar, coatings, water purification, food. <b>S-curve growth model</b>: her teknoloji önce yavaş (fon yok), sonra yatırımcılar gelince hızlı büyür, sonra doyar (saturation). Textiles → railroad → automobile → computer → nanotech. <b>Nanotech hızlı büyüme fazının başında</b>; hoca: "geç değil, tam zamanı".</p>
+    <div class="xp">
+      <h3><span class="tag">Exam 1 · L2</span>Nanoscience vs nanotechnology</h3>
+      <div class="said">"If I ask you something in your mid-term exam, the differences between Nanoscience and nanotechnology."</div>
+      <p>Fark basit: <b>nanoscience = çalışmak, incelemek</b> (teori, kâğıt, bilgisayar); <b>nanotechnology = laboratuvarda yapmak, kontrol etmek</b> (pratik). Enstitüler ikisini de yapıyor, o yüzden adları "Institute for Nanoscience <b>and</b> Nanotechnology".</p>
+      <div class="write"><span class="lab">Write this</span>
+        <b>Nanoscience</b> is the study of phenomena at the nano-size level. It is theoretical: researchers study and prove the properties of materials at this scale (on paper, by computer).<br>
+        <b>Nanotechnology</b> is the ability to work at the molecular level, atom by atom, to create functional materials, devices and systems, by controlling matter in the 1–100 nm range and using the new properties that appear at that scale. It is practical and experimental (in the lab).
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li>Şıkta <i>creating, controlling, working atom by atom, in the lab</i> → <b>nanotechnology</b>. <i>study, theory</i> → <b>nanoscience</b>.</li>
+        <li>"Nanoscience and nanotechnology are the same thing" → <b>yanlış</b>.</li>
+      </ul></div>
+    </div>
 
     <!-- ================= L3 ================= -->
     <h2 id="l3">Lecture 3 — Why size matters</h2>
-    <h3>Bulk → micro → nano</h3>
-    <p><b>Bulk material</b>: görebildiğimiz, dokunabildiğimiz malzeme (powdery, granular, lumpy). Milimetrelik toz da hâlâ bulk. <b>Microparticles</b> tek tek görünmez. Asıl değişim <b>yaklaşık 100 nm'nin altında</b> başlar.</p>
-    <h3>Asıl sebep: surface-to-volume ratio</h3>
-    <ul>
-      <li>Nanomalzemelerin <b>surface area to volume ratio</b> değeri çok yüksektir (birimi <b>m²/m³</b>).</li>
-      <li>Boyut küçüldükçe <b>yüzeydeki atomların yüzdesi</b> hızla artar. Nano ölçekte yüzey atomları içteki atomları geçer (oran > 1).</li>
-      <li>Bu yüzden <b>surface-area-related properties</b> (reactivity, boiling point, melting point…) bulk özelliklere baskın gelir. Nanomalzemenin farklı davranmasının sebebi budur.</li>
-      <li>Slayt 5'teki tablo (13 atomda %92 yüzey, 923 atomda %39) <b>sorulmayacak</b>; sadece eğilimi bil.</li>
-    </ul>
-    <h3 class="ex">Özellik kategorileri (hoca uyardı)</h3>
-    <table class="t">
-      <tr><th>Kategori</th><th>Slayttaki örnek</th><th>Nano'da ne oluyor?</th></tr>
-      <tr><td><b>Physical</b></td><td>melting point</td><td>Düşer.</td></tr>
-      <tr><td><b>Chemical</b></td><td>reactivity (catalytic activity)</td><td>Artar.</td></tr>
-      <tr><td><b>Electrical</b></td><td>conductivity</td><td>Değişir (CNT'ler bükülünce bile).</td></tr>
-      <tr><td><b>Mechanical</b></td><td>strength</td><td>Değişir.</td></tr>
-      <tr><td><b>Optical</b></td><td>light emission (renk)</td><td>Nano altın kırmızı.</td></tr>
-    </table>
-    <div class="callout warn"><b>Hocanın sözü:</b> "Reactivity physical değil, <b>chemical</b>. Conductivity physical değil. Light emission ve strength physical değil. <b>Melting point physical</b>. Bu örnekler önemli, dikkat edin." Muhtemel soru: "Which is a physical property?" → melting point.</div>
-    <h3>Tek tek özellikler</h3>
-    <ul>
-      <li><b>Catalytic activity (chemical):</b> boyuta ve şekle bağlı. <b>Activation energy ile ters orantılı</b>. Boyut küçülünce activation energy düşer, aktivite artar, daha iyi catalyst olur. Kullanım: <b>petroleum processing, energy conversion, pollutant removal</b>. Hocanın "milyon dolarlık" fikri: yeni catalyst icat etme, fabrikanın kullandığını <b>nano boyutta</b> ver.</li>
-      <li><b>Melting point (physical):</b> tanım: atomların onları katıda "sabit" pozisyonda tutan kuvvetleri yenecek enerjiye ulaştığı sıcaklık. <b>Surface atoms</b> daha az komşuyla temas eder (<b>unsaturated</b>, boşta bağları var). Daha az enerjiyle hareket eder ve ilk onlar erir. Nano parçacık çoğunlukla yüzey olduğu için <b>erime noktası düşer</b> (altın: bulk ≈1064 °C, birkaç nm'de çok daha düşük).</li>
-      <li><b>Electrical:</b> bulk karbonun (grafit) iletkenliği boyuttan ve bükülmeden etkilenmez. <b>Carbon nanotube</b> iletkenliği kesit alanı ve bükülmeyle (twisting) değişir; <b>MWCNT ile SWCNT</b> aynı boyutta farklı iletir. Normal tel inceltilince direnç artar, ısınır, yanar; nano teller küçük çapta bile iletir, bu yüzden çipler küçülmeye devam edebildi. Nanostructured solar cells: <b>print-like manufacturing</b>, esnek rulolar, daha ucuz.</li>
-      <li><b>Optical:</b> bulk altın sarı, nano altın kırmızı. Sebep: elektronlar bulk'taki gibi serbest hareket edemez, ışıkla farklı etkileşir.</li>
-      <li><b>Biological:</b> biyolojik bariyerlerden (<b>cell membrane, blood-brain barrier</b>) daha kolay geçer (<b>higher permeability</b>) ve <b>biocompatibility</b> daha yüksektir. Proteinlerle ilişkisi <b>size, curvature, shape, surface (charge, functionalization)</b> ile belirlenir. Büyük parçacığı vücut yabancı cisim sayıp atar; nano parçacık hücreye girip ilacı tümöre taşıyabilir. Hoca: "en önemli uygulama budur".</li>
-    </ul>
-    <h3 class="ex">Nanomaterial tanımı (kelimesi kelimesine ezberle)</h3>
-    <div class="callout warn"><b>A nanomaterial is a material with at least one dimension in the nano size regime (1 to 100 nm).</b> Hoca: "Bu tanım çok önemli, dikkat edin." Neden 1000 değil de 100? Çünkü 500–900 nm'de malzeme hâlâ bulk gibi davranır; özellikler 100 nm civarında değişmeye başlar.</div>
+
+    <div class="xp">
+      <h3><span class="tag">Exam 2 · L3</span>Property kategorileri ve örnekleri</h3>
+      <div class="said">"I'm not examining you from this table in your midterm, but … if I ask you about the physical properties, you should know that reactivity is a chemical, not a physical property. Conductivity is not a physical property. Light emission and strength are not physical properties. Melting point is a physical property. So the examples of each of these properties are important."</div>
+      <p>Boyut küçülünce <b>surface atoms</b> oranı artar ve yüzeyle ilgili bütün özellikler değişir. Hoca her kategorinin <b>örneğini</b> bilmeni istiyor (yüzde tablosunu değil).</p>
+      <table class="t">
+        <tr><th>Category</th><th>Example on the slide</th><th>What happens at nano size</th></tr>
+        <tr><td><b>Physical</b></td><td><b>melting point</b></td><td>decreases</td></tr>
+        <tr><td><b>Chemical</b></td><td>reactivity (catalytic activity)</td><td>increases</td></tr>
+        <tr><td><b>Electrical</b></td><td>conductivity</td><td>changes</td></tr>
+        <tr><td><b>Mechanical</b></td><td>strength</td><td>changes</td></tr>
+        <tr><td><b>Optical</b></td><td>light emission, colour</td><td>changes (nano gold is red)</td></tr>
+        <tr><td colspan="3">Diğerleri: magnetic, biological properties.</td></tr>
+      </table>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li>"Which of these is a physical property?" → <b>melting point</b>.</li>
+        <li class="no">"Reactivity is a physical property"</li>
+        <li class="no">"Conductivity / strength / light emission is a physical property"</li>
+      </ul></div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 3 · L3 · most likely</span>What is a nanomaterial?</h3>
+      <div class="said">"Be careful of this description. This is very important. If somebody asks you what is a nanomaterial, you should say a material with at least one dimension in the range 1 to 100 nanometers."</div>
+      <p>Neden 100? 900 nm, 500 nm'de malzeme hâlâ bulk gibi davranır. <b>100 nm eşik</b>: oradan aşağı inince surface-to-volume ratio sert biçimde artar ve özellikler değişir.</p>
+      <div class="write"><span class="lab">Write this</span>
+        A nanomaterial is a material with <b>at least one dimension in the nano-size range, 1 to 100 nm</b>. 100 nm is the threshold: below it, the surface area to volume ratio and the share of surface atoms increase drastically, so surface-related properties dominate and the properties of the material change. Above 100 nm (for example 500 or 900 nm) the material still behaves like a bulk material.
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"all three dimensions must be 1–100 nm" (bu nanoparticle'ın tanımı, nanomaterial'ın değil)</li>
+        <li class="no">"1 to 1000 nm" (bu matematikteki nano size, bkz. Exam 6)</li>
+      </ul></div>
+    </div>
 
     <!-- ================= L4 ================= -->
-    <h2 id="l4">Lecture 4 — Nanomaterials classification</h2>
-    <p>Birçok sınıflandırma var (origin: engineered/incidental/natural; composition: carbonaceous/organic/inorganic/composite; phase; dispersion…). Hoca bunları ezberlemeni beklemiyor. <b>Asıl önemli olan: boyuta göre sınıflandırma (dimensionality)</b>. Hoca: "bu slayt midterm için iyi bir seçenek olabilir, büyük ihtimalle buradan soracağım".</p>
-    <h3 class="ex">Kural: sayı "serbest kalan" boyutları sayar</h3>
-    <p>"Dimension" burada <b>hâlâ 100 nm'den büyük olan, yani küçültülebilecek</b> boyut sayısıdır. Bu, parçacığın fiziksel boyut sayısı değil, bir isimlendirme kuralı.</p>
-    <table class="t">
-      <tr><th>1–100 nm'ye inen boyut sayısı</th><th>Serbest boyut</th><th>Adı</th><th>Örnekler</th></tr>
-      <tr><td>0</td><td>3</td><td><b>Bulk material</b> (nano değil)</td><td>bütün boyutlar > 100 nm</td></tr>
-      <tr><td>1</td><td>2</td><td><b>2D nanomaterial</b></td><td>nano-plate, coating, layer, <b>film</b>, sheet; <b>graphene</b></td></tr>
-      <tr><td>2</td><td>1</td><td><b>1D nanomaterial</b></td><td>nano-<b>wire</b>, rod, fiber, <b>tube</b></td></tr>
-      <tr><td>3</td><td>0</td><td><b>0D nanomaterial</b></td><td><b>nanoparticle</b>, nanocluster, quantum dot</td></tr>
-    </table>
-    <div class="callout bad"><b>En büyük tuzak:</b> 2D "iki boyutu nano" demek DEĞİL. 2D = <b>iki boyutu büyük, bir boyutu nano</b> (film). Nanowire/nanotube <b>1D</b>. <b>3D nanomaterial yok</b>: hiçbir boyut 100 nm altında değilse bulk'tır.</div>
-    <h3>Quantum materials (1–10 nm)</h3>
-    <p>100 nm'deki büyük değişimin aynısı <b>~10 nm</b> civarında tekrar olur. Burada sadece <b>quantum physics</b> geçerlidir (elektron aynı anda iki yerde olabilir). <b>Quantum material</b>: en az bir boyutu <b>1–10 nm</b>.</p>
-    <table class="t">
-      <tr><th></th><th>Bir boyut küçük</th><th>İki boyut küçük</th><th>Üç boyut küçük</th></tr>
-      <tr><td>Nano (&lt; 100 nm)</td><td>nano-film (2D)</td><td>nano-wire (1D)</td><td>nanoparticle (0D)</td></tr>
-      <tr><td>Quantum (&lt; 10 nm)</td><td><b>quantum well</b> (film)</td><td><b>quantum wire</b></td><td><b>quantum dot</b></td></tr>
-    </table>
-    <div class="callout warn"><b>Hocanın "iyi midterm sorusu":</b> "Are all nanomaterials quantum materials?" → <b>Hayır.</b> Bütün quantum materials nanomaterial'dır, ama her nanomaterial quantum değildir (örn. 50 nm). Bir de: "What is nano size in mathematics?" → <b>1000 nm'den (1 µm) küçük her şey</b>. Malzemede ise sadece 1–100 nm sayılır, çünkü özellikler orada değişir.</div>
+    <h2 id="l4">Lecture 4 — Classification and quantum materials</h2>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 4 · L4 · most likely</span>Classification by dimension (0D, 1D, 2D)</h3>
+      <div class="said">"This slide and the whole information that I will talk in this slide could be a good option for your midterm exam… most probably I will ask you something from this slide."</div>
+      <p>Başka sınıflandırmalar da var (origin, composition, phase…) ama hoca "bunları ezberlemenizi beklemiyorum" dedi. Önemli olan boyut sınıflandırması. <b>Kural:</b> adındaki sayı, <b>hâlâ büyük kalan (100 nm üstü, "serbest") boyut</b> sayısıdır; nano olan boyut sayısı değil.</p>
+      <table class="t">
+        <tr><th>Dimensions in 1–100 nm</th><th>Free (large) dimensions</th><th>Name</th><th>Examples</th></tr>
+        <tr><td>0</td><td>3</td><td><b>bulk material</b> (not nano)</td><td>—</td></tr>
+        <tr><td>1</td><td>2</td><td><b>2D nanomaterial</b></td><td>nano-film, nano-plate, nano-coating, nano-layer, sheet (graphene)</td></tr>
+        <tr><td>2</td><td>1</td><td><b>1D nanomaterial</b></td><td>nanowire, nanorod, nanofiber, nanotube</td></tr>
+        <tr><td>3</td><td>0</td><td><b>0D nanomaterial</b></td><td><b>nanoparticle</b></td></tr>
+      </table>
+      <div class="write"><span class="lab">Write this</span>
+        Nanomaterials are classified by the number of dimensions that are still outside the nano range. If only one dimension is reduced to 1–100 nm, the material is a <b>2D nanomaterial</b> (nano-films, coatings, layers, plates). If two dimensions are in the nano range, it is a <b>1D nanomaterial</b> (nanowires, nanorods, nanofibers, nanotubes). If all three dimensions are in the nano range, there is no free dimension left, so it is a <b>0D nanomaterial</b>, also called a <b>nanoparticle</b>. If no dimension is below 100 nm, it is a bulk material.
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"A 2D nanomaterial has two dimensions in the nano range" (tersi: bir boyutu nano, ikisi büyük)</li>
+        <li class="no">"A nanotube is a 2D nanomaterial" (1D)</li>
+        <li class="no">"A 3D nanomaterial has all three dimensions in the nano range" (öyle bir şey yok; o 0D)</li>
+      </ul></div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag">Exam 5 · L4</span>What are nanoparticles?</h3>
+      <div class="said">"If I ask you what are nanoparticles … you should say …" (all three dimensions in nano size, zero-dimensional)</div>
+      <div class="write"><span class="lab">Write this</span>
+        Nanoparticles are <b>zero-dimensional (0D) nanomaterials</b>: all three dimensions are in the nano range (1–100 nm), so there is no free dimension left to decrease.
+      </div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag">Exam 6 · L4</span>What is nano size in mathematics?</h3>
+      <div class="said">"Now, I may ask you a question. What is a nano size in mathematics? A nano size in mathematics is a size less than a micron or less than 1000 nanometer."</div>
+      <p>Dikkat: matematikte 900 nm de "nano"dur, ama <b>nanomaterial</b> sadece 1–100 nm. Fark, özelliklerin 100 nm altında değişmesinden geliyor.</p>
+      <div class="write"><span class="lab">Write this</span>
+        In mathematics, nano size is any size <b>less than one micron (1000 nm)</b>: 900, 500, 100, 10 nm are all nano sizes. But a nanomaterial is defined only as 1–100 nm, because properties change below 100 nm. Materials above 100 nm are bulk materials.
+      </div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 7 · L4 · most likely</span>Are all nanomaterials quantum materials?</h3>
+      <div class="said">"A good question for your midterm could be, are all nanomaterials quantum materials or not? … All quantum materials could be considered as nanomaterials, but not necessarily all nanomaterials could be considered as quantum materials. This is important to know."</div>
+      <p>100 nm'deki sert değişimin aynısı <b>~10 nm</b> civarında bir daha olur; orada quantum physics geçerli. <b>Quantum material = en az bir boyutu 1–10 nm.</b></p>
+      <table class="t">
+        <tr><th></th><th>one dimension small</th><th>two dimensions small</th><th>three dimensions small</th></tr>
+        <tr><td>&lt; 100 nm (nano)</td><td>nano-film (2D)</td><td>nanowire (1D)</td><td>nanoparticle (0D)</td></tr>
+        <tr><td>&lt; 10 nm (quantum)</td><td><b>quantum well</b></td><td><b>quantum wire</b></td><td><b>quantum dot</b></td></tr>
+      </table>
+      <div class="write"><span class="lab">Write this</span>
+        <b>No.</b> Quantum materials have at least one dimension in the 1–10 nm range. Since 1–10 nm is inside 1–100 nm, <b>all quantum materials are nanomaterials</b>. But <b>not all nanomaterials are quantum materials</b>: for example, a 50 nm nanomaterial is a nanomaterial but not a quantum material. In the quantum range the forms are called quantum well, quantum wire and quantum dot.
+      </div>
+    </div>
 
     <!-- ================= L5 ================= -->
-    <h2 id="l5">Lecture 5 — Health: prevention, early diagnosis, radiation, optical imaging</h2>
-    <p>Sağlık, nanomalzemenin <b>en önemli uygulaması</b>. Üç alanda kullanılır: <b>prevention, diagnosis, treatment</b> (treatment vizeden sonra).</p>
-    <h3>Prevention</h3>
-    <ul>
-      <li>Slogan: <i>"The best way to eliminate the problem is to eliminate the cause."</i></li>
-      <li><b>Disinfecting nanomaterials</b>, <b>antibacterial / antiviral / antifungal NPs</b>: maske, eldiven, sprey, <b>PPE</b> (personal protective equipment) içinde.</li>
-      <li>Yeni yöntem icat edilmiyor. Aynı malzeme (gümüş, altın, ZnO, TiO₂) <b>nano boyutta</b> kullanılıyor, çünkü <b>reactivity / catalytic activity</b> daha yüksek ve patojenleri daha iyi öldürüyor.</li>
-      <li><b>Personal care:</b> <b>sunscreen</b> (ZnO, TiO₂ → daha derin ve uzun koruma), <b>shampoo</b> (antifungal, Ag NPs), <b>anti-aging cream</b> (L'Oréal, biodegradable shell içinde 10–100 nm aktif madde), <b>antibacterial textile</b> (Ag NPs).</li>
-      <li><b>Uyarı:</b> nanomalzemeler yeni; uzun vadeli etkileri (örn. <b>genotoxicity</b>) bilinmiyor. Maskeden nanoparçacık solunabilir. <b>Precaution</b> ve gerçek <b>certificate</b> ile kullan.</li>
-    </ul>
-    <h3>Early diagnosis neden önemli? (slide 10)</h3>
-    <ol>
-      <li>To choose the <b>best therapeutic method</b> and prevent disease progression.</li>
-      <li>To increase the <b>effectiveness of treatment</b>.</li>
-      <li>To avoid <b>wasting excess medical resources</b>.</li>
-    </ol>
-    <p>Conventional: wait → tests → treatment. Early: <b>test on bedside → results online → treatment starts</b>.</p>
-    <p><b>Üç diagnostic technique kategorisi:</b> 1 <b>imaging techniques</b>, 2 <b>biosensor techniques</b>, 3 <b>wearable sensors</b>.</p>
-    <h3 class="ex">Ionizing vs non-ionizing, invasive vs non-invasive (yazılı soru adayı)</h3>
-    <table class="t">
-      <tr><th></th><th>Non-ionizing radiation</th><th>Ionizing radiation</th></tr>
-      <tr><td>Tanım</td><td>Hücreleri iyonize edecek kadar enerjisi yok → güvenli</td><td>Yüksek enerji, <b>molecular bonds</b>'u kırabilir → zararlı</td></tr>
-      <tr><td>Örnekler</td><td>power lines, radio/TV, mobile, satellite, <b>IR</b>, <b>visible light</b>, low-frequency EM fields</td><td><b>UV, X-rays, gamma rays</b></td></tr>
-      <tr><td>Bunu kullanan teknik</td><td><b>Non-invasive</b>: <b>MRI, ultrasound, optical imaging</b></td><td><b>Invasive</b>: <b>PET, SPECT</b> (gamma, X-ray'den bile tehlikeli), <b>CT</b> (X-ray)</td></tr>
-    </table>
-    <p>Neden tek bir mükemmel teknik yok? Her birinin <b>advantages / disadvantages</b> var: güvenli olanların çözünürlüğü (resolution) veya hassasiyeti (sensitivity) düşük, keskin/derin görenler zararlı radyasyon kullanıyor. Doktor hastalığa, evresine ve aciliyetine göre seçer.</p>
-    <h3>Optical imaging ve nanoparçacıklar</h3>
-    <ul>
-      <li><b>Optical imaging</b>: ışık ve fotonla organ, doku, hücre, hatta molekül görüntüler; <b>non-ionizing</b>; <b>early markers</b> olan <b>metabolic changes</b>'i yakalar. Zayıf yönü: ışık <b>derine inmez</b>.</li>
-      <li><b>Fluorescence imaging</b>: NIR ışık altında parlayan bir <b>dye (probe)</b>, örn. <b>ICG (indocyanine green)</b>, damardan verilir. İğne kullanıldığı için "<b>non-invasive or minimally invasive</b>".</li>
-      <li><b>Nano-sized probes</b> (slide 16): <b>Gold NPs</b> (nanoshells, nanorods, nanocages); <b>UCNPs</b> (upconversion NPs: <b>NIR alır</b>, derine iner, <b>UV/visible yayar</b>; stable); <b>QDs</b> (quantum dots: excellent quantum yield, low photobleaching, sharp emission, stable). ICG her yere gider; nano probe'lar biocompatible ve <b>targetable</b>.</li>
-    </ul>
+    <h2 id="l5">Lecture 5 — Prevention, early diagnosis, radiation</h2>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 8 · L5 · written candidate</span>Ionizing vs non-ionizing radiation</h3>
+      <div class="said">"So in your exam, if I ask you about ionizing and non-ionizing radiations, you should write these descriptions."</div>
+      <p>Tek soru: radyasyonun hücreyi iyonize edecek (moleküler bağları kıracak) kadar enerjisi var mı?</p>
+      <div class="write"><span class="lab">Write this</span>
+        <b>Non-ionizing radiation</b> does not have enough energy to ionize our cells, so it is considered safe. Examples: power lines, radio and TV waves, mobile networks, satellite signals, infrared (IR), visible light and low-frequency electromagnetic fields.<br>
+        <b>Ionizing radiation</b> has enough energy to break the molecular bonds of our cells, so it is harmful. Examples: ultraviolet (UV), X-rays and gamma rays.
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"IR / visible light is ionizing"</li>
+        <li class="no">"UV is non-ionizing"</li>
+      </ul></div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 9 · L5 · written candidate</span>Invasive vs non-invasive techniques</h3>
+      <div class="said">"If I ask you about the invasive techniques and non-invasive techniques, you should say that invasive techniques are techniques that use ionizing radiations such as ultraviolet, UV, X-ray and gamma ray."</div>
+      <div class="write"><span class="lab">Write this</span>
+        <b>Invasive</b> (harmful, non-safe) imaging techniques use <b>ionizing radiation</b> such as UV, X-rays and gamma rays: <b>CT</b> (X-ray), <b>PET</b> and <b>SPECT</b> (gamma rays).<br>
+        <b>Non-invasive</b> techniques use <b>non-ionizing radiation</b> such as IR, visible light, radio waves and low-frequency electromagnetic fields, or only sound: <b>MRI</b>, <b>ultrasound</b> and <b>optical imaging</b> (optical/fluorescence imaging is called non-invasive or minimally invasive because the dye is injected).
+      </div>
+    </div>
 
     <!-- ================= L6 ================= -->
     <h2 id="l6">Lecture 6 — Imaging techniques</h2>
-    <table class="t">
-      <tr><th>Teknik</th><th>Pros</th><th>Cons</th><th>Invasive?</th></tr>
-      <tr><td>MRI</td><td>high spatial resolution, no penetration limit</td><td>low sensitivity, high cost, long imaging time</td><td>Hayır</td></tr>
-      <tr><td>PET</td><td>unlimited depth, high sensitivity</td><td>poor spatial resolution, radiation risk</td><td><b>Evet</b></td></tr>
-      <tr><td>SPECT</td><td>unlimited depth, high sensitivity</td><td>poor spatial resolution, radiation risk</td><td><b>Evet</b></td></tr>
-      <tr><td>CT</td><td>high spatial resolution, strong penetration</td><td>radiation risk</td><td><b>Evet</b></td></tr>
-      <tr><td>Ultrasound</td><td>high sensitivity, real-time, low cost</td><td>poor resolution, operator-dependent</td><td>Hayır</td></tr>
-      <tr><td>Optical</td><td>high sensitivity, real-time, cost effective</td><td>low spatial resolution, small penetration depth</td><td>Hayır (minimally)</td></tr>
-    </table>
-    <h3>MRI (Magnetic Resonance Imaging)</h3>
-    <ol>
-      <li>Vücut su dolu; her su molekülünde 2 hidrojen var, hidrojen çekirdeği bir <b>proton</b>. Dönen yüklü proton küçük bir mıknatıs gibidir; normalde rastgele yönlerde döner.</li>
-      <li>MRI'ın güçlü <b>magnetic field</b>'ı protonları <b>hizalar</b> (align).</li>
-      <li>Teknisyen <b>radio-frequency (RF) pulse</b> gönderir, protonları hizadan çıkarır (90° veya 180°).</li>
-      <li>Pulse kesilince protonlar <b>tekrar hizalanır ve enerji salar</b>; <b>coil</b> bu enerjiyi algılar.</li>
-      <li>Farklı dokulardaki protonlar farklı enerji salar; bilgisayar bunu görüntüye çevirir. <b>Fotoğraf değildir.</b></li>
-    </ol>
-    <p>İyonlaştırıcı radyasyon yok → <b>non-invasive</b> (hoca: çoktan seçmelide "hangisi non-invasive" diye sorabilirim). Eski adı <b>NMR</b>; "nuclear" kelimesi insanları korkuttuğu için atıldı.</p>
-    <div class="callout warn"><b>Nanoparticles in MRI (hoca: "iki nokta söyleyebilirsiniz"):</b><br>
-      1. <b>Contrast agent olarak magnetic NPs</b>: <b>SPIO</b> (superparamagnetic iron oxide), manganese oxide, rare-earth (<b>Gd</b>) oxide, alloys (<b>FePt</b>). <b>Biocompatible</b> olmalı.<br>
-      2. <b>Carrier olarak NPs</b>: mevcut ajanı <b>encapsulation</b>, <b>stabilizing</b>, <b>biocompatible polymeric coating</b>, <b>targetability</b> → <b>decreased toxicity, decreased side effects</b>.<br>
-      Neden? <b>Gadolinium toksik ve her yere dağılıyor.</b> Önemli parametre: modifikasyondan sonra <b>magnetic properties korunmalı</b>.</div>
-    <h3>PET ve SPECT (ikisi de invasive, ikisi de pahalı)</h3>
-    <table class="t">
-      <tr><th>PET (Positron Emission Tomography)</th><th>SPECT (Single Photon Emission Computed Tomography)</th></tr>
-      <tr><td><b>Positron-emitting</b> radioisotopes: <b>¹⁸F</b>, ¹²⁴I, ¹¹¹In, ⁶⁴Cu</td><td><b>Gamma-emitting</b> radioisotope: <b>Technetium-99m</b></td></tr>
-      <tr><td>Positron + electron → <b>annihilation</b> → <b>2 gamma ray (511 keV)</b>, zıt yönlerde</td><td>Gamma'yı <b>doğrudan</b> yayar (<b>141 keV</b>); elektrona gerek yok</td></tr>
-      <tr><td colspan="2"><b>Gamma camera</b> algılar, <b>biodistribution</b> görülür. <b>NP rolü:</b> radiotracer'ı <b>hedef bölgeye taşımak</b>, gamma her yerde oluşmasın.</td></tr>
-    </table>
-    <h3 class="ex">Photoacoustic Imaging (PAI): 3 adımı tam yaz</h3>
-    <ol>
-      <li><b>Illumination</b> of the matter with a <b>laser pulse</b>.</li>
-      <li>The absorbed optical radiation <b>excites the electrons</b>; the excited electrons <b>relax back to the ground state</b> and the absorbed energy is <b>released as heat</b>.</li>
-      <li>The heated area tries to <b>expand</b>; this abrupt <b>thermal expansion</b> produces an outgoing <b>thermoacoustic wave</b>, detected by an <b>ultrasound transducer</b>.</li>
-    </ol>
-    <p><b>Advantages:</b> (1) <b>anatomical, functional and molecular contrast</b> tek modalitede; (2) <b>several centimeters</b> derine iner. <b>Contrast agents:</b> <b>plasmonic nanoparticles</b>: <b>Au NPs, Ag NPs, SWNT</b>; <b>superior ability to absorb light</b> ve <b>optimized light-to-acoustic conversion efficiency</b>.</p>
-    <p>Hoca: "procedure'ü sorarsam bu 3 adımı tam anlatmalısınız; advantages ve contrast agents da burada." Ayrıca: <b>photoacoustic ≠ ultrasound</b>.</p>
-    <h3>Ultrasound (US) ve bubbles</h3>
-    <ul>
-      <li>Sadece ses: <b>probe</b> yüksek frekanslı ses gönderir, <b>echo</b>'yu alır → <b>non-invasive</b>. Farkı: PAI'de giriş <b>laser (ışık)</b>, çıkış ses; US'de giriş de çıkış da <b>ses</b>.</li>
-      <li>Ses derine gittikçe echo zayıflar → derin dokular için <b>contrast agent</b> lazım.</li>
-      <li><b>Micro/nano-bubbles</b> şu an klinikte kullanılan <b>tek</b> US contrast agent; boyutları yüzünden <b>intravascular</b> (damar içinde) kalırlar.</li>
-      <li><b>Nasıl çalışır (hoca: "sorarsam nasıl cevap vereceğinizi bilin"):</b> ultrasona maruz kalınca <b>volumetric oscillation</b> (genleşme ve büzülme, patlamadan) → <b>strong nonlinear acoustic response</b> + high backscatter → <b>signal-to-noise ratio</b> artar, kontrast keskinleşir.</li>
-      <li>Nesiller: 1968 kabuksuz (kolay patlar) → protein → protein/lipid → <b>polymer</b> → hybrid. <b>Polymer</b> kabuk en fazla kontrolü verir (chain composition, length, rigidity); lipid ve protein bunu veremez.</li>
-    </ul>
-    <h3>Multimodal imaging</h3>
-    <p>Hiçbir teknik mükemmel değil, o yüzden birleştirilir: <b>SPECT/CT, PET/CT, MRI/PET</b>. <b>CT (X-ray) anatomy</b> (yapı) gösterir, <b>SPECT function</b> (fizyoloji: kalbe kan akışı, beynin aktif bölgeleri, kanserin kemikte etkilediği yer) gösterir.</p>
+
+    <div class="xp">
+      <h3><span class="tag">Exam 10 · L6 · MC</span>Which technique is non-invasive?</h3>
+      <div class="said">"So in your midterm, if I ask you or if I gave some options and some multiple choice questions that which of these techniques are non-invasive, MRI could be considered as one of those techniques."</div>
+      <p>MRI sadece <b>magnetic field</b> ve radio waves kullanır, ionizing radiation yok → non-invasive. Ultrasound sadece ses → non-invasive.</p>
+      <table class="t">
+        <tr><th>Non-invasive</th><th>Invasive</th></tr>
+        <tr><td><b>MRI</b>, <b>ultrasound</b>, optical imaging</td><td><b>CT</b> (X-ray), <b>PET</b>, <b>SPECT</b> (gamma)</td></tr>
+      </table>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 11 · L6 · written candidate</span>Roles of nanoparticles in MRI</h3>
+      <div class="said">"If I ask you what are the applications of nanoparticles or roles of nanoparticles in MRI? You can consider two points."</div>
+      <p>Problem: klasik contrast agent <b>gadolinium</b> toksik ve vücutta <b>her yere dağılıyor</b>. Nanoparçacık bu iki sorunu iki yoldan çözüyor: ya ajanın yerine geçiyor, ya da ajanı taşıyor.</p>
+      <div class="write"><span class="lab">Write this</span>
+        <b>1. Nanoparticles as contrast agents:</b> magnetic nanoparticles such as superparamagnetic iron oxide (SPIO), manganese oxide, rare-earth (gadolinium) oxides and alloys such as FePt can be used as MRI contrast agents to enhance the quality and resolution of the images. They must be <b>biocompatible</b> (not toxic).<br>
+        <b>2. Nanoparticles as carriers:</b> existing contrast agents such as gadolinium cannot be targeted because their surface cannot be modified. If we <b>encapsulate</b> them inside nanoparticles, we can <b>stabilize</b> them, coat them with a <b>biocompatible polymer</b> and modify the surface to <b>target</b> only the specific site, so they do not spread everywhere in the body. Result: <b>decreased toxicity and side effects</b>.<br>
+        In both cases the <b>magnetic properties of the agent must be kept</b> after modification.
+      </div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 12 · L6 · written candidate</span>Photoacoustic imaging (PAI): procedure, advantages, contrast agents</h3>
+      <div class="said">"If I ask you what is the procedure of photoacoustic, you should completely describe these three steps. If I ask you about the advantages, here it is. And if I ask you about the contrast agents, these are the contrast agents… Be careful, this photoacoustic is different from ultrasonic."</div>
+      <p>Mantık: <b>ışık girer, ses çıkar</b>. Lazer dokuyu ısıtır, ısınan doku genleşir, genleşme ses dalgası üretir.</p>
+      <div class="write"><span class="lab">Write this</span>
+        <b>Procedure (3 steps):</b><br>
+        1. The tissue is <b>illuminated with a laser pulse</b>.<br>
+        2. The absorbed light <b>excites the electrons</b>; the excited electrons <b>relax back to the ground state</b> and the absorbed energy is <b>released as heat</b>.<br>
+        3. The heated area tries to expand; this abrupt <b>thermal expansion</b> produces an outgoing <b>thermoacoustic (sound) wave</b>, which is detected by an <b>ultrasound transducer</b> and turned into an image.<br>
+        <b>Advantages:</b> it gives <b>anatomical, functional and molecular contrast</b> in a single modality, and it can image <b>several centimeters deep</b>.<br>
+        <b>Contrast agents:</b> plasmonic nanoparticles such as <b>gold nanoparticles, silver nanoparticles and single-walled carbon nanotubes (SWNT)</b>, because they have a superior ability to absorb light and an optimized light-to-acoustic conversion efficiency.
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"Photoacoustic imaging is the same as ultrasound" (PAI'de giriş <b>laser/light</b>, US'de giriş de çıkış da <b>sound</b>)</li>
+        <li class="no">"The signal detected in PAI is light" (algılanan şey <b>sound wave</b>)</li>
+      </ul></div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 13 · L6 · written candidate</span>How do micro/nano-bubbles work in ultrasound?</h3>
+      <div class="said">"I have written in this specifically because if I ask you, you know how to respond me."</div>
+      <p>Ses derine gittikçe echo zayıflar, o yüzden contrast agent gerekir. Bubbles şu an klinikte kullanılan tek ultrasound contrast agent; büyüklükleri yüzünden <b>damar içinde (intravascular)</b> kalırlar. Patlamazlar, <b>şişip büzülürler</b>.</p>
+      <div class="write"><span class="lab">Write this</span>
+        Micro/nano-bubbles (a gas core with a shell of protein, lipid, polymer or a hybrid) are the only clinically used ultrasound contrast agents. When they are exposed to ultrasound waves, they undergo <b>volumetric oscillation</b>: they expand and contract, without bursting. This produces a <b>very strong nonlinear acoustic response</b> and high backscatter, which enhances the echo and <b>increases the signal-to-noise ratio</b>, giving better contrast and better images. The first bubbles had no shell and burst easily; later shells (protein, lipid, polymer, hybrid) made them stable. Polymer shells give the most control.
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"Bubbles enhance the image by bursting"</li>
+        <li class="no">"Ultrasound is invasive"</li>
+      </ul></div>
+    </div>
 
     <!-- ================= L7 ================= -->
-    <h2 id="l7">Lecture 7 — Biosensors</h2>
-    <h3>Tanım ve parçalar</h3>
-    <p><b>Biosensor</b>: bir <b>analyte</b>'i (hastalıkla ilgili biomarker) algılayan cihaz. İki ana parçası: <b>biocatalyst / receptor</b> (<b>enzyme, antibody, nucleic acid, cell</b>) + <b>transducer</b> (biyolojik/biyokimyasal sinyali <b>quantifiable, readable</b>, genelde elektriksel sinyale çevirir). Zincir: <b>analyte → receptor → transducer → amplification / signal processing → output</b>.</p>
-    <ul>
-      <li><b>Lock and key</b>: enzyme/substrate, antibody/antigen, complementary nucleic acids. Her kilidin tek bir anahtarı var, bu yüzden biosensor tek bir hastalığa özgüdür.</li>
-      <li><b>In vivo</b> (vücut içinde, patient monitoring; pacemaker'a takılı implantable sensor) / <b>ex vivo</b> (vücut dışında, diagnosis; health watch, glucose sensor, wearable).</li>
-    </ul>
-    <div class="callout warn"><b>Hocanın tuzakları:</b> "Antigen bir receptor mü? <b>Hayır, analyte</b>." "Antibody → receptor." "Thermal transducer bir receptor mü? <b>Hayır.</b>" "Biocatalyst nedir diye sorarsam bunları sayın: enzyme, antibody, nucleic acid, cell."</div>
-    <h3>Nanomalzeme nerede kullanılıyor?</h3>
-    <ul>
-      <li><b>1. katman (receptor ile transducer arası):</b> <b>nanofibers, functionalized NPs, 2D nanomaterials</b> → <b>bioreceptor'ları transducer üzerinde stabilize eder</b> (slayt 7: <b>graphene nanosheet</b> üstünde antibody, enzyme, ssDNA).</li>
-      <li><b>2. katman (transducer):</b> <b>nano-enabled transistors</b> ve NPs → elektriksel arayüzün verimini artırır. CNT ve graphene küçük çapta bile iletken olduğu için transducer küçülür, biosensor küçülür → <b>wearable ve implantable</b> sensörler mümkün olur.</li>
-    </ul>
-    <h3 class="ex">Üç transducer'ı ezberle (hoca: "büyük ihtimalle soracağım")</h3>
-    <table class="t">
-      <tr><th>Biosensor</th><th>Ne ölçer?</th></tr>
-      <tr><td><b>Amperometric</b></td><td>The <b>current</b> produced <b>in proportion to the bioreaction</b> occurred (akım)</td></tr>
-      <tr><td><b>Calorimetric / thermal</b></td><td>The amount of <b>heat produced or absorbed</b> (ısı)</td></tr>
-      <tr><td><b>Optical</b></td><td>The changes in <b>light intensity</b> if a specific reaction happens (ışık)</td></tr>
-    </table>
-    <p>Tablonun tamamı: Electronic → amperometric (current), <b>potentiometric (potential)</b>, impedance; Thermal → thermistor (temperature); Mechanical → <b>piezo-electric (mass vibrations)</b>; Acoustical (amplitude, phase, frequency); Optical → photo-conductive, photo-emissive, photo-diodes, photo-transistors, fluorescence (intensity, colour, emission). Hocanın örnek yanlış şıkkı: "<i>amperometric biosensor measures the amount of heat produced</i>" → <b>yanlış</b>, akım ölçer.</p>
-    <h3 class="ex">Performance parameters (hoca: "bu slayta da dikkat")</h3>
-    <table class="t">
-      <tr><th>Parametre</th><th>Tanım</th></tr>
-      <tr><td><b>Selectivity</b></td><td>Detecting the <b>target analyte</b> in the presence of other <b>interfering species</b>; aynı boyut ve yükteki benzerlerini bile ayırt etmek.</td></tr>
-      <tr><td><b>Sensitivity</b></td><td>How <b>sharply</b> the signal changes with variations in the analyte concentration (eğim).</td></tr>
-      <tr><td><b>Response time</b> (speed)</td><td>How long until the sensor is <b>stabilized at a reliable value</b> (saniyeler iyi, 4 dakika kötü).</td></tr>
-      <tr><td><b>Limit of detection</b></td><td>The <b>minimum</b> concentration the biosensor can detect. Ne kadar düşükse o kadar iyi → <b>early diagnosis</b>.</td></tr>
-      <tr><td><b>Accuracy</b> (precision)</td><td>Degree of <b>reproducibility</b> and <b>reliability</b> (aynı örnek 100 kez → aynı sinyal).</td></tr>
-      <tr><td><b>Durability</b> (stability)</td><td>Ability to <b>maintain the signal over time</b> (in vivo için kritik: saatler, günler, aylar).</td></tr>
-      <tr><td>Cost, ease of use</td><td>Herkes alabilmeli, evde kolayca kullanabilmeli.</td></tr>
-    </table>
-    <div class="callout bad"><b>Hocanın kendi verdiği yanlış şıklar:</b> "Selectivity is how sharply the signal changes" → <b>yanlış, bu sensitivity</b>. "Limit of detection is the maximum concentration" → <b>yanlış, minimum</b>. Bir glukoz sensörünün diğerinden pahalı olmasının sebebi bu parametreler.</div>
+    <h2 id="l7">Lecture 7 — Biosensors (en önemli ders)</h2>
+    <div class="callout warn">Son dersin sonunda bir öğrenci "en çok neye odaklanalım?" diye sordu. Cevap: <i>"Today, as I told you, the transducers are important. The performance slide is very important. These are the parts that are mostly examinable."</i></div>
 
-    <!-- ================= HOCA ================= -->
-    <h2 id="hoca">"I may ask you" listesi</h2>
-    <p>Hoca 7. derste: "Her derste hangi kısımların önemli olduğunu söyledim, kayıtları dinleyin, onları ezberleyin, videoları dışarıda bırakın." Söylediği her yer:</p>
-    <table class="t">
-      <tr><th>Ders</th><th>Ne dedi</th><th>Cevap</th></tr>
-      <tr><td>L2</td><td>Nanoscience ile nanotechnology farkı</td><td>Study (teori) vs creation/control in the lab (pratik)</td></tr>
-      <tr><td>L2</td><td>Tarih, tarihler, renk/boyut sayıları</td><td><b>Sorulmayacak</b></td></tr>
-      <tr><td>L3</td><td>Özellik kategorileri ve örnekleri</td><td>Physical = melting point; reactivity chemical; conductivity electrical…</td></tr>
-      <tr><td>L3</td><td>Nanomaterial nedir?</td><td>At least one dimension in 1–100 nm</td></tr>
-      <tr><td>L4</td><td>Boyut sınıflandırması slaytı</td><td>2D film, 1D wire/tube, 0D nanoparticle; quantum well/wire/dot</td></tr>
-      <tr><td>L4</td><td>Nanoparticle nedir?</td><td>Üç boyutu da 1–100 nm olan nanomaterial (0D)</td></tr>
-      <tr><td>L4</td><td>Bütün nanomaterial'lar quantum mu?</td><td>Hayır; bütün quantum'lar nano, tersi değil</td></tr>
-      <tr><td>L4</td><td>Matematikte nano size nedir?</td><td>1000 nm (1 µm) altı</td></tr>
-      <tr><td>L5</td><td>Ionizing vs non-ionizing</td><td>Hücreyi iyonize edecek enerji var mı yok mu; örnekler</td></tr>
-      <tr><td>L5</td><td>Invasive vs non-invasive</td><td>Invasive = ionizing radiation (UV, X-ray, gamma) kullanan</td></tr>
-      <tr><td>L6</td><td>Hangisi non-invasive?</td><td>MRI (ve ultrasound, optical)</td></tr>
-      <tr><td>L6</td><td>NPs in MRI rolleri</td><td>1 magnetic biocompatible contrast agent, 2 carrier (encapsulate, stabilize, target)</td></tr>
-      <tr><td>L6</td><td>PAI procedure, advantages, contrast agents</td><td>3 adım; anatomical+functional+molecular, cm derinlik; Au, Ag, SWNT</td></tr>
-      <tr><td>L6</td><td>US bubbles nasıl çalışır?</td><td>Volumetric oscillation → nonlinear acoustic response → SNR artar</td></tr>
-      <tr><td>L7</td><td>Biocatalyst/receptor nedir? Antigen receptor mü?</td><td>Enzyme, antibody, nucleic acid, cell; antigen = analyte</td></tr>
-      <tr><td>L7</td><td>Üç transducer</td><td>Amperometric = current, calorimetric = heat, optical = light</td></tr>
-      <tr><td>L7</td><td>Performance parameters</td><td>Selectivity, sensitivity, response time, LOD (minimum!), accuracy, durability</td></tr>
-      <tr><td>Hepsi</td><td>Derste izletilen videolar</td><td><b>Sorulmayacak</b></td></tr>
-    </table>
+    <div class="xp">
+      <h3><span class="tag hot">Exam 14 · L7</span>Biosensor, receptor (biocatalyst), analyte, transducer</h3>
+      <div class="said">"If I ask you, what is a biocatalyst or receptor, you should name these ones. If I ask you that if a thermal transducer is considered as a receptor, of course not… If I ask you in your midterm next week if the antigens could be considered as receptor. Of course they are not. Antigens are analytes."</div>
+      <p>Zincir: <b>analyte → receptor (biocatalyst) → transducer → signal output</b>. Analyte = aradığımız şey (hastalığın işareti, örn. antigen). Receptor = analyte'e yapışan parça. Transducer = olan değişimi okunabilir sinyale çeviren parça.</p>
+      <div class="write"><span class="lab">Write this</span>
+        A <b>biosensor</b> is a measuring (sensing) device that detects an <b>analyte</b>, a part or sign of the cause of a disease, to diagnose the disease. It has two main parts. The <b>receptor (biocatalyst)</b> is in contact with the analyte and binds it with a <b>lock-and-key</b> interaction; it can be an <b>enzyme, an antibody, a nucleic acid or a cell</b>. The <b>transducer</b> converts the biological signal of this interaction (a change in current, potential, heat, mass or light) into a <b>quantifiable, readable signal</b>. Types of transducers: electrochemical, optical, thermal and piezoelectric.
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"An antigen is a receptor" (antigen = <b>analyte</b>; antibody = receptor)</li>
+        <li class="no">"A thermal transducer is a receptor"</li>
+        <li>"Which is NOT a biocatalyst?" → enzyme, antibody, nucleic acid, cell dışındaki şık (örn. antigen, transducer).</li>
+      </ul></div>
+    </div>
 
-    <!-- ================= YAZILI ================= -->
-    <h2 id="yazili">Yazılı (classical) sorular için hazır cevaplar</h2>
-    <p>Bunları İngilizce yaz. Kısa, net, slayttaki kelimelerle. Her biri 3–5 cümle.</p>
-    <dl>
-      <dt><b>1. What is a nanomaterial? Why 1–100 nm?</b></dt>
-      <dd>A nanomaterial is a material with at least one dimension in the nano size regime, 1 to 100 nm. Below about 100 nm the surface area to volume ratio and the share of surface atoms increase drastically, so surface-related properties dominate over bulk properties and the material's properties change. Above 100 nm (e.g. 500 nm) the material still behaves like a bulk material.</dd>
-      <dt><b>2. Difference between nanoscience and nanotechnology.</b></dt>
-      <dd>Nanoscience is the study of phenomena at the nano-size level (theoretical). Nanotechnology is the ability to work at the molecular level, atom by atom, to create functional materials, devices and systems, controlling matter on the 1–100 nm scale and exploiting the novel properties that appear at that scale (practical, in the lab).</dd>
-      <dt><b>3. Classify nanomaterials by dimension.</b></dt>
-      <dd>The number counts the dimensions that remain larger than 100 nm. 2D nanomaterials have one dimension in 1–100 nm (nano-films, coatings, layers, sheets such as graphene). 1D nanomaterials have two dimensions in the nano range (nanowires, nanorods, nanofibers, nanotubes). 0D nanomaterials have all three dimensions in the nano range (nanoparticles). If all dimensions are above 100 nm it is a bulk material. Below 10 nm the same shapes are quantum well, quantum wire and quantum dot.</dd>
-      <dt><b>4. Ionizing vs non-ionizing radiation; invasive vs non-invasive imaging.</b></dt>
-      <dd>Non-ionizing radiation (radio waves, microwaves, IR, visible light, low-frequency EM fields) does not have enough energy to ionize cells, so it is safe; imaging techniques using it (MRI, ultrasound, optical imaging) are non-invasive. Ionizing radiation (UV, X-rays, gamma rays) has enough energy to break molecular bonds, so it is harmful; techniques using it (CT, PET, SPECT) are invasive.</dd>
-      <dt><b>5. Describe the procedure of photoacoustic imaging, its advantages and contrast agents.</b></dt>
-      <dd>(1) The tissue is illuminated with a laser pulse. (2) The absorbed light excites electrons; they relax back to the ground state and the absorbed energy is released as heat. (3) The heated area expands abruptly (thermal expansion), producing a thermoacoustic wave that is detected by an ultrasound transducer. Advantages: anatomical, functional and molecular contrast in a single modality, and a depth of several centimeters. Contrast agents: plasmonic nanoparticles (Au NPs, Ag NPs, SWNT), which absorb light strongly and convert light to sound efficiently.</dd>
-      <dt><b>6. What are the roles of nanoparticles in MRI?</b></dt>
-      <dd>First, magnetic nanoparticles such as superparamagnetic iron oxide (SPIO) can be used as biocompatible contrast agents to improve MRI sensitivity. Second, nanoparticles can act as carriers of existing contrast agents such as gadolinium: encapsulation, stabilization, biocompatible polymer coatings and targeting, which decrease toxicity and side effects because the agent no longer spreads everywhere. The magnetic properties must be kept after any modification.</dd>
-      <dt><b>7. How do micro/nano-bubbles enhance ultrasound images?</b></dt>
-      <dd>Micro/nano-bubbles (a gas core with a protein, lipid or polymer shell) are the only clinically used ultrasound contrast agents and stay intravascular. When exposed to ultrasound waves they undergo volumetric oscillations (expansion and contraction), producing a strong nonlinear acoustic response and high backscatter. This improves the signal-to-noise ratio and gives sharp contrast against the surrounding tissue.</dd>
-      <dt><b>8. Define a biosensor and the amperometric, calorimetric and optical biosensors.</b></dt>
-      <dd>A biosensor is a sensing device made of a biocatalyst/receptor (enzyme, antibody, nucleic acid or cell), which recognizes an analyte by a lock-and-key mechanism, and a transducer, which converts the biological signal into a quantifiable, readable signal. An amperometric biosensor measures the current produced in proportion to the bioreaction. A calorimetric (thermal) biosensor measures the amount of heat produced or absorbed. An optical biosensor measures changes in light intensity when a specific reaction happens.</dd>
-      <dt><b>9. Explain the performance parameters of a biosensor.</b></dt>
-      <dd>Selectivity: detecting the target analyte in the presence of other interfering species. Sensitivity: how sharply the signal changes with the analyte concentration. Response time: how long the sensor needs to stabilize at a reliable value. Limit of detection: the minimum concentration it can detect (lower is better for early diagnosis). Accuracy: reproducibility and reliability. Durability: keeping the signal over time. Also cost and ease of use.</dd>
-      <dt><b>10. Why does the melting point of nanoparticles decrease?</b></dt>
-      <dd>The melting point is the temperature at which atoms have enough energy to overcome the forces holding them in fixed positions. Surface atoms are in contact with fewer atoms (unsaturated bonds), so they need less energy to move and start melting first. As size decreases, the share of surface atoms increases strongly, so nanoparticles melt at a lower temperature than the bulk material.</dd>
-    </dl>
-    <div class="callout"><b>Dinleyerek tekrar:</b> <a href="videos.html">İngilizce anlatımlı videolar</a> (her ders ayrı, toplam ~24 dk, altyazılı).</div>
-    <div class="callout"><b>Sonra:</b> <a href="mock.html">Deneme vize sınavı</a>: çoktan seçmeli kısım + yazılı kısım (cevabını yaz, sonra model cevapla karşılaştır).</div>
-    <p class="small muted">İngilizce pratik: Quiz <a href="quiz.html?ch=2">L2</a> · <a href="quiz.html?ch=3">L3</a> · <a href="quiz.html?ch=4">L4</a> · <a href="quiz.html?ch=5">L5</a> · <a href="quiz.html?ch=6">L6</a> · <a href="quiz.html?ch=7">L7</a>. Flashcards <a href="cards.html?ch=2">L2</a> · <a href="cards.html?ch=3">L3</a> · <a href="cards.html?ch=4">L4</a> · <a href="cards.html?ch=5">L5</a> · <a href="cards.html?ch=6">L6</a> · <a href="cards.html?ch=7">L7</a>. Ders ders anlatım: <a href="learn.html?ch=2">L2</a> · <a href="learn.html?ch=3">L3</a> · <a href="learn.html?ch=4">L4</a> · <a href="learn.html?ch=5">L5</a> · <a href="learn.html?ch=6">L6</a> · <a href="learn.html?ch=7">L7</a>.</p>
+    <div class="xp">
+      <h3><span class="tag hot">Exam 15 · L7 · most likely</span>Amperometric, calorimetric and optical biosensors</h3>
+      <div class="said">"I expect you, specifically for your midterm, to memorize these three different transducers… I may ask you to write the definition of each of them, or … in a multiple choice question, which of them is correct… Most probably, I will ask you in the mid-term."</div>
+      <p>Biosensor adını transducer'ından alır. Ölçülen şey: <b>amperometric = akım</b>, <b>calorimetric = ısı</b>, <b>optical = ışık</b>.</p>
+      <div class="write"><span class="lab">Write this</span>
+        An <b>amperometric biosensor</b> has an amperometric transducer that measures the <b>current produced in proportion to the bioreaction</b> between the receptor and the analyte (more analyte → more bioreaction → more current).<br>
+        A <b>calorimetric (thermal) biosensor</b> measures the <b>amount of heat produced or absorbed</b> by the bioreaction (a change in temperature).<br>
+        An <b>optical biosensor</b> measures the <b>change in light intensity</b> (light produced or absorbed) when the specific bioreaction happens.
+      </div>
+      <p class="small muted">Tablonun geri kalanı (MC'de çıkabilir): potentiometric = <b>potential</b>, impedance; thermistor = temperature; piezo-electric = <b>mass</b> (vibrations); acoustic = amplitude, phase, frequency; fluorescence = intensity, colour.</p>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"An amperometric biosensor measures the amount of heat produced" (hocanın kendi örneği; akım ölçer)</li>
+        <li class="no">"A calorimetric biosensor measures current / light"</li>
+        <li class="no">"A potentiometric biosensor measures current" (potential ölçer)</li>
+      </ul></div>
+    </div>
+
+    <div class="xp">
+      <h3><span class="tag hot">Exam 16 · L7 · most likely</span>Performance parameters of a biosensor</h3>
+      <div class="said">"For your midterm, be careful of this slide also. This is important. I may ask you to describe these parameters, or I may ask you, for example, if the selectivity is how sharply the signal change. Of course it is not. This is the definition for sensitivity. I may tell you that the limit of detection is the maximum concentration. Of course it is not. It is minimum concentration."</div>
+      <p>Bu parametreler bir biosensor'ün <b>fiyatını</b> belirler (bir glukoz sensörü neden diğerinden pahalı).</p>
+      <div class="write"><span class="lab">Write this</span>
+        <b>Selectivity:</b> the ability to detect the target analyte in the presence of other interfering species (similar molecules).<br>
+        <b>Sensitivity:</b> how sharply the signal changes with variations in the analyte concentration.<br>
+        <b>Response time (speed):</b> how long it takes for the sensor to stabilize at a reliable value.<br>
+        <b>Limit of detection:</b> the <b>minimum</b> concentration of analyte the biosensor can detect. Lower is better, because detecting low concentrations allows early diagnosis.<br>
+        <b>Accuracy (precision):</b> the degree of reproducibility and reliability (the same sample gives the same signal every time).<br>
+        <b>Durability (stability):</b> the ability to maintain the signal over time, which is important for in vivo (implanted) sensors.<br>
+        <b>Cost and ease of use:</b> everyone should be able to buy it and use it easily at home.
+      </div>
+      <div class="traps"><span class="lab">Traps</span><ul>
+        <li class="no">"Selectivity is how sharply the signal changes with concentration" (bu <b>sensitivity</b>)</li>
+        <li class="no">"Limit of detection is the maximum concentration" (<b>minimum</b>)</li>
+        <li class="no">"Accuracy is the ability to maintain the signal over time" (bu <b>durability</b>)</li>
+        <li class="no">"Response time is the minimum concentration…" (karışık tanım şıkları: her tanımı doğru isme eşle)</li>
+      </ul></div>
+    </div>
+
+    <!-- ================= BACKGROUND ================= -->
+    <h2 id="bg">Arka plan: işaretlenmedi ama test şıklarında çıkabilir</h2>
+    <p>Hoca bunlar için "sorarım" demedi, ama slaytta ve kayıtta var. Kısa bil.</p>
+
+    <h3>L2</h3>
+    <ul>
+      <li><b>Nano = 10<sup>-9</sup></b> (Greek <i>nanos</i> = dwarf). 1 nm = 10<sup>-9</sup> m = 10<sup>-3</sup> µm = 10 Å. 100 nm = 0.1 µm = 1000 Å.</li>
+      <li><b>Convergent science and technology (NBIC):</b> Nano, Bio, Info, Cogno; ortak amaç <b>enhancing human performance</b>.</li>
+      <li>Nano ölçekte <b>size and shape</b> özellikleri (örn. renk) değiştirir.</li>
+      <li><b>S-curve:</b> nanotechnology şu an <b>rapid growth phase</b>'in başında; "geç değil, tam zamanı".</li>
+    </ul>
+
+    <h3>L3: neden boyut önemli</h3>
+    <ul>
+      <li><b>Surface area to volume ratio</b> boyut küçülünce artar; nano'da yüzey atomları içtekileri geçer.</li>
+      <li><b>Catalytic activity</b> (chemical): boyut küçülünce <b>activation energy düşer, activity artar</b>. Aynı catalyst'i nano boyutta kullanmak yeni catalyst icat etmekten ucuz. Kullanım: petroleum, energy conversion, pollutant removal.</li>
+      <li><b>Melting point düşer</b>: surface atoms daha az komşuya bağlı, ısıya ilk onlar maruz kalır ve ilk onlar erir; nano'da çoğunluk yüzey.</li>
+      <li><b>Electrical:</b> normal tel incelince direnci artar ve ısınır; carbon nanotube küçük çapta bile iletir, bu yüzden çipler küçülebildi.</li>
+      <li><b>Biological:</b> hücre zarı ve <b>blood-brain barrier</b>'dan kolay geçer, biocompatibility yüksek. Hoca: sağlık uygulamaları "<b>the most important</b>".</li>
+    </ul>
+
+    <h3>L5</h3>
+    <ul>
+      <li>Sağlıkta üç alan: <b>prevention, diagnosis, treatment</b>.</li>
+      <li><b>Prevention:</b> antibacterial/antiviral NPs (Ag, ZnO, TiO<sub>2</sub>) maske, eldiven, <b>PPE</b>, sunscreen, şampuan, tekstil içinde. Yeni malzeme değil, aynı malzeme <b>nano boyutta</b> (daha reaktif). Uyarı: uzun vadeli etkisi bilinmiyor, <b>certificate</b> ve <b>precaution</b>.</li>
+      <li><b>Early diagnosis neden önemli:</b> best therapeutic method seçmek, treatment effectiveness artırmak, medical resources israfını önlemek.</li>
+      <li>Diagnosis kategorileri: <b>imaging, biosensors, wearable sensors</b>.</li>
+      <li><b>Neden tek bir imaging tekniği yok?</b> Her birinin advantages ve disadvantages'ı var; hiçbiri hepsini birleştirmiyor.</li>
+      <li><b>Optical / fluorescence imaging:</b> NIR ışık + dye (<b>ICG</b>). Zayıf yanı: derine inmez. Nano probes: <b>gold NPs</b>, <b>upconversion NPs</b> (NIR alır, visible/UV verir), <b>quantum dots</b>; targetable.</li>
+    </ul>
+
+    <h3>L6</h3>
+    <table class="t">
+      <tr><th>Technique</th><th>Pros</th><th>Cons</th></tr>
+      <tr><td>MRI</td><td>high spatial resolution, no penetration limit</td><td>low sensitivity, high cost, long imaging time</td></tr>
+      <tr><td>PET / SPECT</td><td>unlimited depth, high sensitivity</td><td>poor spatial resolution, radiation risk</td></tr>
+      <tr><td>CT</td><td>high spatial resolution, strong penetration</td><td>radiation risk</td></tr>
+      <tr><td>Ultrasound</td><td>high sensitivity, real-time, low cost</td><td>poor resolution, operator-dependent</td></tr>
+      <tr><td>Optical</td><td>high sensitivity, real-time, cost effective</td><td>low spatial resolution, small penetration depth</td></tr>
+    </table>
+    <ul>
+      <li><b>MRI nasıl çalışır:</b> vücuttaki suyun hidrojen protonları manyetik alanda hizalanır, <b>RF pulse</b> hizayı bozar, pulse bitince protonlar geri hizalanırken enerji salar, coil algılar. Fotoğraf değil, hesaplanmış görüntü.</li>
+      <li><b>PET:</b> <b>positron</b>-emitting radioisotope (örn. <sup>18</sup>F); positron + electron → annihilation → iki gamma ray. <b>SPECT:</b> doğrudan <b>gamma</b> yayan isotope (technetium-99m). İkisi de invasive, pahalı. NP rolü: radioisotope'u hedefe taşımak, her yere dağılmasın.</li>
+      <li><b>Multimodal imaging:</b> teknikleri birleştirip (SPECT/CT, PET/CT, MRI/PET) avantajları bir arada almak. CT anatomy, SPECT function gösterir.</li>
+    </ul>
+
+    <h3>L7</h3>
+    <ul>
+      <li><b>In vivo</b> (vücut içi, implantable, monitoring) vs <b>ex vivo</b> (vücut dışı, diagnosis, wearable, glucose sensor).</li>
+      <li>Nanomaterial nerede: receptor ile transducer arasında (nanofibers, functionalized NPs, <b>2D nanomaterials / graphene</b>) bioreceptor'ları <b>stabilize</b> eder; transducer'da (nano-enabled transistors, CNT, graphene) verimi artırır ve sensörü küçültür → wearable, implantable.</li>
+    </ul>
+
+    <!-- ================= NOT ON EXAM ================= -->
+    <h2 id="no">Sorulmayacaklar (hoca kendisi söyledi)</h2>
+    <ul>
+      <li>Derste izletilen <b>kısa videolar</b>: "nothing will be examined from them" (L5, L6, L7).</li>
+      <li><b>Tarih</b>, tarihçe, yıllar; "hangi boyut hangi renk" sayıları: "I will not ask anything about the history, the dates, the sizes" (L2).</li>
+      <li>L3'teki <b>yüzey atomu yüzde tablosu</b>: "I'm not examining you from this table".</li>
+      <li>Boyut dışındaki <b>diğer sınıflandırmalar</b> (origin, composition…): "I don't expect you to memorize this".</li>
+      <li>Slayt ve kayıt dışında hiçbir şey; kitaplar isteğe bağlı.</li>
+    </ul>
+
+    <!-- ================= CHECK ================= -->
+    <h2 id="check">Son kontrol: cevabı söyle, sonra aç</h2>
+    <p>Cevabı İngilizce, sesli ya da kâğıda söyle; sonra kontrol et.</p>
+    <details class="q"><summary>Difference between nanoscience and nanotechnology?</summary><p>Nanoscience = the study at the nano-size level (theory). Nanotechnology = working atom by atom to create and control materials, devices and systems at 1–100 nm (practice, lab).</p></details>
+    <details class="q"><summary>Which is a physical property: reactivity, conductivity, melting point, strength?</summary><p>Melting point. Reactivity = chemical, conductivity = electrical, strength = mechanical.</p></details>
+    <details class="q"><summary>Define a nanomaterial.</summary><p>A material with at least one dimension in the range 1–100 nm.</p></details>
+    <details class="q"><summary>A nano-film is 1D, 2D or 0D?</summary><p>2D (one dimension nano, two dimensions large). Nanowire/nanotube = 1D, nanoparticle = 0D.</p></details>
+    <details class="q"><summary>What are nanoparticles?</summary><p>0D nanomaterials: all three dimensions in 1–100 nm.</p></details>
+    <details class="q"><summary>Nano size in mathematics?</summary><p>Anything below 1 µm (1000 nm).</p></details>
+    <details class="q"><summary>Are all nanomaterials quantum materials?</summary><p>No. All quantum materials (1–10 nm) are nanomaterials, but a 50 nm nanomaterial is not quantum.</p></details>
+    <details class="q"><summary>Ionizing vs non-ionizing? Examples?</summary><p>Ionizing has enough energy to break molecular bonds of cells (UV, X-ray, gamma). Non-ionizing does not (radio, TV, mobile, IR, visible light, low-frequency EM fields).</p></details>
+    <details class="q"><summary>Name invasive and non-invasive imaging techniques.</summary><p>Invasive: CT, PET, SPECT. Non-invasive: MRI, ultrasound, optical imaging.</p></details>
+    <details class="q"><summary>Two roles of nanoparticles in MRI?</summary><p>1) Biocompatible magnetic NPs (e.g. SPIO) as contrast agents. 2) NPs as carriers: encapsulate, stabilize, coat and target existing agents like gadolinium → less toxicity and side effects. Keep the magnetic properties.</p></details>
+    <details class="q"><summary>Three steps of photoacoustic imaging?</summary><p>Laser pulse illuminates tissue → electrons excited, relax, energy released as heat → thermal expansion makes a sound wave detected by an ultrasound transducer.</p></details>
+    <details class="q"><summary>PAI advantages and contrast agents?</summary><p>Anatomical + functional + molecular contrast in one modality; several cm depth. Au NPs, Ag NPs, SWNT (strong light absorption, good light-to-acoustic conversion).</p></details>
+    <details class="q"><summary>How do bubbles enhance ultrasound?</summary><p>Volumetric oscillation (expand and contract, no bursting) → strong nonlinear acoustic response → higher signal-to-noise ratio.</p></details>
+    <details class="q"><summary>Name the biocatalysts/receptors. Is an antigen a receptor?</summary><p>Enzyme, antibody, nucleic acid, cell. No, the antigen is the analyte.</p></details>
+    <details class="q"><summary>Amperometric / calorimetric / optical biosensor measures what?</summary><p>Current in proportion to the bioreaction / heat produced or absorbed / change in light intensity.</p></details>
+    <details class="q"><summary>Selectivity vs sensitivity? Limit of detection?</summary><p>Selectivity = detecting the target among interfering species. Sensitivity = how sharply the signal changes with concentration. LOD = the minimum detectable concentration.</p></details>
+    <details class="q"><summary>Accuracy vs durability?</summary><p>Accuracy = reproducibility and reliability. Durability = maintaining the signal over time.</p></details>
+
+    <div class="callout" style="margin-top:28px"><b>Sonra:</b> <a href="mock.html">Deneme vize sınavı</a> (test + yazılı, model cevaplı). Dinleyerek tekrar: <a href="videos.html">İngilizce videolar</a>.</div>
+    <p class="small muted">Ders ders anlatım: <a href="learn.html?ch=2">L2</a> · <a href="learn.html?ch=3">L3</a> · <a href="learn.html?ch=4">L4</a> · <a href="learn.html?ch=5">L5</a> · <a href="learn.html?ch=6">L6</a> · <a href="learn.html?ch=7">L7</a>. Quiz <a href="quiz.html?ch=2">L2</a> · <a href="quiz.html?ch=3">L3</a> · <a href="quiz.html?ch=4">L4</a> · <a href="quiz.html?ch=5">L5</a> · <a href="quiz.html?ch=6">L6</a> · <a href="quiz.html?ch=7">L7</a>.</p>
   </main>
   <script>document.body.dataset.course = 'ens010';</script>
   <script src="../assets/js/common.js"></script>

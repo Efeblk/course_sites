@@ -158,8 +158,8 @@
           : 'Özet sayfasında en düşük dersleri tekrar oku, sonra bu formu yeniden çöz (şıklar karışacak).'),
         el('table', { class: 't' }, el('tr', {}, el('th', {}, 'Topic'), el('th', {}, 'Correct'), el('th', {}, '')), rows),
         el('div', { class: 'row', style: { marginTop: '12px' } },
-          el('a', { class: 'btn', href: 'ozet.html' }, 'Türkçe özet'),
-          el('a', { class: 'btn', href: 'ozet.html#yazili' }, 'Yazılı soru cevapları'),
+          el('a', { class: 'btn', href: 'ozet.html' }, 'Vize özeti'),
+          el('a', { class: 'btn', href: 'ozet.html#check' }, 'Son kontrol soruları'),
           el('button', { onclick: () => start(formKey) }, 'Retake (reshuffled)'))));
       barRow.style.display = 'none';
       result.scrollIntoView({ behavior: 'smooth' });

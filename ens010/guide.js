@@ -32,7 +32,7 @@ window.GUIDE = {
   <tr><td>Source</td><td>"Nothing from outside the slides and nothing from outside what I told you in the recorded videos." The short videos are never examined.</td></tr>
   <tr><td>Final</td><td>Normally covers only the lectures after the midterm.</td></tr>
 </table>
-<div class="callout warn"><b>How to use this site:</b> every place where he said "I may ask you this" is marked with an <b>Exam</b> box in the lessons. In lecture 7 he told students to re-listen for exactly those parts. The <a href="ozet.html">Turkish summary</a> collects them all on one page.</div>`,
+<div class="callout warn"><b>How to use this site:</b> every place where he said "I may ask you this" is marked with an <b>Exam</b> box in the lessons. In lecture 7 he told students to re-listen for exactly those parts. The <a href="ozet.html">midterm summary</a> collects them all on one page.</div>`,
         check: { q: 'Which of these can appear in the ENS010 midterm?', o: ['The definitions and procedures from the slides and the recorded explanations', 'Questions about the short videos shown in class', 'Exact dates from the history of nanotechnology', 'Chapters of the optional textbooks'], why: 'Lectures 1, 2, 5, 6, 7: only the slides and what he says; no videos, no dates.' },
       },
     ],
