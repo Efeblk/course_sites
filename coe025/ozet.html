@@ -21,11 +21,31 @@
     .xp + .xp { border-top: 1px solid var(--line); }
     .xp h3 { margin: 0 0 2px; font-size: 1.2rem; }
     .xp .meta { font-family: var(--mono); font-size: .76rem; color: var(--muted); margin-bottom: 6px; }
-    .fx { font-family: var(--mono); font-size: .92rem; background: var(--hi); padding: 1px 5px; border-radius: 2px; }
-    .ex { font-family: var(--mono); font-size: .88rem; line-height: 1.7; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 8px 14px; margin: 8px 0; }
-    .ex .c { font-family: var(--sans); color: var(--muted); font-size: .84rem; }
-    .ex .c::before { content: "  ← "; white-space: pre; }
-    .ex b { font-weight: 700; }
+    .idea { margin: 4px 0 10px; font-family: var(--serif); font-size: 1.08rem; line-height: 1.55; }
+    /* formulas: real fractions, big serif */
+    .formula { text-align: center; font-family: var(--serif); font-size: 1.28rem; line-height: 2.3; padding: 10px 12px; margin: 12px 0 4px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow-x: auto; }
+    .legend { text-align: center; font-size: .9rem; color: var(--muted); margin: 0 0 14px; }
+    .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 .15em; line-height: 1.3; }
+    .fr > i { font-style: normal; padding: 0 .3em; white-space: nowrap; }
+    .fr > i:first-child { border-bottom: 1.5px solid currentColor; }
+    .mx { display: inline-grid; grid-template-columns: auto auto; gap: 0 .55em; padding: 0 .35em; border-left: 1.5px solid currentColor; border-right: 1.5px solid currentColor; border-radius: 5px; vertical-align: middle; line-height: 1.35; font-size: .92em; }
+    .mx > i { font-style: normal; text-align: center; }
+    /* numbered steps: math on the left, meaning on the right */
+    ol.steps { list-style: none; counter-reset: st; padding: 0; margin: 10px 0 12px; }
+    ol.steps > li { counter-increment: st; display: grid; grid-template-columns: 26px minmax(0, 1.2fr) minmax(0, 1fr); gap: 4px 14px; align-items: center; padding: 9px 0; border-top: 1px dotted var(--line-2); }
+    ol.steps > li::before { content: counter(st); width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--panel); display: grid; place-items: center; font-family: var(--mono); font-size: .78rem; }
+    ol.steps > li.r::before { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+    ol.steps .m { font-family: var(--serif); font-size: 1.1rem; line-height: 2.1; overflow-x: auto; }
+    ol.steps li.r .m { font-weight: 700; }
+    ol.steps .w { font-size: .92rem; color: var(--muted); line-height: 1.45; }
+    .xp h4 { margin: 18px 0 2px; font-size: 1rem; }
+    .res { border-left: 3px solid var(--ok); background: var(--panel); padding: 8px 14px; margin: 10px 0; border-radius: 0 var(--radius) var(--radius) 0; }
+    .res::before { content: "Sonuç ne demek: "; font-weight: 600; color: var(--ok); }
+    table.giv { width: auto; }
+    table.giv td, table.giv th { text-align: center; padding: 5px 12px; }
+    table.giv td:first-child, table.giv th:first-child { text-align: left; }
+    .giv3 { display: flex; flex-wrap: wrap; gap: 0 22px; }
+    .xp figure.fig { margin: 8px 0 14px; }
     .warn1 { font-size: .92rem; margin: 6px 0 10px; }
     .warn1::before { content: "Dikkat: "; font-weight: 600; color: var(--bad); }
     /* written answers */
@@ -39,7 +59,7 @@
     ul.traps s { text-decoration-color: var(--bad); }
     details.more { margin: 12px 0; border-top: 1px solid var(--line); padding-top: 8px; }
     details.more > summary { cursor: pointer; font-weight: 600; }
-    @media (max-width: 640px) { table.map td:first-child, table.map th:first-child { display: none; } table.map td, table.map th { padding: 7px 6px; } .ex .c { display: block; } .ex .c::before { content: "← "; } }
+    @media (max-width: 640px) { table.map td:first-child, table.map th:first-child { display: none; } table.map td, table.map th { padding: 7px 6px; } ol.steps > li { grid-template-columns: 26px minmax(0, 1fr); } ol.steps .w { grid-column: 2; } .formula { font-size: 1.1rem; } }
   </style>
 </head>
 <body data-root="..">
@@ -77,16 +97,16 @@
       <tr><td>4 · W1</td><td>BERT / GPT / T5?</td><td class="a"><b>encoder-only</b> = anlama (classification, NER) · <b>decoder-only</b> = üretim (next word) · <b>encoder-decoder</b> = seq2seq (translation, summarization)</td></tr>
       <tr><td>5 · W1</td><td>When is an LLM the wrong tool? <span class="hot" lang="en">açık uçlu</span></td><td class="a">spam, 1M e-posta/gün: <b>+0.7 puan accuracy, ~3000× maliyet</b> ($30k vs &lt;$10/ay), 100–1000 ms vs &lt;10 ms; + interpretability, privacy, hallucination</td></tr>
       <tr class="wk"><td></td><td colspan="2">Week 2–3: metin sınıflandırma</td></tr>
-      <tr><td>6 · W2</td><td>NB vs LR vs SVM?</td><td class="a"><b>NB</b> generative: P(c)·∏P(w|c), word likelihoods · <b>LR</b> discriminative: σ(w·x+b), olasılık verir · <b>SVM</b>: <b>max margin</b>, işaret = sınıf, skor olasılık değil</td></tr>
+      <tr><td>6 · W2</td><td>NB vs LR vs SVM?</td><td class="a"><b>NB</b> generative: her sınıfın kelime olasılıklarını çarpar · <b>LR</b> discriminative: ağırlıklı toplam → sigmoid → olasılık · <b>SVM</b>: <b>max margin</b>, işaret = sınıf, skor olasılık değil</td></tr>
       <tr><td>7 · W2</td><td>Four feature types?</td><td class="a"><b>statistical</b> (uzunluk, "!") · <b>lexical</b> (BoW, TF-IDF, n-gram) · <b>linguistic</b> (POS, lexicon, NE) · <b>domain</b> (spam kelimeleri, emoji)</td></tr>
       <tr><td>8 · W3</td><td>fit_transform on the test set?</td><td class="a"><b>Hayır.</b> Sözlük ve IDF sadece <b>train'de fit</b>, test'e sadece transform. Yoksa <b>leakage</b>. Ayar validation'da seçilir</td></tr>
       <tr><td>9 · W3</td><td>Does switching NB → SVM fix "not good"?</td><td class="a"><b>Hayır.</b> Sıra <b>özelliklerde</b> kayboldu. Bigram ya da sırayı okuyan encoder gerekir</td></tr>
       <tr><td>10 · W3</td><td>What did each step fix? <span class="hot" lang="en">açık uçlu</span></td><td class="a">embedding: anlam → <b>CNN</b>: yerel kalıp → <b>RNN</b>: bütün sıra → <b>LSTM</b>: kapılar, uzun mesafe → <b>Transformer</b>: doğrudan + paralel → <b>BERT</b>: pretrained</td></tr>
       <tr><td>11 · W3</td><td>RNN vanishing gradient? Clipping?</td><td class="a">sinyal her adımda çarpılır: 0.5<sup>20</sup> ≈ 10<sup>−6</sup>. <b>Clipping sadece exploding'i</b> düzeltir. RNN paralel de değil</td></tr>
       <tr><td>12 · W3</td><td>Padding, mask, input length? <span class="hot" lang="en">duyuruda</span></td><td class="a">PAD + mask 0; attention'da PAD'e <b>−∞</b>. Kesilen son kısım modele <b>hiç ulaşmaz</b> → daha çok head çözmez; longer context / chunks</td></tr>
-      <tr><td>13 · W3</td><td>Attention averages which vectors?</td><td class="a"><b>Value</b>: softmax(QKᵀ/√d<sub>k</sub>)V. √d<sub>k</sub> softmax'ın sivrileşmesini önler. Maliyet T²</td></tr>
+      <tr><td>13 · W3</td><td>Attention averages which vectors?</td><td class="a"><b>Value</b> vektörleri, softmax paylarıyla. √d<sub>k</sub>'ya bölmek softmax'ın sivrileşmesini önler. Maliyet T²</td></tr>
       <tr><td>14 · W3</td><td>Is base BERT a sentiment classifier?</td><td class="a"><b>Hayır.</b> Eğitilmiş bir <b>head</b> + label mapping gerekir. [CLS] A [SEP] B [SEP]; segment A/B ≠ sınıf</td></tr>
-      <tr><td>15 · W3</td><td>Precision, recall, F1?</td><td class="a">P = TP/(TP+FP) · R = TP/(TP+FN) · F1 = 2TP/(2TP+FP+FN), <b>harmonik</b>, TN yok. Macro = sınıflar eşit</td></tr>
+      <tr><td>15 · W3</td><td>Precision, recall, F1?</td><td class="a">P = <span class="fr"><i>TP</i><i>TP + FP</i></span> · R = <span class="fr"><i>TP</i><i>TP + FN</i></span> · F1 <b>harmonik</b> ortalama, TN yok. Macro = sınıflar eşit</td></tr>
       <tr class="wk"><td></td><td colspan="2">Week 4 ve 6: her kelimeye bir etiket</td></tr>
       <tr><td>16 · W4</td><td>How ambiguous is POS?</td><td class="a">types <b>~%15</b>, tokens <b>~%60</b> (sık kelimeler belirsiz). Most-frequent-tag baseline ~%92, iyi tagger ~%97 (koşulsuz tekrarlama)</td></tr>
       <tr><td>17 · W4–6</td><td>Why is NER harder than POS?</td><td class="a"><b>segmentation</b> (New York = 2 kelime) + <b>type ambiguity</b> (Washington: PER/ORG/LOC/GPE). Span olarak ölçülür</td></tr>
@@ -94,173 +114,274 @@
       <tr><td>19 · W6</td><td>Nested entities?</td><td class="a">flat BIO <b>gösteremez</b> (bir konum = bir etiket). Büyük model çözmez, sorun temsilde</td></tr>
       <tr><td>20 · W6</td><td>−100 vs O?</td><td class="a"><b>−100 = loss'ta yok say</b> (özel token, ## parçalar). O = gerçek etiket "isim değil"</td></tr>
       <tr><td>21 · W6</td><td>Why span F1, not token accuracy? <span class="hot" lang="en">duyuruda</span></td><td class="a">90 O + 10 isim, hep O → <b>accuracy %90, entity recall %0</b>. Exact match = <b>sınır + tür</b> aynı</td></tr>
-      <tr><td>22 · W6</td><td>HMM parts and assumptions? <span class="hot" lang="en">en olası</span></td><td class="a"><b>π</b> start, <b>a</b> transition, <b>b(y,x) = P(x | y)</b> emission. Etiket sadece öncekine, kelime sadece kendi etiketine bağlı → zengin ipucu eklemek zor</td></tr>
+      <tr><td>22 · W6</td><td>HMM parts and assumptions? <span class="hot" lang="en">en olası</span></td><td class="a"><b>π</b> start, <b>a</b> transition, <b>b</b> emission = P(kelime | etiket). Etiket sadece öncekine, kelime sadece kendi etiketine bağlı → zengin ipucu eklemek zor</td></tr>
       <tr><td>23 · W6</td><td>Viterbi vs forward?</td><td class="a"><b>Viterbi = max</b> (en iyi yol) · <b>forward = sum</b> (P(X)). O(TK²) zaman</td></tr>
-      <tr><td>24 · W6</td><td>CRF vs HMM? <span class="hot" lang="en">en olası</span></td><td class="a">CRF doğrudan <b>P(Y|X) = exp(S)/Z</b> → örtüşen ipuçları serbest. Sonlu skorlar geçersiz BIO'yu <b>caydırır, yasaklamaz</b> (−∞ gerekir)</td></tr>
+      <tr><td>24 · W6</td><td>CRF vs HMM? <span class="hot" lang="en">en olası</span></td><td class="a">CRF doğrudan <b>P(etiketler | kelimeler)</b> → örtüşen ipuçları serbest. Sonlu skorlar geçersiz BIO'yu <b>caydırır, yasaklamaz</b> (−∞ gerekir)</td></tr>
       <tr><td>25 · W6</td><td>Neural softmax tagger weakness?</td><td class="a">her konum <b>bağımsız argmax</b> → komşu uyumu yok, geçersiz BIO çıkabilir. Çözüm: üstüne CRF / kısıt</td></tr>
     </table>
 
     <!-- ================= CALC ================= -->
-    <h2 id="calc">2. Elle hesaplar: formül + slayttaki örnek</h2>
-    <p>Hepsi study slaytlarından. Önce örneği kapatıp kendin çöz, sonra <a href="drill.html">Hesap pratiği</a>'nde yeni sayılarla tekrar et.</p>
+    <h2 id="calc">2. Elle hesaplar</h2>
+    <p>Hepsi study slaytlarındaki örnekler. Her hesap aynı sırada: <b>ne ölçüyor</b> (bir cümle) → <b>formül</b> → <b>resim</b> → <b>adımlar</b> (sağda her adımın anlamı) → <b>sonuç ne demek</b>. Önce adımları kapatıp kendin çöz, sonra <a href="drill.html">Hesap pratiği</a>'nde yeni sayılarla tekrar et.</p>
+    <nav class="row toc small">
+      <a href="#c-tfidf">TF-IDF</a><a href="#c-nb">Naive Bayes</a><a href="#c-lr">Logistic reg.</a><a href="#c-svm">SVM</a><a href="#c-cnn">CNN</a><a href="#c-rnn">RNN, LSTM</a><a href="#c-att">Attention</a><a href="#c-prf">P, R, F1</a><a href="#c-bio">POS, BIO</a><a href="#c-span">Span F1</a><a href="#c-hmm">HMM</a><a href="#c-crf">CRF</a><a href="#c-soft">Softmax tagger</a>
+    </nav>
 
-    <div class="xp">
+    <!-- TF-IDF -->
+    <div class="xp" id="c-tfidf">
       <h3>TF-IDF</h3>
       <div class="meta">W1 · W3</div>
-      <p><span class="fx">IDF = ln(N / df)</span> · df = kelimenin geçtiği <b>doküman</b> sayısı · <span class="fx">TF-IDF = TF × IDF</span></p>
-      <div class="ex">
-        N = 3, "the" 3 dokümanda → IDF = ln 1 = <b>0</b><span class="c">her yerde geçen kelime sıfırlanır</span><br>
-        "cat" 1 dokümanda → IDF = ln 3 ≈ 1.099; TF = 1/6 → <b>≈ 0.183</b><span class="c">W1: TF = sayı / doküman uzunluğu</span><br>
-        W3 oyuncak veri (N = 4): idf(good) = ln 2 ≈ 0.693; d1'de tf = 2 → <b>1.386</b><span class="c">W3: TF = ham sayı</span>
-      </div>
-      <p class="warn1">"good good movie" df(good)'yi <b>1</b> artırır, 2 değil. TF-IDF bir ağırlık, olasılık değil.</p>
+      <p class="idea">Bir kelime bu dokümanı <b>ne kadar ayırt ediyor?</b> Bu dokümanda geçiyor ama başka dokümanlarda nadirse puanı büyük. Her yerde geçiyorsa puanı 0.</p>
+      <div class="formula">TF-IDF = TF × ln <span class="fr"><i>N</i><i>df</i></span></div>
+      <p class="legend"><b>TF</b> = kelime bu dokümanda kaç kere geçiyor · <b>N</b> = toplam doküman · <b>df</b> = kelime <u>kaç dokümanda</u> geçiyor</p>
+      <div data-fig="tfidf"></div>
+      <ol class="steps">
+        <li><span class="m">IDF(the) = ln <span class="fr"><i>3</i><i>3</i></span> = ln 1 = 0</span><span class="w">"the" 3 dokümanın 3'ünde var, hiçbirini ayırt etmiyor.</span></li>
+        <li><span class="m">IDF(cat) = ln <span class="fr"><i>3</i><i>1</i></span> = ln 3 ≈ 1.10</span><span class="w">"cat" sadece Doc 1'de var: nadir, yani değerli.</span></li>
+        <li><span class="m">TF(cat) = <span class="fr"><i>1</i><i>6</i></span> ≈ 0.167</span><span class="w">Doc 1'de 6 kelime var, 1'i "cat". (W1 böyle doküman uzunluğuna böler.)</span></li>
+        <li class="r"><span class="m">TF-IDF(cat) = 0.167 × 1.10 ≈ 0.18</span><span class="w">İkisini çarp.</span></li>
+      </ol>
+      <p class="res">"cat" Doc 1'i diğerlerinden ayıran kelime. "the" ne kadar sık geçerse geçsin puanı 0.</p>
+      <p class="warn1">W3'te TF <b>ham sayı</b>: "good good movie" içinde TF(good) = 2, IDF = ln <span class="fr"><i>4</i><i>2</i></span> = ln 2 ≈ 0.69 → 2 × 0.69 ≈ 1.39. Ama df'ye bu doküman <b>1</b> kere sayılır.</p>
     </div>
 
-    <div class="xp">
-      <h3>Naive Bayes (add-one smoothing)</h3>
-      <div class="meta">W3 · veri: d1 "good good movie"+, d2 "good movie"+, d3 "bad bad movie"−, d4 "bad movie"− · |V| = 3, her sınıfta 5 token</div>
-      <p><span class="fx">score(c) = P(c) × ∏ P(w|c)</span> · <span class="fx">P(w|c) = (sayı + 1) / (5 + 3)</span></p>
-      <div class="ex">
-        "good movie": + → 0.5 × 4/8 × 3/8 = <b>0.09375</b><br>
-        − → 0.5 × 1/8 × 3/8 ≈ <b>0.0234</b><span class="c">→ positive</span><br>
-        posterior = 0.09375 / (0.09375 + 0.0234) = <b>0.8</b>
-      </div>
-      <p class="warn1">0.8 bu yorumun olasılığı, accuracy değil. Smoothing yoksa görülmemiş kelime çarpımı <b>0</b> yapar.</p>
+    <!-- NAIVE BAYES -->
+    <div class="xp" id="c-nb">
+      <h3>Naive Bayes</h3>
+      <div class="meta">W3</div>
+      <p class="idea">Her sınıfa soruyoruz: <b>"Sen bu kelimeleri ne sıklıkla kullanıyorsun?"</b> Yorumdaki kelimelere en iyi uyan sınıf kazanır.</p>
+      <table class="t giv">
+        <tr><th>Eğitim verisi</th><th>good</th><th>bad</th><th>movie</th><th>toplam kelime</th></tr>
+        <tr><td><b>Pozitif</b>: "good good movie", "good movie"</td><td>3</td><td>0</td><td>2</td><td>5</td></tr>
+        <tr><td><b>Negatif</b>: "bad bad movie", "bad movie"</td><td>0</td><td>3</td><td>2</td><td>5</td></tr>
+      </table>
+      <div class="formula">skor(sınıf) = P(sınıf) × P(good | sınıf) × P(movie | sınıf)<br>P(kelime | sınıf) = <span class="fr"><i>sayı + 1</i><i>5 + 3</i></span></div>
+      <p class="legend"><b>+1</b> = smoothing (hiçbir olasılık 0 olmasın) · <b>5</b> = o sınıftaki toplam kelime · <b>3</b> = sözlükteki farklı kelime (good, bad, movie)</p>
+      <p>Soru: <b>"good movie"</b> pozitif mi?</p>
+      <ol class="steps">
+        <li><span class="m">P(+) = P(−) = <span class="fr"><i>2</i><i>4</i></span> = 0.5</span><span class="w">4 yorumun 2'si pozitif, 2'si negatif.</span></li>
+        <li><span class="m">P(good | +) = <span class="fr"><i>3 + 1</i><i>8</i></span>, &nbsp; P(movie | +) = <span class="fr"><i>2 + 1</i><i>8</i></span></span><span class="w">Pozitif sınıfta "good" çok geçiyor.</span></li>
+        <li><span class="m">P(good | −) = <span class="fr"><i>0 + 1</i><i>8</i></span>, &nbsp; P(movie | −) = <span class="fr"><i>3</i><i>8</i></span></span><span class="w">Negatifte "good" hiç yok, ama +1 sayesinde 0 değil.</span></li>
+        <li><span class="m">skor(+) = 0.5 × <span class="fr"><i>4</i><i>8</i></span> × <span class="fr"><i>3</i><i>8</i></span> ≈ 0.094<br>skor(−) = 0.5 × <span class="fr"><i>1</i><i>8</i></span> × <span class="fr"><i>3</i><i>8</i></span> ≈ 0.023</span><span class="w">Her sınıf için çarp. Büyük olan kazanır.</span></li>
+        <li class="r"><span class="m">P(+ | good movie) = <span class="fr"><i>0.094</i><i>0.094 + 0.023</i></span> = 0.8</span><span class="w">Olasılık istenirse: skoru, iki skorun toplamına böl.</span></li>
+      </ol>
+      <div data-fig="nb"></div>
+      <p class="res">Yorum <b>pozitif</b>; model bu yorum için %80 pozitif diyor. Bu accuracy değil.</p>
     </div>
 
-    <div class="xp">
+    <!-- LOGISTIC REGRESSION -->
+    <div class="xp" id="c-lr">
       <h3>Logistic regression</h3>
       <div class="meta">W3</div>
-      <p><span class="fx">z = w·x + b</span> · <span class="fx">p = σ(z)</span> · z ≥ 0 ⇔ p ≥ 0.5 · gradient <span class="fx">(p − y)·x</span>, bias için <span class="fx">p − y</span></p>
-      <div class="ex">
-        x = [2, 0], w = [0.8, −1], b = −0.4 → z = 1.2 → p ≈ <b>0.769</b> → positive<br>
-        y = 1, η = 0.1: g = (0.769 − 1)×2 ≈ −0.463 → w = 0.8 + 0.046 ≈ <b>0.846</b><span class="c">model "good"a daha çok güvenir</span>
-      </div>
-      <p class="warn1">Adı regression ama sınıflandırıcı. x = 0 olsa bile bias öğrenir.</p>
+      <p class="idea">Her kelimenin bir <b>ağırlığı</b> var ("good" +, "bad" −). Kelime sayılarıyla çarp, topla → skor <b>z</b>. Sigmoid, z'yi <b>0 ile 1 arası bir olasılığa</b> çevirir.</p>
+      <div class="formula">z = w<sub>good</sub>·x<sub>good</sub> + w<sub>bad</sub>·x<sub>bad</sub> + b &nbsp;&nbsp;&nbsp; p = σ(z) = <span class="fr"><i>1</i><i>1 + e<sup>−z</sup></i></span></div>
+      <p class="legend"><b>x</b> = kelime sayıları · <b>w</b> = ağırlıklar · <b>b</b> = bias · z &gt; 0 ise p &gt; 0.5 → positive</p>
+      <p>Örnek: x = [good 2, bad 0], w = [0.8, −1], b = −0.4</p>
+      <ol class="steps">
+        <li><span class="m">z = 0.8 × 2 + (−1) × 0 + (−0.4) = 1.2</span><span class="w">İki "good" skoru pozitif yöne itiyor.</span></li>
+        <li class="r"><span class="m">p = σ(1.2) ≈ 0.77</span><span class="w">z pozitif → p 0.5'ten büyük → <b>positive</b>.</span></li>
+      </ol>
+      <div data-fig="lr"></div>
+      <h4>Bir eğitim adımı (doğru cevap y = 1, öğrenme hızı η = 0.1)</h4>
+      <ol class="steps">
+        <li><span class="m">hata = p − y = 0.77 − 1 = −0.23</span><span class="w">Model olması gerekenden az emin.</span></li>
+        <li><span class="m">gradient = hata × x = −0.23 × 2 ≈ −0.46</span><span class="w">Bu kelime ne kadar sık geçtiyse o kadar büyük düzeltme.</span></li>
+        <li class="r"><span class="m">w<sub>yeni</sub> = 0.8 − 0.1 × (−0.46) ≈ 0.85</span><span class="w">Ağırlık arttı: model "good"a daha çok güveniyor.</span></li>
+      </ol>
+      <p class="warn1">Adında "regression" var ama bir <b>sınıflandırıcı</b>. Bias'ın gradient'i p − y, yani x = 0 olsa da bias öğrenir.</p>
     </div>
 
-    <div class="xp">
-      <h3>SVM: hinge loss, margin</h3>
-      <div class="meta">W3 · y = ±1</div>
-      <p><span class="fx">m = y·f(x)</span> · <span class="fx">loss = max(0, 1 − m)</span> · <span class="fx">genişlik = 2/‖w‖</span> · <span class="fx">J = ½‖w‖² + C·Σloss</span></p>
-      <div class="ex">
-        f = −1, y = −1 → m = 1 → loss <b>0</b><span class="c">doğru ve güvenli</span><br>
-        f = 0.5, y = +1 → m = 0.5 → loss <b>0.5</b><span class="c">doğru ama sınıra yakın</span><br>
-        m = −1 → loss <b>2</b> · w = [1, −1] → genişlik 2/√2 ≈ <b>1.414</b>
-      </div>
-    </div>
-
-    <div class="xp">
-      <h3>CNN: pencere, filtre, pooling</h3>
+    <!-- SVM -->
+    <div class="xp" id="c-svm">
+      <h3>SVM: hinge loss</h3>
       <div class="meta">W3</div>
-      <p><span class="fx">pencere sayısı = L − k + 1</span> · filtre = aynı konumları çarp, topla, ReLU</p>
-      <div class="ex">
-        7 kelime, k = 3 → <b>5</b> pencere<br>
-        not = [1,0], very = [0,1], W = [[1,−1],[1,1]] → 1 + 0 + 0 + 1 = <b>2</b>, ReLU(2) = 2<br>
-        puanlar 0.20, 0.30, 0.95, 0.88, 0.82 → max <b>0.95</b>, mean <b>0.63</b><span class="c">özellik, olasılık değil</span>
-      </div>
+      <p class="idea">Doğru tarafta olmak yetmez: sınırdan <b>en az 1 birim uzakta</b> olmalısın. Değilsen ceza.</p>
+      <div class="formula">m = y × f(x) &nbsp;&nbsp;&nbsp; loss = max(0, 1 − m)</div>
+      <p class="legend"><b>y</b> = doğru sınıf (+1 ya da −1) · <b>f(x)</b> = modelin skoru · m &gt; 0 doğru taraf, m ≥ 1 güvenli</p>
+      <div data-fig="svm"></div>
+      <ol class="steps">
+        <li><span class="m">f = −1, y = −1 → m = 1 → loss = 0</span><span class="w">Doğru ve güvenli mesafede.</span></li>
+        <li><span class="m">f = 0.5, y = +1 → m = 0.5 → loss = 0.5</span><span class="w">Doğru tarafta ama sınıra çok yakın: küçük ceza.</span></li>
+        <li><span class="m">m = −1 → loss = 2</span><span class="w">Yanlış tarafta: büyük ceza.</span></li>
+        <li class="r"><span class="m">margin genişliği = <span class="fr"><i>2</i><i>‖w‖</i></span>; &nbsp; w = [1, −1] → <span class="fr"><i>2</i><i>√2</i></span> ≈ 1.41</span><span class="w">‖w‖ küçükse sınırın iki yanındaki boşluk geniş.</span></li>
+      </ol>
+      <p class="warn1">SVM skoru <b>olasılık değil</b>: f = 2 "%200 emin" demek değil.</p>
     </div>
 
-    <div class="xp">
+    <!-- CNN -->
+    <div class="xp" id="c-cnn">
+      <h3>CNN: kayan pencere</h3>
+      <div class="meta">W3</div>
+      <p class="idea">k kelimelik bir pencere cümle boyunca kayar. Her pencere için "burada kalıp var mı?" puanı çıkar. <b>Pooling</b> bu puanları tek sayıya indirir.</p>
+      <div class="formula">pencere sayısı = L − k + 1</div>
+      <p class="legend"><b>L</b> = kelime sayısı · <b>k</b> = pencere genişliği</p>
+      <ol class="steps">
+        <li><span class="m">7 kelime, k = 3 → 7 − 3 + 1 = 5 pencere</span><span class="w">Aşağıdaki cümlede 5 pencere var.</span></li>
+        <li><span class="m"><span class="mx"><i>1</i><i>0</i><i>0</i><i>1</i></span> ⊙ <span class="mx"><i>1</i><i>−1</i><i>1</i><i>1</i></span> → 1 + 0 + 0 + 1 = 2</span><span class="w">Sol: "not very" penceresi (not = [1,0], very = [0,1]). Sağ: filtre. Aynı yerdekileri çarp, hepsini topla. ReLU(2) = 2 (negatif olsaydı 0).</span></li>
+        <li class="r"><span class="m">max pooling = 0.95 &nbsp; mean pooling = <span class="fr"><i>3.15</i><i>5</i></span> = 0.63</span><span class="w">Max: en güçlü pencere. Mean: ortalama.</span></li>
+      </ol>
+      <div data-fig="cnn"></div>
+      <p class="res">En güçlü kalıp "was absolutely terrible" penceresinde. Bu sayılar özellik, olasılık değil.</p>
+    </div>
+
+    <!-- RNN + LSTM -->
+    <div class="xp" id="c-rnn">
       <h3>RNN ve LSTM</h3>
       <div class="meta">W3</div>
-      <p>RNN <span class="fx">h<sub>t</sub> = tanh(W<sub>x</sub>x<sub>t</sub> + W<sub>h</sub>h<sub>t−1</sub> + b)</span> · LSTM <span class="fx">c = f·c_old + i·g</span>, <span class="fx">h = o·tanh(c)</span></p>
-      <div class="ex">
-        RNN h<sub>t</sub> = tanh(x<sub>t</sub> + 0.5·h<sub>t−1</sub>), girdiler [1, −1]: h1 = tanh 1 ≈ <b>0.762</b>, h2 = tanh(−0.619) ≈ <b>−0.551</b><br>
-        LSTM c_old 0.5, f 0.8, i 0.25, g −0.4, o 0.6: c = 0.40 − 0.10 = <b>0.30</b>, h = 0.6 × tanh 0.30 ≈ <b>0.175</b>
-      </div>
-      <p class="warn1">LSTM'de <b>önce tanh, sonra çarp</b> (0.6 × 0.30 = 0.18 yanlış). BiLSTM: 256 + 256 = 512, streaming'de kullanılamaz.</p>
+      <p class="idea"><b>RNN</b> cümleyi soldan sağa okur ve bir hafızayı (<b>h</b>) kelimeden kelimeye taşır.</p>
+      <div class="formula">h<sub>t</sub> = tanh(x<sub>t</sub> + 0.5 × h<sub>t−1</sub>)</div>
+      <p class="legend">slayttaki basit hali · <b>x<sub>t</sub></b> = şimdiki kelime · <b>h<sub>t−1</sub></b> = önceki hafıza · girdiler [1, −1], h<sub>0</sub> = 0</p>
+      <ol class="steps">
+        <li><span class="m">h<sub>1</sub> = tanh(1 + 0.5 × 0) = tanh 1 ≈ 0.76</span><span class="w">İlk adımda hafıza boş.</span></li>
+        <li class="r"><span class="m">h<sub>2</sub> = tanh(−1 + 0.5 × 0.76) = tanh(−0.62) ≈ −0.55</span><span class="w">İkinci adım birincinin sonucunu kullanıyor.</span></li>
+      </ol>
+      <div data-fig="rnn"></div>
+      <p class="warn1"><b>Vanishing gradient</b>: hata sinyali geriye giderken her adımda çarpılır, 0.5 × 0.5 × … (20 kere) ≈ 0.000001. Baştaki kelimeye neredeyse hiç sinyal ulaşmaz. Clipping sadece <b>patlamayı</b> düzeltir (1.5<sup>20</sup> ≈ 3325).</p>
+
+      <p class="idea" style="margin-top:22px"><b>LSTM</b> ayrı bir hafıza hattı (<b>c</b>) ve 0 ile 1 arası üç <b>musluk</b> ekler: <b>f</b> eskinin ne kadarını tut, <b>i</b> yeninin ne kadarını yaz, <b>o</b> ne kadarını dışarı ver.</p>
+      <div class="formula">c = f × c<sub>eski</sub> + i × g &nbsp;&nbsp;&nbsp; h = o × tanh(c)</div>
+      <p class="legend">c<sub>eski</sub> = 0.5 · f = 0.8 · i = 0.25 · g (yeni içerik) = −0.4 · o = 0.6</p>
+      <div data-fig="lstm"></div>
+      <ol class="steps">
+        <li><span class="m">tut: 0.8 × 0.5 = 0.40</span><span class="w">Eski hafızanın %80'i kalıyor.</span></li>
+        <li><span class="m">yaz: 0.25 × (−0.4) = −0.10</span><span class="w">Yeni içeriğin çeyreği ekleniyor.</span></li>
+        <li><span class="m">c = 0.40 − 0.10 = 0.30</span><span class="w">Yeni hafıza.</span></li>
+        <li class="r"><span class="m">h = 0.6 × tanh(0.30) = 0.6 × 0.29 ≈ 0.175</span><span class="w"><b>Önce tanh, sonra çarp.</b> 0.6 × 0.30 = 0.18 yanlış.</span></li>
+      </ol>
     </div>
 
-    <div class="xp">
-      <h3>Attention ve mask</h3>
+    <!-- ATTENTION -->
+    <div class="xp" id="c-att">
+      <h3>Attention</h3>
       <div class="meta">W3</div>
-      <p><span class="fx">softmax(QKᵀ/√d<sub>k</sub>)V</span> · softmax = exp al, toplama böl · e<sup>ln 2</sup> = 2</p>
-      <div class="ex">
-        s = [0, ln 2, 0] → exp [1, 2, 1] / 4 → <b>[0.25, 0.5, 0.25]</b><br>
-        V = [2,0], [0,4], [2,2] → [0.5,0] + [0,2] + [0.5,0.5] = <b>[1, 2.5]</b><br>
-        3. konum PAD, mask [0, 0, −∞] → exp [1, 2, 0] → <b>[1/3, 2/3, 0]</b><br>
-        BERT-base: d<sub>k</sub> = 768/12 = 64 → √d<sub>k</sub> = 8 · T iki katı → iş <b>4 katı</b>
-      </div>
+      <p class="idea">Bir kelime diğer kelimelere bakar ve her birine bir <b>pay</b> verir (paylar toplamı 1). Sonra onların bilgisini (<b>Value</b>) bu paylarla karıştırır.</p>
+      <div class="formula">pay<sub>i</sub> = <span class="fr"><i>e<sup>s<sub>i</sub></sup></i><i>e<sup>s<sub>1</sub></sup> + e<sup>s<sub>2</sub></sup> + e<sup>s<sub>3</sub></sup></i></span> &nbsp;&nbsp;&nbsp; çıktı = pay<sub>1</sub>·V<sub>1</sub> + pay<sub>2</sub>·V<sub>2</sub> + pay<sub>3</sub>·V<sub>3</sub></div>
+      <p class="legend">Bu softmax. Hesap makinesi gerekmez: <b>e<sup>0</sup> = 1</b>, <b>e<sup>ln 2</sup> = 2</b>, <b>e<sup>−∞</sup> = 0</b></p>
+      <p>Skorlar s = [0, ln 2, 0]; V<sub>1</sub> = [2, 0], V<sub>2</sub> = [0, 4], V<sub>3</sub> = [2, 2]</p>
+      <ol class="steps">
+        <li><span class="m">e üzeri: [1, 2, 1], toplam = 4</span><span class="w">Her skoru e'nin üssü yap.</span></li>
+        <li><span class="m">paylar = [<span class="fr"><i>1</i><i>4</i></span>, <span class="fr"><i>2</i><i>4</i></span>, <span class="fr"><i>1</i><i>4</i></span>] = [0.25, 0.5, 0.25]</span><span class="w">En çok 2. kelimeye bakıyor, ama diğerleri de 0 değil.</span></li>
+        <li class="r"><span class="m">0.25·[2,0] + 0.5·[0,4] + 0.25·[2,2] = [1, 2.5]</span><span class="w">= [0.5, 0] + [0, 2] + [0.5, 0.5]. Bağlamı görmüş yeni vektör.</span></li>
+        <li><span class="m">3. konum PAD → skoruna −∞ ekle → [1, 2, 0] → [<span class="fr"><i>1</i><i>3</i></span>, <span class="fr"><i>2</i><i>3</i></span>, 0]</span><span class="w">Mask: PAD hiç pay almaz, kalanlar yine 1'e toplanır.</span></li>
+      </ol>
+      <div data-fig="att"></div>
+      <p class="warn1">Gerçek formülde skorlar önce <span class="fr"><i>Q·K</i><i>√d<sub>k</sub></i></span> ile hesaplanır. BERT-base: d<sub>k</sub> = 768 / 12 = 64 → √64 = 8. Bölmek softmax'ın aşırı sivrileşmesini önler.</p>
+      <p class="small">BERT bonus: "The film was [MASK]." doğru kelimeye P = 0.25 → loss = −ln 0.25 = ln 4 ≈ 1.39.</p>
     </div>
 
-    <div class="xp">
-      <h3>BERT: şekiller ve MLM loss</h3>
-      <div class="meta">W3</div>
-      <div class="ex">
-        8 yorum × 128 token: ID [8,128] → vektör [8,128,768] → logits [8,2] → argmax [8]<br>
-        "The film was [MASK]." P(excellent) = 0.25 → loss = −ln 0.25 = <b>ln 4 ≈ 1.386</b>
-      </div>
-      <p class="warn1">model.eval() gradient kaydını durdurmaz (onu torch.no_grad() yapar).</p>
-    </div>
-
-    <div class="xp">
+    <!-- P R F1 -->
+    <div class="xp" id="c-prf">
       <h3>Precision, recall, F1</h3>
-      <div class="meta">W3 · TP 30, FN 10, FP 5, TN 55</div>
-      <div class="ex">
-        P = 30/35 ≈ <b>0.857</b> · R = 30/40 = <b>0.75</b> · F1 = 60/75 = <b>0.8</b> · accuracy = 85/100 = <b>0.85</b><br>
-        hep "negatif" baseline = <b>0.60</b><span class="c">0.85'i buna göre yorumla</span><br>
-        negatif sınıf F1 = 110/125 = 0.88 → macro = <b>0.84</b>, weighted = (40×0.8 + 60×0.88)/100 = <b>0.848</b>
-      </div>
-      <p class="warn1">Eşiği 0.5 → 0.7 yapmak p = 0.60'ı NEGATIVE yapar; ağırlıklar değişmez. Eşik validation'da seçilir.</p>
+      <div class="meta">W3</div>
+      <p class="idea">Accuracy "kaçını doğru bildin?" diye sorar. Precision ve recall "<b>ne tür hata</b> yaptın?" diye sorar.</p>
+      <div data-fig="conf"></div>
+      <div class="formula">Precision = <span class="fr"><i>TP</i><i>TP + FP</i></span> &nbsp;&nbsp; Recall = <span class="fr"><i>TP</i><i>TP + FN</i></span> &nbsp;&nbsp; F1 = <span class="fr"><i>2·TP</i><i>2·TP + FP + FN</i></span></div>
+      <p class="legend"><b>Precision</b>: "pozitif dediklerimin kaçı gerçekten pozitif?" · <b>Recall</b>: "gerçek pozitiflerin kaçını yakaladım?" · F1'de <b>TN yok</b></p>
+      <ol class="steps">
+        <li><span class="m">Precision = <span class="fr"><i>30</i><i>35</i></span> ≈ 0.86</span><span class="w">35 "pozitif" dedi, 30'u doğru.</span></li>
+        <li><span class="m">Recall = <span class="fr"><i>30</i><i>40</i></span> = 0.75</span><span class="w">40 gerçek pozitifin 30'unu buldu, 10'unu kaçırdı.</span></li>
+        <li class="r"><span class="m">F1 = <span class="fr"><i>60</i><i>60 + 5 + 10</i></span> = <span class="fr"><i>60</i><i>75</i></span> = 0.8</span><span class="w">İkisinin dengesi (harmonik ortalama).</span></li>
+        <li><span class="m">accuracy = <span class="fr"><i>30 + 55</i><i>100</i></span> = 0.85</span><span class="w">Bütün doğru kararlar (TP + TN).</span></li>
+        <li><span class="m">hep "negatif" diyen model = <span class="fr"><i>60</i><i>100</i></span> = 0.60</span><span class="w">Baseline: 0.85'i buna göre değerlendir.</span></li>
+        <li><span class="m">macro F1 = <span class="fr"><i>0.80 + 0.88</i><i>2</i></span> = 0.84</span><span class="w">Negatif sınıfın F1'i = <span class="fr"><i>110</i><i>125</i></span> = 0.88. Macro: her sınıf eşit.</span></li>
+      </ol>
+      <p class="warn1">Eşiği 0.5'ten 0.7'ye çıkarmak p = 0.60 olan yorumu NEGATIVE yapar. Kararlar değişir, ağırlıklar değişmez.</p>
     </div>
 
-    <div class="xp">
+    <!-- POS / BIO -->
+    <div class="xp" id="c-bio">
       <h3>POS belirsizliği ve BIO etiket sayısı</h3>
+      <div class="meta">W4 · W6</div>
+      <p class="idea"><b>Type</b> = farklı kelime; <b>token</b> = her geçişi. Belirsiz kelimeler sık kullanıldığı için token oranı daha yüksek çıkar.</p>
+      <div data-fig="types"></div>
+      <ol class="steps">
+        <li><span class="m">belirsiz type = <span class="fr"><i>1</i><i>3</i></span> ≈ %33</span><span class="w">3 farklı kelime (book, cat, dog), sadece "book" belirsiz.</span></li>
+        <li class="r"><span class="m">belirsiz token = <span class="fr"><i>3</i><i>5</i></span> = %60</span><span class="w">5 token, 3'ü "book".</span></li>
+      </ol>
+      <p class="idea" style="margin-top:18px"><b>BIO</b>: B = ismin ilk kelimesi, I = devamı, O = isim değil. I-PER sadece B-PER ya da I-PER'den sonra gelebilir.</p>
+      <div data-fig="bio"></div>
+      <div class="formula">IO = n + 1 &nbsp;&nbsp;&nbsp; BIO = 2n + 1 &nbsp;&nbsp;&nbsp; BIOES = 4n + 1</div>
+      <p class="legend"><b>n</b> = varlık türü sayısı. PER, ORG, LOC → n = 3 → <b>4, 7, 13</b> etiket</p>
+    </div>
+
+    <!-- SPAN F1 -->
+    <div class="xp" id="c-span">
+      <h3>Span F1 (exact match)</h3>
       <div class="meta">W6</div>
-      <div class="ex">
-        "book book book cat dog", sadece book belirsiz: type 1/3 ≈ <b>%33</b>, token 3/5 = <b>%60</b><br>
-        book: NOUN 6, VERB 4 → baseline hep NOUN → "Book a flight" <b>yanlış</b><br>
-        n = 3 tür: IO <b>4</b>, BIO <b>7</b>, BIOES <b>13</b>
-      </div>
+      <p class="idea">Bir isim ancak <b>sınırları ve türü tam aynıysa</b> doğru sayılır. Sonra aynı P, R, F1 formülleri.</p>
+      <div data-fig="span"></div>
+      <ol class="steps">
+        <li><span class="m">TP = 2, &nbsp; FP = 4 − 2 = 2, &nbsp; FN = 3 − 2 = 1</span><span class="w">4 tahmin, 3 gerçek isim, 2 tam eşleşme.</span></li>
+        <li><span class="m">P = <span class="fr"><i>2</i><i>4</i></span> = 0.5 &nbsp;&nbsp; R = <span class="fr"><i>2</i><i>3</i></span> ≈ 0.67</span><span class="w"></span></li>
+        <li class="r"><span class="m">F1 = <span class="fr"><i>2·2</i><i>2·2 + 2 + 1</i></span> = <span class="fr"><i>4</i><i>7</i></span> ≈ 0.57</span><span class="w"></span></li>
+      </ol>
+      <p class="warn1">"Acme" ≠ "Acme Labs": tür doğru ama sınır yanlış → yanlış. Micro/macro: PER F1 0.889, LOC F1 0.4 → macro = <span class="fr"><i>0.889 + 0.4</i><i>2</i></span> ≈ 0.64 (her tür eşit); micro (sayıları topla) = <span class="fr"><i>18</i><i>23</i></span> ≈ 0.78.</p>
     </div>
 
-    <div class="xp">
-      <h3>Span F1 (exact match), micro ve macro</h3>
-      <div class="meta">W6</div>
-      <div class="ex">
-        Gold 3 span, tahmin 4 (Ada Lovelace ✓, New York ✓, Acme ✗, Tuesday ✗)<br>
-        TP 2, FP 2, FN 1 → P <b>0.5</b>, R <b>0.667</b>, F1 = 4/7 ≈ <b>0.571</b><br>
-        PER (8,2,0) F1 ≈ 0.889 · LOC (1,0,3) F1 = 0.4 → micro 18/23 ≈ <b>0.783</b>, macro ≈ <b>0.644</b>
+    <!-- HMM -->
+    <div class="xp" id="c-hmm">
+      <h3>HMM "can fish" ve Viterbi</h3>
+      <div class="meta">W6 <span class="hot" lang="en">en olası</span></div>
+      <p class="idea">Bir etiket yolu seç (örneğin V sonra N) ve olasılıklarını sırayla çarp: <b>başla → ilk kelimeyi üret → sonraki etikete geç → ikinci kelimeyi üret</b>. En büyük çarpım kazanır.</p>
+      <div class="giv3">
+        <table class="t giv"><tr><th colspan="2">Start π</th></tr><tr><td>N</td><td>0.6</td></tr><tr><td>V</td><td>0.4</td></tr></table>
+        <table class="t giv"><tr><th>Transition a</th><th>→ N</th><th>→ V</th></tr><tr><td>N</td><td>0.3</td><td>0.7</td></tr><tr><td>V</td><td>0.8</td><td>0.2</td></tr></table>
+        <table class="t giv"><tr><th>Emission b</th><th>can</th><th>fish</th></tr><tr><td>N</td><td>0.4</td><td>0.6</td></tr><tr><td>V</td><td>0.7</td><td>0.3</td></tr></table>
       </div>
-      <p class="warn1">"Acme" yerine "Acme Labs" = sınır yanlış → exact match'te <b>yanlış</b>.</p>
+      <div class="formula">P(V, N) = π(V) × b(V, can) × a(V → N) × b(N, fish)</div>
+      <p class="legend"><b>b(N, fish)</b> = P(fish | N): "etiket N iken kelimenin fish olma olasılığı"</p>
+      <ol class="steps">
+        <li class="r"><span class="m">VN = 0.4 × 0.7 × 0.8 × 0.6 = 0.1344</span><span class="w">Elle: 0.4 × 0.7 = 0.28 → × 0.8 = 0.224 → × 0.6 = 0.1344.</span></li>
+        <li><span class="m">NN = 0.0432 &nbsp; NV = 0.0504 &nbsp; VV = 0.0168</span><span class="w">Aynı şekilde diğer 3 yol (2 kelime, 2 etiket → 4 yol).</span></li>
+        <li><span class="m">P(X) = 0.0432 + 0.0504 + 0.1344 + 0.0168 = 0.2448</span><span class="w">Dört yolun toplamı: "can fish" cümlesinin olasılığı.</span></li>
+        <li class="r"><span class="m">P(VN | can fish) = <span class="fr"><i>0.1344</i><i>0.2448</i></span> ≈ 0.55</span><span class="w">0.1344 <b>joint</b> (kelime ve etiket birlikte), 0.55 <b>posterior</b>.</span></li>
+      </ol>
+      <div data-fig="hmm"></div>
+      <h4>Viterbi: 4 yolu tek tek yazmadan en iyiyi bul</h4>
+      <ol class="steps">
+        <li><span class="m">"can": &nbsp; N = 0.6 × 0.4 = 0.24 &nbsp; V = 0.4 × 0.7 = 0.28</span><span class="w">Başlangıç × emission.</span></li>
+        <li><span class="m">"fish" = N: &nbsp; max(0.24 × 0.3, <b>0.28 × 0.8</b>) × 0.6 = 0.224 × 0.6 = 0.1344</span><span class="w">N'ye iki yoldan gelinebilir; sadece en iyisini (V'den) tut.</span></li>
+        <li><span class="m">"fish" = V: &nbsp; max(<b>0.24 × 0.7</b>, 0.28 × 0.2) × 0.3 = 0.168 × 0.3 = 0.0504</span><span class="w">Bu sefer N'den gelen daha iyi.</span></li>
+        <li class="r"><span class="m">0.1344 &gt; 0.0504 → son etiket N, geri git → V → yol <b>VN</b></span><span class="w">4 yolu yazarak bulduğumuzla aynı.</span></li>
+      </ol>
+      <div data-fig="viterbi"></div>
+      <p class="warn1"><b>Viterbi = max</b> (en iyi yol), <b>Forward = toplam</b> (P(X) = 0.2448). 10 kelime, 3 etiket: 3<sup>10</sup> = 59,049 yol yerine 81 kontrol. Smoothing: N 2 kere, V 0 kere → <span class="fr"><i>2 + 1</i><i>4</i></span> = 0.75 ve <span class="fr"><i>0 + 1</i><i>4</i></span> = 0.25.</p>
     </div>
 
-    <div class="xp">
-      <h3>HMM "can fish" + Viterbi</h3>
-      <div class="meta">W6 <span class="hot" lang="en">en olası</span> · π N 0.6, V 0.4 · a N→N 0.3, N→V 0.7, V→N 0.8, V→V 0.2 · b can|N 0.4, fish|N 0.6, can|V 0.7, fish|V 0.3</div>
-      <p><span class="fx">P(X,Y) = π(y1) · b(y1,can) · a(y1→y2) · b(y2,fish)</span></p>
-      <div class="ex">
-        NN 0.0432 · NV 0.0504 · <b>VN 0.1344</b> · VV 0.0168<span class="c">0.4×0.7 = 0.28 → ×0.8 = 0.224 → ×0.6</span><br>
-        P(X) = toplam = <b>0.2448</b> → P(VN | X) = 0.1344/0.2448 ≈ <b>0.549</b><br>
-        Viterbi: can N 0.24, V 0.28 → fish/N = max(0.072, <b>0.224</b>)×0.6 = 0.1344 · fish/V = max(<b>0.168</b>, 0.056)×0.3 = 0.0504 → geri git: <b>VN</b><br>
-        T = 10, K = 3: 3<sup>10</sup> = 59,049 yol yerine <b>81</b> kontrol<br>
-        add-one: N 2, V 0 → 3/4, 1/4 · UNK: can 4, fish 6, UNK 0 → 5/13, 7/13, 1/13
-      </div>
-      <p class="warn1"><b>0.1344 joint</b>, <b>0.549 posterior</b>. Kazananı bulmak için P(X)'e bölmek gerekmez.</p>
-    </div>
-
-    <div class="xp">
+    <!-- CRF -->
+    <div class="xp" id="c-crf">
       <h3>CRF "can fish"</h3>
-      <div class="meta">W6 <span class="hot" lang="en">en olası</span> · unary can N = ln 2, fish V = ln 2, diğerleri 0 · transition V→N = ln 8</div>
-      <p><span class="fx">S = Σ unary + Σ transition</span> · <span class="fx">P(Y|X) = exp(S)/Z</span> · <span class="fx">loss = ln Z − S(gold)</span></p>
-      <div class="ex">
-        weights NN 2 · NV 4 · <b>VN 8</b> · VV 2 → Z = <b>16</b><span class="c">sadece unary'ye bakılsa NV kazanırdı</span><br>
-        P(VN) = <b>0.5</b> · gold VN → loss = ln 16 − ln 8 = <b>ln 2 ≈ 0.693</b><br>
-        θ(V→N) gradient = beklenen − gerçek = 0.5 − 1 = <b>−0.5</b><span class="c">puan artırılır</span><br>
-        alıştırma V→N = ln 2: 2, 4, 2, 2 → Z = 10, kazanan <b>NV</b>; gold VN loss = ln 5 ≈ 1.609
-      </div>
-      <p class="warn1">Skor 2 geçerli (olasılık değil). Z sadece olasılık ve loss için gerekir, en iyi yol max ile bulunur.</p>
+      <div class="meta">W6 <span class="hot" lang="en">en olası</span></div>
+      <p class="idea">Her yola bir <b>puan</b> ver: "etiket kelimeye uyuyor mu?" + "komşu etiketler birbirine uyuyor mu?". Puanın e üzeri = <b>ağırlık</b>. Olasılık = bu yolun ağırlığı / bütün ağırlıkların toplamı (<b>Z</b>).</p>
+      <table class="t giv">
+        <tr><th>Puanlar</th><th>değer</th><th>e üzeri</th></tr>
+        <tr><td>can → N, fish → V (kelime uyumu)</td><td>ln 2</td><td>2</td></tr>
+        <tr><td>V → N (komşu uyumu)</td><td>ln 8</td><td>8</td></tr>
+        <tr><td>diğer her şey</td><td>0</td><td>1</td></tr>
+      </table>
+      <div class="formula">P(yol) = <span class="fr"><i>e<sup>puan</sup></i><i>Z</i></span> &nbsp;&nbsp;&nbsp; loss = ln Z − puan(doğru yol)</div>
+      <p class="legend">İpucu: ln 2 + ln 2 = ln 4 → e üzeri 4</p>
+      <ol class="steps">
+        <li><span class="m">NN: ln 2 → 2 &nbsp; NV: ln 2 + ln 2 → 4 &nbsp; VN: ln 8 → 8 &nbsp; VV: ln 2 → 2</span><span class="w">Sadece kelime uyumuna bakılsa NV kazanırdı; V → N puanı VN'yi öne geçiriyor.</span></li>
+        <li><span class="m">Z = 2 + 4 + 8 + 2 = 16</span><span class="w">Bütün yolların ağırlık toplamı.</span></li>
+        <li class="r"><span class="m">P(VN) = <span class="fr"><i>8</i><i>16</i></span> = 0.5</span><span class="w">Kazanan VN.</span></li>
+        <li class="r"><span class="m">loss = ln 16 − ln 8 = ln 2 ≈ 0.69</span><span class="w">Doğru yol VN ise. (= −ln 0.5)</span></li>
+        <li><span class="m">gradient(V → N) = beklenen − gerçek = 0.5 − 1 = −0.5</span><span class="w">Negatif → bu puan artırılır.</span></li>
+      </ol>
+      <div data-fig="crf"></div>
+      <p class="warn1">Puan 2 gibi 1'den büyük olabilir (olasılık değil). Z sadece olasılık ve loss için gerekir; en iyi yol max ile bulunur. Öğrenilmiş sonlu puanlar geçersiz BIO'yu <b>yasaklamaz</b>, −∞ gerekir.</p>
     </div>
 
-    <div class="xp">
-      <h3>Neural token classifier</h3>
+    <!-- SOFTMAX TAGGER -->
+    <div class="xp" id="c-soft">
+      <h3>Neural token classifier (softmax)</h3>
       <div class="meta">W6</div>
-      <div class="ex">
-        H (2,5,4) × W (3,4) → logits <b>(2,5,3)</b> = 2 cümle, 5 konum, 3 etiket skoru<br>
-        softmax(ln 1, ln 2, ln 1) → (0.25, <b>0.5</b>, 0.25) → B-PER<br>
-        masked loss, gold olasılıkları 0.8 ve 0.5 → (0.223 + 0.693)/<b>2</b> ≈ <b>0.458</b><span class="c">5'e değil, denetlenen 2 konuma böl</span>
-      </div>
+      <p class="idea">Her token için etiket skorları → softmax → en büyüğü seç. Her konum <b>kendi başına</b> karar verir.</p>
+      <ol class="steps">
+        <li class="r"><span class="m">skorlar (ln 1, ln 2, ln 1) → e üzeri (1, 2, 1) → <span class="fr"><i>(1, 2, 1)</i><i>4</i></span> = (0.25, 0.5, 0.25)</span><span class="w">En büyük 2. etiket: B-PER.</span></li>
+        <li class="r"><span class="m">masked loss = <span class="fr"><i>−ln 0.8 − ln 0.5</i><i>2</i></span> = <span class="fr"><i>0.22 + 0.69</i><i>2</i></span> ≈ 0.46</span><span class="w">Sadece −100 olmayan 2 konum sayılır: <b>2'ye böl</b>, 5'e değil.</span></li>
+        <li><span class="m">logits şekli (2, 5, 3)</span><span class="w">2 cümle × 5 konum × 3 etiket skoru.</span></li>
+      </ol>
     </div>
 
     <!-- ================= OPEN ================= -->
@@ -396,5 +517,45 @@
     })();
   </script>
   <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/figs.js"></script>
+  <script src="../assets/js/anim.js"></script>
+  <script src="anims.js"></script>
+  <script>
+    (function () {
+      const FIGS = {
+        tfidf: { type: 'boxes', t: 'df = kelimenin kaç dokümanda geçtiği', head: ['', 'the', 'cat', 'dog', 'bird'], rows: [
+          { label: 'Doc 1', cells: [['the ×2', 'mute'], ['cat', 'c1'], ['', ''], ['', '']] },
+          { label: 'Doc 2', cells: [['the ×2', 'mute'], ['', ''], ['dog', 'c0'], ['', '']] },
+          { label: 'Doc 3', cells: [['the ×2', 'mute'], ['', ''], ['', ''], ['bird', 'c0']] },
+          { label: '<b>df</b>', cells: [['3', ''], ['1', ''], ['1', ''], ['1', '']] },
+          { label: '<b>IDF</b>', cells: [['ln 1 = <b>0</b>', 'bad'], ['ln 3 ≈ 1.10', 'ok'], ['1.10', ''], ['1.10', '']] },
+        ], cap: '"the" her satırda var → IDF 0. "cat" tek satırda → IDF yüksek.' },
+        nb: { type: 'bars', t: '"good movie" için iki sınıfın skoru', items: [['pozitif', 0.09375, 'c1', '0.094'], ['negatif', 0.0234, 'c4', '0.023']], cap: 'Pozitif skor 4 kat büyük. Oranı: 0.094 / (0.094 + 0.023) = 0.8.' },
+        lr: { type: 'plot', t: 'Sigmoid: skor z → olasılık p', w: 560, h: 270, x: [-6, 6], y: [0, 1], xl: 'z', yl: 'p (positive)', lines: [{ pts: [[-6, 0.0025], [-4, 0.018], [-3, 0.047], [-2, 0.119], [-1, 0.269], [0, 0.5], [1, 0.731], [2, 0.881], [3, 0.953], [4, 0.982], [6, 0.9975]], c: 'c0' }, { pts: [[-6, 0.5], [6, 0.5]], c: 'mute', dash: true }], pts: [[1.2, 0.769, 'c1', 'z = 1.2 → p ≈ 0.77'], [0, 0.5, 'warn', 'z = 0 → 0.5']], cap: 'Kesikli çizginin (0.5) üstü positive.' },
+        svm: { type: 'plot', t: 'Hinge loss: margin m küçüldükçe ceza', w: 560, h: 270, x: [-1.5, 2.5], y: [0, 2.6], xl: 'margin m = y · f(x)', yl: 'loss', lines: [{ pts: [[-1.5, 2.5], [1, 0], [2.5, 0]], c: 'c4' }, { pts: [[0, 0], [0, 2.6]], c: 'mute', dash: true }], pts: [[1, 0, 'ok', 'm = 1 → 0'], [0.5, 0.5, 'warn', 'm = 0.5 → 0.5'], [-1, 2, 'bad', 'm = −1 → 2']], cap: 'Kesikli çizginin solu yanlış taraf. m ≥ 1 olunca ceza biter.' },
+        cnn: { type: 'bars', t: '"This movie was absolutely terrible and boring", k = 3', items: [['This movie was', 0.20, 'mute'], ['movie was absolutely', 0.30, 'mute'], ['<b>was absolutely terrible</b>', 0.95, 'c4', '0.95 ← max'], ['absolutely terrible and', 0.88, 'c2'], ['terrible and boring', 0.82, 'c2']], max: 1, cap: 'Max pooling 0.95\'i alır. Mean pooling hepsinin ortalamasını: 3.15 / 5 = 0.63.' },
+        rnn: { type: 'anim', name: 'rnn', t: 'RNN hafızasını kelimeden kelimeye taşır' },
+        lstm: { type: 'flow', t: 'LSTM bir hafıza adımı', items: [['', 'c<sub>eski</sub> = 0.5', 'eski hafıza', 'mute'], ['', '× f = 0.8', 'tut: 0.40', 'c0'], ['', '+ i × g', '0.25 × (−0.4) = −0.10', 'c2'], ['', 'c = 0.30', 'yeni hafıza', 'c1'], ['', 'h = 0.6 × tanh(0.30)', '≈ 0.175', 'c3']] },
+        att: { type: 'bars', t: 'Paylar (toplamı 1)', items: [['kelime 1', 0.25, 'c0', '1/4 = 0.25'], ['kelime 2', 0.5, 'c2', '2/4 = 0.5'], ['kelime 3', 0.25, 'c0', '1/4 = 0.25']], max: 1, cap: 'Çıktı = 0.25 × V<sub>1</sub> + 0.5 × V<sub>2</sub> + 0.25 × V<sub>3</sub>.' },
+        conf: { type: 'boxes', t: '100 yorum: dört kutu', head: ['', 'Model: pozitif', 'Model: negatif'], rows: [
+          { label: 'Gerçek pozitif (40)', cells: [['TP = 30', 'ok', 'doğru buldu'], ['FN = 10', 'bad', 'kaçırdı']] },
+          { label: 'Gerçek negatif (60)', cells: [['FP = 5', 'bad', 'yanlış alarm'], ['TN = 55', 'ok', 'doğru']] },
+        ], cap: 'Precision sol sütuna bakar (pozitif dediklerim). Recall üst satıra bakar (gerçek pozitifler).' },
+        types: { type: 'boxes', t: 'Corpus: "book book book cat dog"', rows: [{ label: 'token', cells: [['book', 'c2'], ['book', 'c2'], ['book', 'c2'], ['cat', ''], ['dog', '']] }], cap: 'Turuncu = belirsiz (NOUN mu VERB mü?). Token\'ların 3/5\'i turuncu, ama farklı kelimelerin sadece 1/3\'ü.' },
+        bio: { type: 'anim', name: 'bio', t: 'BIO etiketleri, token başına bir tane' },
+        span: { type: 'boxes', t: 'Gold 3 isim, model 4 tahmin', head: ['', '1', '2', '3', '4'], rows: [
+          { label: 'Gold', cells: [['Ada Lovelace', 'c3', 'PER'], ['New York', 'c0', 'LOC'], ['Acme Labs', 'c2', 'ORG'], ['', '']] },
+          { label: 'Tahmin', cells: [['Ada Lovelace ✓', 'ok', 'PER'], ['New York ✓', 'ok', 'LOC'], ['Acme ✗', 'bad', 'ORG, sınır yanlış'], ['Tuesday ✗', 'bad', 'DATE, fazladan']] },
+        ], cap: '2 tam eşleşme (TP). 2 yanlış tahmin (FP). Acme Labs bulunamadı (FN = 1).' },
+        hmm: { type: 'bars', t: 'Dört yolun olasılığı (joint)', items: [['N N', 0.0432, 'mute', '0.0432'], ['N V', 0.0504, 'mute', '0.0504'], ['<b>V N</b>', 0.1344, 'c1', '0.1344 ← en büyük'], ['V V', 0.0168, 'mute', '0.0168']], cap: 'Toplamı 0.2448 = P(can fish). VN\'nin payı 0.1344 / 0.2448 ≈ 0.55.' },
+        viterbi: { type: 'anim', name: 'viterbi', t: 'Viterbi, "can fish" üzerinde' },
+        crf: { type: 'bars', t: 'Yol ağırlıkları (e<sup>puan</sup>)', items: [['N N', 2, 'mute', '2'], ['N V', 4, 'c2', '4'], ['<b>V N</b>', 8, 'c1', '8 ← en büyük'], ['V V', 2, 'mute', '2']], cap: 'Z = 2 + 4 + 8 + 2 = 16. P(VN) = 8 / 16 = 0.5.' },
+      };
+      document.querySelectorAll('[data-fig]').forEach((n) => {
+        const f = FIGS[n.dataset.fig];
+        if (f && CS.figure) n.replaceWith(CS.figure(f));
+      });
+    })();
+  </script>
 </body>
 </html>
