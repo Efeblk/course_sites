@@ -40,8 +40,8 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
     radiation and invasiveness, choose the imaging technique, build a biosensor
   - 23 games, a quiz and flashcards per lecture, driven by `ens010/data.js`
   - `ozet.html` (Turkish midterm summary with English terms) and `mock.html` (mock midterm with written questions)
-  - `videos.html`: narrated English study videos, one per lecture, scripted in `ens010/video.js` and built by
-    `tools/video/build.py` (motion recorded frame by frame from headless Chrome under a fake clock via Playwright + edge-tts speech + ffmpeg) into `materials/ENS010/video/` (local only)
+  - `videos.html`: narrated English study videos, one per lecture, made with Remotion in `tools/motion/`
+    (illustrated scenes that move with the voice, no slides) into `materials/ENS010/video/` (local only)
 
 ## Layout
 
@@ -71,6 +71,12 @@ assets/js/ml.js       seeded RNG, least squares, entropy, colors (COE305, UNI480
 coe303/chN/, coe025/wN/, coe305/wN/, uni480/wN/, ens010/lN/   custom simulations per chapter / week / lecture
 materials/            raw course files — local only, gitignored (copyrighted)
 ```
+
+## Study videos
+
+The recipe is in [`tools/motion/README.md`](tools/motion/README.md). Videos are narrated explainers made with Remotion,
+with drawn scenes that move with the voice and no slides or captions. Follow it for every new course video.
+`tools/video/` is the older slide-and-caption pipeline. It is kept only for reference.
 
 ## Adding a chapter
 

@@ -1,29 +1,7 @@
 /* ENS010 Lecture 3 · Why size matters. Narration: src/scripts/ens010-L3.json (one cue per line). */
 import React from 'react';
-import {AbsoluteFill, random} from 'remotion';
-import {C, FONT, Heading, mix, mixColor, pop, prog, Rise, Tag, Thermometer, useScene} from '../lib';
-
-const Stage: React.FC<{children: React.ReactNode}> = ({children}) => (
-  <AbsoluteFill><svg viewBox="0 0 1920 1080" width={1920} height={1080}>{children}</svg></AbsoluteFill>
-);
-
-/* hexagonal cluster: atoms within `k` rings; ring k is the surface */
-const hexAtoms = (k: number) => {
-  const out: {q: number; r: number; ring: number}[] = [];
-  for (let q = -k; q <= k; q++) for (let r = -k; r <= k; r++) {
-    const ring = Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
-    if (ring <= k) out.push({q, r, ring});
-  }
-  return out;
-};
-const hexXY = (q: number, r: number, d: number) => [d * (q + r / 2), d * (r * Math.sqrt(3)) / 2];
-
-const Atom: React.FC<{x: number; y: number; r: number; fill: string; o?: number; s?: number}> = ({x, y, r, fill, o = 1, s = 1}) => (
-  <g opacity={o} transform={`translate(${x} ${y}) scale(${s})`}>
-    <circle r={r} fill={fill} stroke={C.ink} strokeOpacity={0.25} strokeWidth={2} />
-    <circle cx={-r * 0.3} cy={-r * 0.3} r={r * 0.32} fill="#fff" opacity={0.35} />
-  </g>
-);
+import {random} from 'remotion';
+import {Atom, C, FONT, Heading, hexAtoms, hexXY, mix, mixColor, pop, prog, Rise, Stage, Tag, Thermometer, useScene} from '../lib';
 
 /* ---------- 1. bulk → micro → nano, as a chain of magnifying lenses ---------- */
 const Scale: React.FC = () => {

@@ -78,6 +78,91 @@ export const Heading: React.FC<{start: number; text: string; out?: number}> = ({
   );
 };
 
+/** full-frame SVG canvas, 1920x1080 user units */
+export const Stage: React.FC<{children: React.ReactNode}> = ({children}) => (
+  <AbsoluteFill><svg viewBox="0 0 1920 1080" width={1920} height={1080}>{children}</svg></AbsoluteFill>
+);
+
+/** shaded ball (atom, particle) */
+export const Atom: React.FC<{x: number; y: number; r: number; fill: string; o?: number; s?: number}> = ({x, y, r, fill, o = 1, s = 1}) => (
+  <g opacity={o} transform={`translate(${x} ${y}) scale(${s})`}>
+    <circle r={r} fill={fill} stroke={C.ink} strokeOpacity={0.25} strokeWidth={2} />
+    <circle cx={-r * 0.3} cy={-r * 0.3} r={r * 0.32} fill="#fff" opacity={0.35} />
+  </g>
+);
+
+/* hexagonal cluster: atoms within `k` rings; ring k is the surface */
+export const hexAtoms = (k: number) => {
+  const out: {q: number; r: number; ring: number}[] = [];
+  for (let q = -k; q <= k; q++) for (let r = -k; r <= k; r++) {
+    const ring = Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
+    if (ring <= k) out.push({q, r, ring});
+  }
+  return out;
+};
+export const hexXY = (q: number, r: number, d: number) => [d * (q + r / 2), d * (r * Math.sqrt(3)) / 2];
+
+/** a stroke that draws itself from `start` over `dur` frames */
+export const Draw: React.FC<{start: number; dur?: number; d: string; color?: string; w?: number; dash?: string; out?: number; fill?: string}> =
+  ({start, dur = 24, d, color = C.ink, w = 5, dash, out, fill = 'none'}) => {
+    const {f} = useScene();
+    const t = prog(f, start, dur);
+    const o = out != null ? 1 - prog(f, out, 12) : 1;
+    if (dash) return <path d={d} fill={fill} stroke={color} strokeWidth={w} strokeDasharray={dash} strokeLinecap="round" opacity={t * o} />;
+    return <path d={d} pathLength={1} fill={fill} stroke={color} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1 1" strokeDashoffset={1 - t} opacity={(t > 0 ? 1 : 0) * o} />;
+  };
+
+/** arrow from (x1,y1) to (x2,y2) that grows in at `start` */
+export const Arrow: React.FC<{start: number; x1: number; y1: number; x2: number; y2: number; color?: string; w?: number; out?: number; dur?: number}> =
+  ({start, x1, y1, x2, y2, color = C.ink, w = 5, out, dur = 18}) => {
+    const {f} = useScene();
+    const t = prog(f, start, dur), o = out != null ? 1 - prog(f, out, 12) : 1;
+    const ex = mix(x1, x2, t), ey = mix(y1, y2, t), a = Math.atan2(y2 - y1, x2 - x1), h = 10 + w * 2.4;
+    return (
+      <g opacity={(t > 0 ? 1 : 0) * o} stroke={color} fill={color} strokeWidth={w} strokeLinecap="round">
+        <line x1={x1} y1={y1} x2={ex - Math.cos(a) * h * 0.6} y2={ey - Math.sin(a) * h * 0.6} />
+        <polygon stroke="none" points={`${ex},${ey} ${ex - Math.cos(a - 0.45) * h},${ey - Math.sin(a - 0.45) * h} ${ex - Math.cos(a + 0.45) * h},${ey - Math.sin(a + 0.45) * h}`} />
+      </g>
+    );
+  };
+
+/** a rounded card that pops in, content drawn relative to its centre */
+export const Card: React.FC<{start: number; x: number; y: number; w: number; h: number; stroke?: string; fill?: string; out?: number; children?: React.ReactNode; sw?: number}> =
+  ({start, x, y, w, h, stroke = C.line, fill = C.card, out, children, sw = 4}) => {
+    const {f} = useScene();
+    const s = pop(f, start) * (out != null ? 1 - prog(f, out, 12) : 1);
+    return (
+      <g transform={`translate(${x} ${y}) scale(${s})`} opacity={Math.min(1, s)}>
+        <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={22} fill={fill} stroke={stroke} strokeWidth={sw} />
+        {children}
+      </g>
+    );
+  };
+
+/** plain SVG text (no motion) */
+export const T: React.FC<{x?: number; y?: number; size?: number; color?: string; weight?: number; anchor?: 'start' | 'middle' | 'end'; o?: number; children: React.ReactNode; font?: string}> =
+  ({x = 0, y = 0, size = 30, color = C.ink, weight = 600, anchor = 'middle', o = 1, children, font = FONT}) => (
+    <text x={x} y={y} fontSize={size} fill={color} fontWeight={weight} textAnchor={anchor} fontFamily={font} opacity={o}>{children}</text>
+  );
+
+/** big tick or cross that pops in */
+export const Mark: React.FC<{start: number; x: number; y: number; ok: boolean; size?: number; out?: number}> = ({start, x, y, ok, size = 60, out}) => {
+  const {f} = useScene();
+  const s = pop(f, start) * (out != null ? 1 - prog(f, out, 12) : 1);
+  const c = ok ? C.green : C.red, k = size / 2;
+  return (
+    <g transform={`translate(${x} ${y}) scale(${s})`} opacity={Math.min(1, s)} stroke={c} strokeWidth={size / 7} strokeLinecap="round" fill="none">
+      <circle r={k * 1.15} fill={C.card} strokeWidth={size / 12} />
+      {ok ? <path d={`M ${-k * 0.5} 0 L ${-k * 0.12} ${k * 0.42} L ${k * 0.55} ${-k * 0.45}`} /> : <path d={`M ${-k * 0.45} ${-k * 0.45} L ${k * 0.45} ${k * 0.45} M ${k * 0.45} ${-k * 0.45} L ${-k * 0.45} ${k * 0.45}`} />}
+    </g>
+  );
+};
+
+/** heading for an SVG stage */
+export const StageHeading: React.FC<{start: number; text: string; out?: number}> = (p) => (
+  <foreignObject x={0} y={0} width={1920} height={200}><Heading {...p} /></foreignObject>
+);
+
 const SceneFade: React.FC<{dur: number; children: React.ReactNode}> = ({dur, children}) => {
   const f = useCurrentFrame();
   const o = interpolate(f, [0, 14, dur - 4, dur + 12], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
