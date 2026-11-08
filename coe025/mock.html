@@ -21,15 +21,14 @@
     <div class="mono small muted">COE025 — mock midterm (9 November)</div>
     <h1 style="font-size:2.6rem;margin-top:4px">Deneme vize sınavı</h1>
     <p class="lead">A guess at the real exam in the format the lecturer described: multiple choice plus <b>two open-ended questions</b> (about half a page each). About half tests whether you understand and can compare the methods, half asks you to apply them: small hand calculations with easy numbers (no calculator) and short design decisions. It is not the real exam.</p>
-    <div class="callout small">Nasıl kullanılır: bir form seç. Hesap makinesi kullanma, kâğıt kalemle çöz. Açık uçlu sorulara İngilizce yaz: önce <b>kararını</b> ver, sonra <b>mekanizmayla</b> gerekçelendir (ne çözüyor, ne girer ne çıkar, nerede başarısız). <b>Submit</b>'e basınca test kısmı otomatik puanlanır; açık uçlu kısımda model cevabı görürsün ve cevabında olan noktaları dürüstçe işaretlersin. Şıklar her açılışta karışır. Hesap pratiği için <a href="drill.html">hesap pratiği</a> sayfası var.</div>
+    <div class="callout small">Nasıl kullanılır: bir form seç. Hesap makinesi kullanma, kâğıt kalemle çöz. Açık uçlu sorulara İngilizce yaz: önce <b>kararını</b> ver, sonra <b>mekanizmayla</b> gerekçelendir (ne çözüyor, ne girer ne çıkar, nerede başarısız). Şıkkı seçtiğin anda doğru/yanlış ve açıklama çıkar, Submit yok. Açık uçlu soruda cevabını yaz, sonra <b>Show model answer</b>a bas ve cevabında olan noktaları dürüstçe işaretle. Bütün test soruları bitince sonuç tablosu altta çıkar. Şıklar her açılışta karışır. Hesap pratiği için <a href="drill.html">hesap pratiği</a> sayfası var.</div>
     <div class="row" id="forms"></div>
     <div id="bar-row" class="row" style="display:none">
       <span class="tag" id="count"></span>
       <span class="tag" id="clock"></span>
-      <button class="primary" id="submit-top">Submit</button>
     </div>
-    <div id="result"></div>
     <div id="exam"></div>
+    <div id="result"></div>
   </main>
   <script src="data.js"></script>
   <script src="mock.js"></script>
@@ -58,7 +57,7 @@
     const barRow = document.getElementById('bar-row');
     const count = document.getElementById('count');
     const clock = document.getElementById('clock');
-    let items, picks, texts, ticks, started, timer, done, formKey;
+    let items, picks, texts, ticks, revealed, started, timer, done, formKey;
 
     const formsRow = document.getElementById('forms');
     for (const [key, label, list] of FORMS) {
@@ -76,6 +75,7 @@
       picks = new Array(items.length).fill(null);
       texts = new Array(items.length).fill('');
       ticks = items.map((m) => (m.w ? new Array(m.keys.length).fill(false) : null));
+      revealed = items.map(() => false);
       done = false;
       result.replaceChildren();
       started = Date.now();
@@ -91,7 +91,10 @@
     function tick() {
       const s = Math.floor((Date.now() - started) / 1000);
       clock.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} elapsed`;
-      count.textContent = `${items.filter((m, i) => answered(i)).length} / ${items.length} answered`;
+      const mcI = items.map((m, i) => i).filter((i) => !items[i].w);
+      const right = mcI.filter((i) => picks[i] !== null && items[i].opts[picks[i]].right).length;
+      const picked = mcI.filter((i) => picks[i] !== null).length;
+      count.textContent = `${right} correct · ${picked - right} wrong · ${mcI.length - picked} left`;
     }
 
     function render() {
@@ -103,28 +106,28 @@
         if (m.w) {
           nodes.push(el('div', { class: 'mq', id: `q${qi}` },
             el('div', { class: 'quiz-q' }, `${qi + 1}. ${m.q}`, el('span', { class: 'small muted' }, `  (${TOPIC[m.t].split(' · ')[0]})`)),
-            el('textarea', { disabled: done, placeholder: 'Write your answer in English…', oninput: (e) => { texts[qi] = e.target.value; tick(); } }, texts[qi]),
-            done ? el('div', { class: 'callout small' },
+            el('textarea', { disabled: revealed[qi], placeholder: 'Write your answer in English…', oninput: (e) => { texts[qi] = e.target.value; tick(); } }, texts[qi]),
+            revealed[qi] ? null : el('button', { style: { marginTop: '6px' }, onclick: () => { revealed[qi] = true; render(); } }, 'Show model answer'),
+            revealed[qi] ? el('div', { class: 'callout small' },
               el('b', {}, 'Model answer: '), m.model,
               el('div', { class: 'keys', style: { marginTop: '8px' } }, el('b', {}, 'Tick only the points your answer really contains:'),
                 m.keys.map((k, j) => el('label', {}, el('input', { type: 'checkbox', checked: ticks[qi][j], onchange: (e) => { ticks[qi][j] = e.target.checked; writtenScore(); } }), ' ', k)))) : null));
           return;
         }
         const pick = picks[qi];
-        const status = !done ? '' : pick === null ? 'skip' : m.opts[pick].right ? 'ok' : 'no';
+        const shown = pick !== null;
+        const status = !shown ? '' : m.opts[pick].right ? 'ok' : 'no';
         const buttons = m.opts.map((o, k) => {
           let cls = 'opt';
-          if (!done && pick === k) cls += ' sel';
-          if (done && o.right) cls += ' right';
-          if (done && pick === k && !o.right) cls += ' wrong';
-          return el('button', { class: cls, disabled: done, onclick: () => { picks[qi] = k; render(); tick(); } }, `${L[k]}) ${o.text}`);
+          if (shown && o.right) cls += ' right';
+          if (shown && pick === k && !o.right) cls += ' wrong';
+          return el('button', { class: cls, disabled: shown, onclick: () => answer(qi, k) }, `${L[k]}) ${o.text}`);
         });
         nodes.push(el('div', { class: `mq ${status}`, id: `q${qi}` },
           el('div', { class: 'quiz-q' }, `${qi + 1}. ${m.q}`),
           buttons,
-          done ? el('div', { class: `callout small ${status === 'ok' ? 'ok' : 'bad'}` }, m.why) : null));
+          shown ? el('div', { class: `callout small ${status === 'ok' ? 'ok' : 'bad'}` }, m.why) : null));
       });
-      if (!done) nodes.push(el('button', { class: 'primary', style: { marginTop: '10px' }, onclick: submit }, 'Submit'));
       exam.replaceChildren(...nodes);
     }
 
@@ -134,9 +137,14 @@
       if (box) box.textContent = w.length ? `Open-ended part (your own marking): ${Math.round((100 * w.reduce((a, b) => a + b, 0)) / w.length)}% of the key points` : '';
     }
 
-    function submit() {
-      const blank = items.filter((m, i) => !answered(i)).length;
-      if (blank && !confirm(`${blank} question(s) not answered. Submit anyway?`)) return;
+    function answer(qi, k) {
+      picks[qi] = k;
+      render();
+      tick();
+      if (!done && items.map((m, i) => i).filter((i) => !items[i].w).every((i) => picks[i] !== null)) finish();
+    }
+
+    function finish() {
       done = true;
       clearInterval(timer);
       const mins = Math.round((Date.now() - started) / 60000);
@@ -152,7 +160,7 @@
       render();
       result.replaceChildren(el('div', { class: 'panel' },
         el('h2', {}, `Multiple choice: ${score} / ${mcIdx.length} (${pct}%) in ${mins} min`),
-        el('p', { id: 'wscore', class: 'muted' }, 'Open-ended part: scroll down, read each model answer and tick the points you really wrote.'),
+        el('p', { id: 'wscore', class: 'muted' }, 'Open-ended part: press Show model answer under each one and tick the points you really wrote.'),
         el('p', {}, pct >= 85 ? 'Çok iyi. Yanlışların açıklamalarını oku, açık uçluları model cevapla karşılaştır, sonra diğer formu çöz.'
           : pct >= 65 ? 'İyi. En düşük haftanın özetini tekrar oku, sonra diğer formu çöz.'
           : 'Özet sayfasında en düşük haftaları tekrar oku, hesap pratiğini yap, sonra bu formu yeniden çöz (şıklar karışacak).'),
@@ -165,7 +173,6 @@
       result.scrollIntoView({ behavior: 'smooth' });
     }
 
-    document.getElementById('submit-top').onclick = () => submit();
     const autoForm = new URLSearchParams(location.search).get('form');
     if (FORMS.some((f) => f[0] === autoForm)) start(autoForm);
   </script>

@@ -19,15 +19,14 @@
     <div class="mono small muted">UNI480 — mock midterm</div>
     <h1 style="font-size:2.6rem;margin-top:4px">Deneme vize sınavı</h1>
     <p class="lead">A guess at the real exam, written the way a model would write one from the four slide decks and Dr. Arsan's recorded lectures. It is not the real exam; the real questions may differ.</p>
-    <div class="callout small">Nasıl kullanılır: bir form seç, bütün soruları cevapla, sonra <b>Submit</b>'e bas. Cevaplar sona kadar gösterilmez, gerçek sınav gibi. Şıklar her açılışta karışır. Sonuçta her sorunun Türkçe açıklaması ve slayt numarası çıkar. Form A ve Form B farklı sorular; ikisini de çöz.</div>
+    <div class="callout small">Nasıl kullanılır: bir form seç. Şıkkı seçtiğin anda doğru/yanlış ve açıklama çıkar, Submit yok. Bütün sorular bitince hafta hafta sonuç tablosu altta çıkar. Şıklar her açılışta karışır. Sonuçta her sorunun Türkçe açıklaması ve slayt numarası çıkar. Form A ve Form B farklı sorular; ikisini de çöz.</div>
     <div class="row" id="forms"></div>
     <div id="bar-row" class="row" style="display:none">
       <span class="tag" id="count"></span>
       <span class="tag" id="clock"></span>
-      <button class="primary" id="submit-top">Submit</button>
     </div>
-    <div id="result"></div>
     <div id="exam"></div>
+    <div id="result"></div>
   </main>
   <script src="data.js"></script>
   <script src="mock.js"></script>
@@ -82,7 +81,10 @@
     function tick() {
       const s = Math.floor((Date.now() - started) / 1000);
       clock.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} elapsed`;
-      count.textContent = `${picks.filter((p) => p !== null).length} / ${items.length} answered`;
+      const mcI = items.map((m, i) => i);
+      const right = mcI.filter((i) => picks[i] !== null && items[i].opts[picks[i]].right).length;
+      const picked = mcI.filter((i) => picks[i] !== null).length;
+      count.textContent = `${right} correct · ${picked - right} wrong · ${mcI.length - picked} left`;
     }
 
     function render() {
@@ -91,29 +93,33 @@
       items.forEach((m, qi) => {
         if (m.t !== lastTopic) { nodes.push(el('h2', {}, TOPIC[m.t])); lastTopic = m.t; }
         const pick = picks[qi];
-        const status = !done ? '' : pick === null ? 'skip' : m.opts[pick].right ? 'ok' : 'no';
+        const shown = pick !== null;
+        const status = !shown ? '' : m.opts[pick].right ? 'ok' : 'no';
         const buttons = m.opts.map((o, k) => {
           let cls = 'opt';
-          if (!done && pick === k) cls += ' sel';
-          if (done && o.right) cls += ' right';
-          if (done && pick === k && !o.right) cls += ' wrong';
+          if (shown && o.right) cls += ' right';
+          if (shown && pick === k && !o.right) cls += ' wrong';
           return el('button', {
-            class: cls, disabled: done,
-            onclick: () => { picks[qi] = k; render(); tick(); },
+            class: cls, disabled: shown,
+            onclick: () => answer(qi, k),
           }, `${L[k]}) ${o.text}`);
         });
         nodes.push(el('div', { class: `mq ${status}`, id: `q${qi}` },
           el('div', { class: 'quiz-q' }, `${qi + 1}. ${m.q}`),
           buttons,
-          done ? el('div', { class: `callout small ${status === 'ok' ? 'ok' : 'bad'}` }, m.why) : null));
+          shown ? el('div', { class: `callout small ${status === 'ok' ? 'ok' : 'bad'}` }, m.why) : null));
       });
-      if (!done) nodes.push(el('button', { class: 'primary', style: { marginTop: '10px' }, onclick: submit }, 'Submit'));
       exam.replaceChildren(...nodes);
     }
 
-    function submit() {
-      const blank = picks.filter((p) => p === null).length;
-      if (blank && !confirm(`${blank} question(s) not answered. Submit anyway?`)) return;
+    function answer(qi, k) {
+      picks[qi] = k;
+      render();
+      tick();
+      if (!done && items.map((m, i) => i).every((i) => picks[i] !== null)) finish();
+    }
+
+    function finish() {
       done = true;
       clearInterval(timer);
       const mins = Math.round((Date.now() - started) / 60000);
@@ -140,7 +146,6 @@
       result.scrollIntoView({ behavior: 'smooth' });
     }
 
-    document.getElementById('submit-top').onclick = () => submit();
     const autoForm = new URLSearchParams(location.search).get('form');
     if (FORMS.some((f) => f[0] === autoForm)) start(autoForm);
   </script>
