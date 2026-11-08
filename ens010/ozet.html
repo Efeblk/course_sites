@@ -18,7 +18,7 @@
     .traps { border-left: 3px solid var(--bad); padding: 6px 14px; margin: 10px 0; }
     .traps > .lab { color: var(--bad); }
     .traps ul { margin: 4px 0; padding-left: 18px; }
-    .no { text-decoration: line-through; text-decoration-color: var(--bad); }
+    .no s { text-decoration-color: var(--bad); }
     details.q { border-top: 1px solid var(--line); padding: 8px 0; }
     details.q summary { cursor: pointer; }
     details.q p { margin: 6px 0 0; }
@@ -30,7 +30,7 @@
     <h1 style="font-size:2.5rem;margin-top:4px">Vize özeti: hocanın "sınavda sorarım" dediği yerler</h1>
     <p class="lead">Sınav İngilizce, kampüste (yer/saat OIS'te). Format: çoğu <b>multiple choice</b>, 1–2 tane <b>classical</b> (yazılı) soru; hocanın örneği "8 sorudan 6'sı test, 2'si yazılı". Sorular <b>sadece slaytlardan ve kayıtlarda anlattıklarından</b>. 7. derste hoca açıkça şunu dedi: <i>"For each lecture I have mentioned which parts are important… check specifically those parts."</i> Bu sayfa o kısımlar üzerine kurulu.</p>
 
-    <div class="callout"><b>Sayfayı nasıl kullan:</b> her kartta üç parça var. <b>Hocanın sözü</b> (kayıttan aynen), <b>Write this</b> (yazılı soru gelirse kâğıda bunu yaz, İngilizce), <b>Traps</b> (test sorusunda karşına çıkacak yanlış şıklar). Kırmızı <span class="mono small" style="color:var(--bad)">MOST LIKELY</span> etiketi = hoca "büyük ihtimalle soracağım" dedi.</div>
+    <div class="callout"><b>Sayfayı nasıl kullan:</b> her kartta üç parça var. <b>Hocanın sözü</b> (kayıttan aynen), <b>Write this</b> (yazılı soru gelirse kâğıda bunu yaz, İngilizce), <b>Traps</b> (test sorusunda karşına çıkacak yanlış şıklar). Kırmızı <span class="mono small" lang="en" style="color:var(--bad)">MOST LIKELY</span> etiketi = hoca "büyük ihtimalle soracağım" dedi.</div>
 
     <nav class="row toc">
       <a href="#l2"><b>L2</b>Nanoscience vs nanotech</a>
@@ -57,14 +57,14 @@
     <h2 id="l2">Lecture 2 — Introduction</h2>
 
     <div class="xp">
-      <h3><span class="tag">Exam 1 · L2</span>Nanoscience vs nanotechnology</h3>
+      <h3><span lang="en" class="tag">Exam 1 · L2</span>Nanoscience vs nanotechnology</h3>
       <div class="said">"If I ask you something in your mid-term exam, the differences between Nanoscience and nanotechnology."</div>
       <p>Fark basit: <b>nanoscience = çalışmak, incelemek</b> (teori, kâğıt, bilgisayar); <b>nanotechnology = laboratuvarda yapmak, kontrol etmek</b> (pratik). Enstitüler ikisini de yapıyor, o yüzden adları "Institute for Nanoscience <b>and</b> Nanotechnology".</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         <b>Nanoscience</b> is the study of phenomena at the nano-size level. It is theoretical: researchers study and prove the properties of materials at this scale (on paper, by computer).<br>
         <b>Nanotechnology</b> is the ability to work at the molecular level, atom by atom, to create functional materials, devices and systems, by controlling matter in the 1–100 nm range and using the new properties that appear at that scale. It is practical and experimental (in the lab).
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
         <li>Şıkta <i>creating, controlling, working atom by atom, in the lab</i> → <b>nanotechnology</b>. <i>study, theory</i> → <b>nanoscience</b>.</li>
         <li>"Nanoscience and nanotechnology are the same thing" → <b>yanlış</b>.</li>
       </ul></div>
@@ -74,7 +74,7 @@
     <h2 id="l3">Lecture 3 — Why size matters</h2>
 
     <div class="xp">
-      <h3><span class="tag">Exam 2 · L3</span>Property kategorileri ve örnekleri</h3>
+      <h3><span lang="en" class="tag">Exam 2 · L3</span>Property kategorileri ve örnekleri</h3>
       <div class="said">"I'm not examining you from this table in your midterm, but … if I ask you about the physical properties, you should know that reactivity is a chemical, not a physical property. Conductivity is not a physical property. Light emission and strength are not physical properties. Melting point is a physical property. So the examples of each of these properties are important."</div>
       <p>Boyut küçülünce <b>surface atoms</b> oranı artar ve yüzeyle ilgili bütün özellikler değişir. Hoca her kategorinin <b>örneğini</b> bilmeni istiyor (yüzde tablosunu değil).</p>
       <table class="t">
@@ -86,23 +86,23 @@
         <tr><td><b>Optical</b></td><td>light emission, colour</td><td>changes (nano gold is red)</td></tr>
         <tr><td colspan="3">Diğerleri: magnetic, biological properties.</td></tr>
       </table>
-      <div class="traps"><span class="lab">Traps</span><ul>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
         <li>"Which of these is a physical property?" → <b>melting point</b>.</li>
-        <li class="no">"Reactivity is a physical property"</li>
-        <li class="no">"Conductivity / strength / light emission is a physical property"</li>
+        <li class="no"><s>"Reactivity is a physical property"</s></li>
+        <li class="no"><s>"Conductivity / strength / light emission is a physical property"</s></li>
       </ul></div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 3 · L3 · most likely</span>What is a nanomaterial?</h3>
+      <h3><span lang="en" class="tag hot">Exam 3 · L3 · most likely</span>What is a nanomaterial?</h3>
       <div class="said">"Be careful of this description. This is very important. If somebody asks you what is a nanomaterial, you should say a material with at least one dimension in the range 1 to 100 nanometers."</div>
       <p>Neden 100? 900 nm, 500 nm'de malzeme hâlâ bulk gibi davranır. <b>100 nm eşik</b>: oradan aşağı inince surface-to-volume ratio sert biçimde artar ve özellikler değişir.</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         A nanomaterial is a material with <b>at least one dimension in the nano-size range, 1 to 100 nm</b>. 100 nm is the threshold: below it, the surface area to volume ratio and the share of surface atoms increase drastically, so surface-related properties dominate and the properties of the material change. Above 100 nm (for example 500 or 900 nm) the material still behaves like a bulk material.
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"all three dimensions must be 1–100 nm" (bu nanoparticle'ın tanımı, nanomaterial'ın değil)</li>
-        <li class="no">"1 to 1000 nm" (bu matematikteki nano size, bkz. Exam 6)</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"all three dimensions must be 1–100 nm"</s> (bu nanoparticle'ın tanımı, nanomaterial'ın değil)</li>
+        <li class="no"><s>"1 to 1000 nm"</s> (bu matematikteki nano size, bkz. Exam 6)</li>
       </ul></div>
     </div>
 
@@ -110,7 +110,7 @@
     <h2 id="l4">Lecture 4 — Classification and quantum materials</h2>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 4 · L4 · most likely</span>Classification by dimension (0D, 1D, 2D)</h3>
+      <h3><span lang="en" class="tag hot">Exam 4 · L4 · most likely</span>Classification by dimension (0D, 1D, 2D)</h3>
       <div class="said">"This slide and the whole information that I will talk in this slide could be a good option for your midterm exam… most probably I will ask you something from this slide."</div>
       <p>Başka sınıflandırmalar da var (origin, composition, phase…) ama hoca "bunları ezberlemenizi beklemiyorum" dedi. Önemli olan boyut sınıflandırması. <b>Kural:</b> adındaki sayı, <b>hâlâ büyük kalan (100 nm üstü, "serbest") boyut</b> sayısıdır; nano olan boyut sayısı değil.</p>
       <table class="t">
@@ -120,35 +120,35 @@
         <tr><td>2</td><td>1</td><td><b>1D nanomaterial</b></td><td>nanowire, nanorod, nanofiber, nanotube</td></tr>
         <tr><td>3</td><td>0</td><td><b>0D nanomaterial</b></td><td><b>nanoparticle</b></td></tr>
       </table>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         Nanomaterials are classified by the number of dimensions that are still outside the nano range. If only one dimension is reduced to 1–100 nm, the material is a <b>2D nanomaterial</b> (nano-films, coatings, layers, plates). If two dimensions are in the nano range, it is a <b>1D nanomaterial</b> (nanowires, nanorods, nanofibers, nanotubes). If all three dimensions are in the nano range, there is no free dimension left, so it is a <b>0D nanomaterial</b>, also called a <b>nanoparticle</b>. If no dimension is below 100 nm, it is a bulk material.
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"A 2D nanomaterial has two dimensions in the nano range" (tersi: bir boyutu nano, ikisi büyük)</li>
-        <li class="no">"A nanotube is a 2D nanomaterial" (1D)</li>
-        <li class="no">"A 3D nanomaterial has all three dimensions in the nano range" (öyle bir şey yok; o 0D)</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"A 2D nanomaterial has two dimensions in the nano range"</s> (tersi: bir boyutu nano, ikisi büyük)</li>
+        <li class="no"><s>"A nanotube is a 2D nanomaterial"</s> (1D)</li>
+        <li class="no"><s>"A 3D nanomaterial has all three dimensions in the nano range"</s> (öyle bir şey yok; o 0D)</li>
       </ul></div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag">Exam 5 · L4</span>What are nanoparticles?</h3>
+      <h3><span lang="en" class="tag">Exam 5 · L4</span>What are nanoparticles?</h3>
       <div class="said">"If I ask you what are nanoparticles … you should say …" (all three dimensions in nano size, zero-dimensional)</div>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         Nanoparticles are <b>zero-dimensional (0D) nanomaterials</b>: all three dimensions are in the nano range (1–100 nm), so there is no free dimension left to decrease.
       </div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag">Exam 6 · L4</span>What is nano size in mathematics?</h3>
+      <h3><span lang="en" class="tag">Exam 6 · L4</span>What is nano size in mathematics?</h3>
       <div class="said">"Now, I may ask you a question. What is a nano size in mathematics? A nano size in mathematics is a size less than a micron or less than 1000 nanometer."</div>
       <p>Dikkat: matematikte 900 nm de "nano"dur, ama <b>nanomaterial</b> sadece 1–100 nm. Fark, özelliklerin 100 nm altında değişmesinden geliyor.</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         In mathematics, nano size is any size <b>less than one micron (1000 nm)</b>: 900, 500, 100, 10 nm are all nano sizes. But a nanomaterial is defined only as 1–100 nm, because properties change below 100 nm. Materials above 100 nm are bulk materials.
       </div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 7 · L4 · most likely</span>Are all nanomaterials quantum materials?</h3>
+      <h3><span lang="en" class="tag hot">Exam 7 · L4 · most likely</span>Are all nanomaterials quantum materials?</h3>
       <div class="said">"A good question for your midterm could be, are all nanomaterials quantum materials or not? … All quantum materials could be considered as nanomaterials, but not necessarily all nanomaterials could be considered as quantum materials. This is important to know."</div>
       <p>100 nm'deki sert değişimin aynısı <b>~10 nm</b> civarında bir daha olur; orada quantum physics geçerli. <b>Quantum material = en az bir boyutu 1–10 nm.</b></p>
       <table class="t">
@@ -156,7 +156,7 @@
         <tr><td>&lt; 100 nm (nano)</td><td>nano-film (2D)</td><td>nanowire (1D)</td><td>nanoparticle (0D)</td></tr>
         <tr><td>&lt; 10 nm (quantum)</td><td><b>quantum well</b></td><td><b>quantum wire</b></td><td><b>quantum dot</b></td></tr>
       </table>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         <b>No.</b> Quantum materials have at least one dimension in the 1–10 nm range. Since 1–10 nm is inside 1–100 nm, <b>all quantum materials are nanomaterials</b>. But <b>not all nanomaterials are quantum materials</b>: for example, a 50 nm nanomaterial is a nanomaterial but not a quantum material. In the quantum range the forms are called quantum well, quantum wire and quantum dot.
       </div>
     </div>
@@ -165,23 +165,23 @@
     <h2 id="l5">Lecture 5 — Prevention, early diagnosis, radiation</h2>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 8 · L5 · written candidate</span>Ionizing vs non-ionizing radiation</h3>
+      <h3><span lang="en" class="tag hot">Exam 8 · L5 · written candidate</span>Ionizing vs non-ionizing radiation</h3>
       <div class="said">"So in your exam, if I ask you about ionizing and non-ionizing radiations, you should write these descriptions."</div>
       <p>Tek soru: radyasyonun hücreyi iyonize edecek (moleküler bağları kıracak) kadar enerjisi var mı?</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         <b>Non-ionizing radiation</b> does not have enough energy to ionize our cells, so it is considered safe. Examples: power lines, radio and TV waves, mobile networks, satellite signals, infrared (IR), visible light and low-frequency electromagnetic fields.<br>
         <b>Ionizing radiation</b> has enough energy to break the molecular bonds of our cells, so it is harmful. Examples: ultraviolet (UV), X-rays and gamma rays.
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"IR / visible light is ionizing"</li>
-        <li class="no">"UV is non-ionizing"</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"IR / visible light is ionizing"</s></li>
+        <li class="no"><s>"UV is non-ionizing"</s></li>
       </ul></div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 9 · L5 · written candidate</span>Invasive vs non-invasive techniques</h3>
+      <h3><span lang="en" class="tag hot">Exam 9 · L5 · written candidate</span>Invasive vs non-invasive techniques</h3>
       <div class="said">"If I ask you about the invasive techniques and non-invasive techniques, you should say that invasive techniques are techniques that use ionizing radiations such as ultraviolet, UV, X-ray and gamma ray."</div>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         <b>Invasive</b> (harmful, non-safe) imaging techniques use <b>ionizing radiation</b> such as UV, X-rays and gamma rays: <b>CT</b> (X-ray), <b>PET</b> and <b>SPECT</b> (gamma rays).<br>
         <b>Non-invasive</b> techniques use <b>non-ionizing radiation</b> such as IR, visible light, radio waves and low-frequency electromagnetic fields, or only sound: <b>MRI</b>, <b>ultrasound</b> and <b>optical imaging</b> (optical/fluorescence imaging is called non-invasive or minimally invasive because the dye is injected).
       </div>
@@ -191,7 +191,7 @@
     <h2 id="l6">Lecture 6 — Imaging techniques</h2>
 
     <div class="xp">
-      <h3><span class="tag">Exam 10 · L6 · MC</span>Which technique is non-invasive?</h3>
+      <h3><span lang="en" class="tag">Exam 10 · L6 · MC</span>Which technique is non-invasive?</h3>
       <div class="said">"So in your midterm, if I ask you or if I gave some options and some multiple choice questions that which of these techniques are non-invasive, MRI could be considered as one of those techniques."</div>
       <p>MRI sadece <b>magnetic field</b> ve radio waves kullanır, ionizing radiation yok → non-invasive. Ultrasound sadece ses → non-invasive.</p>
       <table class="t">
@@ -201,10 +201,10 @@
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 11 · L6 · written candidate</span>Roles of nanoparticles in MRI</h3>
+      <h3><span lang="en" class="tag hot">Exam 11 · L6 · written candidate</span>Roles of nanoparticles in MRI</h3>
       <div class="said">"If I ask you what are the applications of nanoparticles or roles of nanoparticles in MRI? You can consider two points."</div>
       <p>Problem: klasik contrast agent <b>gadolinium</b> toksik ve vücutta <b>her yere dağılıyor</b>. Nanoparçacık bu iki sorunu iki yoldan çözüyor: ya ajanın yerine geçiyor, ya da ajanı taşıyor.</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         <b>1. Nanoparticles as contrast agents:</b> magnetic nanoparticles such as superparamagnetic iron oxide (SPIO), manganese oxide, rare-earth (gadolinium) oxides and alloys such as FePt can be used as MRI contrast agents to enhance the quality and resolution of the images. They must be <b>biocompatible</b> (not toxic).<br>
         <b>2. Nanoparticles as carriers:</b> existing contrast agents such as gadolinium cannot be targeted because their surface cannot be modified. If we <b>encapsulate</b> them inside nanoparticles, we can <b>stabilize</b> them, coat them with a <b>biocompatible polymer</b> and modify the surface to <b>target</b> only the specific site, so they do not spread everywhere in the body. Result: <b>decreased toxicity and side effects</b>.<br>
         In both cases the <b>magnetic properties of the agent must be kept</b> after modification.
@@ -212,10 +212,10 @@
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 12 · L6 · written candidate</span>Photoacoustic imaging (PAI): procedure, advantages, contrast agents</h3>
+      <h3><span lang="en" class="tag hot">Exam 12 · L6 · written candidate</span>Photoacoustic imaging (PAI): procedure, advantages, contrast agents</h3>
       <div class="said">"If I ask you what is the procedure of photoacoustic, you should completely describe these three steps. If I ask you about the advantages, here it is. And if I ask you about the contrast agents, these are the contrast agents… Be careful, this photoacoustic is different from ultrasonic."</div>
       <p>Mantık: <b>ışık girer, ses çıkar</b>. Lazer dokuyu ısıtır, ısınan doku genleşir, genleşme ses dalgası üretir.</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         <b>Procedure (3 steps):</b><br>
         1. The tissue is <b>illuminated with a laser pulse</b>.<br>
         2. The absorbed light <b>excites the electrons</b>; the excited electrons <b>relax back to the ground state</b> and the absorbed energy is <b>released as heat</b>.<br>
@@ -223,22 +223,22 @@
         <b>Advantages:</b> it gives <b>anatomical, functional and molecular contrast</b> in a single modality, and it can image <b>several centimeters deep</b>.<br>
         <b>Contrast agents:</b> plasmonic nanoparticles such as <b>gold nanoparticles, silver nanoparticles and single-walled carbon nanotubes (SWNT)</b>, because they have a superior ability to absorb light and an optimized light-to-acoustic conversion efficiency.
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"Photoacoustic imaging is the same as ultrasound" (PAI'de giriş <b>laser/light</b>, US'de giriş de çıkış da <b>sound</b>)</li>
-        <li class="no">"The signal detected in PAI is light" (algılanan şey <b>sound wave</b>)</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"Photoacoustic imaging is the same as ultrasound"</s> (PAI'de giriş <b>laser/light</b>, US'de giriş de çıkış da <b>sound</b>)</li>
+        <li class="no"><s>"The signal detected in PAI is light"</s> (algılanan şey <b>sound wave</b>)</li>
       </ul></div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 13 · L6 · written candidate</span>How do micro/nano-bubbles work in ultrasound?</h3>
+      <h3><span lang="en" class="tag hot">Exam 13 · L6 · written candidate</span>How do micro/nano-bubbles work in ultrasound?</h3>
       <div class="said">"I have written in this specifically because if I ask you, you know how to respond me."</div>
       <p>Ses derine gittikçe echo zayıflar, o yüzden contrast agent gerekir. Bubbles şu an klinikte kullanılan tek ultrasound contrast agent; büyüklükleri yüzünden <b>damar içinde (intravascular)</b> kalırlar. Patlamazlar, <b>şişip büzülürler</b>.</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         Micro/nano-bubbles (a gas core with a shell of protein, lipid, polymer or a hybrid) are the only clinically used ultrasound contrast agents. When they are exposed to ultrasound waves, they undergo <b>volumetric oscillation</b>: they expand and contract, without bursting. This produces a <b>very strong nonlinear acoustic response</b> and high backscatter, which enhances the echo and <b>increases the signal-to-noise ratio</b>, giving better contrast and better images. The first bubbles had no shell and burst easily; later shells (protein, lipid, polymer, hybrid) made them stable. Polymer shells give the most control.
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"Bubbles enhance the image by bursting"</li>
-        <li class="no">"Ultrasound is invasive"</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"Bubbles enhance the image by bursting"</s></li>
+        <li class="no"><s>"Ultrasound is invasive"</s></li>
       </ul></div>
     </div>
 
@@ -247,41 +247,41 @@
     <div class="callout warn">Son dersin sonunda bir öğrenci "en çok neye odaklanalım?" diye sordu. Cevap: <i>"Today, as I told you, the transducers are important. The performance slide is very important. These are the parts that are mostly examinable."</i></div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 14 · L7</span>Biosensor, receptor (biocatalyst), analyte, transducer</h3>
+      <h3><span lang="en" class="tag hot">Exam 14 · L7</span>Biosensor, receptor (biocatalyst), analyte, transducer</h3>
       <div class="said">"If I ask you, what is a biocatalyst or receptor, you should name these ones. If I ask you that if a thermal transducer is considered as a receptor, of course not… If I ask you in your midterm next week if the antigens could be considered as receptor. Of course they are not. Antigens are analytes."</div>
       <p>Zincir: <b>analyte → receptor (biocatalyst) → transducer → signal output</b>. Analyte = aradığımız şey (hastalığın işareti, örn. antigen). Receptor = analyte'e yapışan parça. Transducer = olan değişimi okunabilir sinyale çeviren parça.</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         A <b>biosensor</b> is a measuring (sensing) device that detects an <b>analyte</b>, a part or sign of the cause of a disease, to diagnose the disease. It has two main parts. The <b>receptor (biocatalyst)</b> is in contact with the analyte and binds it with a <b>lock-and-key</b> interaction; it can be an <b>enzyme, an antibody, a nucleic acid or a cell</b>. The <b>transducer</b> converts the biological signal of this interaction (a change in current, potential, heat, mass or light) into a <b>quantifiable, readable signal</b>. Types of transducers: electrochemical, optical, thermal and piezoelectric.
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"An antigen is a receptor" (antigen = <b>analyte</b>; antibody = receptor)</li>
-        <li class="no">"A thermal transducer is a receptor"</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"An antigen is a receptor"</s> (antigen = <b>analyte</b>; antibody = receptor)</li>
+        <li class="no"><s>"A thermal transducer is a receptor"</s></li>
         <li>"Which is NOT a biocatalyst?" → enzyme, antibody, nucleic acid, cell dışındaki şık (örn. antigen, transducer).</li>
       </ul></div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 15 · L7 · most likely</span>Amperometric, calorimetric and optical biosensors</h3>
+      <h3><span lang="en" class="tag hot">Exam 15 · L7 · most likely</span>Amperometric, calorimetric and optical biosensors</h3>
       <div class="said">"I expect you, specifically for your midterm, to memorize these three different transducers… I may ask you to write the definition of each of them, or … in a multiple choice question, which of them is correct… Most probably, I will ask you in the mid-term."</div>
       <p>Biosensor adını transducer'ından alır. Ölçülen şey: <b>amperometric = akım</b>, <b>calorimetric = ısı</b>, <b>optical = ışık</b>.</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         An <b>amperometric biosensor</b> has an amperometric transducer that measures the <b>current produced in proportion to the bioreaction</b> between the receptor and the analyte (more analyte → more bioreaction → more current).<br>
         A <b>calorimetric (thermal) biosensor</b> measures the <b>amount of heat produced or absorbed</b> by the bioreaction (a change in temperature).<br>
         An <b>optical biosensor</b> measures the <b>change in light intensity</b> (light produced or absorbed) when the specific bioreaction happens.
       </div>
       <p class="small muted">Tablonun geri kalanı (MC'de çıkabilir): potentiometric = <b>potential</b>, impedance; thermistor = temperature; piezo-electric = <b>mass</b> (vibrations); acoustic = amplitude, phase, frequency; fluorescence = intensity, colour.</p>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"An amperometric biosensor measures the amount of heat produced" (hocanın kendi örneği; akım ölçer)</li>
-        <li class="no">"A calorimetric biosensor measures current / light"</li>
-        <li class="no">"A potentiometric biosensor measures current" (potential ölçer)</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"An amperometric biosensor measures the amount of heat produced"</s> (hocanın kendi örneği; akım ölçer)</li>
+        <li class="no"><s>"A calorimetric biosensor measures current / light"</s></li>
+        <li class="no"><s>"A potentiometric biosensor measures current"</s> (potential ölçer)</li>
       </ul></div>
     </div>
 
     <div class="xp">
-      <h3><span class="tag hot">Exam 16 · L7 · most likely</span>Performance parameters of a biosensor</h3>
+      <h3><span lang="en" class="tag hot">Exam 16 · L7 · most likely</span>Performance parameters of a biosensor</h3>
       <div class="said">"For your midterm, be careful of this slide also. This is important. I may ask you to describe these parameters, or I may ask you, for example, if the selectivity is how sharply the signal change. Of course it is not. This is the definition for sensitivity. I may tell you that the limit of detection is the maximum concentration. Of course it is not. It is minimum concentration."</div>
       <p>Bu parametreler bir biosensor'ün <b>fiyatını</b> belirler (bir glukoz sensörü neden diğerinden pahalı).</p>
-      <div class="write"><span class="lab">Write this</span>
+      <div class="write"><span class="lab" lang="en">Write this</span>
         <b>Selectivity:</b> the ability to detect the target analyte in the presence of other interfering species (similar molecules).<br>
         <b>Sensitivity:</b> how sharply the signal changes with variations in the analyte concentration.<br>
         <b>Response time (speed):</b> how long it takes for the sensor to stabilize at a reliable value.<br>
@@ -290,11 +290,11 @@
         <b>Durability (stability):</b> the ability to maintain the signal over time, which is important for in vivo (implanted) sensors.<br>
         <b>Cost and ease of use:</b> everyone should be able to buy it and use it easily at home.
       </div>
-      <div class="traps"><span class="lab">Traps</span><ul>
-        <li class="no">"Selectivity is how sharply the signal changes with concentration" (bu <b>sensitivity</b>)</li>
-        <li class="no">"Limit of detection is the maximum concentration" (<b>minimum</b>)</li>
-        <li class="no">"Accuracy is the ability to maintain the signal over time" (bu <b>durability</b>)</li>
-        <li class="no">"Response time is the minimum concentration…" (karışık tanım şıkları: her tanımı doğru isme eşle)</li>
+      <div class="traps"><span class="lab" lang="en">Traps</span><ul>
+        <li class="no"><s>"Selectivity is how sharply the signal changes with concentration"</s> (bu <b>sensitivity</b>)</li>
+        <li class="no"><s>"Limit of detection is the maximum concentration"</s> (<b>minimum</b>)</li>
+        <li class="no"><s>"Accuracy is the ability to maintain the signal over time"</s> (bu <b>durability</b>)</li>
+        <li class="no"><s>"Response time is the minimum concentration…"</s> (karışık tanım şıkları: her tanımı doğru isme eşle)</li>
       </ul></div>
     </div>
 
