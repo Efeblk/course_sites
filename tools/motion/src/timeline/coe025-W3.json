@@ -1,0 +1,200 @@
+{
+ "id": "coe025-W3",
+ "title": "Week 3 \u00b7 From counts to BERT",
+ "fps": 30,
+ "dur": 4055,
+ "scenes": [
+  {
+   "id": "tfidf",
+   "from": 18,
+   "dur": 670,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 141,
+     "audio": "audio/397bf400cc7b7b92.mp3",
+     "text": "Some words are everywhere. Movie appears in every movie review."
+    },
+    {
+     "from": 164,
+     "dur": 156,
+     "audio": "audio/41e3db88a33b48e4.mp3",
+     "text": "A word that is everywhere tells us nothing. TF-IDF gives it a small weight."
+    },
+    {
+     "from": 342,
+     "dur": 136,
+     "audio": "audio/aa354968bfca6706.mp3",
+     "text": "Movie is in all four reviews, so its weight becomes zero."
+    },
+    {
+     "from": 500,
+     "dur": 143,
+     "audio": "audio/138dc1cde66de0ec.mp3",
+     "text": "Good is only in two, so it keeps its weight. Rare words count more."
+    }
+   ]
+  },
+  {
+   "id": "split",
+   "from": 688,
+   "dur": 584,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 56,
+     "audio": "audio/356f91bea3f0392c.mp3",
+     "text": "One important rule."
+    },
+    {
+     "from": 79,
+     "dur": 151,
+     "audio": "audio/83506cd84003ec5b.mp3",
+     "text": "The test set is the model's final exam. The model must not see it before."
+    },
+    {
+     "from": 252,
+     "dur": 123,
+     "audio": "audio/d28b1ce764651f1e.mp3",
+     "text": "So learn the vocabulary and the weights from the training set only."
+    },
+    {
+     "from": 398,
+     "dur": 159,
+     "audio": "audio/83901f8fc677d48a.mp3",
+     "text": "Then only apply them to the test set. Otherwise the test leaks into training."
+    }
+   ]
+  },
+  {
+   "id": "rnn",
+   "from": 1272,
+   "dur": 839,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 158,
+     "audio": "audio/8a885736949bc559.mp3",
+     "text": "Counting words loses the order. So neural models read the text word by word."
+    },
+    {
+     "from": 181,
+     "dur": 172,
+     "audio": "audio/ae8b686988989d52.mp3",
+     "text": "A recurrent network, an RNN, carries a memory from one word to the next."
+    },
+    {
+     "from": 375,
+     "dur": 189,
+     "audio": "audio/1704b55fbbac9239.mp3",
+     "text": "But in a long sentence, the early words fade away. This is the vanishing gradient problem."
+    },
+    {
+     "from": 587,
+     "dur": 225,
+     "audio": "audio/72f39c92e5545a9d.mp3",
+     "text": "An LSTM adds gates. They decide what to keep, what to write, and what to show. So it remembers longer."
+    }
+   ]
+  },
+  {
+   "id": "attn",
+   "from": 2111,
+   "dur": 728,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 99,
+     "audio": "audio/e2fac063f039a37a.mp3",
+     "text": "The transformer takes another way: attention."
+    },
+    {
+     "from": 122,
+     "dur": 150,
+     "audio": "audio/fcd834706b2a1af9.mp3",
+     "text": "Every word looks at every other word directly, all at the same time."
+    },
+    {
+     "from": 295,
+     "dur": 156,
+     "audio": "audio/95629ee8b5bfabd4.mp3",
+     "text": "In: the animal was tired because it, the word it looks most at animal."
+    },
+    {
+     "from": 474,
+     "dur": 228,
+     "audio": "audio/5b7c04d2da9a1a54.mp3",
+     "text": "BERT is a big transformer trained on lots of text first. Then we add a small head and fine-tune it for our task."
+    }
+   ]
+  },
+  {
+   "id": "eval",
+   "from": 2839,
+   "dur": 513,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 60,
+     "audio": "audio/68afb4b3ad757a9a.mp3",
+     "text": "How do we measure a classifier?"
+    },
+    {
+     "from": 83,
+     "dur": 122,
+     "audio": "audio/4bd23253f28d2264.mp3",
+     "text": "Precision: of everything we flagged, how much was right?"
+    },
+    {
+     "from": 228,
+     "dur": 138,
+     "audio": "audio/2b6ff248eb1b227e.mp3",
+     "text": "Recall: of everything that was really there, how much did we find?"
+    },
+    {
+     "from": 388,
+     "dur": 98,
+     "audio": "audio/602d5b4f1b80e877.mp3",
+     "text": "F1 combines the two into one number."
+    }
+   ]
+  },
+  {
+   "id": "exam",
+   "from": 3352,
+   "dur": 656,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 56,
+     "audio": "audio/38dddec3fd09ed83.mp3",
+     "text": "For the exam:"
+    },
+    {
+     "from": 79,
+     "dur": 91,
+     "audio": "audio/97d24d1870477b93.mp3",
+     "text": "TF-IDF makes common words weak."
+    },
+    {
+     "from": 192,
+     "dur": 59,
+     "audio": "audio/8e8470f3a4115563.mp3",
+     "text": "Fit on the training set only."
+    },
+    {
+     "from": 273,
+     "dur": 199,
+     "audio": "audio/a7493e0c2a36d5d9.mp3",
+     "text": "RNN, then LSTM, then attention: each one keeps more of the sentence."
+    },
+    {
+     "from": 495,
+     "dur": 133,
+     "audio": "audio/30e6c4a79a309f8e.mp3",
+     "text": "Precision is about your alarms. Recall is about what you missed."
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,62 @@
+{
+ "id": "coe025-W6",
+ "title": "Week 6 · HMM and CRF",
+ "rate": "-10%",
+ "gap": 0.75,
+ "scenes": [
+  {
+   "id": "fit",
+   "lines": [
+    "When we label word by word, the labels must fit together.",
+    "If every word picks its label alone, we can get O, then I person.",
+    "That is illegal. I must continue a name that already began.",
+    "So a good model also looks at the neighbouring labels."
+   ]
+  },
+  {
+   "id": "hmm",
+   "lines": [
+    "The hidden Markov model does exactly that.",
+    "The tags are hidden. The words are what we see.",
+    "At each step it asks two questions. How likely is this tag after the previous tag? That is the transition.",
+    "And how likely is this tag to produce this word? That is the emission: the word given the tag, not the tag given the word."
+   ]
+  },
+  {
+   "id": "paths",
+   "lines": [
+    "Take two words: can fish. Each can be a noun or a verb. That gives four paths.",
+    "For each path, multiply the numbers along the way.",
+    "Verb then noun wins, with zero point one three four four.",
+    "This number is a joint probability. To get the posterior, divide by the total of all four paths."
+   ]
+  },
+  {
+   "id": "viterbi",
+   "lines": [
+    "With long sentences, there are far too many paths to try.",
+    "The Viterbi algorithm keeps, for every tag, only the best way to reach it.",
+    "Viterbi takes the maximum. The forward algorithm takes the sum, which gives the total."
+   ]
+  },
+  {
+   "id": "crf",
+   "lines": [
+    "The CRF uses scores instead of probabilities.",
+    "A score can use any clue: a capital letter, a word ending, a list of names.",
+    "Add up the scores of a path, and divide by the total of all paths. That total is called Z.",
+    "But a CRF only prefers legal labels. To forbid illegal ones, we must block them."
+   ]
+  },
+  {
+   "id": "exam",
+   "lines": [
+    "For the exam:",
+    "The emission is the word given the tag.",
+    "A path product is joint. Divide by the total to get the posterior.",
+    "Viterbi uses the maximum. Z and the forward algorithm use the sum.",
+    "And entities are scored as whole spans, not word by word."
+   ]
+  }
+ ]
+}

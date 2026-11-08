@@ -17,16 +17,12 @@ import N1 from './timeline/coe025-W1.json';
 import {W1Scenes} from './coe025/W1';
 import N2 from './timeline/coe025-W2.json';
 import {W2Scenes} from './coe025/W2';
-import N3a from './timeline/coe025-W3a.json';
-import {W3aScenes} from './coe025/W3a';
-import N3b from './timeline/coe025-W3b.json';
-import {W3bScenes} from './coe025/W3b';
+import N3 from './timeline/coe025-W3.json';
+import {W3Scenes} from './coe025/W3';
 import N4 from './timeline/coe025-W4.json';
 import {W4Scenes} from './coe025/W4';
-import N6a from './timeline/coe025-W6a.json';
-import {W6aScenes} from './coe025/W6a';
-import N6b from './timeline/coe025-W6b.json';
-import {W6bScenes} from './coe025/W6b';
+import N6 from './timeline/coe025-W6.json';
+import {W6Scenes} from './coe025/W6';
 
 // one composition per timeline (src/timeline/<id>.json, made by prep.py from src/scripts/<id>.json);
 // scenes are React components, so they are bound here rather than passed as (serialised) props
@@ -39,11 +35,9 @@ const videos: [Timeline, Record<string, React.FC>][] = [
   [L7 as Timeline, L7Scenes],
   [N1 as Timeline, W1Scenes],
   [N2 as Timeline, W2Scenes],
-  [N3a as Timeline, W3aScenes],
-  [N3b as Timeline, W3bScenes],
+  [N3 as Timeline, W3Scenes],
   [N4 as Timeline, W4Scenes],
-  [N6a as Timeline, W6aScenes],
-  [N6b as Timeline, W6bScenes],
+  [N6 as Timeline, W6Scenes],
 ];
 
 export const Root: React.FC = () => (

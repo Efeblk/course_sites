@@ -2,209 +2,148 @@
  "id": "coe025-W1",
  "title": "Week 1 \u00b7 Turning text into numbers",
  "fps": 30,
- "dur": 5998,
+ "dur": 2864,
  "scenes": [
   {
-   "id": "numbers",
+   "id": "why",
    "from": 18,
-   "dur": 802,
+   "dur": 471,
    "cues": [
     {
      "from": 0,
-     "dur": 138,
-     "audio": "audio/2c23e34cec9f3c4b.mp3",
-     "text": "Week one asks one question: why do we turn text into numbers at all?"
-    },
-    {
-     "from": 148,
-     "dur": 145,
-     "audio": "audio/c5b749ec1f29e5e2.mp3",
-     "text": "Because a model can only compute with numbers. It cannot read the word good."
-    },
-    {
-     "from": 303,
-     "dur": 216,
-     "audio": "audio/f87f1c6900d4dc38.mp3",
-     "text": "So every method in this course is a way of turning text into numbers, and each one keeps something and loses something."
-    },
-    {
-     "from": 530,
-     "dur": 245,
-     "audio": "audio/7718204939034306.mp3",
-     "text": "For every method, ask three things: what problem does it fix, what goes in and comes out, and where does it still fail."
-    }
-   ]
-  },
-  {
-   "id": "tokens",
-   "from": 820,
-   "dur": 1090,
-   "cues": [
-    {
-     "from": 0,
-     "dur": 258,
-     "audio": "audio/5b53ba145229384e.mp3",
-     "text": "Step one is tokenization: split the text into tokens. A token can be a word, a piece of a word, or punctuation."
-    },
-    {
-     "from": 268,
      "dur": 91,
-     "audio": "audio/34ac1148a8ac1df9.mp3",
-     "text": "Don't becomes do plus n apostrophe t."
+     "audio": "audio/20acf23c248a5648.mp3",
+     "text": "A computer can only calculate with numbers."
     },
     {
-     "from": 369,
-     "dur": 186,
-     "audio": "audio/4333d183719f0657.mp3",
-     "text": "A word-level vocabulary has a problem: a word it never saw in training is out of vocabulary."
+     "from": 113,
+     "dur": 172,
+     "audio": "audio/8a383bb6a139af2d.mp3",
+     "text": "So every NLP method starts the same way: it turns text into numbers."
     },
     {
-     "from": 566,
-     "dur": 193,
-     "audio": "audio/b42c4d166285e902.mp3",
-     "text": "Subword tokenizers fix this. Unhappiness is split into pieces the model already knows."
-    },
-    {
-     "from": 769,
-     "dur": 294,
-     "audio": "audio/81bfd9b29940c5c2.mp3",
-     "text": "B P E merges the most frequent pairs and is used by G P T. WordPiece marks continuation pieces with two hashes and is used by BERT."
+     "from": 308,
+     "dur": 136,
+     "audio": "audio/0169af16a64cf340.mp3",
+     "text": "The methods differ in one thing: what they keep, and what they lose."
     }
    ]
   },
   {
    "id": "bow",
-   "from": 1910,
-   "dur": 771,
+   "from": 489,
+   "dur": 636,
    "cues": [
     {
      "from": 0,
-     "dur": 191,
-     "audio": "audio/c25c2e15e99cd0e0.mp3",
-     "text": "Now give each word a column. One-hot: a vector as long as the vocabulary, with a single one."
+     "dur": 125,
+     "audio": "audio/02d22fbd7a5c61dd.mp3",
+     "text": "The simplest way is a bag of words. We just count each word."
     },
     {
-     "from": 201,
-     "dur": 143,
-     "audio": "audio/121230339b4d76f3.mp3",
-     "text": "Bag of words adds them up: it counts how often each word appears."
+     "from": 147,
+     "dur": 125,
+     "audio": "audio/ff900b583da124a4.mp3",
+     "text": "Dog bites man. One dog, one bites, one man."
     },
     {
-     "from": 354,
-     "dur": 174,
-     "audio": "audio/47cdb360947467c3.mp3",
-     "text": "But it forgets the order. Dog bites man and man bites dog get exactly the same vector."
+     "from": 295,
+     "dur": 125,
+     "audio": "audio/1fcc08fa56b1d14e.mp3",
+     "text": "Now: man bites dog. The counts are exactly the same."
     },
     {
-     "from": 539,
-     "dur": 205,
-     "audio": "audio/f47d8079bfaed997.mp3",
-     "text": "N-grams bring back some local order: New York becomes one feature, and not good becomes one feature."
-    }
-   ]
-  },
-  {
-   "id": "tfidf",
-   "from": 2681,
-   "dur": 1234,
-   "cues": [
-    {
-     "from": 0,
-     "dur": 178,
-     "audio": "audio/144aa2aaa3f4c39a.mp3",
-     "text": "Counts treat every word the same. TF-IDF down-weights words that appear everywhere."
-    },
-    {
-     "from": 188,
-     "dur": 261,
-     "audio": "audio/ee3b0f9fa6b0eae3.mp3",
-     "text": "I D F is the log of N over d f. N is the number of documents, d f is how many documents contain the word."
-    },
-    {
-     "from": 459,
-     "dur": 237,
-     "audio": "audio/c194ceb227d4be17.mp3",
-     "text": "Four reviews. Good appears in two of them, so its I D F is log of four over two, about zero point six nine."
-    },
-    {
-     "from": 707,
-     "dur": 201,
-     "audio": "audio/40249cb5b57507cb.mp3",
-     "text": "Movie appears in all four. Log of four over four is zero: it does not tell the documents apart."
-    },
-    {
-     "from": 918,
-     "dur": 289,
-     "audio": "audio/e4ebb38d27f698d0.mp3",
-     "text": "The weight is count times I D F. Good twice in one review gives about one point three nine. It is a weight, not a sentiment and not a probability."
+     "from": 443,
+     "dur": 166,
+     "audio": "audio/dd037c81a02f9314.mp3",
+     "text": "So a bag of words loses the word order. Two different stories get the same numbers."
     }
    ]
   },
   {
    "id": "embed",
-   "from": 3915,
-   "dur": 978,
+   "from": 1125,
+   "dur": 661,
    "cues": [
     {
      "from": 0,
-     "dur": 158,
-     "audio": "audio/7a980e65a612627a.mp3",
-     "text": "One-hot vectors are all equally far apart. Cat is as far from dog as from car."
+     "dur": 147,
+     "audio": "audio/c720c26d7d3b0598.mp3",
+     "text": "A better idea: give every word a point in space, a vector."
     },
     {
      "from": 169,
-     "dur": 217,
-     "audio": "audio/470e06234e59c583.mp3",
-     "text": "Dense embeddings give each word fifty to three hundred learned numbers, so similar meanings land close together."
+     "dur": 181,
+     "audio": "audio/c68586a16bcc0466.mp3",
+     "text": "Words with similar meaning land close together. Good sits near great. Bad is far away."
     },
     {
-     "from": 397,
-     "dur": 136,
-     "audio": "audio/05328a85bcec6f3b.mp3",
-     "text": "The famous example: king minus man plus woman lands near queen."
+     "from": 373,
+     "dur": 92,
+     "audio": "audio/46d4b8abcf456bb5.mp3",
+     "text": "This is an embedding, like Word2Vec."
     },
     {
-     "from": 543,
-     "dur": 207,
-     "audio": "audio/ed33e6dfc806d958.mp3",
-     "text": "Word2Vec and GloVe are static: bank gets one vector, whether it is a river bank or a bank loan."
-    },
-    {
-     "from": 761,
-     "dur": 191,
-     "audio": "audio/6a09c6b3d4be8607.mp3",
-     "text": "Contextual models like BERT give each occurrence its own vector, built from the words around it."
+     "from": 487,
+     "dur": 147,
+     "audio": "audio/88014a927df4b2b2.mp3",
+     "text": "But it is static. Bank gets the same point in river bank and in bank loan."
     }
    ]
   },
   {
-   "id": "tool",
-   "from": 4893,
-   "dur": 1057,
+   "id": "context",
+   "from": 1786,
+   "dur": 425,
    "cues": [
     {
      "from": 0,
-     "dur": 119,
-     "audio": "audio/d752dc82d6bf26e0.mp3",
-     "text": "Last idea: when is a large language model the wrong tool?"
+     "dur": 112,
+     "audio": "audio/591b3db697685ce3.mp3",
+     "text": "Contextual models, like BERT, fix this."
     },
     {
-     "from": 129,
-     "dur": 333,
-     "audio": "audio/6d54a4c8620a7ed2.mp3",
-     "text": "For a spam filter, the lecture compared an L L M with Naive Bayes. The accuracy gap was small: ninety-nine point two versus ninety-eight point five percent."
+     "from": 134,
+     "dur": 127,
+     "audio": "audio/c5fb51a097abb3de.mp3",
+     "text": "They read the whole sentence, and give each bank its own vector."
     },
     {
-     "from": 472,
-     "dur": 305,
-     "audio": "audio/536c2b3d62da694e.mp3",
-     "text": "But the L L M costs about thirty thousand dollars a month, and Naive Bayes under ten. It takes a hundred to a thousand milliseconds, Naive Bayes under ten."
+     "from": 284,
+     "dur": 114,
+     "audio": "audio/793494e0d4555ac0.mp3",
+     "text": "The price: they are big, slow and expensive."
+    }
+   ]
+  },
+  {
+   "id": "exam",
+   "from": 2211,
+   "dur": 606,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 84,
+     "audio": "audio/fee445c3b8dfb550.mp3",
+     "text": "For the exam, remember three things."
     },
     {
-     "from": 788,
-     "dur": 243,
-     "audio": "audio/eee1d9491424d937.mp3",
-     "text": "Add privacy, interpretability and hallucinations. Don't use a bulldozer to crack a chestnut: start with a cheap baseline."
+     "from": 106,
+     "dur": 68,
+     "audio": "audio/bf5130e7d9e8b902.mp3",
+     "text": "Bag of words loses the order."
+    },
+    {
+     "from": 197,
+     "dur": 151,
+     "audio": "audio/de77ea7be8e23715.mp3",
+     "text": "Embeddings put similar words close, but one word has one vector."
+    },
+    {
+     "from": 371,
+     "dur": 208,
+     "audio": "audio/698f19b6db82aeed.mp3",
+     "text": "And a big model is not always the right tool. For a simple task like spam, try a cheap model first."
     }
    ]
   }

@@ -1,0 +1,63 @@
+{
+ "id": "coe025-W3",
+ "title": "Week 3 · From counts to BERT",
+ "rate": "-10%",
+ "gap": 0.75,
+ "scenes": [
+  {
+   "id": "tfidf",
+   "lines": [
+    "Some words are everywhere. Movie appears in every movie review.",
+    "A word that is everywhere tells us nothing. TF-IDF gives it a small weight.",
+    "Movie is in all four reviews, so its weight becomes zero.",
+    "Good is only in two, so it keeps its weight. Rare words count more."
+   ]
+  },
+  {
+   "id": "split",
+   "lines": [
+    "One important rule.",
+    "The test set is the model's final exam. The model must not see it before.",
+    "So learn the vocabulary and the weights from the training set only.",
+    "Then only apply them to the test set. Otherwise the test leaks into training."
+   ]
+  },
+  {
+   "id": "rnn",
+   "lines": [
+    "Counting words loses the order. So neural models read the text word by word.",
+    "A recurrent network, an RNN, carries a memory from one word to the next.",
+    "But in a long sentence, the early words fade away. This is the vanishing gradient problem.",
+    "An LSTM adds gates. They decide what to keep, what to write, and what to show. So it remembers longer."
+   ]
+  },
+  {
+   "id": "attn",
+   "lines": [
+    "The transformer takes another way: attention.",
+    "Every word looks at every other word directly, all at the same time.",
+    "In: the animal was tired because it, the word it looks most at animal.",
+    "BERT is a big transformer trained on lots of text first. Then we add a small head and fine-tune it for our task."
+   ]
+  },
+  {
+   "id": "eval",
+   "lines": [
+    "How do we measure a classifier?",
+    "Precision: of everything we flagged, how much was right?",
+    "Recall: of everything that was really there, how much did we find?",
+    "F1 combines the two into one number."
+   ]
+  },
+  {
+   "id": "exam",
+   "lines": [
+    "For the exam:",
+    "TF-IDF makes common words weak.",
+    "Fit on the training set only.",
+    "RNN, then LSTM, then attention: each one keeps more of the sentence.",
+    "Precision is about your alarms. Recall is about what you missed."
+   ]
+  }
+ ]
+}

@@ -44,6 +44,11 @@ from the script.
 
 ## Writing the narration (`src/scripts/*.json`)
 
+- **Keep it simple.** On 2026-11-08 the owner rejected the first COE025 videos as "too complex": too many facts per
+  minute and calculations on screen. The remake (`coe025-W1..W6`) has 4 to 6 ideas per video, intuition first with one
+  plain example, short sentences, and ends with a "For the exam" scene (`ExamList` in `src/coe025/simple.tsx`). The
+  detailed maths stays in the summary page and the drill, not in the video.
+- A script can slow its own speech: `"rate": "-10%"` (edge-tts) and `"gap": 0.75` (seconds between lines).
 - Use one scene per idea, with 3 to 7 lines per scene. One line is one or two spoken sentences, and each line becomes
   one cue that the motion is timed to.
 - Aim for 2 to 4 minutes per lecture. Cover what the lecturer flagged for the exam first, and say it the way the exam

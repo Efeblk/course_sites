@@ -2,154 +2,154 @@
  "id": "coe025-W4",
  "title": "Week 4 \u00b7 Parts of speech and named entities",
  "fps": 30,
- "dur": 4351,
+ "dur": 3182,
  "scenes": [
   {
    "id": "pos",
    "from": 18,
-   "dur": 753,
+   "dur": 635,
    "cues": [
     {
      "from": 0,
-     "dur": 122,
-     "audio": "audio/63ff9b3ebebe92d9.mp3",
-     "text": "Week four moves from one label per text to one label per word."
+     "dur": 117,
+     "audio": "audio/c37dd693f55e9b16.mp3",
+     "text": "Now we label every single word, not the whole text."
     },
     {
-     "from": 133,
-     "dur": 151,
-     "audio": "audio/5af074e73a856175.mp3",
-     "text": "Part-of-speech tagging gives every word its grammatical role in this sentence."
+     "from": 139,
+     "dur": 192,
+     "audio": "audio/a16e5717ad95d696.mp3",
+     "text": "Part of speech tagging gives each word its grammar role: noun, verb, adjective."
     },
     {
-     "from": 295,
-     "dur": 211,
-     "audio": "audio/2ea305358e67d2fe.mp3",
-     "text": "Book that flight: book is a verb. Hand me that book: book is a noun. The tag depends on context."
+     "from": 354,
+     "dur": 91,
+     "audio": "audio/c85c457bd2e9a496.mp3",
+     "text": "Book that flight: here book is a verb."
     },
     {
-     "from": 516,
-     "dur": 210,
-     "audio": "audio/35fc56159a378568.mp3",
-     "text": "Back can even be five things: an adjective, a noun, a verb, a particle or an adverb."
+     "from": 467,
+     "dur": 141,
+     "audio": "audio/6219ca7ac80b9d50.mp3",
+     "text": "Hand me that book: here book is a noun. The context decides."
     }
    ]
   },
   {
-   "id": "classes",
-   "from": 771,
-   "dur": 661,
+   "id": "amb",
+   "from": 653,
+   "dur": 665,
    "cues": [
     {
      "from": 0,
-     "dur": 254,
-     "audio": "audio/fd1abb3be3c2a22f.mp3",
-     "text": "Open classes gain new words every day: nouns, verbs, adjectives, adverbs. Selfie, to google."
+     "dur": 87,
+     "audio": "audio/f0b67ef4bbc0c202.mp3",
+     "text": "Only a few words can have more than one tag."
     },
     {
-     "from": 265,
-     "dur": 247,
-     "audio": "audio/4722655d5f76c014.mp3",
-     "text": "Closed classes almost never change: determiners, pronouns, prepositions, conjunctions, auxiliaries."
+     "from": 110,
+     "dur": 117,
+     "audio": "audio/a7d63619fc4ec214.mp3",
+     "text": "But they are very common words, like that, back and book."
     },
     {
-     "from": 522,
-     "dur": 112,
-     "audio": "audio/c4081e0ff8fd73dc.mp3",
-     "text": "Universal Dependencies has seventeen tags in total."
-    }
-   ]
-  },
-  {
-   "id": "ambig",
-   "from": 1431,
-   "dur": 1007,
-   "cues": [
-    {
-     "from": 0,
-     "dur": 145,
-     "audio": "audio/6e05cddd28450a89.mp3",
-     "text": "Only a small share of word types is ambiguous, but those are the common words."
+     "from": 249,
+     "dur": 147,
+     "audio": "audio/83afc1a7d9604318.mp3",
+     "text": "So in real text, most of the words we read are ambiguous."
     },
     {
-     "from": 156,
-     "dur": 191,
-     "audio": "audio/f9ebca5218334252.mp3",
-     "text": "Take book book book cat dog. One of three types is ambiguous, but three of five tokens are."
-    },
-    {
-     "from": 357,
-     "dur": 238,
-     "audio": "audio/51d715836d7f16aa.mp3",
-     "text": "The simplest tagger gives each word its most frequent tag from training. It ignores context, so book a flight comes out wrong."
-    },
-    {
-     "from": 605,
-     "dur": 374,
-     "audio": "audio/409ae2b37d527e8f.mp3",
-     "text": "Better taggers combine three clues: the word itself, its neighbours, and its shape, like a suffix or a capital letter. A clue is not a rule: friendly ends in l y and is an adjective."
+     "from": 418,
+     "dur": 220,
+     "audio": "audio/0ada305492176197.mp3",
+     "text": "A simple baseline always picks the most frequent tag. It is often right, but it gets book that flight wrong."
     }
    ]
   },
   {
    "id": "ner",
-   "from": 2438,
-   "dur": 835,
+   "from": 1318,
+   "dur": 743,
    "cues": [
     {
      "from": 0,
-     "dur": 246,
-     "audio": "audio/2dafacd83568f930.mp3",
-     "text": "Named entity recognition finds names of things: people, organizations, locations, geo-political entities."
+     "dur": 140,
+     "audio": "audio/0d59fef460fe4f25.mp3",
+     "text": "Named entity recognition finds names in the text, and their type."
     },
     {
-     "from": 256,
-     "dur": 100,
-     "audio": "audio/eba6f79034ff4a50.mp3",
-     "text": "It is harder than part-of-speech tagging for two reasons."
+     "from": 163,
+     "dur": 91,
+     "audio": "audio/13fe03f949b7873d.mp3",
+     "text": "Person, organization, location."
     },
     {
-     "from": 367,
-     "dur": 173,
-     "audio": "audio/6d3177dfdaa221bf.mp3",
-     "text": "First, segmentation: United Airlines Holding is one entity of three words."
+     "from": 276,
+     "dur": 233,
+     "audio": "audio/a1ca6112daff56cb.mp3",
+     "text": "It has two jobs. First, where does the name start and end? San Francisco is two words, but one name."
     },
     {
-     "from": 550,
-     "dur": 258,
-     "audio": "audio/9ddfe62666ca0ca6.mp3",
-     "text": "Second, type ambiguity: Washington can be a person, a team, a place or a state, and only the context decides."
+     "from": 532,
+     "dur": 184,
+     "audio": "audio/5be1933b9ed2b4ce.mp3",
+     "text": "Second, what type is it? Washington can be a person, a city, or a government."
     }
    ]
   },
   {
    "id": "bio",
-   "from": 3273,
-   "dur": 1030,
+   "from": 2060,
+   "dur": 485,
    "cues": [
     {
      "from": 0,
-     "dur": 235,
-     "audio": "audio/a702db99780a2755.mp3",
-     "text": "To label entities word by word, we use B I O. B begins an entity, I is inside it, O is outside."
+     "dur": 114,
+     "audio": "audio/82d9644f751c6f13.mp3",
+     "text": "To label names word by word, we use B I O."
     },
     {
-     "from": 245,
-     "dur": 217,
-     "audio": "audio/6248e67a802602d4.mp3",
-     "text": "Jane, B person. Villanueva, I person. Of, O. United, B organization."
+     "from": 136,
+     "dur": 143,
+     "audio": "audio/0d0d5b57bd915c10.mp3",
+     "text": "B means begin. I means inside the same name. O means outside."
     },
     {
-     "from": 472,
-     "dur": 191,
-     "audio": "audio/7d305bf3f4f96c23.mp3",
-     "text": "With n entity types, B I O needs two n plus one tags. Three types give seven."
+     "from": 302,
+     "dur": 156,
+     "audio": "audio/0e2d81ce14841510.mp3",
+     "text": "San is B location. Francisco is I location. Every other word is O."
+    }
+   ]
+  },
+  {
+   "id": "exam",
+   "from": 2545,
+   "dur": 589,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 56,
+     "audio": "audio/38dddec3fd09ed83.mp3",
+     "text": "For the exam:"
     },
     {
-     "from": 674,
-     "dur": 329,
-     "audio": "audio/234e1cc41cec7925.mp3",
-     "text": "I O uses n plus one tags, but cannot separate two people standing next to each other. B I O E S adds end and single, for four n plus one."
+     "from": 79,
+     "dur": 125,
+     "audio": "audio/8b8a2222a553fa4f.mp3",
+     "text": "The same word can have different tags. The context decides."
+    },
+    {
+     "from": 226,
+     "dur": 203,
+     "audio": "audio/a7aa4df6a5cc0985.mp3",
+     "text": "Named entity recognition is harder than part of speech tagging: it needs the boundaries and the type."
+    },
+    {
+     "from": 452,
+     "dur": 110,
+     "audio": "audio/6a314fd6d1d21790.mp3",
+     "text": "And B I O turns names into one label per word."
     }
    ]
   }

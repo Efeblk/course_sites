@@ -13,6 +13,8 @@ VOICE, RATE, FPS = 'en-US-AndrewNeural', '-4%', 30
 LEAD, GAP, SCENE_GAP, TAIL = 0.6, 0.35, 0.9, 1.6  # seconds
 
 script = json.loads((HERE / sys.argv[1]).read_text(encoding='utf-8'))
+# a script may slow itself down: "rate" (edge-tts, e.g. "-12%") and "gap" (pause between lines, seconds)
+RATE, GAP = script.get('rate', RATE), script.get('gap', GAP)
 lines = [l for sc in script['scenes'] for l in sc['lines']]
 
 

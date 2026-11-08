@@ -1,0 +1,194 @@
+{
+ "id": "coe025-W6",
+ "title": "Week 6 \u00b7 HMM and CRF",
+ "fps": 30,
+ "dur": 4166,
+ "scenes": [
+  {
+   "id": "fit",
+   "from": 18,
+   "dur": 600,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 126,
+     "audio": "audio/6f56bcd524dc27a6.mp3",
+     "text": "When we label word by word, the labels must fit together."
+    },
+    {
+     "from": 148,
+     "dur": 154,
+     "audio": "audio/913d0902b0b6e70b.mp3",
+     "text": "If every word picks its label alone, we can get O, then I person."
+    },
+    {
+     "from": 325,
+     "dur": 125,
+     "audio": "audio/d99e100a966d8721.mp3",
+     "text": "That is illegal. I must continue a name that already began."
+    },
+    {
+     "from": 473,
+     "dur": 100,
+     "audio": "audio/d6a575d5220be6b7.mp3",
+     "text": "So a good model also looks at the neighbouring labels."
+    }
+   ]
+  },
+  {
+   "id": "hmm",
+   "from": 618,
+   "dur": 742,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 91,
+     "audio": "audio/d779f17231f07e79.mp3",
+     "text": "The hidden Markov model does exactly that."
+    },
+    {
+     "from": 113,
+     "dur": 94,
+     "audio": "audio/e2a79edf00b57318.mp3",
+     "text": "The tags are hidden. The words are what we see."
+    },
+    {
+     "from": 229,
+     "dur": 214,
+     "audio": "audio/1849415d945782a9.mp3",
+     "text": "At each step it asks two questions. How likely is this tag after the previous tag? That is the transition."
+    },
+    {
+     "from": 466,
+     "dur": 249,
+     "audio": "audio/0b50bcd5cee82445.mp3",
+     "text": "And how likely is this tag to produce this word? That is the emission: the word given the tag, not the tag given the word."
+    }
+   ]
+  },
+  {
+   "id": "paths",
+   "from": 1360,
+   "dur": 751,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 192,
+     "audio": "audio/ef2de93281527b36.mp3",
+     "text": "Take two words: can fish. Each can be a noun or a verb. That gives four paths."
+    },
+    {
+     "from": 214,
+     "dur": 106,
+     "audio": "audio/c287aa3dc5f9890a.mp3",
+     "text": "For each path, multiply the numbers along the way."
+    },
+    {
+     "from": 342,
+     "dur": 146,
+     "audio": "audio/663be2d489b376bb.mp3",
+     "text": "Verb then noun wins, with zero point one three four four."
+    },
+    {
+     "from": 511,
+     "dur": 213,
+     "audio": "audio/0fdb0022eb57fc58.mp3",
+     "text": "This number is a joint probability. To get the posterior, divide by the total of all four paths."
+    }
+   ]
+  },
+  {
+   "id": "viterbi",
+   "from": 2111,
+   "dur": 539,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 120,
+     "audio": "audio/1586c489444afc31.mp3",
+     "text": "With long sentences, there are far too many paths to try."
+    },
+    {
+     "from": 143,
+     "dur": 170,
+     "audio": "audio/ed76c11c05d01b88.mp3",
+     "text": "The Viterbi algorithm keeps, for every tag, only the best way to reach it."
+    },
+    {
+     "from": 335,
+     "dur": 177,
+     "audio": "audio/5699016b951cb6cb.mp3",
+     "text": "Viterbi takes the maximum. The forward algorithm takes the sum, which gives the total."
+    }
+   ]
+  },
+  {
+   "id": "crf",
+   "from": 2650,
+   "dur": 780,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 110,
+     "audio": "audio/c1e7bbdf4865c8af.mp3",
+     "text": "The CRF uses scores instead of probabilities."
+    },
+    {
+     "from": 133,
+     "dur": 188,
+     "audio": "audio/e025abbce0d6057f.mp3",
+     "text": "A score can use any clue: a capital letter, a word ending, a list of names."
+    },
+    {
+     "from": 343,
+     "dur": 198,
+     "audio": "audio/e3b84a705d209a48.mp3",
+     "text": "Add up the scores of a path, and divide by the total of all paths. That total is called Z."
+    },
+    {
+     "from": 564,
+     "dur": 189,
+     "audio": "audio/1fb2e7a491465806.mp3",
+     "text": "But a CRF only prefers legal labels. To forbid illegal ones, we must block them."
+    }
+   ]
+  },
+  {
+   "id": "exam",
+   "from": 3430,
+   "dur": 688,
+   "cues": [
+    {
+     "from": 0,
+     "dur": 56,
+     "audio": "audio/38dddec3fd09ed83.mp3",
+     "text": "For the exam:"
+    },
+    {
+     "from": 79,
+     "dur": 88,
+     "audio": "audio/1dbc5dcd9613b0e0.mp3",
+     "text": "The emission is the word given the tag."
+    },
+    {
+     "from": 189,
+     "dur": 139,
+     "audio": "audio/09126a8765420e90.mp3",
+     "text": "A path product is joint. Divide by the total to get the posterior."
+    },
+    {
+     "from": 350,
+     "dur": 161,
+     "audio": "audio/dd209af19f90b8b2.mp3",
+     "text": "Viterbi uses the maximum. Z and the forward algorithm use the sum."
+    },
+    {
+     "from": 534,
+     "dur": 127,
+     "audio": "audio/0d8fee0bf46167ce.mp3",
+     "text": "And entities are scored as whole spans, not word by word."
+    }
+   ]
+  }
+ ]
+}

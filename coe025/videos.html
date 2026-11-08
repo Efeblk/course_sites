@@ -16,7 +16,7 @@
   <main>
     <div class="mono small muted">COE025 — study videos</div>
     <h1 style="font-size:2.6rem;margin-top:4px">Study videos</h1>
-    <p class="lead">Narrated, illustrated videos for every week on the midterm, in English like the course and the exam. Every idea is drawn and moves with the voice, and the worked numbers from the study slides are calculated on screen. About 21 minutes in total.</p>
+    <p class="lead">Short, slow videos for every week on the midterm, in English like the exam. Each one explains only a few big ideas, intuition first with one simple example, and ends with a "For the exam" list. About 10 minutes in total. For the full calculations, use the <a href="ozet.html">midterm summary</a> and the <a href="drill.html">calculation drill</a>.</p>
     <div class="callout small">The video files are rendered locally with Remotion (<code>tools/motion/</code>, recipe in its README) into <code>materials/COE025/video/</code>. They are not in the GitHub repo (too large), so they play only on this computer. If a player stays black, render them once with <code>tools/motion/render.py</code>.</div>
     <nav class="row toc" id="toc"></nav>
     <div id="list"></div>
@@ -35,11 +35,9 @@
     const all = [
       { id: 'W1', title: 'Week 1 · Turning text into numbers' },
       { id: 'W2', title: 'Week 2 · Text classification' },
-      { id: 'W3a', title: 'Week 3, part 1 · Classical classifiers by hand' },
-      { id: 'W3b', title: 'Week 3, part 2 · From embeddings to BERT' },
+      { id: 'W3', title: 'Week 3 · From counts to BERT' },
       { id: 'W4', title: 'Week 4 · Parts of speech and named entities' },
-      { id: 'W6a', title: 'Week 6, part 1 · Token classification' },
-      { id: 'W6b', title: 'Week 6, part 2 · HMM and CRF' },
+      { id: 'W6', title: 'Week 6 · HMM and CRF' },
       { id: 'all', title: 'All weeks in one video' },
     ];
     const toc = document.getElementById('toc'), list = document.getElementById('list');
