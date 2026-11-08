@@ -130,4 +130,65 @@
     A.step('“route” → O. Done: one tag per token, and you can read the spans back from the B and I tags. An <b>I</b> can never follow <b>O</b>.', { ...cur(9), ...tag(9) });
     A.step('With <b>n</b> entity types BIO needs <b>2n + 1</b> tags: a B and an I for each type, plus O. With 4 types that is <b>9 tags</b>.', { cur: { o: 0 }, cnt: { o: 1 } });
   });
+
+  /* ---------- W6: HMM Viterbi on "can fish" (lecture slides 26–29) ---------- */
+  def('viterbi', { w: 720, h: 330 }, (A) => {
+    const X = [90, 300, 560], Y = { N: 130, V: 225 };
+    A.text('w1', { tx: X[1], ty: 26, text: 'can', size: 17, weight: 700, mono: true });
+    A.text('w2', { tx: X[2], ty: 26, text: 'fish', size: 17, weight: 700, mono: true });
+    A.box('st', { tx: X[0], ty: 177, w: 86, h: 36, text: 'START', c: 'mute', fill: 'ghost' });
+    for (const t of ['N', 'V']) {
+      A.box('c' + t, { tx: X[1], ty: Y[t], w: 120, h: 50, text: t, sub: '', c: t === 'N' ? 'c0' : 'c4', fill: 'soft' });
+      A.box('f' + t, { tx: X[2], ty: Y[t], w: 120, h: 50, text: t, sub: '', c: t === 'N' ? 'c0' : 'c4', fill: 'soft' });
+      A.line('s' + t, { x1: X[0] + 44, y1: 177, x2: X[1] - 62, y2: Y[t], head: true, draw: 0 });
+    }
+    // edges can/p → fish/q; the candidate products are listed above / below the target cell, clear of the crossing edges
+    const lab = { NN: [X[2], 62], VN: [X[2], 80], NV: [X[2], 272], VV: [X[2], 290] };
+    for (const p of ['N', 'V']) for (const q of ['N', 'V']) {
+      A.line('e' + p + q, { x1: X[1] + 62, y1: Y[p], x2: X[2] - 62, y2: Y[q], head: true, draw: 0 });
+      A.text('l' + p + q, { tx: lab[p + q][0], ty: lab[p + q][1], text: '', size: 12, mono: true, o: 0 });
+    }
+    A.text('note', { tx: 300, ty: 318, text: '', size: 13, mono: true, o: 0 });
+    const keep = { c: 'c1', sw: 3.2 }, drop = { c: 'mute', sw: 1, o: 0.35 };
+
+    A.step('Two words, two hidden tags (N = NOUN, V = VERB). Every path through the grid is one tagging; there are 2² = <b>4</b> of them. Viterbi finds the best without listing them all.');
+    A.step('First word: <b>start × emission</b>. N: 0.6 × P(can|N) 0.4 = <b>0.24</b>. V: 0.4 × P(can|V) 0.7 = <b>0.28</b>. These are joint weights, not posteriors.',
+      { sN: { draw: 1 }, sV: { draw: 1 }, cN: { sub: '0.24' }, cV: { sub: '0.28' } }, { fx: ['cN', 'cV'] });
+    A.step('Ending in <b>N</b> at "fish": compare both predecessors. From N: 0.24 × 0.3 = 0.072. From V: 0.28 × 0.8 = <b>0.224</b>. Keep V.',
+      { eNN: { draw: 1 }, eVN: { draw: 1 }, lNN: { o: 1, text: 'from N: 0.24 × 0.3 = 0.072' }, lVN: { o: 1, text: 'from V: 0.28 × 0.8 = 0.224' } });
+    A.step('Multiply the winner by the emission P(fish|N) = 0.6 → <b>0.1344</b>, and store the backpointer <b>V</b>.',
+      { eVN: keep, eNN: drop, lNN: { o: 0.35 }, fN: { sub: '0.1344 ← V' } }, { fx: ['fN'] });
+    A.step('Ending in <b>V</b>: from N 0.24 × 0.7 = <b>0.168</b>, from V 0.28 × 0.2 = 0.056. Keep N, × P(fish|V) 0.3 → <b>0.0504</b>, backpointer N.',
+      { eNV: { draw: 1, ...keep }, eVV: { draw: 1, ...drop }, lNV: { o: 1, text: 'from N: 0.24 × 0.7 = 0.168' }, lVV: { o: 0.35, text: 'from V: 0.28 × 0.2 = 0.056' }, fV: { sub: '0.0504 ← N' } }, { fx: ['fV'] });
+    A.step('Pick the larger final cell: N (0.1344 > 0.0504). Follow its backpointer to V: the best path is <b>V N</b>, "preserve fish". Same answer as listing all 4 paths.',
+      { fN: { fill: 'solid' }, cV: { fill: 'solid' }, sV: keep, sN: drop, eNV: drop, lNV: { o: 0.35 }, note: { o: 1, text: 'VN = 0.1344 (joint).  posterior = 0.1344 / 0.2448 ≈ 0.549' } }, { fx: ['fN', 'cV'] });
+    A.step('Cost: Viterbi keeps one best partial path per ending tag, so it is <b>O(TK²)</b> for T words and K tags, instead of checking <b>Kᵀ</b> full paths.',
+      { note: { text: 'T words, K tags: O(T·K²) instead of Kᵀ paths' } });
+  });
+
+  /* ---------- W6: CRF path scores → weights → Z (lecture slides 34–36) ---------- */
+  def('crf', { w: 720, h: 320 }, (A) => {
+    const P = ['NN', 'NV', 'VN', 'VV'], base = 250, unit = 22;
+    const S0 = { NN: 'ln 2', NV: 'ln 4', VN: '0', VV: 'ln 2' }, W0 = { NN: 2, NV: 4, VN: 1, VV: 2 };
+    const S1 = { NN: 'ln 2', NV: 'ln 4', VN: 'ln 8', VV: 'ln 2' }, W1 = { NN: 2, NV: 4, VN: 8, VV: 2 };
+    const x = (i) => 140 + i * 140;
+    P.forEach((p, i) => {
+      A.area('b' + p, { tx: x(i) - 36, ty: base, w: 72, h: 0, c: p === 'VN' ? 'c1' : 'c0', solid: true });
+      A.text('p' + p, { tx: x(i), ty: base + 20, text: p, size: 16, weight: 700, mono: true });
+      A.text('s' + p, { tx: x(i), ty: base + 44, text: '', size: 13, mono: true, c: 'mute' });
+      A.text('v' + p, { tx: x(i), ty: base - 14, text: '', size: 14, mono: true, weight: 700 });
+    });
+    A.text('top', { tx: 360, ty: 28, text: '', size: 14, mono: true, o: 0 });
+    const bars = (W, txt) => Object.fromEntries(P.flatMap((p) => [['b' + p, { h: W[p] * unit, ty: base - W[p] * unit }], ['v' + p, { ty: base - W[p] * unit - 14, text: txt(p) }]]));
+
+    A.step('Input "can fish", four candidate label paths. A CRF gives each <b>complete path</b> a real-valued score S, then compares paths, not single words.');
+    A.step('Unary scores only: can → N gets ln 2, fish → V gets ln 2, everything else 0. Path scores: NN ln 2, NV <b>ln 4</b>, VN 0, VV ln 2. NV wins.',
+      { ...Object.fromEntries(P.map((p) => ['s' + p, { text: 'S = ' + S0[p] }])), ...bars(W0, (p) => String(W0[p])), top: { o: 1, text: 'weight = exp(S):  2, 4, 1, 2' } }, { fx: ['bNV'] });
+    A.step('Add one transition score: <b>a(V,N) = ln 8</b>, counted once for the adjacent pair. VN: 0 + 0 + ln 8 = <b>ln 8</b>. Now VN wins: label compatibility changed the decision.',
+      { sVN: { text: 'S = ln 8' }, ...bars(W1, (p) => String(W1[p])), top: { text: 'weight = exp(S):  2, 4, 8, 2' } }, { fx: ['bVN'] });
+    A.step('Normalize over <b>all paths</b>: Z = 2 + 4 + 8 + 2 = <b>16</b>. Divide each weight by the same Z: 0.125, 0.25, <b>0.5</b>, 0.125.',
+      { ...bars(W1, (p) => (W1[p] / 16).toFixed(3).replace(/0+$/, '')), top: { text: 'Z = 16    P(Y|X) = exp(S) / Z' } });
+    A.step('If VN is the gold path, the loss is −ln 0.5 = ln Z − gold score = ln 16 − ln 8 = <b>ln 2 ≈ 0.6931</b>. Training raises the gold path; decoding just takes the max.',
+      { top: { text: 'loss = ln Z − S(gold) = ln 16 − ln 8 ≈ 0.6931' } }, { fx: ['bVN'] });
+  });
 })();

@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Span Scorer · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .seq { overflow-x: auto; }
+    .seq table { border-collapse: collapse; }
+    .seq td, .seq th { border: 1px solid var(--line); padding: 5px 8px; font-family: var(--mono); font-size: .84rem; text-align: center; white-space: nowrap; }
+    .seq th { background: var(--panel-2); font-family: var(--sans); text-align: left; }
+    .seq select { font-family: var(--mono); font-size: .82rem; }
+    .PER { background: color-mix(in srgb, var(--f-c3) 22%, transparent); }
+    .LOC { background: color-mix(in srgb, var(--f-c1) 22%, transparent); }
+    .ign { color: var(--muted); }
+    .hit { color: var(--ok); font-weight: 700; }
+    .miss { color: var(--bad); font-weight: 700; }
+    .big { font-size: 1.05rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="6" data-title="Span Scorer" data-activity="w6-span">
+  <main>
+    <h1>Span Scorer</h1>
+    <p class="lead">NER is labeled <b>per token</b> but scored <b>per span</b>. A span counts only if both boundaries <b>and</b> the type match the gold annotation exactly.</p>
+
+    <div class="panel">
+      <h2>1 · Annotate (lecture practice, slide 20)</h2>
+      <p class="small">Types: PER and LOC. Gold mentions: <b>Ada</b> (PER) and <b>New York</b> (LOC). Use strict BIO: I continues the same type.</p>
+      <div class="seq"><table id="annot"></table></div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="checkA">Check</button>
+        <button id="showA">Show answer</button>
+        <span id="outA"></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>2 · Score a prediction</h2>
+      <p class="small">Gold stays fixed. Change the predicted labels, or load a preset. Spans are decoded from the BIO labels, then compared with exact matching.</p>
+      <div class="row">
+        <button class="chip" data-p="B-PER O O B-LOC O">York only (slide 20)</button>
+        <button class="chip" data-p="B-PER O B-LOC I-LOC O">perfect</button>
+        <button class="chip" data-p="B-PER O B-PER I-PER O">wrong type</button>
+        <button class="chip" data-p="O O O O O">all O</button>
+        <button class="chip" data-p="B-PER I-PER B-LOC I-LOC O">person span too long</button>
+      </div>
+      <div class="seq" style="margin-top:10px"><table id="pred"></table></div>
+      <div class="cols" style="margin-top:6px">
+        <div id="spanList"></div>
+        <div id="metrics"></div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2>3 · Accuracy can hide missed entities</h2>
+        <p class="small">A test set has 100 evaluated tokens. The model predicts <b>O everywhere</b>.</p>
+        <label>entity tokens <input type="range" id="ent" min="1" max="50" value="10"> <code id="entV"></code></label>
+        <div id="trap" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h2>4 · Slide 18 counts</h2>
+        <div class="row">
+          <label>gold spans <input type="number" id="g" min="0" max="50" value="3" style="width:64px"></label>
+          <label>predicted <input type="number" id="p" min="0" max="50" value="4" style="width:64px"></label>
+          <label>exact matches <input type="number" id="m" min="0" max="50" value="2" style="width:64px"></label>
+        </div>
+        <div id="counts" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>5 · Words and subwords must stay aligned</h2>
+      <p class="small">The subword splits here are <b>supplied for explanation</b>, not the output of a particular tokenizer. Word indices are zero-based, like <code>word_ids()</code>.</p>
+      <div class="row">
+        <button class="chip" data-s="0">Ada | Washington (two people, slide 16)</button>
+        <button class="chip" data-s="1">Ada Lovelace visited New York</button>
+        <label style="margin-left:auto">policy
+          <select id="policy"><option value="first">first subword only (lecture)</option><option value="all">all subwords, B → I</option></select></label>
+      </div>
+      <div class="seq" style="margin-top:10px"><table id="sub"></table></div>
+      <div id="subNote" class="callout" style="margin-top:10px"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const TOK = ['Ada', 'visited', 'New', 'York', '.'];
+    const GOLD = ['B-PER', 'O', 'B-LOC', 'I-LOC', 'O'];
+    const LABELS = ['O', 'B-PER', 'I-PER', 'B-LOC', 'I-LOC'];
+    const typ = (t) => (t === 'O' || t === '-100' ? '' : t.slice(2));
+
+    // decode BIO into spans [start, end, type]; an illegal I starts a new span (lenient) and is reported
+    function decode(tags) {
+      const spans = [], bad = [];
+      let cur = null;
+      tags.forEach((t, i) => {
+        if (t === 'O') { cur = null; return; }
+        const [p, ty] = [t[0], t.slice(2)];
+        if (p === 'I' && cur && cur[2] === ty) { cur[1] = i; return; }
+        if (p === 'I') bad.push(i);
+        cur = [i, i, ty]; spans.push(cur);
+      });
+      return { spans, bad };
+    }
+    const sk = (s) => s.join('|');
+    const show = (s, toks = TOK) => `${s[2]} “${toks.slice(s[0], s[1] + 1).join(' ')}”`;
+
+    function selRow(tags, onchange) {
+      return tags.map((t, i) => el('td', { class: typ(t) },
+        el('select', { onchange: (e) => onchange(i, e.target.value) }, LABELS.map((l) => el('option', { value: l, selected: l === t }, l)))));
+    }
+
+    /* ---- 1 · annotate ---- */
+    let mine = ['O', 'O', 'O', 'O', 'O'];
+    function drawA() {
+      fill($('#annot'),
+        el('tr', {}, el('th', {}, 'token'), TOK.map((w) => el('td', {}, w))),
+        el('tr', {}, el('th', {}, 'your BIO'), selRow(mine, (i, v) => { mine[i] = v; $('#outA').textContent = ''; drawA(); })));
+    }
+    $('#checkA').onclick = () => {
+      const ok = mine.filter((t, i) => t === GOLD[i]).length;
+      const { bad } = decode(mine);
+      $('#outA').innerHTML = ok === 5 ? '<b class="hit">All five correct: B-PER O B-LOC I-LOC O.</b>'
+        : `${ok}/5 labels match.` + (bad.length ? ` <b class="miss">Position ${bad.map((i) => i + 1).join(', ')}: an I that continues nothing of its type.</b>` : '')
+          + (mine[2] === 'I-LOC' ? ' “New” starts the span, so it needs B.' : '') + (mine[3] === 'B-LOC' ? ' “York” continues New York, so it is I-LOC.' : '');
+    };
+    $('#showA').onclick = () => { mine = [...GOLD]; drawA(); $('#outA').innerHTML = 'B-PER | O | B-LOC | I-LOC | O'; };
+
+    /* ---- 2 · score ---- */
+    let pred = 'B-PER O O B-LOC O'.split(' ');
+    function drawP() {
+      fill($('#pred'),
+        el('tr', {}, el('th', {}, 'token'), TOK.map((w) => el('td', {}, w))),
+        el('tr', {}, el('th', {}, 'gold'), GOLD.map((t) => el('td', { class: typ(t) }, t))),
+        el('tr', {}, el('th', {}, 'predicted'), selRow(pred, (i, v) => { pred[i] = v; drawP(); })));
+      const G = decode(GOLD).spans, P = decode(pred);
+      const gk = new Set(G.map(sk)), pk = new Set(P.spans.map(sk));
+      const tp = P.spans.filter((s) => gk.has(sk(s))).length, fp = P.spans.length - tp, fn = G.length - tp;
+      const acc = pred.filter((t, i) => t === GOLD[i]).length;
+      const pr = P.spans.length ? tp / P.spans.length : null, rc = tp / G.length;
+      const f1 = 2 * tp + fp + fn ? (2 * tp) / (2 * tp + fp + fn) : 0;
+      const f = (x) => (x == null ? 'undefined (0/0)' : x.toFixed(3).replace(/\.?0+$/, '') || '0');
+      fill($('#spanList'),
+        el('h3', {}, 'Spans'),
+        el('p', { class: 'small' }, 'Gold: ', G.map((s) => el('span', { class: 'tok ' + s[2], style: { marginRight: '6px' } }, show(s)))),
+        el('p', { class: 'small' }, 'Predicted: ', P.spans.length ? P.spans.map((s) => el('span', { class: 'tok ' + s[2], style: { marginRight: '6px' } }, show(s), gk.has(sk(s)) ? ' ✓' : ' ✗')) : el('span', { class: 'muted' }, 'none')),
+        P.bad.length ? el('div', { class: 'callout bad small' }, `Invalid BIO at position ${P.bad.map((i) => i + 1).join(', ')}: a lenient decoder starts a new span there.`) : null,
+        G.filter((s) => !pk.has(sk(s))).map((s) => el('div', { class: 'small miss' }, `missed: ${show(s)} → FN`)),
+        P.spans.filter((s) => !gk.has(sk(s))).map((s) => el('div', { class: 'small miss' }, `not an exact match: ${show(s)} → FP`)));
+      fill($('#metrics'),
+        el('h3', {}, 'Scores'),
+        el('table', { class: 't' },
+          el('tr', {}, el('td', {}, 'token accuracy'), el('td', { class: 'mono' }, `${acc} / 5 = ${acc * 20}%`)),
+          el('tr', {}, el('td', {}, 'TP · FP · FN'), el('td', { class: 'mono' }, `${tp} · ${fp} · ${fn}`)),
+          el('tr', {}, el('td', {}, 'precision TP/(TP+FP)'), el('td', { class: 'mono' }, f(pr))),
+          el('tr', {}, el('td', {}, 'recall TP/(TP+FN)'), el('td', { class: 'mono' }, f(rc))),
+          el('tr', {}, el('td', {}, el('b', {}, 'F1 = 2TP/(2TP+FP+FN)')), el('td', { class: 'mono big' }, `${2 * tp}/${2 * tp + fp + fn} = ${f(f1)}`))),
+        pr == null ? el('p', { class: 'small muted' }, 'No predicted spans: precision has a zero denominator. The evaluator must state its convention.') : null,
+        acc >= 4 && f1 < 1 ? el('p', { class: 'small' }, `${acc * 20}% of tokens are right, yet F1 is only ${f(f1)}: one boundary or type mistake breaks a whole span.`) : null);
+    }
+    $$('[data-p]').forEach((b) => (b.onclick = () => { pred = b.dataset.p.split(' '); drawP(); }));
+
+    /* ---- 3 · accuracy trap ---- */
+    function trap() {
+      const e = +$('#ent').value; $('#entV').textContent = e;
+      fill($('#trap'), el('table', { class: 't' },
+        el('tr', {}, el('td', {}, 'outside (O) tokens'), el('td', { class: 'mono' }, 100 - e)),
+        el('tr', {}, el('td', {}, 'token accuracy'), el('td', { class: 'mono big' }, `${100 - e} / 100 = ${100 - e}%`)),
+        el('tr', {}, el('td', {}, 'entity recall'), el('td', { class: 'mono big miss' }, '0 spans found = 0%'))),
+        el('p', { class: 'small' }, 'At least one gold span exists because entity tokens exist, but we cannot say how many: one span can cover several tokens. Accuracy and recall have different denominators.'));
+    }
+    $('#ent').addEventListener('input', trap);
+
+    /* ---- 4 · counts ---- */
+    function counts() {
+      const g = +$('#g').value, p = +$('#p').value, m = Math.min(+$('#m').value, g, p);
+      const fp = p - m, fn = g - m, d = 2 * m + fp + fn;
+      fill($('#counts'), el('table', { class: 't' },
+        el('tr', {}, el('td', {}, 'TP = matches'), el('td', { class: 'mono' }, m)),
+        el('tr', {}, el('td', {}, 'FP = predicted − matches'), el('td', { class: 'mono' }, `${p} − ${m} = ${fp}`)),
+        el('tr', {}, el('td', {}, 'FN = gold − matches'), el('td', { class: 'mono' }, `${g} − ${m} = ${fn}`)),
+        el('tr', {}, el('td', {}, 'precision'), el('td', { class: 'mono' }, p ? `${m}/${p} = ${(m / p).toFixed(3)}` : 'undefined')),
+        el('tr', {}, el('td', {}, 'recall'), el('td', { class: 'mono' }, g ? `${m}/${g} = ${(m / g).toFixed(3)}` : 'undefined')),
+        el('tr', {}, el('td', {}, el('b', {}, 'F1')), el('td', { class: 'mono big' }, d ? `${2 * m}/${d} = ${((2 * m) / d).toFixed(3)}` : 'undefined'))),
+        +$('#m').value > Math.min(g, p) ? el('p', { class: 'small miss' }, 'Matches cannot exceed the gold or predicted count.') : null);
+    }
+    ['#g', '#p', '#m'].forEach((s) => $(s).addEventListener('input', counts));
+
+    /* ---- 5 · subword alignment ---- */
+    const SETS = [
+      { words: ['Ada', 'Washington'], tags: ['B-PER', 'B-PER'], pieces: [['Ada'], ['Wash', '##ington']] },
+      { words: ['Ada', 'Lovelace', 'visited', 'New', 'York'], tags: ['B-PER', 'I-PER', 'O', 'B-LOC', 'I-LOC'], pieces: [['Ada'], ['Love', '##lace'], ['visit', '##ed'], ['New'], ['York']] },
+    ];
+    let set = 0;
+    function sub() {
+      const S = SETS[set], pol = $('#policy').value;
+      const toks = ['[CLS]'], wid = [null], lab = ['-100'];
+      S.pieces.forEach((ps, w) => ps.forEach((p, k) => {
+        toks.push(p); wid.push(w);
+        lab.push(k === 0 ? S.tags[w] : pol === 'first' ? '-100' : S.tags[w].replace(/^B-/, 'I-'));
+      }));
+      toks.push('[SEP]'); wid.push(null); lab.push('-100');
+      fill($('#sub'),
+        el('tr', {}, el('th', {}, 'word (gold label)'), S.words.map((w, i) => el('td', { colspan: S.pieces[i].length, class: typ(S.tags[i]) }, `${w}  ${S.tags[i]}`)).reduce((a, x) => a.concat(x), [el('td', { class: 'ign' }, '')]), el('td', { class: 'ign' }, '')),
+        el('tr', {}, el('th', {}, 'model token'), toks.map((t) => el('td', {}, t))),
+        el('tr', {}, el('th', {}, 'word index'), wid.map((w) => el('td', { class: w == null ? 'ign' : '' }, w == null ? 'none' : w))),
+        el('tr', {}, el('th', {}, 'training label'), lab.map((l) => el('td', { class: l === '-100' ? 'ign' : typ(l) }, l === '-100' ? '−100' : l))));
+      const n = lab.filter((l) => l !== '-100').length;
+      $('#subNote').innerHTML = (pol === 'first'
+        ? `First-subword policy: <b>${n}</b> positions are trained, one per word. Later pieces and [CLS]/[SEP] get <b>−100</b>, which removes them from the loss.`
+        : `All-subwords policy: <b>${n}</b> positions are trained. Later pieces of a B word become I. Valid too, but training and evaluation must use the same policy.`)
+        + (set === 0 ? ' Ada and Washington are <b>two adjacent people</b>, so both start with B-PER.' : '')
+        + ' <b>O</b> is a real label the model learns; −100 is not a label.';
+    }
+    $$('[data-s]').forEach((b) => (b.onclick = () => { set = +b.dataset.s; sub(); }));
+    $('#policy').onchange = sub;
+
+    drawA(); drawP(); trap(); counts(); sub();
+  </script>
+</body>
+</html>

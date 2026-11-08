@@ -35,7 +35,7 @@
   const saveDone = () => progress.set(KEY, [...done]);
   const labOf = (href) => ch.activities.find((a) => a.href === href);
   const games = Object.entries(C.games).filter(([, gm]) => gm.ch === n);
-  const next = C.chapters.find((c) => c.n === n + 1);
+  const next = C.chapters[C.chapters.indexOf(ch) + 1]; // week numbers can skip (a midterm week has no lesson)
 
   const steps = [...g.steps, { t: 'Practice & test yourself', practice: true }];
   const askStep = CS.param('step'); // the understanding test links straight to a step to re-learn

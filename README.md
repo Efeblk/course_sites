@@ -23,9 +23,9 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
 - **COE303 — Operating Systems** (`coe303/`): Chapters 1–4
   - 11 simulations (`coe303/chN/*.html`)
   - 24 order/sort/match games, a quiz and flashcards per chapter, all driven by `coe303/data.js`
-- **COE025 — Natural Language Processing** (`coe025/`): Weeks 1–4
-  - 15 simulations (`coe025/wN/*.html`)
-  - 20 games, a quiz and flashcards per week, driven by `coe025/data.js`
+- **COE025 — Natural Language Processing** (`coe025/`): Weeks 1–4 and 6 (Week 5 was the midterm)
+  - 18 simulations (`coe025/wN/*.html`); Week 6 adds a span scorer, an HMM/Viterbi lab and a CRF score lab
+  - 25 games, a quiz and flashcards per week, driven by `coe025/data.js`
 - **COE305 — Machine Learning** (`coe305/`): Weeks 1–5
   - 12 simulations (`coe305/wN/*.html`): credit scoring, baskets, hypothesis rectangles,
     overfitting, K-fold CV, PCA, subset selection, k-means, EM, hierarchical clustering, ID3, regression trees

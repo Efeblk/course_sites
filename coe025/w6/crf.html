@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRF Score Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .par { border-collapse: collapse; }
+    .par td, .par th { border: 1px solid var(--line); padding: 4px 8px; text-align: center; font-family: var(--mono); font-size: .85rem; }
+    .par th { background: var(--panel-2); font-family: var(--sans); }
+    .par input { width: 76px; font-family: var(--mono); text-align: center; }
+    .par input.err { border-color: var(--bad); }
+    .best td { background: color-mix(in srgb, var(--ok) 16%, transparent); font-weight: 700; }
+    .illegal td { color: var(--bad); }
+    .bar { height: 12px; background: var(--f-c0); border-radius: 2px; display: inline-block; vertical-align: middle; }
+    .scroll { overflow-x: auto; }
+    .big { font-size: 1.05rem; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="6" data-title="CRF Score Lab" data-activity="w6-crf">
+  <main>
+    <h1>CRF Score Lab</h1>
+    <p class="lead">A CRF scores <b>complete label sequences</b> with real numbers, turns them into weights with exp, and divides by <b>Z</b>, the sum over all sequences: P(Y | X) = exp(S(X, Y)) / Z(X).</p>
+
+    <div class="panel">
+      <h2>1 · Scores for "can fish" (slides 34–36)</h2>
+      <p class="small">Type any real number, or <code>ln 2</code>, <code>ln 8</code>, <code>-inf</code>. Start and end scores are 0. S = u₁(first) + u₂(second) + a(first, second).</p>
+      <div class="cols">
+        <div class="scroll"><h3>Unary uᵢ(tag)</h3><table class="par" id="tU"></table></div>
+        <div class="scroll"><h3>Transition a(prev, next)</h3><table class="par" id="tT"></table></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="chip" id="lect">lecture scores</button>
+        <button class="chip" id="unary">unary only (a = 0)</button>
+        <label>gold path <select id="gold"><option>NN</option><option>NV</option><option selected>VN</option><option>VV</option></select></label>
+      </div>
+      <div class="scroll" style="margin-top:10px"><table class="t" id="paths"></table></div>
+      <div id="pNote"></div>
+    </div>
+
+    <div class="panel">
+      <h2>2 · Max for the path, sum for Z</h2>
+      <p class="small">Viterbi adds scores and keeps the best predecessor (max). The forward pass uses the same table but <b>sums</b> weights, which gives Z without listing paths.</p>
+      <div class="scroll"><table class="t" id="vit"></table></div>
+      <div id="vNote" class="small"></div>
+    </div>
+
+    <div class="panel">
+      <h2>3 · BIO constraints for NER (slide 39)</h2>
+      <p class="small">Labels O, B-PER, I-PER for three tokens. These unary scores are <b>made up for this lab</b>: alone they prefer the illegal O I-PER O. Move the penalty on the two illegal transitions (O → I-PER and START → I-PER).</p>
+      <div class="row">
+        <label>penalty <input type="range" id="pen" min="0" max="30" value="0"> <code id="penV"></code></label>
+        <button class="chip" id="hard">hard constraint (−∞)</button>
+      </div>
+      <div class="scroll" style="margin-top:8px"><table class="par" id="tN"></table></div>
+      <div class="scroll" style="margin-top:10px"><table class="t" id="ner"></table></div>
+      <div id="nNote"></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <h2>4 · One softmax decision (slide 41)</h2>
+        <p class="small">A neural head gives scores zᵢ = W hᵢ + b. Softmax exponentiates them and divides by their sum, for this position only.</p>
+        <div class="row">
+          <label>O <input type="text" class="lg" value="ln 1" style="width:70px"></label>
+          <label>B-PER <input type="text" class="lg" value="ln 2" style="width:70px"></label>
+          <label>I-PER <input type="text" class="lg" value="ln 1" style="width:70px"></label>
+        </div>
+        <div id="soft" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h2>5 · Logit shape</h2>
+        <div class="row">
+          <label>B sequences <input type="number" id="sB" value="2" min="1" style="width:60px"></label>
+          <label>L positions <input type="number" id="sL" value="5" min="1" style="width:60px"></label>
+          <label>K labels <input type="number" id="sK" value="3" min="1" style="width:60px"></label>
+        </div>
+        <div id="shape" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, $$, el, fill } = CS;
+    const T = ['N', 'V'];
+    // a score is kept as typed text plus its value; "ln k" stays readable in the tables
+    function parse(s) {
+      s = String(s).trim().replace('−', '-');
+      if (/^-?inf(inity)?$/i.test(s) || s === '-∞') return -Infinity;
+      const m = s.match(/^(-)?\s*ln\s*\(?\s*([\d.]+)\s*\)?$/i);
+      if (m) return (m[1] ? -1 : 1) * Math.log(+m[2]);
+      return s === '' || isNaN(+s) ? NaN : +s;
+    }
+    const lnName = (v) => {
+      if (v === -Infinity) return '−∞';
+      if (Math.abs(v) < 1e-12) return '0';
+      const k = Math.exp(v);
+      return Math.abs(k - Math.round(k)) < 1e-9 && Math.round(k) > 1 ? `ln ${Math.round(k)}` : (+v.toFixed(3)).toString();
+    };
+    const f3 = (x) => (x === 0 ? '0' : (+x.toFixed(4)).toString());
+    const LECT = { u: [{ N: 'ln 2', V: '0' }, { N: '0', V: 'ln 2' }], a: { N: { N: '0', V: '0' }, V: { N: 'ln 8', V: '0' } } };
+    let S = JSON.parse(JSON.stringify(LECT));
+
+    function inp(get, set) {
+      const i = el('input', { type: 'text', value: get(), oninput: (e) => { i.classList.toggle('err', isNaN(parse(e.target.value))); set(e.target.value); compute(); } });
+      return i;
+    }
+    function tables() {
+      fill($('#tU'), el('tr', {}, el('th', {}, 'position / word'), T.map((t) => el('th', {}, `u(${t})`))),
+        ['can', 'fish'].map((w, i) => el('tr', {}, el('th', {}, `${i + 1} / ${w}`), T.map((t) => el('td', {}, inp(() => S.u[i][t], (v) => (S.u[i][t] = v)))))));
+      fill($('#tT'), el('tr', {}, el('th', {}, 'prev → next'), T.map((t) => el('th', {}, t))),
+        T.map((p) => el('tr', {}, el('th', {}, p), T.map((q) => el('td', {}, inp(() => S.a[p][q], (v) => (S.a[p][q] = v)))))));
+    }
+    const U = (i, t) => parse(S.u[i][t]), A = (p, q) => parse(S.a[p][q]);
+
+    function compute() {
+      const P = [];
+      for (const p of T) for (const q of T) {
+        const sc = U(0, p) + U(1, q) + A(p, q);
+        P.push({ y: p + q, parts: [S.u[0][p], S.u[1][q], S.a[p][q]], sc, w: Math.exp(sc), un: U(0, p) + U(1, q) });
+      }
+      if (P.some((x) => isNaN(x.sc))) { fill($('#pNote'), el('div', { class: 'callout bad' }, 'One score is not a number.')); return; }
+      const Z = P.reduce((s, x) => s + x.w, 0), best = P.reduce((a, x) => (x.sc > a.sc ? x : a)), ubest = P.reduce((a, x) => (x.un > a.un ? x : a));
+      const gold = P.find((x) => x.y === $('#gold').value), maxW = Math.max(...P.map((x) => x.w));
+      fill($('#paths'),
+        el('tr', {}, el('th', {}, 'path'), el('th', {}, 'S = u₁ + u₂ + a'), el('th', {}, 'weight exp(S)'), el('th', {}, 'P = weight / Z'), el('th', {}, '')),
+        P.map((x) => el('tr', { class: x === best ? 'best' : '' },
+          el('td', { class: 'mono' }, x.y), el('td', { class: 'mono' }, `${x.parts.join(' + ')} = ${lnName(x.sc)}`),
+          el('td', { class: 'mono' }, f3(x.w)), el('td', { class: 'mono' }, Z ? (x.w / Z).toFixed(3) : '—'),
+          el('td', {}, el('span', { class: 'bar', style: { width: `${maxW ? (120 * x.w) / maxW : 0}px` } }), x === best ? '  ← winner' : ''))),
+        el('tr', {}, el('td', {}, el('b', {}, 'Z')), el('td', { class: 'mono' }, 'sum of all weights'), el('td', { class: 'mono big' }, el('b', {}, f3(Z))), el('td', { class: 'mono' }, '1'), el('td')));
+      const pg = gold.w / Z, loss = Math.log(Z) - gold.sc;
+      fill($('#pNote'),
+        el('p', {}, `Gold ${gold.y}: P = ${f3(gold.w)} / ${f3(Z)} = ${pg.toFixed(3)}.  Loss = −ln P = ln Z − S(gold) = ${(+Math.log(Z).toFixed(4))} − ${(+gold.sc.toFixed(4))} = `, el('b', {}, isFinite(loss) ? loss.toFixed(4) : '∞')),
+        el('p', { class: 'small' }, `Unary scores alone would pick ${ubest.y}. ` + (ubest.y !== best.y ? `The transition scores changed the winner to ${best.y}: label compatibility matters.` : 'Here the transitions do not change the winner.')),
+        el('p', { class: 'small muted' }, 'Scores can be any real number: they are not probabilities and no row has to sum to 1. P(gold) = 0.5 is a model probability for one path, not an accuracy.'));
+      viterbi(Z);
+    }
+
+    function viterbi(Z) {
+      const d1 = Object.fromEntries(T.map((t) => [t, U(0, t)]));
+      const d2 = {}, al2 = {};
+      for (const q of T) {
+        const c = T.map((p) => [p, d1[p] + A(p, q)]);
+        const b = c.reduce((x, y) => (y[1] > x[1] ? y : x));
+        d2[q] = { v: b[1] + U(1, q), from: b[0], c };
+        al2[q] = T.reduce((s, p) => s + Math.exp(d1[p] + A(p, q)), 0) * Math.exp(U(1, q));
+      }
+      const end = T.reduce((a, t) => (d2[t].v > d2[a].v ? t : a));
+      fill($('#vit'),
+        el('tr', {}, el('th', {}, 'ending tag'), el('th', {}, 'at "can"'), el('th', {}, 'at "fish": max over predecessors, + u₂'), el('th', {}, 'from'), el('th', {}, 'forward sum of weights')),
+        T.map((t) => el('tr', { class: t === end ? 'best' : '' },
+          el('td', {}, t), el('td', { class: 'mono' }, lnName(d1[t])),
+          el('td', { class: 'mono' }, `max(${d2[t].c.map(([p, v]) => `${lnName(d1[p])} + ${lnName(A(p, t))}`).join(', ')}) + ${lnName(U(1, t))} = ${lnName(d2[t].v)}`),
+          el('td', { class: 'mono' }, d2[t].from),
+          el('td', { class: 'mono' }, f3(al2[t])))));
+      fill($('#vNote'), el('p', {}, `Best final cell ${end}, backpointer ${d2[end].from}: the path is `, el('b', {}, d2[end].from + end),
+        `. Forward sums ${T.map((t) => f3(al2[t])).join(' + ')} = ${f3(T.reduce((s, t) => s + al2[t], 0))} = Z (${f3(Z)}). You never need Z to decode; you need it for probabilities and the loss.`));
+    }
+    $('#gold').onchange = compute;
+    $('#lect').onclick = () => { S = JSON.parse(JSON.stringify(LECT)); tables(); compute(); };
+    $('#unary').onclick = () => { for (const p of T) for (const q of T) S.a[p][q] = '0'; tables(); compute(); };
+
+    /* ---- 3 · BIO constraints ---- */
+    const L = ['O', 'B-PER', 'I-PER'], W = ['Dr', 'Lovelace', 'spoke'];
+    const NU = [{ O: 1.0, 'B-PER': 0.6, 'I-PER': 0 }, { O: 0, 'B-PER': 0.9, 'I-PER': 1.2 }, { O: 2.0, 'B-PER': 0, 'I-PER': 0 }];
+    let hard = false;
+    const illegal = (p, q) => q === 'I-PER' && (p === 'O' || p === 'START');
+    function ner() {
+      const pv = +$('#pen').value / 10, pen = hard ? -Infinity : -pv;
+      $('#penV').textContent = hard ? '−∞ (hard)' : pv ? `−${pv.toFixed(1)}` : '0 (no constraint)';
+      fill($('#tN'), el('tr', {}, el('th', {}, 'unary'), W.map((w) => el('th', {}, w))), L.map((l) => el('tr', {}, el('th', {}, l), NU.map((u) => el('td', {}, u[l])))));
+      const all = [];
+      for (const a of L) for (const b of L) for (const c of L) {
+        const y = [a, b, c];
+        let s = NU[0][a] + NU[1][b] + NU[2][c], bad = 0;
+        ['START', a, b].forEach((p, i) => { if (illegal(p, y[i])) { s += pen; bad++; } });
+        all.push({ y, s, bad });
+      }
+      all.sort((x, y) => y.s - x.s);
+      const Z = all.reduce((s, x) => s + Math.exp(x.s), 0);
+      fill($('#ner'),
+        el('tr', {}, el('th', {}, 'rank'), el('th', {}, 'labels for Dr · Lovelace · spoke'), el('th', {}, 'score'), el('th', {}, 'P(Y | X)'), el('th', {}, 'IOB2')),
+        all.slice(0, 6).map((x, k) => el('tr', { class: (k === 0 ? 'best ' : '') + (x.bad ? 'illegal' : '') },
+          el('td', {}, k + 1), el('td', { class: 'mono' }, x.y.join('  ')), el('td', { class: 'mono' }, isFinite(x.s) ? x.s.toFixed(2) : '−∞'),
+          el('td', { class: 'mono' }, (Math.exp(x.s) / Z).toFixed(3)), el('td', {}, x.bad ? 'illegal' : 'legal'))));
+      const top = all[0];
+      fill($('#nNote'), el('div', { class: 'callout ' + (top.bad ? 'bad' : 'ok') },
+        top.bad ? `The winner ${top.y.join(' ')} is illegal: I-PER follows O. Independent per-token choices (or a weak finite penalty) do not stop it.`
+          : hard ? 'Hard constraint: illegal transitions score −∞, exp(−∞) = 0, so every illegal path has probability exactly 0.'
+            : `A finite penalty of −${pv.toFixed(1)} is enough for this sentence, but it only discourages illegal paths: their probability is still above 0, so there is no guarantee for other inputs.`));
+    }
+    $('#pen').addEventListener('input', () => { hard = false; ner(); });
+    $('#hard').onclick = () => { hard = true; ner(); };
+
+    /* ---- 4 · softmax ---- */
+    function soft() {
+      const z = $$('.lg').map((i) => parse(i.value));
+      if (z.some(isNaN)) return fill($('#soft'), el('div', { class: 'callout bad' }, 'One logit is not a number.'));
+      const e = z.map(Math.exp), s = e.reduce((a, x) => a + x, 0), p = e.map((x) => x / s), k = p.indexOf(Math.max(...p));
+      fill($('#soft'), el('table', { class: 't' },
+        el('tr', {}, el('th', {}, ''), L.map((l) => el('th', {}, l))),
+        el('tr', {}, el('td', {}, 'logit z'), z.map((x) => el('td', { class: 'mono' }, lnName(x)))),
+        el('tr', {}, el('td', {}, 'exp(z)'), e.map((x) => el('td', { class: 'mono' }, f3(x)))),
+        el('tr', {}, el('td', {}, `÷ ${f3(s)}`), p.map((x, i) => el('td', { class: 'mono' + (i === k ? ' big' : '') }, i === k ? el('b', {}, x.toFixed(3)) : x.toFixed(3))))),
+        el('p', { class: 'small' }, `Argmax: `, el('b', {}, L[k]), '. This decides one position alone; it never looks at the neighbouring labels, so nothing stops O followed by I-PER.'));
+    }
+    $$('.lg').forEach((i) => i.addEventListener('input', soft));
+    function shape() {
+      const b = Math.max(1, +$('#sB').value), l = Math.max(1, +$('#sL').value), k = Math.max(1, +$('#sK').value);
+      fill($('#shape'), el('p', { class: 'mono big' }, `logits: (${b}, ${l}, ${k}) → ${b} × ${l} × ${k} = ${b * l * k} scores`),
+        el('p', { class: 'small' }, `${k} candidate label scores at each of ${l} token positions, in each of ${b} sequences. Padded and special positions are dropped when predictions are aligned back to words.`));
+    }
+    ['#sB', '#sL', '#sK'].forEach((s) => $(s).addEventListener('input', shape));
+
+    tables(); compute(); ner(); soft(); shape();
+  </script>
+</body>
+</html>

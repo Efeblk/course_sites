@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HMM &amp; Viterbi Lab · COE025</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .par { border-collapse: collapse; }
+    .par td, .par th { border: 1px solid var(--line); padding: 4px 8px; text-align: center; font-family: var(--mono); font-size: .85rem; }
+    .par th { background: var(--panel-2); font-family: var(--sans); }
+    .par input { width: 64px; font-family: var(--mono); text-align: center; }
+    .sumbad { color: var(--bad); font-weight: 700; }
+    .sumok { color: var(--ok); }
+    .best td { background: color-mix(in srgb, var(--ok) 16%, transparent); font-weight: 700; }
+    .trellis { border-collapse: collapse; }
+    .trellis td, .trellis th { border: 1px solid var(--line); padding: 8px 10px; text-align: center; font-family: var(--mono); font-size: .84rem; vertical-align: top; min-width: 150px; }
+    .trellis th { background: var(--panel-2); }
+    .trellis .cand { color: var(--muted); font-size: .76rem; display: block; }
+    .trellis .cand.win { color: var(--text); font-weight: 700; }
+    .trellis td.onpath { background: color-mix(in srgb, var(--ok) 18%, transparent); }
+    .trellis td.hidden > * { visibility: hidden; }
+    .scroll { overflow-x: auto; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe025" data-chapter="6" data-title="HMM & Viterbi Lab" data-activity="w6-hmm">
+  <main>
+    <h1>HMM &amp; Viterbi Lab</h1>
+    <p class="lead">Hidden tags generate visible words. A path's weight is <b>start × emission × transition × emission …</b> The defaults are the lecture's supplied "can fish" numbers (slides 26–29).</p>
+
+    <div class="panel">
+      <h2>Parameters</h2>
+      <p class="small">N = NOUN, V = lexical VERB. Every row must sum to 1. An emission is <b>P(word | tag)</b>, not P(tag | word).</p>
+      <div class="cols">
+        <div class="scroll"><table class="par" id="tA"></table></div>
+        <div class="scroll"><table class="par" id="tB"></table></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <span class="small">Sentence:</span>
+        <span class="toks" id="sent"></span>
+        <button class="chip" id="addCan">+ can</button>
+        <button class="chip" id="addFish">+ fish</button>
+        <button class="chip" id="pop">remove last</button>
+        <button class="chip" id="reset">reset to "can fish" and lecture numbers</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>1 · Enumerate every path</h2>
+      <div class="scroll"><table class="t" id="paths"></table></div>
+      <div id="pathNote"></div>
+    </div>
+
+    <div class="panel">
+      <h2>2 · Viterbi: one best partial path per ending tag</h2>
+      <p class="small">Each cell = max over predecessors of (previous best × transition), then × emission. The arrow is the backpointer.</p>
+      <div class="row">
+        <button class="primary" id="step">Next column</button>
+        <button id="all">Show all</button>
+        <button id="clear">Start over</button>
+        <span id="vOut" class="small"></span>
+      </div>
+      <div class="scroll" style="margin-top:10px"><table class="trellis" id="trellis"></table></div>
+    </div>
+
+    <div class="panel">
+      <h2>3 · Training: count and normalize</h2>
+      <p class="small">With tagged sentences, transition probabilities are counts divided by the row total. The lecture example: N→N 3 times, N→V 7 times.</p>
+      <div class="row">
+        <label>N→N <input type="number" id="cNN" value="3" min="0" style="width:64px"></label>
+        <label>N→V <input type="number" id="cNV" value="7" min="0" style="width:64px"></label>
+        <label>V→N <input type="number" id="cVN" value="8" min="0" style="width:64px"></label>
+        <label>V→V <input type="number" id="cVV" value="2" min="0" style="width:64px"></label>
+        <label><input type="checkbox" id="smooth"> add-one smoothing</label>
+        <button class="chip" id="use">use these as transitions</button>
+      </div>
+      <div id="cnt" style="margin-top:10px"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const T = ['N', 'V'], VOC = ['can', 'fish'];
+    const DEF = { pi: { N: 0.6, V: 0.4 }, a: { N: { N: 0.3, V: 0.7 }, V: { N: 0.8, V: 0.2 } }, b: { N: { can: 0.4, fish: 0.6 }, V: { can: 0.7, fish: 0.3 } } };
+    let M = JSON.parse(JSON.stringify(DEF)), words = ['can', 'fish'], shown = 0;
+    const r4 = (x) => +x.toFixed(4);
+    const sup = (n) => String(n).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+    const fmt = (x) => (x === 0 ? '0' : x < 0.0001 ? x.toExponential(2) : String(r4(x)));
+
+    function num(get, set) {
+      return el('input', { type: 'number', step: '0.05', min: '0', max: '1', value: get(), oninput: (e) => { set(Math.max(0, +e.target.value || 0)); sums(); redraw(false, false); } });
+    }
+    const rowSum = (o) => Object.values(o).reduce((s, x) => s + x, 0);
+    const sumCell = (o) => { const td = el('td'); td._row = o; return td; };
+    // row sums are refreshed in place, so typing in an input never re-creates (and unfocuses) it
+    function sums() {
+      document.querySelectorAll('.par td').forEach((td) => {
+        if (!td._row) return;
+        const s = rowSum(td._row), ok = Math.abs(s - 1) < 1e-9;
+        td.className = ok ? 'sumok' : 'sumbad'; td.textContent = ok ? '1 ✓' : r4(s) + ' ≠ 1';
+      });
+    }
+
+    function tables() {
+      fill($('#tA'),
+        el('tr', {}, el('th', {}, 'previous → next'), T.map((t) => el('th', {}, t)), el('th', {}, 'row sum')),
+        el('tr', {}, el('th', {}, 'START π'), T.map((t) => el('td', {}, num(() => M.pi[t], (v) => (M.pi[t] = v)))), sumCell(M.pi)),
+        T.map((p) => el('tr', {}, el('th', {}, p), T.map((q) => el('td', {}, num(() => M.a[p][q], (v) => (M.a[p][q] = v)))), sumCell(M.a[p]))));
+      fill($('#tB'),
+        el('tr', {}, el('th', {}, 'tag'), VOC.map((w) => el('th', {}, `P(${w} | tag)`)), el('th', {}, 'row sum')),
+        T.map((t) => el('tr', {}, el('th', {}, t), VOC.map((w) => el('td', {}, num(() => M.b[t][w], (v) => (M.b[t][w] = v)))), sumCell(M.b[t]))));
+    }
+    // all K^T paths with their factors
+    function paths() {
+      let out = [[]];
+      for (let i = 0; i < words.length; i++) out = out.flatMap((p) => T.map((t) => [...p, t]));
+      return out.map((p) => {
+        const f = [M.pi[p[0]], M.b[p[0]][words[0]]];
+        for (let i = 1; i < p.length; i++) f.push(M.a[p[i - 1]][p[i]], M.b[p[i]][words[i]]);
+        return { p, f, w: f.reduce((s, x) => s * x, 1) };
+      });
+    }
+    function viterbi() {
+      const cols = [];
+      words.forEach((w, i) => {
+        const col = {};
+        for (const t of T) {
+          if (i === 0) { col[t] = { v: M.pi[t] * M.b[t][w], from: null, cand: [[`START ${M.pi[t]}`, M.pi[t]]] }; continue; }
+          const cand = T.map((p) => [`${p}: ${fmt(cols[i - 1][p].v)}×${M.a[p][t]}`, cols[i - 1][p].v * M.a[p][t], p]);
+          const best = cand.reduce((a, c) => (c[1] > a[1] ? c : a));
+          col[t] = { v: best[1] * M.b[t][w], from: best[2], cand, best: best[2] };
+        }
+        cols.push(col);
+      });
+      const last = cols[cols.length - 1], end = T.reduce((a, t) => (last[t].v > last[a].v ? t : a));
+      const path = [end];
+      for (let i = cols.length - 1; i > 0; i--) path.unshift(cols[i][path[0]].from);
+      return { cols, path };
+    }
+
+    function redraw(resetSteps = true, rebuild = true) {
+      if (rebuild) { tables(); sums(); }
+      fill($('#sent'), words.map((w, i) => el('span', { class: 'tok c0' }, `${i + 1}. ${w}`)));
+      if (!words.length) { fill($('#paths')); fill($('#trellis')); return; }
+      const P = paths(), Z = P.reduce((s, x) => s + x.w, 0), best = P.reduce((a, x) => (x.w > a.w ? x : a));
+      fill($('#paths'),
+        el('tr', {}, el('th', {}, 'path'), el('th', {}, 'π × b × (a × b)…'), el('th', {}, 'joint P(words, path)'), el('th', {}, 'posterior = joint / P(words)')),
+        P.map((x) => el('tr', { class: x === best ? 'best' : '' }, el('td', { class: 'mono' }, x.p.join('')), el('td', { class: 'mono' }, x.f.join(' × ')), el('td', { class: 'mono' }, fmt(x.w) + (x === best ? '  ← largest' : '')), el('td', { class: 'mono' }, Z ? r4(x.w / Z).toFixed(4) : '—'))),
+        el('tr', {}, el('td', {}, el('b', {}, 'sum')), el('td', { class: 'mono' }, `= P(${words.join(', ')})`), el('td', { class: 'mono' }, el('b', {}, fmt(Z))), el('td', { class: 'mono' }, Z ? '1' : '—')));
+      fill($('#pathNote'),
+        el('p', { class: 'small' }, `${T.length}${sup(words.length)} = ${P.length} paths. Best: `, el('b', {}, best.p.join('')), `. Its joint weight ${fmt(best.w)} is not a probability of being right; the posterior is ${fmt(best.w)} / ${fmt(Z)} ≈ ${Z ? (best.w / Z).toFixed(3) : '—'}. Dividing every row by the same P(words) cannot change the winner.`),
+        words.join(' ') === 'can fish' && JSON.stringify(M) === JSON.stringify(DEF) ? el('div', { class: 'callout ok small' }, 'Lecture numbers: NN 0.0432, NV 0.0504, VN 0.1344, VV 0.0168, sum 0.2448. VN = "preserve fish".') : null);
+      if (resetSteps) shown = words.length;
+      trellis();
+    }
+
+    function trellis() {
+      const { cols, path } = viterbi(), n = words.length;
+      fill($('#trellis'),
+        el('tr', {}, el('th', {}, ''), words.map((w, i) => el('th', {}, `${i + 1}. ${w}`))),
+        T.map((t) => el('tr', {}, el('th', {}, t), cols.map((c, i) => {
+          const x = c[t], onp = shown >= n && path[i] === t;
+          return el('td', { class: (i < shown ? '' : 'hidden') + (onp ? ' onpath' : '') },
+            i === 0 ? el('span', { class: 'cand win' }, `π(${t}) ${M.pi[t]} × P(${words[0]}|${t}) ${M.b[t][words[0]]}`)
+              : x.cand.map(([lab, v, p]) => el('span', { class: 'cand' + (p === x.best ? ' win' : '') }, `from ${lab} = ${fmt(v)}`)),
+            i > 0 ? el('span', { class: 'cand' }, `× P(${words[i]}|${t}) ${M.b[t][words[i]]}`) : null,
+            el('div', { style: { marginTop: '4px', fontSize: '1rem' } }, el('b', {}, fmt(x.v)), x.from ? `  ← ${x.from}` : ''));
+        }))));
+      if (shown >= n) {
+        const back = path.map((t, i) => (i ? `${t}` : t)).join(' → ');
+        $('#vOut').innerHTML = `Best final cell: <b>${path[n - 1]}</b> (${fmt(cols[n - 1][path[n - 1]].v)}). Backtrace: <b>${back}</b>. ${n} words × ${T.length}² transitions checked = O(TK²), instead of ${T.length}${sup(n)} = ${T.length ** n} full paths.`;
+      } else $('#vOut').textContent = shown ? `Column ${shown} of ${n} filled.` : 'Press "Next column".';
+    }
+    $('#step').onclick = () => { shown = Math.min(words.length, shown + 1); trellis(); };
+    $('#all').onclick = () => { shown = words.length; trellis(); };
+    $('#clear').onclick = () => { shown = 0; trellis(); };
+    $('#addCan').onclick = () => { if (words.length < 6) words.push('can'); redraw(); };
+    $('#addFish').onclick = () => { if (words.length < 6) words.push('fish'); redraw(); };
+    $('#pop').onclick = () => { if (words.length > 1) words.pop(); redraw(); };
+    $('#reset').onclick = () => { M = JSON.parse(JSON.stringify(DEF)); words = ['can', 'fish']; redraw(); };
+
+    function counts() {
+      const c = { N: { N: +$('#cNN').value, V: +$('#cNV').value }, V: { N: +$('#cVN').value, V: +$('#cVV').value } }, sm = $('#smooth').checked ? 1 : 0;
+      const rows = T.map((p) => {
+        const tot = T.reduce((s, q) => s + c[p][q] + sm, 0);
+        return { p, tot, q: T.map((q) => ({ q, n: c[p][q] + sm, pr: tot ? (c[p][q] + sm) / tot : 0 })) };
+      });
+      fill($('#cnt'), el('table', { class: 't' },
+        el('tr', {}, el('th', {}, 'from'), T.map((q) => el('th', {}, `P(${q} | from)`)), el('th', {}, 'row total')),
+        rows.map((r) => el('tr', {}, el('td', {}, r.p), r.q.map((x) => el('td', { class: 'mono' + (x.pr === 0 ? ' sumbad' : '') }, `${x.n}/${r.tot} = ${r4(x.pr)}`)), el('td', { class: 'mono' }, r.tot)))),
+        rows.some((r) => r.q.some((x) => x.pr === 0))
+          ? el('div', { class: 'callout bad small' }, 'A zero count gives a zero probability, and one zero factor makes every path through that transition weigh 0. Turn on smoothing to give unseen outcomes some mass.')
+          : el('p', { class: 'small muted' }, sm ? 'Add-one smoothing adds 1 to every count before dividing.' : 'Maximum-likelihood estimate: count / row total. Emissions work the same way: count(word with tag) / count(tag).'));
+      return rows;
+    }
+    ['#cNN', '#cNV', '#cVN', '#cVV', '#smooth'].forEach((s) => $(s).addEventListener('input', counts));
+    $('#use').onclick = () => { for (const r of counts()) for (const x of r.q) M.a[r.p][x.q] = r4(x.pr); redraw(); };
+
+    redraw(); counts();
+  </script>
+</body>
+</html>

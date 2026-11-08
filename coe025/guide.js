@@ -618,4 +618,356 @@ window.GUIDE = {
       },
     ],
   },
+  /* ================================================================ */
+  6: {
+    goal: 'State the token-classification contract, label POS and NER (BIO) by hand, recognise chunking, slot filling, morphology and punctuation restoration as the same output pattern, align subwords with −100, score NER with exact spans, compute the HMM "can fish" paths and Viterbi, compute CRF scores, Z, probabilities and loss, and say which method models what.',
+    time: '≈ 2 h (the lecture is 2 × 60 min)',
+    videos: [
+      ['BIO tagging and NER', 'named entity recognition BIO tagging explained'],
+      ['HMM POS tagging', 'hidden markov model part of speech tagging example'],
+      ['Viterbi step by step', 'Viterbi algorithm worked example HMM'],
+      ['CRF intuition', 'conditional random field sequence labeling explained'],
+      ['Hugging Face token classification', 'Hugging Face token classification tutorial word_ids -100'],
+    ],
+    steps: [
+      {
+        t: 'The contract: one label per token',
+        key: 'Token classification gives <b>every token its own label</b>, then reads useful structure back from the labels. It is <b>not</b> one label per document.',
+        fig: { type: 'boxes', head: ['', 'Ada', 'visits', 'Paris', '.'], rows: [
+          { label: 'position', cells: [['1', ''], ['2', ''], ['3', ''], ['4', '']] },
+          { label: 'POS', cells: [['PROPN', 'c0'], ['VERB', 'c1'], ['PROPN', 'c0'], ['PUNCT', '']] },
+          { label: 'NER', cells: [['B-PER', 'c3'], ['O', ''], ['B-LOC', 'c4'], ['O', '']] },
+        ], cap: 'Same four tokens, two annotation tasks, exactly four labels each.' },
+        html: `
+<p>Week 2 was <b>f(text) → one label</b>. This week the output is a <b>sequence</b>: if the tokenizer makes 4 tokens, the task makes exactly 4 labels.</p>
+<ul>
+  <li>Here tokens are <b>words plus punctuation</b>.</li>
+  <li><b>POS</b> labels grammar: PROPN = proper noun, PUNCT = punctuation.</li>
+  <li><b>NER</b> labels mentions: PER = person, LOC = location. <b>B</b> begins a span, <b>O</b> is outside.</li>
+</ul>
+<p>The lecture has two hours: <b>hour 1</b> = the problems (tasks, annotation, evaluation), <b>hour 2</b> = the methods (HMM, CRF, neural taggers).</p>
+<div class="callout"><b>Remember:</b> NER can be <i>represented</i> as token labels but is <i>evaluated</i> as recovered spans. That matters in step 7.</div>`,
+        check: { q: 'Does this week predict one label per document?', o: ['No, one aligned label per token', 'Yes, like sentiment analysis', 'Yes, one label per sentence', 'No, one label per word type'], why: 'The basic output is an aligned sequence of token labels.' },
+      },
+      {
+        t: 'POS: a role in context',
+        key: 'A word form can have several tags; <b>context picks the tag for this occurrence</b>. The frequent-tag baseline ignores context, which is exactly what it gets wrong.',
+        fig: [{ type: 'boxes', rows: [{ cells: [['Book that flight.', 'c1', 'Book = VERB'], ['Hand me that book.', 'c0', 'book = NOUN'], ['They back the plan.', 'c1', 'back = VERB'], ['The back door is open.', 'c2', 'back = ADJ']] }] },
+          { type: 'compare', cols: [{ t: 'Open classes', pts: ['accept new members', 'NOUN, VERB, ADJ, ADV', 'robot, stream, useful, slowly'], c: 'c0' }, { t: 'Closed classes', pts: ['relatively stable', 'DET, PRON, ADP, AUX, NUM', 'the, they, under, can, three'], c: 'c3' }, { t: 'Other', pts: ['PUNCT, SYM, X', 'comma, %, unclassified'], c: 'c5' }] }],
+        html: `
+<p><b>Part-of-speech tagging</b> assigns each word its grammatical category <b>in this sentence</b>. Capitalisation alone cannot decide: sentence-initial "Book" is still a verb.</p>
+<p>An open class is not "unlimited labels": new <i>words</i> enter NOUN, but the <i>label</i> NOUN stays the same.</p>
+<h3>What POS labels are for</h3>
+<ul>
+  <li><b>Text-to-speech</b>: "They ob<b>ject</b>" (verb) vs "an <b>ob</b>ject" (noun) are pronounced differently.</li>
+  <li><b>Language analysis</b>: compare adjective or verb use across documents.</li>
+  <li><b>Structured processing</b>: clues for parsers and extraction systems.</li>
+</ul>
+<p>POS is usually an <b>intermediate</b> representation, not the final answer to a user.</p>
+<h3>A baseline and the clues it misses</h3>
+<table class="t">
+  <tr><th>Information</th><th>Example</th><th>Suggests</th></tr>
+  <tr><td>Frequent tag for this word</td><td>book is often NOUN in training</td><td>NOUN, before seeing context</td></tr>
+  <tr><td>Neighbouring words</td><td>Book that flight.</td><td>imperative VERB</td></tr>
+  <tr><td>Word form</td><td>importantly ends in -ly</td><td>often ADV, <b>not a rule</b></td></tr>
+  <tr><td>Capitalisation</td><td>Janet</td><td>possible proper noun</td></tr>
+</table>
+<p>The baseline counts each word–tag pair in the <b>training set</b> and picks the largest count. Clues are clues: "friendly" ends in -ly and is usually an adjective.</p>
+<div class="callout warn">The lecturer explicitly says not to repeat the old "97% accuracy / human parity" claim as a general fact.</div>`,
+        lab: { href: 'w4/pos.html', todo: [
+          'Section 2: work through the faces of "back" and say which neighbouring word decides each one.',
+          'Section 3: race the most-frequent-tag baseline and see where context fixes it.',
+        ] },
+        check: { q: 'Does the suffix -ly guarantee ADV?', o: ['No: "friendly" is usually an adjective', 'Yes, always', 'Yes, unless capitalised', 'No: -ly always marks a noun'], why: 'Spelling and context are clues, not guarantees.' },
+      },
+      {
+        t: 'NER: boundaries and types',
+        key: 'NER must decide <b>where</b> a mention starts and ends <b>and</b> what <b>type</b> it is. The same string can have different types in different contexts.',
+        fig: [{ type: 'boxes', head: ['Ada', 'Lovelace', 'joined', 'Acme'], rows: [
+          { cells: [['PERSON begins', 'c3'], ['PERSON ends', 'c3'], ['outside', ''], ['ORGANIZATION', 'c0']] },
+          { cells: [['start', ''], ['continue', ''], ['none', ''], ['start + end', '']] },
+        ] }, { type: 'boxes', rows: [{ cells: [['Washington lies on the river.', 'c4', 'LOCATION'], ['Washington announced a policy.', 'c0', 'GOVERNMENT / ORG'], ['Washington scored again.', 'c3', 'PERSON or TEAM: need context']] }] }],
+        html: `
+<p><b>Named-entity recognition</b> identifies text <b>spans</b> (a contiguous token range) and assigns semantic <b>types</b>. Which types exist is decided by the dataset's <b>annotation policy</b>.</p>
+<ul>
+  <li>"Ada Lovelace" is <b>one</b> mention, not two people. "Ada" alone is not the exact gold span.</li>
+  <li>Detecting the span and classifying its type are two separate decisions.</li>
+  <li>A gazetteer (list of city names) cannot solve "Washington": the string alone does not fix the type.</li>
+</ul>
+<p><b>What NER is for:</b> it supplies mentions to question answering, fact extraction and targeted sentiment. NER itself does not answer questions or compute sentiment.</p>
+<div class="callout">Linking a mention to one real-world database entry (which Washington?) is a different task, <b>entity linking</b>.</div>`,
+        check: { q: '"Ada Lovelace joined Acme." Is "Ada" alone the exact person mention?', o: ['No, the gold span includes Lovelace', 'Yes, the first name is enough', 'Yes, if typed PERSON', 'No, Ada is an ORGANIZATION'], why: 'Exact span = same boundaries and type. The gold PERSON span is Ada Lovelace.' },
+      },
+      {
+        t: 'BIO turns spans into token labels',
+        key: '<b>B</b> begins a span, <b>I</b> continues the <b>same type</b>, <b>O</b> is outside. Every new entity starts with B, even right next to another one. n types → <b>2n + 1</b> labels.',
+        fig: { type: 'anim', name: 'bio', t: 'From spans to BIO tags', cap: 'Strict IOB2: I-X needs a B-X or I-X right before it.' },
+        html: `
+<table class="t">
+  <tr><th>Token</th><td>Jane</td><td>Villanueva</td><td>of</td><td>United</td></tr>
+  <tr><th>BIO</th><td>B-PER</td><td>I-PER</td><td>O</td><td>B-ORG</td></tr>
+  <tr><th>Span</th><td>Jane Villanueva</td><td>same person</td><td>none</td><td>United</td></tr>
+</table>
+<p>"United" is one word and still gets <b>B-ORG</b>: a one-word span starts and ends at the same token.</p>
+<h3>Structural rules</h3>
+<table class="t">
+  <tr><th>Sequence</th><th>Valid?</th><th>Why</th></tr>
+  <tr><td><code>B-PER I-PER O</code></td><td>yes</td><td>a person span, then outside</td></tr>
+  <tr><td><code>O I-PER</code></td><td><b>no</b></td><td>no PER span to continue</td></tr>
+  <tr><td><code>B-ORG I-PER</code></td><td><b>no</b></td><td>the continuation changes type</td></tr>
+  <tr><td><code>B-PER B-PER</code></td><td>yes</td><td>two adjacent person spans</td></tr>
+</table>
+<p><b>Counting:</b> n B labels + n I labels + O = <b>2n + 1</b>. With PER, ORG, LOC: B/I-PER, B/I-ORG, B/I-LOC, O = <b>7</b>.</p>
+<div class="callout warn">If every token is labeled independently, the output <b>can break these rules</b>. Fixing that is one reason for HMMs and CRFs in hour 2.</div>`,
+        lab: { href: 'w4/bio.html', todo: [
+          'Section 3: try <code>B-PER B-PER O</code> (valid) and <code>O I-ORG</code> (invalid), and read the reason.',
+          'Section 2: set n = 3 and check that BIO has 7 labels.',
+        ] },
+        check: { q: 'Is B-PER B-PER invalid because the type repeats?', o: ['No, it is two neighbouring person mentions', 'Yes, PER cannot repeat', 'Yes, the second must be I-PER', 'No, but only at sentence end'], why: 'B always starts a new span, so two B-PER in a row = two adjacent people.' },
+      },
+      {
+        t: 'One output pattern, many tasks',
+        key: 'POS, NER, chunking, slot filling, morphology and punctuation restoration all output one label per token. <b>The task is defined by what the label means</b>, not by the model.',
+        fig: { type: 'boxes', head: ['Task', 'Label describes', 'Example output'], rows: [
+          { cells: [['POS', 'c0'], ['grammatical role', ''], ['NOUN, VERB, ADJ', '']] },
+          { cells: [['NER', 'c3'], ['mention type + boundary', ''], ['B-PER, I-PER, O', '']] },
+          { cells: [['Chunking', 'c1'], ['shallow phrase boundary', ''], ['B-NP, I-NP, B-VP', '']] },
+          { cells: [['Slot filling', 'c2'], ['a field in a request', ''], ['departure-city', '']] },
+          { cells: [['Morphological tagging', 'c5'], ['grammatical features', ''], ['plural, past, ablative', '']] },
+          { cells: [['Punctuation restoration', 'c4'], ['boundary after the word', ''], ['none, comma, period', '']] },
+        ] },
+        html: `
+<h3>Chunking: phrases without a full parse</h3>
+<table class="t">
+  <tr><th>Token</th><td>The</td><td>small</td><td>cat</td><td>sleeps</td></tr>
+  <tr><th>Chunk</th><td>B-NP</td><td>I-NP</td><td>I-NP</td><td>B-VP</td></tr>
+</table>
+<p>NP = noun phrase, VP = verb phrase. I-NP does <b>not</b> mean "noun": the adjective "small" is inside the NP. Chunking finds shallow, non-overlapping groups; it does not build a syntax tree.</p>
+<h3>Slots and punctuation</h3>
+<ul>
+  <li><b>Slot filling</b>: "fly from <b>Boston</b> to <b>Paris</b>" → Boston = departure, Paris = arrival. A plain LOCATION tag could not tell them apart; "from" and "to" decide.</li>
+  <li><b>Punctuation restoration</b>: "hello Ada how are you" → hello: comma, Ada: comma, you: ?. Each word is labeled with what to insert <b>after</b> it (NONE = nothing).</li>
+</ul>
+<h3>Language and domain change the labels</h3>
+<ul>
+  <li>Turkish <b>evlerden</b> = ev + ler + den (house + plural + from) → NOUN; Number=Plur; Case=Abl. One word, several attributes.</li>
+  <li>Biomedical NER: <b>aspirin</b> → CHEMICAL, <b>heart failure</b> → DISEASE span. A medical entity need not be a proper name.</li>
+</ul>
+<h3>Hugging Face: check the task contract</h3>
+<p>The Hub has resources for each: the Transformers token-classification guide (NER), the <b>ATIS</b> dataset (slots; it also has sentence-level <i>intents</i>, a different target), the <b>fullstop</b> punctuation model, and <b>BC5CDR</b> (chemicals and diseases). A task tag tells you the interface; <b>read the card</b> to learn what the labels mean.</p>
+<div class="callout warn">A shared interface does not make heads interchangeable: a pretrained NER head will not output chunk labels, and a punctuation checkpoint will not return person names.</div>`,
+        check: { q: 'Why is punctuation restoration still token classification?', o: ['Each word gets a label for its following boundary', 'It labels the whole text once', 'It generates brand-new words', 'It only labels existing commas'], why: 'The label says what to insert after that word.' },
+      },
+      {
+        t: 'Words and subwords must stay aligned',
+        key: 'A transformer splits words into subwords. With the <b>first-subword policy</b> the first piece gets the word\'s label and every other piece and special token gets <b>−100</b> (ignored in the loss).',
+        fig: { type: 'boxes', head: ['[CLS]', 'Ada', 'Wash', '##ington', '[SEP]'], rows: [
+          { label: 'word index', cells: [['none', ''], ['0', ''], ['1', ''], ['1', ''], ['none', '']] },
+          { label: 'training label', cells: [['−100', ''], ['B-PER', 'c3'], ['B-PER', 'c3'], ['−100', ''], ['−100', '']] },
+        ], cap: 'Two separate people: Ada; Washington. Word indices are zero-based, as in word_ids().' },
+        html: `
+<p>Follow each model token back to its original word (<code>word_ids()</code>), then:</p>
+<ol>
+  <li>first piece of a word → the word's label;</li>
+  <li>later pieces (##ington) and special tokens ([CLS], [SEP]) → <b>−100</b>.</li>
+</ol>
+<p>Ada and Washington are annotated as <b>two adjacent people</b>, so both get <b>B-PER</b>. That is intentional.</p>
+<div class="callout"><b>−100 vs O:</b> −100 is not a category the model learns; it removes the position from the loss. <b>O</b> is a real label ("outside any entity") that the model must predict.</div>
+<p>Other valid policies label all subwords (converting B to I for later pieces), but training and evaluation must use <b>one consistent</b> policy.</p>
+<h3>Failures before the model</h3>
+<table class="t">
+  <tr><th>Failure</th><th>Consequence</th><th>Check</th></tr>
+  <tr><td>Wrong token-to-label alignment</td><td>a correct word gets the wrong target</td><td>inspect paired tokens and labels</td></tr>
+  <tr><td>Same document in train and test</td><td>over-optimistic score</td><td>split by independent documents</td></tr>
+  <tr><td>Wrong label map</td><td>class ID decoded as the wrong type</td><td>save <code>id2label</code> with the model</td></tr>
+  <tr><td>Truncated entity</td><td>boundary cannot be reconstructed</td><td>plan windows and overlap</td></tr>
+</table>
+<p>No classifier can repair a label map that swaps PER and ORG. Evaluate the whole pipeline: tokenization → labels → decoded spans → task metric.</p>`,
+        lab: { href: 'w6/spans.html', todo: [
+          'Section 5: read the word index and training label of each model token.',
+          'Switch the policy to "all subwords" and see which labels change.',
+        ] },
+        check: { q: 'Is −100 an extra entity category learned by the model?', o: ['No, it removes the position from the loss', 'Yes, it marks subword pieces', 'Yes, it is the same as O', 'No, it marks a missing word'], why: 'O is a real modeled category; −100 is the ignore index.' },
+      },
+      {
+        t: 'Evaluate spans, not just tokens',
+        key: 'Token accuracy can look great while <b>no entity is found</b>. NER is scored by <b>exact span match</b>: same boundaries <b>and</b> same type. F1 = 2TP / (2TP + FP + FN).',
+        fig: [{ type: 'bars', t: 'Predict O everywhere on 90 O + 10 entity tokens', items: [['Token accuracy', 90, 'c0', '90 / 100 = 90%'], ['Entity recall', 0, 'c4', '0 spans found = 0%']], max: 100 },
+          { type: 'boxes', head: ['', 'calculation', 'result'], rows: [
+            { label: 'TP', cells: [['exact matches', ''], ['2', 'c1']] },
+            { label: 'FP', cells: [['4 predictions − 2', ''], ['2', 'c4']] },
+            { label: 'FN', cells: [['3 gold − 2', ''], ['1', 'c4']] },
+            { label: 'P / R', cells: [['2/4 ; 2/3', ''], ['0.50 ; 0.667', '']] },
+            { label: 'F1', cells: [['4 / 7', ''], ['0.571', 'c0']] },
+          ] }],
+        html: `
+<p><b>Gold</b> = the reference annotation. <b>Accuracy</b> = correct token labels ÷ evaluated tokens. <b>Entity recall</b> = exact gold spans found ÷ all gold spans. They have <b>different denominators</b>.</p>
+<p>In the all-O example precision has a zero denominator (no predicted spans), so the evaluator must <b>state its convention</b>.</p>
+<h3>Exact span match</h3>
+<p>Supplied counts: 3 gold spans, 4 predicted, 2 exact matches.</p>
+<ul>
+  <li>TP = 2, FP = 4 − 2 = 2, FN = 3 − 2 = 1</li>
+  <li>Precision = TP/(TP+FP) = 2/4 = <b>0.50</b>; Recall = TP/(TP+FN) = 2/3 = <b>0.667</b></li>
+  <li>F1 = 2PR/(P+R) = 2TP/(2TP+FP+FN) = 4/7 ≈ <b>0.571</b> (micro totals, not an average of class F1s)</li>
+</ul>
+<p>A partial name or a correct boundary with the wrong type <b>fails</b>: it is one FP and leaves the gold span as one FN.</p>
+<h3>Practice (slides 20–21)</h3>
+<p>Tokens: Ada | visited | New | York | . — gold: Ada (PER), New York (LOC). Prediction: Ada (PER), York (LOC).</p>
+<ul>
+  <li>BIO: <code>B-PER O B-LOC I-LOC O</code></li>
+  <li>Only Ada matches: TP = 1, FP = 1 (York), FN = 1 (New York) → F1 = 2/(2+1+1) = <b>0.50</b>.</li>
+</ul>
+<p>"York" has the right type but the wrong boundary. That is a <b>boundary mistake</b>.</p>`,
+        lab: { href: 'w6/spans.html', todo: [
+          'Section 1: label the five tokens yourself and press <b>Check</b>.',
+          'Section 2: load the "York only" prediction and confirm TP 1, FP 1, FN 1, F1 0.50.',
+          'Load "all O", then use section 3 to compare token accuracy with entity recall.',
+        ] },
+        check: { q: '3 gold spans, 4 predictions, 2 exact matches. F1 = ?', o: ['4/7 ≈ 0.571', '2/4 = 0.50', '2/3 ≈ 0.667', '6/7 ≈ 0.857'], why: 'F1 = 2TP/(2TP+FP+FN) = 4/(4+2+1).' },
+      },
+      {
+        t: 'HMM: hidden tags, visible words',
+        key: 'An HMM says: a hidden <b>state sequence</b> (the tags) generates the <b>observations</b> (the words). Its score is a product of three ingredients: <b>start × emission × transition × emission…</b>',
+        fig: { type: 'graph', w: 640, h: 230, nodes: { y1: [170, 60, 'hidden y₁ (tag)', 'c3'], y2: [470, 60, 'hidden y₂ (tag)', 'c3'], x1: [170, 180, 'observed x₁ (word)', 'c0'], x2: [470, 180, 'observed x₂ (word)', 'c0'] }, edges: [['y1', 'y2', 'a(y₁,y₂)'], ['y1', 'x1', 'b(y₁,x₁)'], ['y2', 'x2', 'b(y₂,x₂)']] },
+        html: `
+<p>Why it exists: we want the labels, but only the words are visible. "Hidden" does not mean unknowable: the observations give evidence about the states.</p>
+<ul>
+  <li><b>Horizontal arrow</b>: the next tag depends on the previous tag (first-order Markov).</li>
+  <li><b>Vertical arrow</b>: each word is generated from its own tag.</li>
+</ul>
+<p>For two positions:</p>
+<div class="callout"><b>P(X, Y) = π(y₁) × b(y₁, x₁) × a(y₁, y₂) × b(y₂, x₂)</b></div>
+<ul>
+  <li><b>π(y)</b> start probability, <b>a(y, z)</b> = P(next tag z | tag y), <b>b(y, x)</b> = P(word x | tag y).</li>
+  <li>Every start distribution and every row of a and b <b>sums to 1</b>. Length is fixed, so no end probability.</li>
+</ul>
+<h3>The "can fish" model (supplied numbers)</h3>
+<table class="t">
+  <tr><th>from</th><th>→ N</th><th>→ V</th><th></th><th>P(can | ·)</th><th>P(fish | ·)</th></tr>
+  <tr><td>START π</td><td>0.6</td><td>0.4</td><td></td><td></td><td></td></tr>
+  <tr><td>N</td><td>0.3</td><td>0.7</td><td>N</td><td>0.4</td><td>0.6</td></tr>
+  <tr><td>V</td><td>0.8</td><td>0.2</td><td>V</td><td>0.7</td><td>0.3</td></tr>
+</table>
+<p>N = NOUN, V = lexical VERB ("can" = preserve food; the modal AUX reading is left out of this tiny tag set).</p>
+<div class="callout warn"><b>Emission direction:</b> b(N, can) = P(can | N), <b>not</b> P(N | can). At "can": N weight 0.6 × 0.4 = 0.24, V weight 0.4 × 0.7 = 0.28. They sum to 0.52, not 1, because they are joint probabilities with the word.</div>`,
+        check: { q: 'What does b(N, can) mean?', o: ['P(can | N)', 'P(N | can)', 'P(N | previous N)', 'P(can and fish)'], why: 'Emissions connect a tag to an observed word: P(word | tag).' },
+      },
+      {
+        t: 'Four paths, and Viterbi',
+        key: 'List all paths and multiply: <b>VN = 0.1344</b> wins. Viterbi gets the same answer by keeping <b>one best partial path per ending tag</b> and backtracing.',
+        fig: { type: 'anim', name: 'viterbi', t: 'Viterbi on "can fish"', cap: 'Green = kept predecessor. Grey = dropped.' },
+        html: `
+<table class="t">
+  <tr><th>Path</th><th>start × emission × transition × emission</th><th>P(words, path)</th></tr>
+  <tr><td>NN</td><td>0.6 × 0.4 × 0.3 × 0.6</td><td>0.0432</td></tr>
+  <tr><td>NV</td><td>0.6 × 0.4 × 0.7 × 0.3</td><td>0.0504</td></tr>
+  <tr><td><b>VN</b></td><td>0.4 × 0.7 × 0.8 × 0.6</td><td><b>0.1344</b> ← largest</td></tr>
+  <tr><td>VV</td><td>0.4 × 0.7 × 0.2 × 0.3</td><td>0.0168</td></tr>
+</table>
+<p>P(words) = 0.0432 + 0.0504 + 0.1344 + 0.0168 = <b>0.2448</b>. Dividing every row by the same 0.2448 cannot change the winner.</p>
+<div class="callout"><b>Joint vs posterior:</b> 0.1344 is the joint P(words, VN). The posterior P(VN | words) = 0.1344 / 0.2448 ≈ <b>0.549</b>.</div>
+<h3>Viterbi table</h3>
+<table class="t">
+  <tr><th>Ending tag at "fish"</th><th>Candidates before emission</th><th>Best</th></tr>
+  <tr><td>N</td><td>max(0.24×0.3, 0.28×0.8) × 0.6</td><td>0.1344, from V</td></tr>
+  <tr><td>V</td><td>max(0.24×0.7, 0.28×0.2) × 0.3</td><td>0.0504, from N</td></tr>
+</table>
+<p>Final winner N has predecessor V → backtrace <b>V → N</b>. With T words and K tags Viterbi costs <b>O(TK²)</b> instead of checking Kᵀ paths.</p>
+<p><b>Why keep both cells after "can"?</b> V is better there (0.28 &gt; 0.24), yet the best path ending in V at "fish" comes from <b>N</b> (0.168 &gt; 0.056). Dropping N early would have made that cell wrong. Future transitions differ, so Viterbi keeps one best partial path for <b>each</b> ending tag.</p>`,
+        lab: { href: 'w6/hmm.html', todo: [
+          'Section 1: check the four path products and the sum 0.2448.',
+          'Section 2: step through the trellis and read each backpointer.',
+          'Change the V row of the transitions to 0.2 / 0.8 (it must still sum to 1) and see which path wins now.',
+        ] },
+        check: { q: 'Is 0.1344 the posterior probability of VN?', o: ['No, it is the joint; divide by 0.2448', 'Yes, it is P(VN | words)', 'No, it is the transition V → N', 'Yes, joint and posterior are equal'], why: 'Lecture check question: 0.1344 is P(words, VN); the posterior is ≈ 0.549.' },
+      },
+      {
+        t: 'Training an HMM, and its limit',
+        key: 'With tagged data an HMM learns by <b>counting and normalizing</b>. Its weakness: the emission sees only <b>one word given one tag</b>, so rich overlapping clues are hard to add.',
+        fig: { type: 'flow', items: [['', 'Count', 'N→N 3 times, N→V 7 times', 'c0'], ['', 'Normalize', 'total 10: P(N|N) = 0.3, P(V|N) = 0.7', 'c1'], ['', 'Decode', 'use the tables in Viterbi', 'c3']] },
+        html: `
+<p><b>Training</b> estimates parameters; <b>decoding</b> uses them to label new words.</p>
+<ul>
+  <li>Transitions: count tag pairs, divide by how often the first tag occurs.</li>
+  <li>Starts: sentence-start counts. Emissions: count(word with tag) ÷ count(tag).</li>
+  <li>A <b>zero count</b> gives probability 0 and can zero a whole path. Unseen words and transitions need <b>smoothing</b> or an unknown-word model.</li>
+</ul>
+<h3>Why look beyond the basic HMM?</h3>
+<table class="t">
+  <tr><th>Useful structure</th><th>Missing evidence</th></tr>
+  <tr><td>Transitions model neighbouring labels; Viterbi gives the best complete sequence. States can be POS tags <b>or</b> BIO entity labels.</td><td>The emission sees one word given one tag. Suffixes, capitalisation and surrounding words are <b>overlapping</b> clues that are awkward to fit into P(word | tag).</td></tr>
+</table>
+<p>Goal: <b>rich input evidence and coherent output sequences in one conditional model</b>. That is the CRF.</p>`,
+        lab: { href: 'w6/hmm.html', todo: ['Section 3: type transition counts and watch them become a probability row.', 'Set one count to 0 and switch add-one smoothing on and off.'] },
+        check: { q: 'N→N occurs 3 times and N→V 7 times. P(V | N) = ?', o: ['0.7', '0.3', '7', '0.07'], why: 'Count and normalize: 7 / (3 + 7).' },
+      },
+      {
+        t: 'CRF: score whole sequences, then normalize',
+        key: 'A CRF gives each complete label sequence a <b>real-valued score</b> S(X,Y), turns it into a weight with exp, and divides by <b>Z(X)</b>, the sum over all sequences. <b>Max</b> picks the best path; <b>sum</b> builds Z.',
+        fig: { type: 'anim', name: 'crf', t: 'CRF on "can fish"', cap: 'Unary scores alone pick NV; the transition score a(V,N) = ln 8 makes VN win.' },
+        html: `
+<p>Why it exists: combine rich, overlapping clues (word, suffix, capitalisation, context) <b>and</b> label compatibility. Unlike an HMM it does not model how the words are generated: the input is fixed, and only label sequences compete.</p>
+<div class="callout"><b>P(Y | X) = exp(S(X, Y)) / Z(X)</b>, &nbsp; <b>Z(X) = Σ over all Y′ of exp(S(X, Y′))</b></div>
+<ul>
+  <li>Scores are any real numbers (a transition score of 2 is fine). They are <b>not probabilities</b>.</li>
+  <li>Normalize <b>complete paths</b>, not each transition row.</li>
+  <li>Z is the same for every path, so the winner is simply the path with the highest S.</li>
+</ul>
+<h3>"can fish" with supplied scores</h3>
+<p>Unary scores: u₁(N) = ln 2, u₁(V) = 0; u₂(N) = 0, u₂(V) = ln 2. Transition a(V,N) = ln 8, all others 0. S = u₁ + u₂ + a.</p>
+<table class="t">
+  <tr><th>Path</th><th>Score</th><th>exp(S)</th><th>P = weight / 16</th></tr>
+  <tr><td>NN</td><td>ln 2 + 0 + 0 = ln 2</td><td>2</td><td>0.125</td></tr>
+  <tr><td>NV</td><td>ln 2 + ln 2 + 0 = ln 4</td><td>4</td><td>0.250</td></tr>
+  <tr><td><b>VN</b></td><td>0 + 0 + ln 8 = ln 8</td><td>8</td><td><b>0.500</b></td></tr>
+  <tr><td>VV</td><td>0 + ln 2 + 0 = ln 2</td><td>2</td><td>0.125</td></tr>
+</table>
+<p>Z = 2 + 4 + 8 + 2 = <b>16</b>. If VN is gold: loss = −ln 0.5 = ln Z − gold score = ln 16 − ln 8 = <b>ln 2 ≈ 0.6931</b>.</p>
+<h3>CRF Viterbi adds scores</h3>
+<table class="t">
+  <tr><th>Ending at "fish"</th><th>Best score</th><th>From</th></tr>
+  <tr><td>N</td><td>max(ln 2 + 0, 0 + ln 8) + 0 = ln 8</td><td>V</td></tr>
+  <tr><td>V</td><td>max(ln 2 + 0, 0 + 0) + ln 2 = ln 4</td><td>N</td></tr>
+</table>
+<p>HMM Viterbi multiplies probabilities; CRF Viterbi adds real scores. Training: score gold and all alternatives, loss = ln Z − gold score, adjust weights to raise the gold probability, check on validation data. The features can be hand-designed or come from a neural encoder.</p>
+<div class="callout warn">P(VN) = 0.5 does <b>not</b> mean the model is 50% accurate. It is a model probability for one path under sample scores.</div>`,
+        lab: { href: 'w6/crf.html', todo: [
+          'Section 1: set a(V,N) to 0 and see NV win; set it back to ln 8.',
+          'Check that Z = 16, P(VN) = 0.5 and the loss is 0.6931.',
+          'Section 2: run the score-adding Viterbi and read the backpointers.',
+        ] },
+        check: { q: 'Which operation finds the best CRF path, and which builds Z?', o: ['Max for the path, sum for Z', 'Sum for the path, max for Z', 'Max for both', 'Sum for both'], why: 'Lecture check question. You do not need Z to decode.' },
+      },
+      {
+        t: 'BIO constraints, neural heads, and choosing a method',
+        key: 'A hard constraint sets illegal transitions (O → I-PER, START → I-PER) to <b>−∞</b>. A transformer supplies token scores zᵢ = W hᵢ + b; softmax decides each token alone, a CRF decodes them jointly.',
+        fig: { type: 'compare', cols: [
+          { t: 'HMM', pts: ['models joint words + label path', 'local emissions P(word | tag)', 'Viterbi on probabilities'], c: 'c3' },
+          { t: 'Contextual softmax', pts: ['each label given the full input', 'no label-pair scores', 'argmax at each position'], c: 'c0' },
+          { t: 'Linear-chain CRF', pts: ['whole label sequence given input', 'unary + adjacent-label scores', 'Viterbi on sequence scores'], c: 'c1' }] },
+        html: `
+<h3>Constraints for NER</h3>
+<table class="t">
+  <tr><th>Adjacent labels</th><th>IOB2</th><th>Reason</th></tr>
+  <tr><td>O → I-PER</td><td><b>forbidden</b></td><td>no person span has started</td></tr>
+  <tr><td>B-PER → I-PER</td><td>allowed</td><td>continue the person span</td></tr>
+  <tr><td>I-PER → B-ORG</td><td>allowed</td><td>start a new organisation span</td></tr>
+  <tr><td>START → I-PER</td><td><b>forbidden</b></td><td>a sequence cannot start inside a span</td></tr>
+</table>
+<p>exp(−∞) = 0, so a forbidden path gets probability 0. A <b>finite learned</b> score only discourages it: training a CRF does <b>not</b> guarantee legal BIO.</p>
+<h3>Neural token classifiers</h3>
+<ol>
+  <li><b>Input</b>: words → subword tokens and positions; an attention mask separates real input from padding.</li>
+  <li><b>Encoder + head</b>: contextual vector hᵢ → scores zᵢ = W hᵢ + b for every label.</li>
+  <li><b>Decoder</b>: per-token softmax, or a CRF using these scores plus label transitions.</li>
+</ol>
+<p><b>Shapes:</b> B = 2 sequences, L = 5 positions, K = 3 labels (O, B-PER, I-PER) → logits (2, 5, 3) = <b>30</b> scores. At one position (ln 1, ln 2, ln 1) → exp (1, 2, 1) → ÷ 4 → (0.25, <b>0.50</b>, 0.25) → B-PER. Then align predictions back to words.</p>
+<div class="callout warn">Reading the whole sentence (the encoder) is not the same as decoding labels jointly (a CRF). A contextual encoder alone does <b>not</b> guarantee valid BIO.</div>
+<h3>Workflow</h3>
+<p>Define labels and token unit → align and mark −100 → train (HMM counts or neural/CRF loss) → decode with the chosen constraints → return to word/span units → report POS accuracy or exact span metrics on held-out data. Start with the simplest suitable baseline, then test whether structured decoding fixes the errors you actually see.</p>`,
+        lab: { href: 'w6/crf.html', todo: ['Section 3: switch the hard BIO constraint on and off and watch the illegal path disappear.', 'Section 4: change the three logits and watch the softmax.'] },
+        check: { q: 'Does a contextual encoder guarantee valid BIO labels?', o: ['No, input context and output constraints differ', 'Yes, attention sees all labels', 'Yes, softmax enforces BIO', 'No, encoders ignore context'], why: 'An explicit constraint or structured decoder is a separate decision.' },
+      },
+    ],
+  },
 };
