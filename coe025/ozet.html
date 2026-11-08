@@ -69,7 +69,7 @@
   <main>
     <div class="mono small muted">COE025 — vize özeti</div>
     <h1 style="font-size:2.5rem;margin-top:4px">NLP vize özeti</h1>
-    <p class="lead">Sınav 9 Kasım. Kapsam hocanın duyurusundaki gibi: Week 1, Week 3 ve Week 6'nın <b>study</b> slaytları. Her konu önce sade Türkçeyle anlatılıyor, ardından sınavda nasıl sorulacağı gösteriliyor. Sınav İngilizce olduğu için terimler İngilizce bırakıldı.</p>
+    <p class="lead">Sınav 9 Kasım. <b>Bütün haftalar</b> dahil: Week 1, 2, 3, 4 ve 6. Hocanın e-postasındaki "weeks 1, 3, 6" bir yazım hatasıydı. En ağırlıklı kaynaklar Week 3 ve Week 6'nın <b>study</b> slaytları. Her konu önce sade Türkçeyle anlatılıyor, ardından sınavda nasıl sorulacağı gösteriliyor. Sınav İngilizce olduğu için terimler İngilizce bırakıldı.</p>
 
     <div class="callout warn">
       <b>Hocanın duyurusu, kısaca:</b>
@@ -81,13 +81,15 @@
           <ol style="margin:4px 0"><li>Önceki yöntemin çözemediği hangi sorunu çözüyor?</li><li>Ne girer, ne çıkar?</li><li>Nerede hâlâ başarısız?</li></ol></li>
         <li><b>Nasıl çalışmalı:</b> study slaytlarındaki çözülmüş örnekleri (TF-IDF, Naive Bayes, attention, HMM, precision/recall/F1…) önce çözüme bakmadan elle yap. Sonra bir sayıyı değiştirip tekrar çöz. <a href="drill.html">Hesap pratiği</a> sayfası tam olarak bunu yaptırıyor.</li>
       </ul>
-      <p class="small" style="margin:8px 0 0">Duyuruda adı geçmeyen ama slaytta olan bir konu da sorulabilir. Bu sayfa üç study deck'teki konuları kapsıyor ve onların dışına çıkmıyor.</p>
+      <p class="small" style="margin:8px 0 0">Duyuruda adı geçmeyen ama slaytta olan bir konu da sorulabilir. Bu sayfa bütün haftaların slaytlarını kapsıyor ve onların dışına çıkmıyor.</p>
     </div>
 
     <nav class="row toc">
       <a href="#big"><b>0</b>Büyük resim</a>
       <a href="#w1"><b>W1</b>Metni sayıya çevirmek</a>
+      <a href="#w2"><b>W2</b>Klasik sınıflandırıcılar</a>
       <a href="#w3"><b>W3</b>Metin sınıflandırma</a>
+      <a href="#w4"><b>W4</b>POS ve NER</a>
       <a href="#w6"><b>W6</b>Her kelimeye etiket</a>
       <a href="#open"><b>OE</b>Açık uçlu</a>
       <a href="#check"><b>?</b>Son kontrol</a>
@@ -100,10 +102,10 @@
     <div data-fig="big"></div>
     <ol class="story">
       <li><b>Bilgisayar sadece sayı anlar.</b> Bu yüzden önce metni sayılara çeviririz (Week 1). En basit yol kelimeleri saymaktır. Ama sayınca kelime sırası kaybolur, "the" gibi hiçbir şey anlatmayan kelimeler öne çıkar ve kelimelerin anlamı hiç temsil edilmez. TF-IDF, n-gram ve embedding'ler bu eksikleri tek tek kapatır.</li>
-      <li><b>Sayılar hazır, şimdi bir karar lazım:</b> "Bu yorum olumlu mu, olumsuz mu?" (Week 3'ün ilk yarısı). Naive Bayes, logistic regression ve SVM aynı sayıları alır ama karara farklı yollardan varır.</li>
+      <li><b>Sayılar hazır, şimdi bir karar lazım:</b> "Bu yorum olumlu mu, olumsuz mu?" (Week 2 ve Week 3'ün ilk yarısı). Naive Bayes, logistic regression ve SVM aynı sayıları alır ama karara farklı yollardan varır.</li>
       <li><b>Kaybolan bilgiyi sınıflandırıcı geri getiremez.</b> Saymak sırayı kaybettiyse, hangi sınıflandırıcıyı seçersen seç "not good" ile "good not" aynı görünür. Çözüm, sırayı okuyabilen modellerdir: CNN, RNN, LSTM, Transformer, BERT (Week 3'ün ikinci yarısı).</li>
       <li><b>Modelin ne kadar iyi olduğunu doğru ölçmek gerekir.</b> Accuracy tek başına yanıltabilir. Precision, recall ve F1 bunun için var.</li>
-      <li><b>Week 6'da görev değişir.</b> Artık metnin tamamına tek bir etiket vermiyoruz, <b>her kelimeye</b> ayrı bir etiket veriyoruz (POS, NER). Komşu etiketlerin de birbirine uyması gerekir. HMM ve CRF tam olarak bu iş için var.</li>
+      <li><b>Week 4 ve Week 6'da görev değişir.</b> Artık metnin tamamına tek bir etiket vermiyoruz, <b>her kelimeye</b> ayrı bir etiket veriyoruz (POS, NER). Komşu etiketlerin de birbirine uyması gerekir. HMM ve CRF tam olarak bu iş için var.</li>
     </ol>
 
     <!-- ===================================================== WEEK 1 -->
@@ -259,6 +261,53 @@
         <p><b>Why:</b> The accuracy difference is very small (about 0.7 percentage points), but the LLM costs about 3000 times more (about $30,000 vs under $10 per month for 1M emails a day) and is much slower (100–1000 ms vs under 10 ms). A small model is also easier to interpret, keeps the data private because nothing is sent to an external API, and does not hallucinate.</p>
         <p><b>When an LLM is right:</b> open-ended generation such as creative writing, or complex question answering that needs reasoning.</p>
       </div>
+    </div>
+
+    <!-- ===================================================== WEEK 2 -->
+    <h2 id="w2">Week 2 — Metin sınıflandırma: klasik yöntemler</h2>
+    <p class="intro">Week 2, Week 3'ün ilk yarısının kısa bir girişi. Aynı üç sınıflandırıcıyı (Naive Bayes, logistic regression, SVM) tanıtıyor. Hesapları aşağıda Week 3'te, oyuncak veriyle var. Burada Week 2'ye özgü olanlar duruyor: pipeline, generative ve discriminative farkı, özellik türleri ve proje sırası.</p>
+
+    <div class="m" id="w2task">
+      <h3><span class="wk">W2</span>Görev ve pipeline</h3>
+      <p class="one">Text classification = <b>f(text) → label</b>. Bir dokümana önceden belirlenmiş tek bir etiket verilir: sentiment, spam/ham, topic, intent.</p>
+      <p>Pipeline sırası: <b>Data → Features → Model → Prediction → Evaluation</b>. Sonuç kötüyse veriye geri dönülür. Klasik yöntemlerle başlanır, çünkü hızlıdırlar, yorumlanabilirler, az veriyle çalışırlar ve güçlü bir <b>baseline</b> verirler.</p>
+      <div class="traps"><span class="lab">Şıkta görürsen</span><ul>
+        <li><q>Text classification gives one label per token.</q> <b class="no">Yanlış.</b> Bu token classification (Week 4 ve 6). Text classification bütün metne tek etiket verir.</li>
+      </ul></div>
+    </div>
+
+    <div class="m" id="w2three">
+      <h3><span class="wk">W2 · açık uçlu adayı</span>Naive Bayes, logistic regression, SVM: farkları</h3>
+      <table class="t">
+        <tr><th>Yöntem</th><th>Nasıl karar verir</th><th>Zayıf yanı</th></tr>
+        <tr><td><b>Naive Bayes</b> (generative)</td><td>P(c) × ∏ P(word|c) en büyük olan sınıf. Her sınıfın kelimeleri nasıl "ürettiğini" modeller.</td><td>"Naive": kelimeleri sınıf verildiğinde bağımsız sayar, ilişkili kelimeler kanıtı iki kez sayar. Smoothing yoksa görülmemiş kelime çarpımı 0 yapar.</td></tr>
+        <tr><td><b>Logistic regression</b> (discriminative)</td><td>p = σ(w·x + b), eşik 0.5. Sınırı doğrudan öğrenir, bir olasılık verir.</td><td>Sınırı doğrusal. Adında "regression" geçse de bir sınıflandırıcı.</td></tr>
+        <tr><td><b>SVM</b></td><td>Sınıflar arasında <b>en geniş margin</b>'li çizgi; f(x)'in işareti sınıfı verir. <b>Kernel trick</b> doğrusal olmayan sınır sağlar.</td><td>Büyük veride yavaş, ölçeklemeye duyarlı. Skor olasılık değil.</td></tr>
+      </table>
+      <div class="write"><span class="lab">Sınavda yaz (İngilizce)</span>
+        <p><b>Naive Bayes</b> is a generative classifier: it picks the class with the largest P(c) × ∏ P(word|c). It is fast, works with little data and is a strong baseline, but it assumes the words are independent given the class and needs smoothing for unseen words.</p>
+        <p><b>Logistic regression</b> is discriminative: it learns weights directly and outputs a probability p = σ(w·x + b); despite its name it is a classifier with a linear boundary.</p>
+        <p><b>SVM</b> chooses the boundary with the maximum margin; the sign of the score gives the class, but the score is not a probability. Kernels allow non-linear boundaries. For a project: Naive Bayes baseline first, then logistic regression, then SVM if time allows.</p>
+      </div>
+      <div class="traps"><span class="lab">Şıkta görürsen</span><ul>
+        <li><q>Naive Bayes is discriminative and logistic regression is generative.</q> <b class="no">Yanlış.</b> Tam tersi.</li>
+        <li><q>Naive Bayes is naive because it needs no training data.</q> <b class="no">Yanlış.</b> Naive = kelimeler bağımsız varsayımı.</li>
+        <li><q>An SVM score of 2 means 200% confidence.</q> <b class="no">Yanlış.</b> Skor sadece sınırın hangi tarafında olduğunu ve uzaklığı gösterir.</li>
+      </ul></div>
+    </div>
+
+    <div class="m" id="w2feat">
+      <h3><span class="wk">W2</span>Feature engineering: dört özellik türü</h3>
+      <table class="t">
+        <tr><th>Tür</th><th>Örnek</th></tr>
+        <tr><td><b>Statistical</b></td><td>metin uzunluğu, "!" sayısı, büyük harf oranı</td></tr>
+        <tr><td><b>Lexical</b></td><td>BoW, TF-IDF, n-grams, character n-grams</td></tr>
+        <tr><td><b>Linguistic</b></td><td>POS etiketleri, sözlükler (lexicons), named entities</td></tr>
+        <tr><td><b>Domain-specific</b></td><td>spam kelimeleri, emoji</td></tr>
+      </table>
+      <div class="traps"><span class="lab">Şıkta görürsen</span><ul>
+        <li><q>Counting "!" marks is a lexical feature.</q> <b class="no">Yanlış.</b> Bu statistical. Lexical = kelimelerin kendisi (BoW, TF-IDF, n-gram).</li>
+      </ul></div>
     </div>
 
     <!-- ===================================================== WEEK 3 -->
@@ -580,6 +629,33 @@
     </div>
 
     <!-- ===================================================== WEEK 6 -->
+    <!-- ===================================================== WEEK 4 -->
+    <h2 id="w4">Week 4 — POS ve NER (Jurafsky &amp; Martin)</h2>
+    <p class="intro">Week 4'ün destesi (Jurafsky &amp; Martin) Week 6'nın kaynağı. Konuların çoğu (type/token belirsizliği, en sık etiket baseline'ı, NER, BIO, IO/BIOES) aşağıda Week 6 kartlarında, hesaplarıyla birlikte anlatılıyor. Burada Week 4 destesine özgü sayılar ve tanımlar var.</p>
+
+    <div class="m" id="w4pos">
+      <h3><span class="wk">W4</span>POS tagging: tanım, sınıflar, gerçek sayılar</h3>
+      <p class="one">POS tagging: x₁…xₙ kelimeleri → y₁…yₙ etiketleri, <b>kelime başına bir etiket</b>. Bir belirsizlik giderme (disambiguation) işi.</p>
+      <ul>
+        <li><b>Open class</b> (NOUN, VERB, ADJ, ADV, INTJ) yeni kelime alır: selfie, google. <b>Closed class</b> (DET, PRON, ADP, CCONJ, AUX, PART) sabittir: on, the, and. Universal Dependencies'te <b>17</b> etiket var.</li>
+        <li>İngilizcede kelime tiplerinin (types) yalnızca <b>~%15</b>'i belirsiz. Ama bunlar çok sık kelimeler (back, that, will), bu yüzden metindeki token'ların <b>~%60</b>'ı belirsiz.</li>
+        <li><b>Most-frequent-tag baseline</b> ~%92 doğruluk verir (bilinmeyen kelime → NOUN). İyi tagger'lar ~%97. Week 6 hocası bu %97'yi koşulsuz genel bir gerçek gibi tekrarlamamamızı söylüyor.</li>
+        <li><b>Bilgi kaynakları:</b> kelimenin kendi eğilimi ("will" genelde AUX), komşu kelimeler, kelimenin biçimi (-ly eki, un- öneki, büyük harf).</li>
+      </ul>
+      <div class="traps"><span class="lab">Şıkta görürsen</span><ul>
+        <li><q>About 15% of tokens in running text are ambiguous.</q> <b class="no">Yanlış.</b> %15 type'lar için; token'ların ~%60'ı belirsiz.</li>
+        <li><q>Prepositions (on, under) are an open class.</q> <b class="no">Yanlış.</b> ADP kapalı sınıf.</li>
+      </ul></div>
+    </div>
+
+    <div class="m" id="w4ner">
+      <h3><span class="wk">W4 · açık uçlu adayı</span>NER neden POS'tan zor?</h3>
+      <p class="one">NER isimleri ve türlerini bulur: <b>PER</b> (kişi), <b>ORG</b> (kurum), <b>LOC</b> (yer), <b>GPE</b> (ülke, şehir gibi siyasi bölge), ayrıca tarih ve para.</p>
+      <div class="write"><span class="lab">Sınavda yaz (İngilizce)</span>
+        <p>NER is harder than POS tagging because it has to solve two problems at once. First, <b>segmentation</b>: it must find where a name starts and ends, and many names are several words long ("New York"). Second, <b>type ambiguity</b>: the same name can be a person, an organization, a location or a GPE ("Washington"). Entities are labelled token by token with schemes such as BIO, but they are evaluated as whole spans. For n entity types, IO needs n + 1 tags, BIO 2n + 1 and BIOES 4n + 1; IO cannot separate two adjacent entities of the same type.</p>
+      </div>
+    </div>
+
     <h2 id="w6">Week 6 — Her kelimeye bir etiket</h2>
     <p class="intro">Week 3'te metnin tamamına tek bir etiket veriyorduk. Bu hafta <b>her token'a ayrı bir etiket</b> veriyoruz (<b>token classification</b>). Haftanın ilk saati görevler (POS, NER, BIO, değerlendirme), ikinci saati yöntemler (HMM, CRF, neural tagger).</p>
     <p>Aynı dört token, iki farklı görev (slayt 2):</p>
