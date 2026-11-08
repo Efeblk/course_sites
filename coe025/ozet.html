@@ -123,6 +123,36 @@
     </table>
     <p><b>"can fish" sayıları:</b> HMM yolları NN .0432, NV .0504, <b>VN .1344</b>, VV .0168, toplam .2448, VN posterior ≈ .549 (0.1344 joint, posterior değil!). Viterbi: fish/N = max(.24×.3, .28×.8)×.6 = .1344 ← V. CRF: unary tek başına NV seçer; a(V,N) = ln 8 eklenince ağırlıklar 2, 4, 8, 2, Z = 16, P(VN) = .5, loss = ln 2 ≈ .6931. Softmax: (ln 1, ln 2, ln 1) → (.25, .5, .25) → B-PER; logits (2,5,3) = 30 skor.</p>
 
+    <h3>Study destesinden ek hesaplar (94 slayt, sınavda olabilir)</h3>
+    <table class="t">
+      <tr><th>Konu</th><th>Örnek ve anlamı</th></tr>
+      <tr><td>Type vs token belirsizliği</td><td>"book book book cat dog": belirsiz tip 1/3, belirsiz token 3/5. Sık geçen belirsiz kelime token oranını büyütür.</td></tr>
+      <tr><td>Frequent-tag baseline</td><td>book: NOUN 6, VERB 4 → P(NOUN|book) = 0.6, her zaman NOUN der; "Book a flight" yanlış. Baseline sayıları test setinden alınmaz.</td></tr>
+      <tr><td>Kaynak NER örneği</td><td>United Airlines (ORG), Friday (TIME), $6 (MONEY)… toplam 5 ORG + 1 PER + 2 TIME + 1 MONEY + 4 LOC = 13 mention. San Francisco iki kelime, bir mention. "Named entity" özel isimden geniş.</td></tr>
+      <tr><td>Flat BIO sınırı</td><td>Nested [University of [New York] LOC] ORG ve discontinuous varlıklar tek BIO katmanıyla gösterilemez; daha büyük model çözmez.</td></tr>
+      <tr><td>BIOES</td><td>Jane Villanueva → B-PER E-PER; Chicago → S-LOC; United Airlines Holding → B-ORG I-ORG E-ORG. n = 3 → IO 4, BIO 7, BIOES 13.</td></tr>
+      <tr><td>Subword politikaları</td><td>First-piece: sonraki parçalar −100. All-piece: B-X kelimesinin sonraki parçaları I-X. Padding token genelde loss'ta yok sayılır ve attention-mask'lenir; attention mask ile loss mask farklı.</td></tr>
+      <tr><td>Span listesi</td><td>Gold: Ada Lovelace/PER, New York/LOC, Acme Labs/ORG. Tahmin: + Acme/ORG (sınır hatası), Tuesday/DATE (fazla). TP 2, FP 2, FN 1.</td></tr>
+      <tr><td>Micro vs macro</td><td>PER 8/2/0 → F1 8/9; LOC 1/0/3 → 2/5. Micro (sayıları birleştir) 18/23 ≈ 0.783; macro (ortalama) ≈ 0.644.</td></tr>
+      <tr><td>HMM varsayımları</td><td>P(yₜ | önceki durumlar) = P(yₜ | yₜ₋₁); P(xₜ | her şey) = P(xₜ | yₜ). Bunlar greedy decoding demek değil.</td></tr>
+      <tr><td>Posterior tablosu</td><td>NN .1765, NV .2059, <b>VN .5490</b>, VV .0686 (joint / 0.2448).</td></tr>
+      <tr><td>Viterbi işi</td><td>T = 10, K = 3: 3¹⁰ = 59.049 yol yerine 9 × 3 × 3 = 81 kontrol. Zaman O(TK²), alan O(TK).</td></tr>
+      <tr><td><b>Forward algoritması</b></td><td>αₜ(j) = b(j,xₜ) Σᵢ αₜ₋₁(i) a(i,j). "can fish": N = (0.24×0.3 + 0.28×0.8)×0.6 = 0.1776, V = (0.24×0.7 + 0.28×0.2)×0.3 = 0.0672, toplam 0.2448. Viterbi = max, forward = sum.</td></tr>
+      <tr><td>Tag marginal</td><td>P(son etiket N) = (NN + VN)/P(X) = 0.1776/0.2448 ≈ 0.7255. Tüm yol VN ≈ 0.549. En olası yol ≠ en olası tek etiketler.</td></tr>
+      <tr><td>Smoothing, UNK</td><td>N 2, V 0 → add-one 0.75 / 0.25. UNK: can 4, fish 6, UNK 0 → 5/13, 7/13, 1/13.</td></tr>
+      <tr><td>Log space</td><td>ln(0.4×0.7×0.8×0.6) ≈ −2.0069 = ln 0.1344. Underflow önlenir, kazanan değişmez; ln 0 = −∞.</td></tr>
+      <tr><td>Linear-chain skor</td><td>S = Σ uᵢ(yᵢ) + Σ a(yᵢ₋₁, yᵢ). Unary tüm girdiye bakabilir, çıktı yapısı birinci dereceden.</td></tr>
+      <tr><td>Local vs global normalizasyon</td><td>Unary-only softmax: P(NV) = 2/3 × 2/3 = 4/9 kazanır. CRF + V→N: P(VN) = 8/16 kazanır. Farklı olasılık modelleri.</td></tr>
+      <tr><td><b>CRF forward</b></td><td>exp ağırlıklar: N sonu (2×1 + 1×8)×1 = 10, V sonu (2×1 + 1×1)×2 = 6, Z = 16. LSE(ln 2, ln 8) = ln 10.</td></tr>
+      <tr><td>CRF gradyanı</td><td>∂loss/∂θ(V→N) = beklenen sayım − gold sayım = 0.5 − 1 = −0.5 → θ artar.</td></tr>
+      <tr><td>Feature vs neural CRF</td><td>Unary skorları ya w·f(X,i,etiket) (büyük harf, ek, gazetteer) ya da W hᵢ + b'den gelir; CRF yapısı aynı.</td></tr>
+      <tr><td>IOB2 mask</td><td>I-X'ten önce sadece B-X veya I-X; START → I-X yasak; O ve B-X her şeyden sonra gelebilir. Yasak = −∞.</td></tr>
+      <tr><td>Head boyutları, maskeli loss</td><td>H (2,5,4), W (3,4), b (3,), logits (2,5,3), gold (2,5). İki denetlenen pozisyon 0.8 ve 0.5: (−ln 0.8 − ln 0.5)/2 ≈ 0.458 (5'e bölme!).</td></tr>
+      <tr><td>Pratik 1 (HMM)</td><td>V satırı (0.5, 0.5): VN 0.084, toplam 0.2196, VN hâlâ kazanır ama posterior ≈ 0.3825.</td></tr>
+      <tr><td>Pratik 2 (CRF)</td><td>a(V,N) = ln 2: ağırlıklar 2, 4, 2, 2, Z = 10, NV kazanır; gold VN loss = ln 5 ≈ 1.609.</td></tr>
+    </table>
+    <div class="callout ex"><b>Hocanın sınav kontrol listesi (study slayt 93):</b> HMM: joint, posterior, Viterbi, forward hesapla; yerel varsayımları ve görülmemiş olayları açıkla. CRF: yol skoru, Z, olasılık, loss; tercih ≠ kesin geçerlilik. Neural head: boyut, softmax, maskeli loss; bağlam ≠ geçerli çıktı. Görev tasarımı: etiketler, hizalama, değerlendirme. "Tam cevap girdiyi, varsayımları, işlemi, sonucu ve sonucun anlamını söyler."</div>
+
     <!-- ================= formulas ================= -->
     <h2 id="formul">Formül kâğıdı (sonucun anlamıyla)</h2>
     <table class="t">

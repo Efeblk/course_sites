@@ -167,6 +167,51 @@
           a: [['weight NN', W.NN], ['weight NV', W.NV], ['weight VN', W.VN], ['weight VV', W.VV], ['Z', Z], ['P(VN)', W.VN / Z], ['loss (gold VN)', Math.log(Z / W.VN)]],
           s: `exp(ln a + ln b) = a × b, so weights: NN ${W.NN}, NV ${W.NV}, VN ${W.VN}, VV ${W.VV}. Z = ${Z}. P(VN) = ${frac(W.VN, Z)} ≈ ${r3(W.VN / Z)}. Loss = −ln P = ln Z − S(gold) = ln ${Z} − ln ${W.VN} = ln(${frac(Z, W.VN)}) ≈ <b>${r3(Math.log(Z / W.VN))}</b>. Best path: ${best} (max). Z is a sum; you do not need Z to decode.` };
       } },
+      { w: 6, t: 'HMM forward algorithm and a tag marginal (study slides 59–61)', f() {
+        const pi = pick([[0.6, 0.4], [0.5, 0.5], [0.8, 0.2]]), a = pick([[[0.3, 0.7], [0.8, 0.2]], [[0.5, 0.5], [0.5, 0.5]], [[0.3, 0.7], [0.5, 0.5]]]);
+        const b1 = pick([[0.4, 0.7], [0.5, 0.5]]), b2 = pick([[0.6, 0.3], [0.5, 0.5]]);
+        const a1 = [pi[0] * b1[0], pi[1] * b1[1]];
+        const fN = (a1[0] * a[0][0] + a1[1] * a[1][0]) * b2[0], fV = (a1[0] * a[0][1] + a1[1] * a[1][1]) * b2[1], Z = fN + fV;
+        return { q: `"can fish". π = (N ${pi[0]}, V ${pi[1]}); transitions N→(N ${a[0][0]}, V ${a[0][1]}), V→(N ${a[1][0]}, V ${a[1][1]}); P(can|N) = ${b1[0]}, P(can|V) = ${b1[1]}, P(fish|N) = ${b2[0]}, P(fish|V) = ${b2[1]}. Run the <b>forward</b> algorithm (sum, not max): α₁, then the final masses α₂(N), α₂(V), P(can, fish), and the marginal P(final tag = N | words).`,
+          a: [['α₁(N)', a1[0]], ['α₁(V)', a1[1]], ['α₂(N)', fN], ['α₂(V)', fV], ['P(can, fish)', Z], ['P(final N)', fN / Z]],
+          s: `α₁(N) = ${pi[0]} × ${b1[0]} = ${r3(a1[0])}; α₁(V) = ${pi[1]} × ${b1[1]} = ${r3(a1[1])}. α₂(N) = (${r3(a1[0])}×${a[0][0]} + ${r3(a1[1])}×${a[1][0]}) × ${b2[0]} = ${r3(fN)}; α₂(V) = (${r3(a1[0])}×${a[0][1]} + ${r3(a1[1])}×${a[1][1]}) × ${b2[1]} = ${r3(fV)}. P(X) = ${r3(Z)}. P(final N) = ${r3(fN)}/${r3(Z)} ≈ <b>${r3(fN / Z)}</b>. Viterbi takes max (best path); forward takes the sum (total probability). A tag marginal (final N, any first tag) is a different question from the probability of one whole path.` };
+      } },
+      { w: 6, t: 'HMM smoothing and UNK (study slides 63–64)', f() {
+        const c = [ri(1, 6), ri(0, 6), 0];
+        const den = c[0] + c[1] + c[2] + 3;
+        return { q: `For one tag, the training emission counts are can = ${c[0]}, fish = ${c[1]}, and a reserved UNK symbol = 0. Use add-one smoothing over the three symbols. Compute P(can | tag), P(fish | tag) and P(UNK | tag).`,
+          a: [['P(can|tag)', (c[0] + 1) / den], ['P(fish|tag)', (c[1] + 1) / den], ['P(UNK|tag)', 1 / den]],
+          s: `Denominator = ${c[0]} + ${c[1]} + 0 + 3 = ${den}. P = ${c[0] + 1}/${den}, ${c[1] + 1}/${den}, <b>1/${den}</b>; they sum to 1. Rule: (count + α)/(total + αK). A zero count is not proof of impossibility; an unseen word is mapped to UNK.` };
+      } },
+      { w: 6, t: 'Micro vs macro F1 over entity types (study slide 39)', f() {
+        const p = [ri(4, 9), ri(0, 3), ri(0, 2)], l = [ri(1, 4), ri(0, 2), ri(1, 4)];
+        const f = (t) => (2 * t[0]) / (2 * t[0] + t[1] + t[2]), m = [p[0] + l[0], p[1] + l[1], p[2] + l[2]];
+        return { q: `Span counts by type. PER: TP ${p[0]}, FP ${p[1]}, FN ${p[2]}. LOC: TP ${l[0]}, FP ${l[1]}, FN ${l[2]}. Compute F1 for each type, micro-F1 (pool the counts) and macro-F1 (average the type F1s).`,
+          a: [['F1 PER', f(p)], ['F1 LOC', f(l)], ['micro-F1', f(m)], ['macro-F1', (f(p) + f(l)) / 2]],
+          s: `PER: ${2 * p[0]}/${2 * p[0] + p[1] + p[2]} = ${r3(f(p))}. LOC: ${2 * l[0]}/${2 * l[0] + l[1] + l[2]} = ${r3(f(l))}. Micro pools ${m.join(' / ')}: ${2 * m[0]}/${2 * m[0] + m[1] + m[2]} = <b>${r3(f(m))}</b>. Macro = (${r3(f(p))} + ${r3(f(l))})/2 = <b>${r3((f(p) + f(l)) / 2)}</b>. Micro weights frequent types more; macro gives every type equal weight. O is not an entity type.` };
+      } },
+      { w: 6, t: 'CRF forward for Z, and one gradient (study slides 75, 78)', f() {
+        const u1 = pick([1, 2]), u2 = pick([1, 2]), tr = pick([2, 4, 8]); // exp weights: first (N,V) = (u1,1); second (N,V) = (1,u2); V→N = tr, others 1
+        const mN = (u1 * 1 + 1 * tr) * 1, mV = (u1 * 1 + 1 * 1) * u2, Z = mN + mV, pVN = tr / Z;
+        const lnf = (k) => (k === 1 ? '0' : `ln ${k}`);
+        return { q: `"can fish". Unary u₁(N) = ${lnf(u1)}, u₁(V) = 0, u₂(N) = 0, u₂(V) = ${lnf(u2)}; transition a(V,N) = ln ${tr}, all others 0. Exponentiate the scores and run the CRF forward pass: mass ending in N, mass ending in V, and Z. Then, if VN is gold, give the gradient of the loss for the V→N score θ: expected count − gold count = P(VN) − 1.`,
+          a: [['mass N', mN], ['mass V', mV], ['Z', Z], ['P(VN)', pVN], ['∂loss/∂θ', pVN - 1]],
+          s: `Weights: first (N, V) = (${u1}, 1), V→N = ${tr}, other transitions 1, second (N, V) = (1, ${u2}). Mass N = (${u1}×1 + 1×${tr}) × 1 = ${mN}; mass V = (${u1}×1 + 1×1) × ${u2} = ${mV}; Z = ${Z}. P(VN) = ${tr}/${Z} ≈ ${r3(pVN)}. Gradient = ${r3(pVN)} − 1 = <b>${r3(pVN - 1)}</b>, negative, so θ ← θ − η·g increases the V→N reward. In log space alternatives combine with log-sum-exp, e.g. LSE(ln 2, ln 8) = ln 10.` };
+      } },
+      { w: 6, t: 'Masked loss and head shapes (study slides 84–85)', f() {
+        const ps = pick([[0.8, 0.5], [0.5, 0.25], [0.5, 0.5], [0.25, 0.5]]), L = pick([5, 6]), d = pick([4, 8, 768]), K = pick([3, 5, 7]);
+        const loss = (-Math.log(ps[0]) - Math.log(ps[1])) / 2;
+        return { q: `${L} model positions; only 2 carry supervised labels (the rest are −100). The model gives the gold labels probabilities ${ps[0]} and ${ps[1]}. Compute the mean loss over supervised positions. Then: hidden size d = ${d}, K = ${K} labels. What is the shape of W, and how many logits does one sequence of ${L} positions produce?`,
+          a: [['mean loss', loss], ['W rows', K], ['W columns', d], ['logits per sequence', L * K]],
+          s: `loss = (−ln ${ps[0]} − ln ${ps[1]}) / 2 = <b>${r3(loss)}</b>: divide by the 2 supervised positions, not by ${L}. W has shape (K, d) = (${K}, ${d}) and b has K entries, so zᵢ = W hᵢ + b gives ${K} scores per position: ${L} × ${K} = ${L * K} per sequence. The attention mask and the loss mask are different things.` };
+      } },
+      { w: 4, t: 'Ambiguity, baseline and work counts (study slides 9, 11, 58)', f() {
+        const nb = ri(2, 5), other = ri(2, 4), T = pick([5, 10]), K = pick([2, 3]);
+        const n = pick([6, 8]), v = pick([2, 4]);
+        return { q: `(1) Corpus: "book" × ${nb} plus ${other} other word types once each; only "book" is ambiguous. Share of ambiguous types, and share of ambiguous tokens? (2) Training counts for "book": NOUN ${n}, VERB ${v}. Baseline P(NOUN | book)? (3) T = ${T} positions, K = ${K} labels: how many complete paths, and how many predecessor checks does Viterbi make after the first position?`,
+          a: [['ambiguous types', 1 / (1 + other)], ['ambiguous tokens', nb / (nb + other)], ['P(NOUN|book)', n / (n + v)], ['paths Kᵀ', K ** T], ['Viterbi (T−1)K²', (T - 1) * K * K]],
+          s: `(1) Types: 1/${1 + other} ≈ ${r3(1 / (1 + other))}; tokens: ${nb}/${nb + other} ≈ ${r3(nb / (nb + other))}. A frequent ambiguous type makes token ambiguity higher than type ambiguity (slide: 1/3 vs 3/5). (2) ${n}/${n + v} = ${r3(n / (n + v))}; the baseline always says NOUN and ignores context ("Book a flight" fails). (3) ${K}^${T} = ${K ** T} paths vs (${T} − 1) × ${K}² = ${(T - 1) * K * K} checks: O(TK²).` };
+      } },
       { w: 3, t: 'Shapes: BiLSTM, BERT, logits (slides 37, 56, 69, 96; W6 slide 41)', f() {
         const H = pick([128, 256]), B = pick([2, 4, 8]), L = pick([5, 64, 128]), K = pick([2, 3, 4]), T = pick([7, 9]), k = 3;
         return { q: `(1) A BiLSTM has ${H} hidden units per direction: width of the concatenated final summary? (2) A batch of B = ${B} texts, padded length L = ${L}, K = ${K} labels per token: how many logit scores? (3) A Conv1d with width ${k} over ${T} tokens, no padding: output length?`,
@@ -202,7 +247,7 @@
       return box;
     }
     function draw() {
-      fill($('#filters'), [[0, 'All weeks'], [1, 'Week 1'], [3, 'Week 2–3'], [6, 'Week 4–6']].map(([w, t]) => el('button', { class: 'chip' + (only === w ? ' on' : ''), onclick: () => { only = w; draw(); } }, t)));
+      fill($('#filters'), [[0, 'All weeks'], [1, 'Week 1'], [3, 'Week 2–3'], [4, 'Week 4'], [6, 'Week 6']].map(([w, t]) => el('button', { class: 'chip' + (only === w ? ' on' : ''), onclick: () => { only = w; draw(); } }, t)));
       fill($('#cards'), G.filter((g) => !only || g.w === only).map(card));
     }
     draw();

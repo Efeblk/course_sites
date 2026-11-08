@@ -57,6 +57,7 @@ mostly images (COE025 weeks 1–2); export them to PNG with PowerPoint to read t
 | slides/week3-pro-standalone.pptx | 110 | Week 3 extended version with derivations and worked checks |
 | slides/8_POSNER_intro_May_6_2021.pptx | 26 | Jurafsky & Martin: Sequence labeling for POS and NER (placed as Week 4) |
 | slides/week6-pro-standalone-lecture.pptx | 44 | Week 6 token classification: POS, NER/BIO, chunking, slots, subword alignment, span F1, HMM + Viterbi, CRF, neural heads (text slides with detailed notes; builds on the Jurafsky & Martin deck) |
+| slides/week6-pro-standalone.pptx | 94 | Week 6 study version: everything in the lecture deck plus BIOES, nested entities, micro/macro F1, HMM forward and marginals, smoothing/UNK, log space, CRF forward/LSE/gradient, masked loss, two practice problems |
 
 ## COE305 inventory (as of 2026-10-24)
 
