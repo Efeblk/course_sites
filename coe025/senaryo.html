@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COE025 — Senaryo soruları · Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    h2 { margin-top: 52px; padding-top: 10px; border-top: 2px solid var(--text); }
+    .qbox { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 18px; margin: 12px 0; }
+    .qbox p { margin: 6px 0; }
+    .qbox ol { margin: 6px 0 2px; padding-left: 22px; }
+    .qbox li { margin: 4px 0; }
+    table.giv { width: auto; margin: 8px 0; }
+    table.giv td, table.giv th { text-align: center; padding: 4px 12px; }
+    table.giv td:first-child, table.giv th:first-child { text-align: left; }
+    details.sol { margin: 14px 0 6px; }
+    details.sol > summary { cursor: pointer; font-weight: 600; padding: 8px 14px; border: 1px solid var(--line-2); border-radius: var(--radius); display: inline-block; }
+    details.sol[open] > summary { margin-bottom: 8px; }
+    h4 { margin: 22px 0 2px; font-size: 1.02rem; }
+    .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 .15em; line-height: 1.3; }
+    .fr > i { font-style: normal; padding: 0 .3em; white-space: nowrap; }
+    .fr > i:first-child { border-bottom: 1.5px solid currentColor; }
+    /* the answer as it would be written on paper (left) and why (right) */
+    ol.steps { list-style: none; counter-reset: st; padding: 0; margin: 8px 0 10px; }
+    ol.steps > li { counter-increment: st; display: grid; grid-template-columns: 26px minmax(0, 1.25fr) minmax(0, 1fr); gap: 4px 14px; align-items: center; padding: 8px 0; border-top: 1px dotted var(--line-2); }
+    ol.steps > li::before { content: counter(st); width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--panel); display: grid; place-items: center; font-family: var(--mono); font-size: .78rem; }
+    ol.steps > li.r::before { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+    ol.steps .m { font-family: var(--serif); font-size: 1.08rem; line-height: 2.1; overflow-x: auto; }
+    ol.steps li.r .m { font-weight: 700; }
+    ol.steps .w { font-size: .9rem; color: var(--muted); line-height: 1.45; }
+    .res { border-left: 3px solid var(--ok); background: var(--panel); padding: 8px 14px; margin: 10px 0; border-radius: 0 var(--radius) var(--radius) 0; }
+    .res::before { content: "Sonuç ne demek: "; font-weight: 600; color: var(--ok); }
+    .paper { font-family: var(--serif); font-size: 1.05rem; line-height: 1.6; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 10px 16px; margin: 10px 0; }
+    .paper p { margin: 6px 0; }
+    .paper .tag { font-family: var(--sans); font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+    .tip { font-size: .92rem; margin: 6px 0 10px; }
+    .tip::before { content: "Sınavda: "; font-weight: 600; color: var(--warn, var(--accent)); }
+    @media (max-width: 640px) { ol.steps > li { grid-template-columns: 26px minmax(0, 1fr); } ol.steps .w { grid-column: 2; } }
+  </style>
+</head>
+<body data-root="..">
+  <main>
+    <div class="mono small muted">COE025 — vize hazırlık</div>
+    <h1 style="font-size:2.4rem;margin-top:4px">Senaryo soruları, çözümlü</h1>
+    <p class="lead">Açık uçlu sorular büyük ihtimalle böyle olacak: <b>gerçek bir durum → küçük bir hesap → hesaba dayanan bir karar</b>. Aşağıdaki 3 soruyu ben yazdım (slayttaki örneklerin sayıları değiştirildi). Önce kâğıtta kendin çöz, sonra <b>Çözüm</b>'ü aç.</p>
+    <p class="small muted">Çözümler bir öğrencinin kâğıda yazacağı gibi: solda kâğıttaki satır, sağda Türkçe "neden bu adım". Her sorunun sonunda yazılacak kısa İngilizce karar paragrafı var.</p>
+    <nav class="row toc">
+      <a href="#q1"><b>1</b>Yorum filtresi (NB + P/R/F1)</a>
+      <a href="#q2"><b>2</b>Haber NER (span F1 + CRF)</a>
+      <a href="#q3"><b>3</b>"can fish" (HMM + Viterbi)</a>
+    </nav>
+
+    <!-- ================= Q1 ================= -->
+    <h2 id="q1">Soru 1 · Text classification</h2>
+    <div class="qbox">
+      <p>A small online shop wants to flag reviews automatically. Training data:</p>
+      <table class="t giv">
+        <tr><th>doc</th><th>text</th><th>label</th></tr>
+        <tr><td>d1</td><td>great great item</td><td>+</td></tr>
+        <tr><td>d2</td><td>great item</td><td>+</td></tr>
+        <tr><td>d3</td><td>bad bad item</td><td>−</td></tr>
+        <tr><td>d4</td><td>bad item</td><td>−</td></tr>
+      </table>
+      <ol type="a">
+        <li>Using multinomial Naive Bayes with add-one smoothing, classify the new review <b>"great great item"</b> and give P(+ | review).</li>
+        <li>The shop runs the model on 200 new reviews. With <b>negative</b> as the target class: TP = 40, FN = 10, FP = 20, TN = 130. Compute precision, recall, F1 and accuracy, and compare with a model that never flags anything.</li>
+        <li>The manager wants to replace the model with a large LLM API because it reached 0.88 accuracy in a demo. Give your verdict and justify it.</li>
+      </ol>
+    </div>
+
+    <details class="sol"><summary>Çözüm</summary>
+      <h4>(a) Naive Bayes</h4>
+      <ol class="steps">
+        <li><span class="m">+ : great 3, item 2 → 5 tokens<br>− : bad 3, item 2 → 5 tokens<br>|V| = 3 &nbsp;·&nbsp; P(+) = P(−) = <span class="fr"><i>2</i><i>4</i></span> = 0.5</span><span class="w">Önce sınıf sınıf say. Prior doküman sayar (2/4), likelihood token sayar.</span></li>
+        <li><span class="m">P(great | +) = <span class="fr"><i>3 + 1</i><i>5 + 3</i></span> = <span class="fr"><i>1</i><i>2</i></span> &nbsp; P(item | +) = <span class="fr"><i>2 + 1</i><i>8</i></span> = <span class="fr"><i>3</i><i>8</i></span></span><span class="w">Payda: sınıftaki token + |V|. Her kelimeye 1 ekle.</span></li>
+        <li><span class="m">P(great | −) = <span class="fr"><i>0 + 1</i><i>8</i></span> = <span class="fr"><i>1</i><i>8</i></span> &nbsp; P(item | −) = <span class="fr"><i>3</i><i>8</i></span></span><span class="w">"great" negatifte hiç yok. Smoothing olmasa 0 olurdu ve bütün çarpım sıfırlanırdı.</span></li>
+        <li><span class="m">s(+) = 0.5 × <span class="fr"><i>1</i><i>2</i></span> × <span class="fr"><i>1</i><i>2</i></span> × <span class="fr"><i>3</i><i>8</i></span> = <span class="fr"><i>3</i><i>64</i></span></span><span class="w">"great" iki kere geçiyor → <b>iki kere</b> çarp. En sık yapılan hata bu.</span></li>
+        <li><span class="m">s(−) = 0.5 × <span class="fr"><i>1</i><i>8</i></span> × <span class="fr"><i>1</i><i>8</i></span> × <span class="fr"><i>3</i><i>8</i></span> = <span class="fr"><i>3</i><i>1024</i></span></span><span class="w">Kısa yol: "item" ikisinde de 3/8, sonucu değiştirmez.</span></li>
+        <li class="r"><span class="m">s(+) / s(−) = 16 &nbsp;→&nbsp; P(+ | d) = <span class="fr"><i>16</i><i>16 + 1</i></span> = <span class="fr"><i>16</i><i>17</i></span> ≈ 0.94 → positive</span><span class="w">Hesap makinesi yok: 3/64 ile 3/1024'ü bölmek yerine oranına bak. 16'ya 1 → 16/17.</span></li>
+      </ol>
+      <div class="res">model bu yorumun pozitif olduğuna %94 inanıyor. Bu bir <b>olasılık</b>, accuracy değil.</div>
+
+      <h4>(b) Precision, recall, F1</h4>
+      <ol class="steps">
+        <li><span class="m">P = <span class="fr"><i>TP</i><i>TP + FP</i></span> = <span class="fr"><i>40</i><i>60</i></span> = <span class="fr"><i>2</i><i>3</i></span> ≈ 0.67</span><span class="w">"Negatif" diye işaretlediklerimin 3'te 1'i yanlış alarm.</span></li>
+        <li><span class="m">R = <span class="fr"><i>TP</i><i>TP + FN</i></span> = <span class="fr"><i>40</i><i>50</i></span> = 0.8</span><span class="w">Gerçek negatif yorumların %80'ini yakaladım.</span></li>
+        <li><span class="m">F1 = <span class="fr"><i>2·TP</i><i>2·TP + FP + FN</i></span> = <span class="fr"><i>80</i><i>110</i></span> = <span class="fr"><i>8</i><i>11</i></span> ≈ 0.73</span><span class="w">Sayım formu daha kolay: P ve R'yi kesirle uğraşmadan birleştirir. TN yok.</span></li>
+        <li><span class="m">Acc = <span class="fr"><i>40 + 130</i><i>200</i></span> = 0.85</span><span class="w">Bütün doğru kararlar / hepsi.</span></li>
+        <li class="r"><span class="m">Never flag: Acc = <span class="fr"><i>150</i><i>200</i></span> = 0.75, &nbsp;R = 0, &nbsp;F1 = 0</span><span class="w">Baseline: 50 negatif var, kalan 150'yi "doğru" bilir. Accuracy farkı küçük görünür ama baseline hiçbir şey bulmaz.</span></li>
+      </ol>
+      <div class="res">accuracy 0.85 vs 0.75 küçük bir fark gibi duruyor, ama model kötü yorumların %80'ini buluyor, baseline hiçbirini. Bu yüzden sınıf dengesizken <b>F1</b>'e bakılır.</div>
+
+      <h4>(c) Karar: LLM mi?</h4>
+      <div class="paper"><span class="tag">Kâğıda böyle yazarım</span>
+        <p><b>Verdict:</b> I would keep the Naive Bayes model (or try logistic regression with bigrams) and not switch to an LLM API.</p>
+        <p><b>Why:</b> 0.88 vs 0.85 is a small gain, and a demo is not a held-out test set, so the two numbers are not even comparable. Accuracy is also the wrong metric here: we care about F1 for the negative class. An LLM call for every review costs much more, is slower and sends customer data to an outside service, while NB is cheap, fast and its word likelihoods are easy to inspect.</p>
+        <p><b>Limit:</b> NB uses bag of words, so "not great" still counts "great" as positive evidence. I would add bigrams such as "not great", then compare both models on the same test set using negative-class F1.</p>
+      </div>
+      <p class="tip">Karar paragrafında <b>kendi hesabından bir sayı</b> kullan (0.85, 0.75, F1 0.73). "Hesapla, sonra yorumla" istediği şey bu.</p>
+    </details>
+
+    <!-- ================= Q2 ================= -->
+    <h2 id="q2">Soru 2 · Token classification (NER)</h2>
+    <div class="qbox">
+      <p>A news agency wants to extract PER, ORG and LOC names. One test sentence:</p>
+      <div data-fig="ner"></div>
+      <ol type="a">
+        <li>Compute token accuracy, and exact-match span precision, recall and F1.</li>
+        <li>Which number should the agency report, and why?</li>
+        <li>A second model (BERT + softmax head) sometimes outputs <b>O I-PER</b>. Explain why, and what you would change. Would you put an HMM or a CRF on top?</li>
+      </ol>
+    </div>
+
+    <details class="sol"><summary>Çözüm</summary>
+      <h4>(a) İki ölçü</h4>
+      <ol class="steps">
+        <li><span class="m">token acc = <span class="fr"><i>7</i><i>9</i></span> ≈ 0.78</span><span class="w">Token token karşılaştır: sadece "Cook" (I-PER → O) ve "Apple" (B-ORG → B-LOC) yanlış.</span></li>
+        <li><span class="m">gold spans: Ada Lovelace (PER), Tim Cook (PER), Apple (ORG), Cupertino (LOC) → 4</span><span class="w">BIO'yu isimlere çevir: B ile başlar, I ile devam eder.</span></li>
+        <li><span class="m">predicted: Ada Lovelace (PER) ✓, Tim (PER) ✗, Apple (LOC) ✗, Cupertino (LOC) ✓ → 4</span><span class="w">"Tim" = sınır yanlış. "Apple LOC" = tür yanlış. İkisi de tam eşleşme değil.</span></li>
+        <li><span class="m">TP = 2, &nbsp;FP = 4 − 2 = 2, &nbsp;FN = 4 − 2 = 2</span><span class="w">Yanlış bir span hem FP (fazla tahmin) hem FN (kaçırılan gold) olur.</span></li>
+        <li class="r"><span class="m">P = <span class="fr"><i>2</i><i>4</i></span>, &nbsp;R = <span class="fr"><i>2</i><i>4</i></span>, &nbsp;F1 = <span class="fr"><i>2·2</i><i>2·2 + 2 + 2</i></span> = 0.5</span><span class="w">Token'da %78, isim düzeyinde %50.</span></li>
+      </ol>
+      <div class="res">aynı tahmin token bazında 0.78, isim bazında 0.5. Fark O token'lardan geliyor: O'yu bilmek kolay, ama kullanıcı isim istiyor.</div>
+
+      <h4>(b) ve (c)</h4>
+      <div class="paper"><span class="tag">Kâğıda böyle yazarım</span>
+        <p><b>(b)</b> The agency should report <b>exact-match span F1</b> (0.5), not token accuracy (0.78). Users need whole names: "Tim" instead of "Tim Cook" is useless, but token accuracy still gives it credit for "Tim". Most tokens are O and easy to get right, so token accuracy looks good even for a weak tagger; in real news text, where about 90% of tokens are O, tagging everything O would score about 90%.</p>
+        <p><b>(c)</b> A softmax head takes the argmax <b>at each position independently</b>. It sees the whole sentence through BERT, but it never scores a label pair, so nothing stops O → I-PER. I would add a <b>linear-chain CRF</b> on top: BERT's outputs become the unary scores, the CRF adds <b>transition scores</b> between neighbouring labels, and Viterbi picks the best whole sequence. Training makes O → I-PER unlikely, but finite scores do not forbid it, so I would set that transition to <b>−∞</b>.</p>
+        <p>Not an HMM: its emission P(word | tag) only looks at the current word, so it cannot use BERT's features or overlapping clues such as capital letters. I would check the fix with span F1 on a held-out test set.</p>
+      </div>
+      <p class="tip">"Neden" sorusunda <b>mekanizmayı</b> söyle: "softmax her konumda ayrı karar veriyor". "Model kötü" demek puan getirmez.</p>
+    </details>
+
+    <!-- ================= Q3 ================= -->
+    <h2 id="q3">Soru 3 · HMM</h2>
+    <div class="qbox">
+      <p>A voice assistant must tag <b>"can fish"</b> with N (noun) or V (verb). The HMM has:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:0 26px">
+        <table class="t giv"><tr><th>start π</th><th></th></tr><tr><td>N</td><td>0.4</td></tr><tr><td>V</td><td>0.6</td></tr></table>
+        <table class="t giv"><tr><th>a(prev → next)</th><th>N</th><th>V</th></tr><tr><td>N</td><td>0.4</td><td>0.6</td></tr><tr><td>V</td><td>0.8</td><td>0.2</td></tr></table>
+        <table class="t giv"><tr><th>b(word | tag)</th><th>can</th><th>fish</th></tr><tr><td>N</td><td>0.2</td><td>0.5</td></tr><tr><td>V</td><td>0.6</td><td>0.25</td></tr></table>
+      </div>
+      <ol type="a">
+        <li>Compute the joint probability of all four tag paths and P(can fish).</li>
+        <li>Which path does Viterbi return? Give its posterior probability.</li>
+        <li>A colleague says "0.144 means the model is 14% sure of VN". Correct them. What would happen if "fish" had never been seen as a V in training?</li>
+      </ol>
+    </div>
+
+    <details class="sol"><summary>Çözüm</summary>
+      <h4>(a) Dört yol</h4>
+      <ol class="steps">
+        <li><span class="m">P(words, t₁t₂) = π(t₁) × b(t₁, can) × a(t₁ → t₂) × b(t₂, fish)</span><span class="w">Formülü bir kere yaz. Sıra: başla → kelimeyi üret → geç → kelimeyi üret.</span></li>
+        <li><span class="m">NN = 0.4 × 0.2 × 0.4 × 0.5 = 0.016</span><span class="w">Soldan sağa çarp: 0.08 → 0.032 → 0.016. Küçük adımlar, hesap makinesi gerekmez.</span></li>
+        <li><span class="m">NV = 0.4 × 0.2 × 0.6 × 0.25 = 0.012</span><span class="w">0.08 → 0.048 → 0.012.</span></li>
+        <li><span class="m">VN = 0.6 × 0.6 × 0.8 × 0.5 = 0.144</span><span class="w">0.36 → 0.288 → 0.144.</span></li>
+        <li><span class="m">VV = 0.6 × 0.6 × 0.2 × 0.25 = 0.018</span><span class="w">0.36 → 0.072 → 0.018.</span></li>
+        <li class="r"><span class="m">P(can fish) = 0.016 + 0.012 + 0.144 + 0.018 = 0.19</span><span class="w">Bütün yolların toplamı (forward da bunu verir).</span></li>
+      </ol>
+      <div data-fig="paths"></div>
+
+      <h4>(b) Viterbi ve posterior</h4>
+      <table class="t giv">
+        <tr><th></th><th>can</th><th>fish</th></tr>
+        <tr><td>N</td><td>0.4 × 0.2 = 0.08</td><td>max(0.08 × 0.4, <b>0.36 × 0.8</b>) × 0.5 = <b>0.144</b> ← V</td></tr>
+        <tr><td>V</td><td>0.6 × 0.6 = 0.36</td><td>max(0.08 × 0.6, <b>0.36 × 0.2</b>) × 0.25 = 0.018 ← V</td></tr>
+      </table>
+      <ol class="steps">
+        <li><span class="m">son sütunun en büyüğü: 0.144 (N), geri ok → V</span><span class="w">Viterbi her etiket için en iyi kısmi yolu tutar, sonra geriye takip eder.</span></li>
+        <li class="r"><span class="m">best = VN, &nbsp;posterior = <span class="fr"><i>0.144</i><i>0.19</i></span> = <span class="fr"><i>144</i><i>190</i></span> ≈ 0.76</span><span class="w">Pay: o yol. Payda: bütün yollar. 190 × 0.75 = 142.5, biraz fazlası → ≈ 0.76.</span></li>
+      </ol>
+      <div class="res">model "can fish" için VN okumasına %76 inanıyor: "can" fiil (konserve yapmak), "fish" isim → "balığı konserve yap".</div>
+
+      <h4>(c)</h4>
+      <div class="paper"><span class="tag">Kâğıda böyle yazarım</span>
+        <p>0.144 is the <b>joint</b> probability P(can fish, VN): the chance of generating these words <i>and</i> these tags together. It is small because every specific sentence is unlikely. The model's belief in VN for this sentence is the <b>posterior</b> 0.144 / 0.19 ≈ 0.76.</p>
+        <p>If "fish" was never seen as V, the unsmoothed estimate is b(fish | V) = 0, so every path ending in V (NV and VV) gets probability 0, even when the sentence really is "… they fish". A zero count is not proof that something is impossible, so we use <b>add-one smoothing</b> (and an <b>UNK</b> symbol for unseen words).</p>
+      </div>
+      <p class="tip">Joint ile posterior'ı karıştırma; bu hem şıkta hem yazılıda gelir.</p>
+    </details>
+
+    <div class="callout" style="margin-top:36px"><b>Daha fazla:</b> <a href="drill.html">Hesap pratiği</a> (aynı hesaplar, yeni sayılar) · <a href="mock.html">Deneme vize</a> · <a href="ozet.html">Vize özeti</a></div>
+  </main>
+  <script>document.body.dataset.course = 'coe025';</script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/figs.js"></script>
+  <script>
+    (function () {
+      const FIGS = {
+        ner: { type: 'boxes', t: 'Gold vs model', head: ['', 'Ada', 'Lovelace', 'met', 'Tim', 'Cook', 'at', 'Apple', 'in', 'Cupertino'], rows: [
+          { label: 'Gold', cells: [['B-PER', 'c3'], ['I-PER', 'c3'], ['O', 'mute'], ['B-PER', 'c3'], ['I-PER', 'c3'], ['O', 'mute'], ['B-ORG', 'c2'], ['O', 'mute'], ['B-LOC', 'c1']] },
+          { label: 'Model', cells: [['B-PER', 'c3'], ['I-PER', 'c3'], ['O', 'mute'], ['B-PER', 'c3'], ['O', 'bad'], ['O', 'mute'], ['B-LOC', 'bad'], ['O', 'mute'], ['B-LOC', 'c1']] },
+        ] },
+        paths: { type: 'bars', t: 'Dört yol (joint)', items: [['N N', 0.016, 'mute', '0.016'], ['N V', 0.012, 'mute', '0.012'], ['<b>V N</b>', 0.144, 'c1', '0.144 ← en büyük'], ['V V', 0.018, 'mute', '0.018']], cap: 'Toplam 0.19. VN\'nin payı 0.144 / 0.19 ≈ 0.76.' },
+      };
+      document.querySelectorAll('[data-fig]').forEach((n) => {
+        const f = FIGS[n.dataset.fig];
+        if (f && CS.figure) n.replaceWith(CS.figure(f));
+      });
+    })();
+  </script>
+</body>
+</html>
