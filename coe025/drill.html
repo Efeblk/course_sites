@@ -18,6 +18,20 @@
     .dr.open .sol { display: block; }
     .dr table.t { margin: 6px 0; }
     .dr code, .dr .m { font-family: var(--mono); }
+    /* formula box: generic formula, then the same formula with this question's numbers */
+    .fm { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 6px 14px 8px; margin: 10px 0; }
+    .fm .fh, .fm .fl { display: grid; grid-template-columns: minmax(84px, auto) minmax(0, 1fr) minmax(0, 1.2fr); gap: 2px 18px; align-items: center; }
+    .fm .fh { font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding-bottom: 2px; }
+    .fm .fl { padding: 6px 0; border-top: 1px dotted var(--line-2); font-family: var(--serif); font-size: 1.06rem; line-height: 2.1; }
+    .fm .fl > span { overflow-x: auto; }
+    .fm .k { font-family: var(--sans); font-size: .85rem; font-weight: 600; }
+    .fm .x { color: var(--accent); font-weight: 700; }
+    .fm .qm { color: var(--bad); }
+    .fm .lg { font-size: .86rem; color: var(--muted); padding-top: 6px; border-top: 1px dotted var(--line-2); }
+    .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 .15em; line-height: 1.3; }
+    .fr > i { font-style: normal; padding: 0 .3em; white-space: nowrap; }
+    .fr > i:first-child { border-bottom: 1.5px solid currentColor; }
+    @media (max-width: 640px) { .fm .fh { display: none; } .fm .fl { grid-template-columns: 1fr; gap: 0; } }
     #filters button.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
   </style>
 </head>
@@ -26,7 +40,7 @@
     <div class="mono small muted">COE025 — midterm prep</div>
     <h1 style="font-size:2.6rem;margin-top:4px">Hesap pratiği: bir sayıyı değiştir, tekrar çöz</h1>
     <p class="lead">The lecturer's advice: redo every worked example in the study slides by hand, then change one number and solve it again. Each card below is one worked example from the slides. <b>New numbers</b> changes the inputs; the numbers stay easy because the exam has no calculator.</p>
-    <div class="callout small">Kâğıt kalemle çöz, cevabı kutuya yaz, <b>Check</b>'e bas. Kesir (<code>3/4</code>), ondalık (<code>0.75</code> veya <code>0,75</code>) ve <code>ln 2</code> yazabilirsin; ±0.01 tolerans var. Sonra <b>Solution</b> ile adımları kendi adımlarınla karşılaştır. Akılda tut: ln 2 ≈ 0.693, ln 3 ≈ 1.099, ln 4 ≈ 1.386, e ≈ 2.718.</div>
+    <div class="callout small">Her kartta bir <b>formül kutusu</b> var: solda formül, sağda aynı formül <b>bu sorunun sayıları yerine konmuş</b> hâlde (mavi sayılar sorudan geliyor, kırmızı <b>?</b> senin bulacağın). Kâğıt kalemle çöz, cevabı kutuya yaz, <b>Check</b>'e bas. Kesir (<code>3/4</code>), ondalık (<code>0.75</code> veya <code>0,75</code>) ve <code>ln 2</code> yazabilirsin; ±0.01 tolerans var. Sonra <b>Solution</b> ile adımları kendi adımlarınla karşılaştır. Akılda tut: ln 2 ≈ 0.693, ln 3 ≈ 1.099, ln 4 ≈ 1.386, e ≈ 2.718.</div>
     <div class="row" id="filters"></div>
     <div id="cards"></div>
   </main>
@@ -40,6 +54,9 @@
     const LN = { 1: '0', 2: 'ln 2', 3: 'ln 3', 4: 'ln 4', 8: 'ln 8' };
     const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
     const frac = (a, b) => { const g = gcd(a, b) || 1; return b / g === 1 ? String(a / g) : `${a / g}/${b / g}`; };
+    const D = (a, b) => `<span class="fr"><i>${a}</i><i>${b}</i></span>`; // real fraction
+    const X = (v) => `<span class="x">${v}</span>`; // a number taken from the question
+    const ex = (k) => (k === 1 ? 'e<sup>0</sup>' : `e<sup>ln ${k}</sup>`);
     function parse(s) {
       s = String(s).trim().replace(/,/g, '.').replace('−', '-');
       if (!s) return NaN;
@@ -55,13 +72,17 @@
       { w: 1, t: 'TF-IDF weight (slides 4–5, 31)', f() {
         const N = pick([4, 8]), df = pick(N === 4 ? [1, 2, 4] : [1, 2, 4, 8]), c = ri(1, 3), r = N / df;
         const idf = Math.log(r);
-        return { q: `A corpus has <b>N = ${N}</b> documents. The word "good" appears in <b>${df}</b> of them. In document d it occurs <b>${c}</b> time(s). Use weight = count × ln(N / df), no smoothing.`,
+        return { fm: [['idf', `idf = ln ${D('N', 'df')}`, `ln ${D(X(N), X(df))}`], ['weight', 'weight = count × idf', `${X(c)} × idf`]],
+          lg: 'N = toplam doküman · df = kelimenin geçtiği doküman sayısı · count = d içinde kaç kere',
+          q: `A corpus has <b>N = ${N}</b> documents. The word "good" appears in <b>${df}</b> of them. In document d it occurs <b>${c}</b> time(s). Use weight = count × ln(N / df), no smoothing.`,
           a: [['idf(good)', idf], ['weight(good, d)', c * idf]],
           s: `idf = ln(${N}/${df}) = ${LN[r]} ≈ ${r3(idf)}. weight = ${c} × ${r3(idf)} = <b>${r3(c * idf)}</b>. df counts <i>documents</i>, not occurrences: repeating "good" inside d changes the count, not df.${r === 1 ? ' A word in every document gets weight 0.' : ''}` };
       } },
       { w: 3, t: 'Naive Bayes: add-one likelihood (slide 10)', f() {
         const V = 3, tok = pick([5, 7, 9]), c = ri(0, Math.min(4, tok)), den = tok + V;
-        return { q: `Class + has <b>${tok}</b> tokens in total; |V| = 3. The word "good" occurs <b>${c}</b> times in class +. Compute P(good | +) with add-one smoothing (α = 1).`,
+        return { fm: [['P(good | +)', `P(w | c) = ${D('count(w, c) + α', 'tokens(c) + α·|V|')}`, D(`${X(c)} + 1`, `${X(tok)} + 1·${X(V)}`)]],
+          lg: 'count = kelimenin bu sınıftaki sayısı · tokens(c) = sınıftaki bütün tokenlar · |V| = sözlük boyu · α = 1',
+          q: `Class + has <b>${tok}</b> tokens in total; |V| = 3. The word "good" occurs <b>${c}</b> times in class +. Compute P(good | +) with add-one smoothing (α = 1).`,
           a: [['P(good | +)', (c + 1) / den]],
           s: `P(t|c) = (count + α) / (tokens(c) + α|V|) = (${c} + 1) / (${tok} + 3) = ${c + 1}/${den} = <b>${r3((c + 1) / den)}</b>.${c === 0 ? ' Without smoothing this would be 0 and wipe out the whole product.' : ''}` };
       } },
@@ -69,20 +90,26 @@
         const pg = pick([[1, 2, 1, 8], [1, 2, 1, 4], [1, 4, 1, 8], [3, 4, 1, 4]]); // P(good|+), P(good|−) as fractions
         const gp = pg[0] / pg[1], gn = pg[2] / pg[3], mv = pick([0.25, 0.5]);
         const sp = 0.5 * gp * mv, sn = 0.5 * gn * mv, post = sp / (sp + sn);
-        return { q: `Priors P(+) = P(−) = 0.5. P(good|+) = ${pg[0]}/${pg[1]}, P(good|−) = ${pg[2]}/${pg[3]}, P(movie|+) = P(movie|−) = ${mv}. Review: "good movie". Compute the unnormalized scores and P(+ | review).`,
+        return { fm: [['s(+)', 's(c) = P(c) × P(good | c) × P(movie | c)', `${X(0.5)} × ${X(pg[0] + '/' + pg[1])} × ${X(mv)}`], ['s(−)', '', `${X(0.5)} × ${X(pg[2] + '/' + pg[3])} × ${X(mv)}`], ['P(+ | review)', `P(+ | d) = ${D('s(+)', 's(+) + s(−)')}`, D('s(+)', 's(+) + s(−)')]],
+          lg: 'P(c) = prior · P(w | c) = likelihood · sonuç kelimelerin çarpımı',
+          q: `Priors P(+) = P(−) = 0.5. P(good|+) = ${pg[0]}/${pg[1]}, P(good|−) = ${pg[2]}/${pg[3]}, P(movie|+) = P(movie|−) = ${mv}. Review: "good movie". Compute the unnormalized scores and P(+ | review).`,
           a: [['s(+)', sp], ['s(−)', sn], ['P(+ | review)', post]],
           s: `s(+) = 0.5 × ${r3(gp)} × ${mv} = ${r3(sp)}. s(−) = 0.5 × ${r3(gn)} × ${mv} = ${r3(sn)}. P(+|d) = ${r3(sp)} / (${r3(sp)} + ${r3(sn)}) = <b>${r3(post)}</b>. The movie factor is the same for both classes, so it cannot change the winner. In logs: score = ln P(c) + Σ n ln P(t|c); the larger (less negative) score wins. The posterior is a model probability, not an accuracy.` };
       } },
       { w: 3, t: 'Logistic regression: score, decision, gradient (slides 14, 17–18, 33)', f() {
         const g = ri(0, 3), b = ri(0, 2), wg = pick([0.5, 1, 2]), wb = pick([-1, -2]), bias = pick([-1, -0.5, 0, 0.5]);
         const z = wg * g + wb * b + bias, y = pick([0, 1]), p = pick([0.2, 0.25, 0.75, 0.8]);
-        return { q: `x = [good, bad] = [${g}, ${b}], w = [${wg}, ${wb}], b = ${bias}. (1) Compute z and the predicted label at threshold 0.5 (σ(z) ≥ 0.5 exactly when z ≥ 0). (2) Another example has p = ${p}, label y = ${y} and feature value x = ${g || 1}: compute the weight gradient (p − y)x and the bias gradient.`,
+        return { fm: [['z', 'z = w₁·x₁ + w₂·x₂ + b', `${X(wg)}·${X(g)} + (${X(wb)})·${X(b)} + (${X(bias)})`], ['label', 'z ≥ 0 → 1 (pos) · z &lt; 0 → 0 (neg)', 'z ≥ 0 mı?'], ['weight grad.', '(p − y) · x', `(${X(p)} − ${X(y)}) · ${X(g || 1)}`], ['bias grad.', 'p − y', `${X(p)} − ${X(y)}`]],
+          lg: 'w = ağırlıklar · x = özellik değerleri · b = bias · p = modelin olasılığı · y = gerçek etiket',
+          q: `x = [good, bad] = [${g}, ${b}], w = [${wg}, ${wb}], b = ${bias}. (1) Compute z and the predicted label at threshold 0.5 (σ(z) ≥ 0.5 exactly when z ≥ 0). (2) Another example has p = ${p}, label y = ${y} and feature value x = ${g || 1}: compute the weight gradient (p − y)x and the bias gradient.`,
           a: [['z', z], ['label (1 = pos, 0 = neg)', z >= 0 ? 1 : 0], ['(p − y)x', (p - y) * (g || 1)], ['bias gradient', p - y]],
           s: `z = ${wg}×${g} + (${wb})×${b} + (${bias}) = <b>${r3(z)}</b> → ${z >= 0 ? 'z ≥ 0, p ≥ 0.5, positive (1)' : 'z < 0, p < 0.5, negative (0)'}. Gradient = (${p} − ${y}) × ${g || 1} = <b>${r3((p - y) * (g || 1))}</b>; bias gradient = p − y = <b>${r3(p - y)}</b>. Update: w ← w − η·gradient. With x = 0 the weight gradient is 0 but the bias still learns.` };
       } },
       { w: 3, t: 'SVM: margin and hinge loss (slides 21–22, 34)', f() {
         const g = ri(0, 3), b = ri(0, 3), y = pick([1, -1]), f = g - b, m = y * f, L = Math.max(0, 1 - m);
-        return { q: `f(x) = good − bad, x = [${g}, ${b}], label y = ${y > 0 ? '+1' : '−1'}. Compute f, the signed margin m = y·f(x) and the hinge loss max(0, 1 − m).`,
+        return { fm: [['f(x)', 'f = good − bad', `${X(g)} − ${X(b)}`], ['m', 'm = y · f(x)', `(${X(y)}) · f`], ['loss', 'loss = max(0, 1 − m)', 'max(0, 1 − m)']],
+          lg: 'y = +1 veya −1 · m ≥ 1 → loss 0 · m &lt; 0 → yanlış taraf',
+          q: `f(x) = good − bad, x = [${g}, ${b}], label y = ${y > 0 ? '+1' : '−1'}. Compute f, the signed margin m = y·f(x) and the hinge loss max(0, 1 − m).`,
           a: [['f(x)', f], ['m', m], ['loss', L]],
           s: `f = ${g} − ${b} = ${f}; m = (${y}) × (${f}) = ${m}; loss = max(0, 1 − ${m}) = <b>${L}</b>. ${m >= 1 ? 'Correct side with enough margin: loss 0.' : m > 0 ? 'Correct sign but inside the margin: positive loss.' : 'Wrong side (or on the boundary): loss ≥ 1.'} The SVM score is not a probability.` };
       } },
@@ -90,54 +117,70 @@
         const e = pick([[1, 2, 1], [1, 1, 2], [2, 1, 1], [1, 3, 1], [1, 1, 1], [1, 2, 2]]); // exp(s): s = ln e
         const sc = e, S = e.reduce((a, b) => a + b, 0), a = e.map((x) => x / S);
         const V = [[2, 0], [0, 4], [2, 2]], z = [0, 1].map((r) => a.reduce((s, w, j) => s + w * V[j][r], 0));
-        return { q: `Attention scores for one query: s = [${sc.map((x) => (x === 1 ? '0' : `ln ${x}`)).join(', ')}]. Values V₁ = [2, 0], V₂ = [0, 4], V₃ = [2, 2]. Compute the three softmax weights and the output z = Σ aⱼVⱼ.`,
+        return { fm: [['aⱼ', `aⱼ = ${D('e<sup>sⱼ</sup>', 'e<sup>s₁</sup> + e<sup>s₂</sup> + e<sup>s₃</sup>')}`, `a₁ = ${D(X(ex(e[0])), e.map((x) => X(ex(x))).join(' + '))}`], ['z', 'z = a₁·V₁ + a₂·V₂ + a₃·V₃', `a₁·${X('[2, 0]')} + a₂·${X('[0, 4]')} + a₃·${X('[2, 2]')}`]],
+          lg: 'e<sup>ln k</sup> = k · e<sup>0</sup> = 1 · ağırlıkların toplamı 1',
+          q: `Attention scores for one query: s = [${sc.map((x) => (x === 1 ? '0' : `ln ${x}`)).join(', ')}]. Values V₁ = [2, 0], V₂ = [0, 4], V₃ = [2, 2]. Compute the three softmax weights and the output z = Σ aⱼVⱼ.`,
           a: [['a₁', a[0]], ['a₂', a[1]], ['a₃', a[2]], ['z first coord', z[0]], ['z second coord', z[1]]],
           s: `exp(s) = [${e.join(', ')}], sum ${S}, so a = [${e.map((x) => frac(x, S)).join(', ')}]. z = ${a.map((w, j) => `${frac(e[j], S)}×[${V[j]}]`).join(' + ')} = <b>[${z.map(r3).join(', ')}]</b>. Each row of weights sums to 1; the output mixes value vectors.` };
       } },
       { w: 3, t: 'Attention with a padding mask (slide 84)', f() {
         const s2 = pick([2, 3, 4]), pad = pick([0, 2]);
         const e = [1, s2, 1]; e[pad] = 0; const S = e.reduce((a, b) => a + b, 0);
-        return { q: `Scores s = [0, ln ${s2}, 0]. Position ${pad + 1} is padding, so the mask adds −∞ there. Compute the three weights.`,
+        return { fm: [['aⱼ', `aⱼ = ${D('e<sup>sⱼ + Mⱼ</sup>', 'Σ e<sup>sₖ + Mₖ</sup>')}`, `exp: [${[1, s2, 1].map((x, j) => X(j === pad ? 'e<sup>−∞</sup>' : ex(x))).join(', ')}]`]],
+          lg: 'M = 0 gerçek token, −∞ PAD · e<sup>−∞</sup> = 0 · e<sup>ln k</sup> = k · e<sup>0</sup> = 1',
+          q: `Scores s = [0, ln ${s2}, 0]. Position ${pad + 1} is padding, so the mask adds −∞ there. Compute the three weights.`,
           a: [['a₁', e[0] / S], ['a₂', e[1] / S], ['a₃', e[2] / S]],
           s: `exp(s + M) = [${e.join(', ')}] because exp(−∞) = 0. Sum ${S}, weights <b>[${e.map((x) => frac(x, S)).join(', ')}]</b>. The mask changes the denominator; the valid weights still sum to 1.` };
       } },
       { w: 3, t: 'CNN filter response and window count (slides 51–52)', f() {
         const W = [[pick([1, -1]), pick([1, -1])], [pick([1, -1]), 1]], x1 = [ri(0, 1), ri(0, 1)], x2 = [ri(0, 1), ri(0, 1)];
         const v = W[0][0] * x1[0] + W[0][1] * x1[1] + W[1][0] * x2[0] + W[1][1] * x2[1], L = pick([5, 6, 7, 8]), k = pick([2, 3]);
-        return { q: `Filter W = [[${W[0]}], [${W[1]}]] (width 2, two features), bias 0. Window tokens x₁ = [${x1}], x₂ = [${x2}]. Compute the ReLU output. Then: L = ${L} tokens, width k = ${k}, stride 1, no padding: how many windows?`,
+        return { fm: [['ReLU output', 'max(0, Σ W ⊙ x)', `max(0, ${X(W[0][0])}·${X(x1[0])} + ${X(W[0][1])}·${X(x1[1])} + ${X(W[1][0])}·${X(x2[0])} + ${X(W[1][1])}·${X(x2[1])})`], ['windows', 'L − k + 1', `${X(L)} − ${X(k)} + 1`]],
+          lg: 'W\'nin 1. satırı x₁ ile, 2. satırı x₂ ile çarpılır · L = token sayısı · k = pencere genişliği',
+          q: `Filter W = [[${W[0]}], [${W[1]}]] (width 2, two features), bias 0. Window tokens x₁ = [${x1}], x₂ = [${x2}]. Compute the ReLU output. Then: L = ${L} tokens, width k = ${k}, stride 1, no padding: how many windows?`,
           a: [['ReLU output', Math.max(0, v)], ['windows', L - k + 1]],
           s: `Sum of elementwise products: ${W[0][0]}×${x1[0]} + ${W[0][1]}×${x1[1]} + ${W[1][0]}×${x2[0]} + ${W[1][1]}×${x2[1]} = ${v}; ReLU(${v}) = <b>${Math.max(0, v)}</b>. Windows = L − k + 1 = ${L} − ${k} + 1 = <b>${L - k + 1}</b>. Max pooling then keeps only the largest response and drops the position.` };
       } },
       { w: 3, t: 'LSTM cell update (slides 65–66)', f() {
         const co = pick([0.5, 0.4, 1]), f = pick([0.5, 0.8, 1]), i = pick([0.25, 0.5]), g = pick([-0.4, 0.4, -0.2, 0.6]);
         const c = f * co + i * g;
-        return { q: `c_old = ${co}, forget gate f = ${f}, input gate i = ${i}, candidate g = ${g}. Compute the new cell c. (h = o × tanh(c) needs tanh, so the exam would give it.)`,
+        return { fm: [['f·c_old', 'f × c<sub>old</sub>', `${X(f)} × ${X(co)}`], ['i·g', 'i × g', `${X(i)} × (${X(g)})`], ['new c', 'c = f × c<sub>old</sub> + i × g', 'tutulan + yazılan']],
+          lg: 'f = forget gate (ne kadar tut) · i = input gate (ne kadar yaz) · g = yeni aday bilgi',
+          q: `c_old = ${co}, forget gate f = ${f}, input gate i = ${i}, candidate g = ${g}. Compute the new cell c. (h = o × tanh(c) needs tanh, so the exam would give it.)`,
           a: [['retained f·c_old', f * co], ['written i·g', i * g], ['new c', c]],
           s: `c = f×c_old + i×g = ${f}×${co} + ${i}×(${g}) = ${r3(f * co)} + (${r3(i * g)}) = <b>${r3(c)}</b>. h = o × tanh(c): apply tanh first, never o × c directly. A gate near 1 keeps the signal: 0.8²⁰ ≈ 0.0115 but 0.99²⁰ ≈ 0.82.` };
       } },
       { w: 3, t: 'Residual + layer normalization (slide 89)', f() {
         const m = ri(1, 3), d = pick([0.5, 1, 2]), s = pick([[m - d, m + d], [m + d, m - d]]); // σ = d keeps the square root easy
         const mu = (s[0] + s[1]) / 2, v = ((s[0] - mu) ** 2 + (s[1] - mu) ** 2) / 2, n = s.map((q) => (q - mu) / Math.sqrt(v));
-        return { q: `Residual sum for one token (γ = 1, β = 0, ignore ε): x + attention(x) = [${s}]. Compute the mean, the variance and the normalized vector.`,
+        return { fm: [['μ', `μ = ${D('x₁ + x₂', '2')}`, D(`${X(s[0])} + ${X(s[1])}`, '2')], ['σ²', `σ² = ${D('(x₁ − μ)² + (x₂ − μ)²', '2')}`, D(`(${X(s[0])} − μ)² + (${X(s[1])} − μ)²`, '2')], ['normalized', `x̂ = ${D('x − μ', '√σ²')}`, `[${D(X(s[0]) + ' − μ', '√σ²')}, ${D(X(s[1]) + ' − μ', '√σ²')}]`]],
+          lg: 'önce ortalama, sonra varyans, sonra her sayıdan μ çıkar ve σ\'ya böl',
+          q: `Residual sum for one token (γ = 1, β = 0, ignore ε): x + attention(x) = [${s}]. Compute the mean, the variance and the normalized vector.`,
           a: [['mean μ', mu], ['variance σ²', v], ['first coord', n[0]], ['second coord', n[1]]],
           s: `μ = (${s[0]} + ${s[1]})/2 = ${r3(mu)}. σ² = ((${s[0]} − ${r3(mu)})² + (${s[1]} − ${r3(mu)})²)/2 = ${r3(v)}. Normalized = (s − μ)/√σ² = <b>[${n.map(r3).join(', ')}]</b>. With two features the answer is always [−1, 1] or [1, −1]. Layer norm works within one token, not across the batch.` };
       } },
       { w: 3, t: 'Precision, recall, F1, macro-F1, accuracy (slides 100–106)', f() {
         const TP = pick([6, 8, 10, 30]), FP = pick([2, 4, 5]), FN = pick([2, 4, 10]), TN = pick([10, 20, 55]);
         const P = TP / (TP + FP), R = TP / (TP + FN), F = (2 * TP) / (2 * TP + FP + FN), Fn = (2 * TN) / (2 * TN + FN + FP);
-        return { q: `Confusion matrix (positive = target): TP = ${TP}, FP = ${FP}, FN = ${FN}, TN = ${TN}. Compute precision, recall, F1 (positive), F1 (negative class), macro-F1 and accuracy.`,
+        return { fm: [['precision', `P = ${D('TP', 'TP + FP')}`, D(X(TP), `${X(TP)} + ${X(FP)}`)], ['recall', `R = ${D('TP', 'TP + FN')}`, D(X(TP), `${X(TP)} + ${X(FN)}`)], ['F1 pos', `F1 = ${D('2·TP', '2·TP + FP + FN')}`, D(`2·${X(TP)}`, `2·${X(TP)} + ${X(FP)} + ${X(FN)}`)], ['F1 neg', `F1<sub>neg</sub> = ${D('2·TN', '2·TN + FN + FP')}`, D(`2·${X(TN)}`, `2·${X(TN)} + ${X(FN)} + ${X(FP)}`)], ['macro-F1', D('F1<sub>pos</sub> + F1<sub>neg</sub>', '2'), D('F1<sub>pos</sub> + F1<sub>neg</sub>', '2')], ['accuracy', D('TP + TN', 'hepsi'), D(`${X(TP)} + ${X(TN)}`, `${X(TP)} + ${X(FP)} + ${X(FN)} + ${X(TN)}`)]],
+          lg: 'TP = doğru pozitif · FP = yanlış alarm · FN = kaçırılan · TN = doğru negatif · negatif sınıf için FP ve FN yer değiştirir',
+          q: `Confusion matrix (positive = target): TP = ${TP}, FP = ${FP}, FN = ${FN}, TN = ${TN}. Compute precision, recall, F1 (positive), F1 (negative class), macro-F1 and accuracy.`,
           a: [['precision', P], ['recall', R], ['F1 positive', F], ['F1 negative', Fn], ['macro-F1', (F + Fn) / 2], ['accuracy', (TP + TN) / (TP + FP + FN + TN)]],
           s: `P = ${TP}/(${TP}+${FP}) = ${frac(TP, TP + FP)}; R = ${TP}/(${TP}+${FN}) = ${frac(TP, TP + FN)}; F1 = 2TP/(2TP+FP+FN) = ${2 * TP}/${2 * TP + FP + FN} ≈ <b>${r3(F)}</b>. For the negative class FP and FN swap roles: F1 = ${2 * TN}/${2 * TN + FN + FP} ≈ ${r3(Fn)}. Macro-F1 = mean of the class F1s ≈ ${r3((F + Fn) / 2)}. Accuracy = ${TP + TN}/${TP + FP + FN + TN} ≈ ${r3((TP + TN) / (TP + FP + FN + TN))}. F1 is a harmonic mean, not (P+R)/2.` };
       } },
       { w: 6, t: 'NER exact-span F1 (slides 17–18, 20–21)', f() {
         const g = ri(2, 5), p = ri(1, 5), m = ri(0, Math.min(g, p));
-        return { q: `Gold has <b>${g}</b> entity spans, the model predicts <b>${p}</b> spans, and <b>${m}</b> of them match exactly (same boundaries and type). Compute TP, FP, FN, precision, recall and F1.`,
+        return { fm: [['TP', 'TP = tam eşleşen', X(m)], ['FP', 'FP = tahmin − TP', `${X(p)} − ${X(m)}`], ['FN', 'FN = gold − TP', `${X(g)} − ${X(m)}`], ['precision', `P = ${D('TP', 'tahmin sayısı')}`, D(X(m), X(p))], ['recall', `R = ${D('TP', 'gold sayısı')}`, D(X(m), X(g))], ['F1', `F1 = ${D('2·TP', '2·TP + FP + FN')}`, D(`2·${X(m)}`, '2·TP + FP + FN')]],
+          lg: 'gold = doğru cevaptaki isimler · tahmin = modelin bulduğu isimler',
+          q: `Gold has <b>${g}</b> entity spans, the model predicts <b>${p}</b> spans, and <b>${m}</b> of them match exactly (same boundaries and type). Compute TP, FP, FN, precision, recall and F1.`,
           a: [['TP', m], ['FP', p - m], ['FN', g - m], ['precision', m / p], ['recall', m / g], ['F1', (2 * m) / (2 * m + (p - m) + (g - m))]],
           s: `TP = ${m}, FP = ${p} − ${m} = ${p - m}, FN = ${g} − ${m} = ${g - m}. P = ${frac(m, p)}, R = ${frac(m, g)}, F1 = 2TP/(2TP+FP+FN) = ${2 * m}/${2 * m + p - m + g - m} = <b>${r3((2 * m) / (p + g))}</b>. A partial span ("York" for "New York") or a wrong type counts as one FP <i>and</i> one FN.` };
       } },
       { w: 6, t: 'BIO label count and subword labels (slides 10, 16)', f() {
         const n = ri(2, 6);
-        return { q: `A NER scheme has <b>${n}</b> entity types. How many labels do IO, BIO and BIOES need? And how many positions get a real (non −100) training label for "[CLS] Ada Wash ##ington [SEP]" with the first-subword policy?`,
+        return { fm: [['IO', 'n + 1', `${X(n)} + 1`], ['BIO', '2n + 1', `2·${X(n)} + 1`], ['BIOES', '4n + 1', `4·${X(n)} + 1`], ['trained', 'her kelimenin <b>ilk</b> parçası', '[CLS] Ada Wash ##ington [SEP]: kaç konum etiketli?']],
+          lg: 'n = isim türü sayısı · +1 = O etiketi',
+          q: `A NER scheme has <b>${n}</b> entity types. How many labels do IO, BIO and BIOES need? And how many positions get a real (non −100) training label for "[CLS] Ada Wash ##ington [SEP]" with the first-subword policy?`,
           a: [['IO', n + 1], ['BIO', 2 * n + 1], ['BIOES', 4 * n + 1], ['trained positions', 2]],
           s: `IO = n + 1 = ${n + 1}; BIO = 2n + 1 = ${2 * n + 1}; BIOES = 4n + 1 = ${4 * n + 1}. Subwords: Ada → B-PER, Wash → B-PER, ##ington, [CLS], [SEP] → −100, so <b>2</b> positions are trained. −100 means "ignore in the loss"; O would be a real label.` };
       } },
@@ -147,13 +190,17 @@
         const T = ['N', 'V'], paths = [];
         for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) paths.push({ p: T[i] + T[j], w: pi[i] * b1[i] * a[i][j] * b2[j], f: `${pi[i]} × ${b1[i]} × ${a[i][j]} × ${b2[j]}` });
         const Z = paths.reduce((s, x) => s + x.w, 0), best = paths.reduce((x, y) => (y.w > x.w ? y : x));
-        return { q: `Two tags N, V; words "can fish". Start π(N) = ${pi[0]}, π(V) = ${pi[1]}. Transitions: N→N ${a[0][0]}, N→V ${a[0][1]}, V→N ${a[1][0]}, V→V ${a[1][1]}. Emissions: P(can|N) = ${b1[0]}, P(can|V) = ${b1[1]}, P(fish|N) = ${b2[0]}, P(fish|V) = ${b2[1]}. Compute the joint weight of path VN, P(can, fish), and the posterior of the best path.`,
+        return { fm: [['P(words, VN)', 'π(t₁) × b(t₁, can) × a(t₁→t₂) × b(t₂, fish)', `π(V) × P(can|V) × a(V→N) × P(fish|N) = ${X(pi[1])} × ${X(b1[1])} × ${X(a[1][0])} × ${X(b2[0])}`], ['P(can, fish)', 'NN + NV + VN + VV', '4 yolun toplamı'], ['posterior', D('en büyük yol', 'P(can, fish)'), D('max', 'toplam')]],
+          lg: 'π = başlangıç · b = emission P(kelime | etiket) · a = transition P(sonraki | önceki)',
+          q: `Two tags N, V; words "can fish". Start π(N) = ${pi[0]}, π(V) = ${pi[1]}. Transitions: N→N ${a[0][0]}, N→V ${a[0][1]}, V→N ${a[1][0]}, V→V ${a[1][1]}. Emissions: P(can|N) = ${b1[0]}, P(can|V) = ${b1[1]}, P(fish|N) = ${b2[0]}, P(fish|V) = ${b2[1]}. Compute the joint weight of path VN, P(can, fish), and the posterior of the best path.`,
           a: [['P(words, VN)', paths[2].w], ['P(can, fish)', Z], ['posterior of best', best.w / Z]],
           s: `<table class="t"><tr><th>path</th><th>π × b × a × b</th><th>joint</th></tr>${paths.map((x) => `<tr><td>${x.p}</td><td class="m">${x.f}</td><td class="m">${r3(x.w)}</td></tr>`).join('')}</table>P(can, fish) = sum = ${r3(Z)}. Best path <b>${best.p}</b> (${r3(best.w)}), posterior ${r3(best.w)}/${r3(Z)} ≈ <b>${r3(best.w / Z)}</b>. Viterbi gets the same winner by keeping, for each ending tag at "fish", only the best predecessor: O(TK²) instead of Kᵀ paths.` };
       } },
       { w: 6, t: 'HMM training: count and normalize (slide 30)', f() {
         const nn = ri(1, 6), nv = ri(1, 6), tot = nn + nv;
-        return { q: `In the tagged training data, N is followed by N <b>${nn}</b> times and by V <b>${nv}</b> times. Estimate P(N | N) and P(V | N). Then with add-one smoothing (two tags), estimate P(N | N) again.`,
+        return { fm: [['P(N|N)', `P(N | N) = ${D('count(N→N)', 'count(N→her şey)')}`, D(X(nn), `${X(nn)} + ${X(nv)}`)], ['P(V|N)', D('count(N→V)', 'count(N→her şey)'), D(X(nv), `${X(nn)} + ${X(nv)}`)], ['smoothed', D('count + 1', 'toplam + K'), D(`${X(nn)} + 1`, `${X(nn)} + ${X(nv)} + ${X(2)}`)]],
+          lg: 'K = etiket sayısı (2: N, V) · bir satırın toplamı 1',
+          q: `In the tagged training data, N is followed by N <b>${nn}</b> times and by V <b>${nv}</b> times. Estimate P(N | N) and P(V | N). Then with add-one smoothing (two tags), estimate P(N | N) again.`,
           a: [['P(N|N)', nn / tot], ['P(V|N)', nv / tot], ['smoothed P(N|N)', (nn + 1) / (tot + 2)]],
           s: `P(N|N) = ${nn}/${tot} = ${r3(nn / tot)}, P(V|N) = ${nv}/${tot} = ${r3(nv / tot)} (a row sums to 1). Add-one: (${nn} + 1)/(${tot} + 2) = <b>${r3((nn + 1) / (tot + 2))}</b>. A zero count would make every path through that transition weigh 0.` };
       } },
@@ -163,7 +210,9 @@
         const W = { NN: wN1 * wN2, NV: wN1 * wV2, VN: wV1 * wN2 * tr, VV: wV1 * wV2 };
         const Z = Object.values(W).reduce((a, b) => a + b, 0), best = Object.keys(W).reduce((x, y) => (W[y] > W[x] ? y : x));
         const lnf = (k) => (k === 1 ? '0' : `ln ${k}`);
-        return { q: `"can fish", tags N/V. Unary: u₁(N) = ${lnf(u1)}, u₁(V) = 0, u₂(N) = 0, u₂(V) = ${lnf(u2)}. Transition a(V,N) = ${lnf(tr)}, all others 0. Compute the weight exp(S) of each path, Z, P(VN | words), and the loss if VN is gold.`,
+        return { fm: [['weight', 'e<sup>S</sup> = e<sup>u₁(t₁) + a(t₁, t₂) + u₂(t₂)</sup>', `VN: e<sup>${lnf(1)} + ${lnf(tr)} + ${lnf(1)}</sup>`], ['Z', 'Z = w(NN) + w(NV) + w(VN) + w(VV)', '4 ağırlığın toplamı'], ['P(VN)', D('w(VN)', 'Z'), D('w(VN)', 'Z')], ['loss', 'ln Z − ln w(gold)', 'ln Z − ln w(VN)']],
+          lg: `e<sup>ln a + ln b</sup> = a × b · e<sup>0</sup> = 1 · u₁(N) = ${lnf(u1)}, u₂(V) = ${lnf(u2)}, a(V,N) = ${lnf(tr)}, geri kalan 0`,
+          q: `"can fish", tags N/V. Unary: u₁(N) = ${lnf(u1)}, u₁(V) = 0, u₂(N) = 0, u₂(V) = ${lnf(u2)}. Transition a(V,N) = ${lnf(tr)}, all others 0. Compute the weight exp(S) of each path, Z, P(VN | words), and the loss if VN is gold.`,
           a: [['weight NN', W.NN], ['weight NV', W.NV], ['weight VN', W.VN], ['weight VV', W.VV], ['Z', Z], ['P(VN)', W.VN / Z], ['loss (gold VN)', Math.log(Z / W.VN)]],
           s: `exp(ln a + ln b) = a × b, so weights: NN ${W.NN}, NV ${W.NV}, VN ${W.VN}, VV ${W.VV}. Z = ${Z}. P(VN) = ${frac(W.VN, Z)} ≈ ${r3(W.VN / Z)}. Loss = −ln P = ln Z − S(gold) = ln ${Z} − ln ${W.VN} = ln(${frac(Z, W.VN)}) ≈ <b>${r3(Math.log(Z / W.VN))}</b>. Best path: ${best} (max). Z is a sum; you do not need Z to decode.` };
       } },
@@ -172,21 +221,27 @@
         const b1 = pick([[0.4, 0.7], [0.5, 0.5]]), b2 = pick([[0.6, 0.3], [0.5, 0.5]]);
         const a1 = [pi[0] * b1[0], pi[1] * b1[1]];
         const fN = (a1[0] * a[0][0] + a1[1] * a[1][0]) * b2[0], fV = (a1[0] * a[0][1] + a1[1] * a[1][1]) * b2[1], Z = fN + fV;
-        return { q: `"can fish". π = (N ${pi[0]}, V ${pi[1]}); transitions N→(N ${a[0][0]}, V ${a[0][1]}), V→(N ${a[1][0]}, V ${a[1][1]}); P(can|N) = ${b1[0]}, P(can|V) = ${b1[1]}, P(fish|N) = ${b2[0]}, P(fish|V) = ${b2[1]}. Run the <b>forward</b> algorithm (sum, not max): α₁, then the final masses α₂(N), α₂(V), P(can, fish), and the marginal P(final tag = N | words).`,
+        return { fm: [['α₁(N)', 'α₁(t) = π(t) × b(t, can)', `${X(pi[0])} × ${X(b1[0])}`], ['α₁(V)', '', `${X(pi[1])} × ${X(b1[1])}`], ['α₂(N)', '(α₁(N)·a(N→N) + α₁(V)·a(V→N)) × b(N, fish)', `(α₁(N)·${X(a[0][0])} + α₁(V)·${X(a[1][0])}) × ${X(b2[0])}`], ['α₂(V)', '(α₁(N)·a(N→V) + α₁(V)·a(V→V)) × b(V, fish)', `(α₁(N)·${X(a[0][1])} + α₁(V)·${X(a[1][1])}) × ${X(b2[1])}`], ['P(can, fish)', 'α₂(N) + α₂(V)', 'α₂(N) + α₂(V)'], ['P(final N)', D('α₂(N)', 'P(can, fish)'), D('α₂(N)', 'P(can, fish)')]],
+          lg: 'forward = topla (Viterbi = max) · π = başlangıç · a = transition · b = emission',
+          q: `"can fish". π = (N ${pi[0]}, V ${pi[1]}); transitions N→(N ${a[0][0]}, V ${a[0][1]}), V→(N ${a[1][0]}, V ${a[1][1]}); P(can|N) = ${b1[0]}, P(can|V) = ${b1[1]}, P(fish|N) = ${b2[0]}, P(fish|V) = ${b2[1]}. Run the <b>forward</b> algorithm (sum, not max): α₁, then the final masses α₂(N), α₂(V), P(can, fish), and the marginal P(final tag = N | words).`,
           a: [['α₁(N)', a1[0]], ['α₁(V)', a1[1]], ['α₂(N)', fN], ['α₂(V)', fV], ['P(can, fish)', Z], ['P(final N)', fN / Z]],
           s: `α₁(N) = ${pi[0]} × ${b1[0]} = ${r3(a1[0])}; α₁(V) = ${pi[1]} × ${b1[1]} = ${r3(a1[1])}. α₂(N) = (${r3(a1[0])}×${a[0][0]} + ${r3(a1[1])}×${a[1][0]}) × ${b2[0]} = ${r3(fN)}; α₂(V) = (${r3(a1[0])}×${a[0][1]} + ${r3(a1[1])}×${a[1][1]}) × ${b2[1]} = ${r3(fV)}. P(X) = ${r3(Z)}. P(final N) = ${r3(fN)}/${r3(Z)} ≈ <b>${r3(fN / Z)}</b>. Viterbi takes max (best path); forward takes the sum (total probability). A tag marginal (final N, any first tag) is a different question from the probability of one whole path.` };
       } },
       { w: 6, t: 'HMM smoothing and UNK (study slides 63–64)', f() {
         const c = [ri(1, 6), ri(0, 6), 0];
         const den = c[0] + c[1] + c[2] + 3;
-        return { q: `For one tag, the training emission counts are can = ${c[0]}, fish = ${c[1]}, and a reserved UNK symbol = 0. Use add-one smoothing over the three symbols. Compute P(can | tag), P(fish | tag) and P(UNK | tag).`,
+        return { fm: [['P(can | tag)', `P(w | tag) = ${D('count(w) + 1', 'toplam + 3')}`, D(`${X(c[0])} + 1`, `${X(c[0])} + ${X(c[1])} + ${X(0)} + 3`)], ['P(fish | tag)', '', D(`${X(c[1])} + 1`, `${X(c[0])} + ${X(c[1])} + ${X(0)} + 3`)], ['P(UNK | tag)', '', D(`${X(0)} + 1`, `${X(c[0])} + ${X(c[1])} + ${X(0)} + 3`)]],
+          lg: '3 = sembol sayısı (can, fish, UNK) · payda üçünde aynı',
+          q: `For one tag, the training emission counts are can = ${c[0]}, fish = ${c[1]}, and a reserved UNK symbol = 0. Use add-one smoothing over the three symbols. Compute P(can | tag), P(fish | tag) and P(UNK | tag).`,
           a: [['P(can|tag)', (c[0] + 1) / den], ['P(fish|tag)', (c[1] + 1) / den], ['P(UNK|tag)', 1 / den]],
           s: `Denominator = ${c[0]} + ${c[1]} + 0 + 3 = ${den}. P = ${c[0] + 1}/${den}, ${c[1] + 1}/${den}, <b>1/${den}</b>; they sum to 1. Rule: (count + α)/(total + αK). A zero count is not proof of impossibility; an unseen word is mapped to UNK.` };
       } },
       { w: 6, t: 'Micro vs macro F1 over entity types (study slide 39)', f() {
         const p = [ri(4, 9), ri(0, 3), ri(0, 2)], l = [ri(1, 4), ri(0, 2), ri(1, 4)];
         const f = (t) => (2 * t[0]) / (2 * t[0] + t[1] + t[2]), m = [p[0] + l[0], p[1] + l[1], p[2] + l[2]];
-        return { q: `Span counts by type. PER: TP ${p[0]}, FP ${p[1]}, FN ${p[2]}. LOC: TP ${l[0]}, FP ${l[1]}, FN ${l[2]}. Compute F1 for each type, micro-F1 (pool the counts) and macro-F1 (average the type F1s).`,
+        return { fm: [['F1 PER', `F1 = ${D('2·TP', '2·TP + FP + FN')}`, D(`2·${X(p[0])}`, `2·${X(p[0])} + ${X(p[1])} + ${X(p[2])}`)], ['F1 LOC', '', D(`2·${X(l[0])}`, `2·${X(l[0])} + ${X(l[1])} + ${X(l[2])}`)], ['micro', 'önce sayıları topla, sonra F1', D(`2·(${X(p[0])} + ${X(l[0])})`, `2·(${X(p[0])} + ${X(l[0])}) + (${X(p[1])} + ${X(l[1])}) + (${X(p[2])} + ${X(l[2])})`)], ['macro', D('F1<sub>PER</sub> + F1<sub>LOC</sub>', '2'), D('F1<sub>PER</sub> + F1<sub>LOC</sub>', '2')]],
+          lg: 'micro = sayıları birleştir · macro = F1\'lerin ortalaması',
+          q: `Span counts by type. PER: TP ${p[0]}, FP ${p[1]}, FN ${p[2]}. LOC: TP ${l[0]}, FP ${l[1]}, FN ${l[2]}. Compute F1 for each type, micro-F1 (pool the counts) and macro-F1 (average the type F1s).`,
           a: [['F1 PER', f(p)], ['F1 LOC', f(l)], ['micro-F1', f(m)], ['macro-F1', (f(p) + f(l)) / 2]],
           s: `PER: ${2 * p[0]}/${2 * p[0] + p[1] + p[2]} = ${r3(f(p))}. LOC: ${2 * l[0]}/${2 * l[0] + l[1] + l[2]} = ${r3(f(l))}. Micro pools ${m.join(' / ')}: ${2 * m[0]}/${2 * m[0] + m[1] + m[2]} = <b>${r3(f(m))}</b>. Macro = (${r3(f(p))} + ${r3(f(l))})/2 = <b>${r3((f(p) + f(l)) / 2)}</b>. Micro weights frequent types more; macro gives every type equal weight. O is not an entity type.` };
       } },
@@ -194,27 +249,35 @@
         const u1 = pick([1, 2]), u2 = pick([1, 2]), tr = pick([2, 4, 8]); // exp weights: first (N,V) = (u1,1); second (N,V) = (1,u2); V→N = tr, others 1
         const mN = (u1 * 1 + 1 * tr) * 1, mV = (u1 * 1 + 1 * 1) * u2, Z = mN + mV, pVN = tr / Z;
         const lnf = (k) => (k === 1 ? '0' : `ln ${k}`);
-        return { q: `"can fish". Unary u₁(N) = ${lnf(u1)}, u₁(V) = 0, u₂(N) = 0, u₂(V) = ${lnf(u2)}; transition a(V,N) = ln ${tr}, all others 0. Exponentiate the scores and run the CRF forward pass: mass ending in N, mass ending in V, and Z. Then, if VN is gold, give the gradient of the loss for the V→N score θ: expected count − gold count = P(VN) − 1.`,
+        return { fm: [['mass N', '(w₁(N)·a(N→N) + w₁(V)·a(V→N)) × w₂(N)', `(${X(u1)}·1 + 1·${X(tr)}) × 1`], ['mass V', '(w₁(N)·a(N→V) + w₁(V)·a(V→V)) × w₂(V)', `(${X(u1)}·1 + 1·1) × ${X(u2)}`], ['Z', 'mass N + mass V', 'mass N + mass V'], ['∂loss/∂θ', 'P(VN) − 1', `${D(X(tr), 'Z')} − 1`]],
+          lg: `ağırlık = e<sup>skor</sup>: w₁(N) = ${u1}, w₁(V) = 1, w₂(N) = 1, w₂(V) = ${u2}, a(V→N) = ${tr}, diğer geçişler 1 · gradient = beklenen sayım − gold sayım`,
+          q: `"can fish". Unary u₁(N) = ${lnf(u1)}, u₁(V) = 0, u₂(N) = 0, u₂(V) = ${lnf(u2)}; transition a(V,N) = ln ${tr}, all others 0. Exponentiate the scores and run the CRF forward pass: mass ending in N, mass ending in V, and Z. Then, if VN is gold, give the gradient of the loss for the V→N score θ: expected count − gold count = P(VN) − 1.`,
           a: [['mass N', mN], ['mass V', mV], ['Z', Z], ['P(VN)', pVN], ['∂loss/∂θ', pVN - 1]],
           s: `Weights: first (N, V) = (${u1}, 1), V→N = ${tr}, other transitions 1, second (N, V) = (1, ${u2}). Mass N = (${u1}×1 + 1×${tr}) × 1 = ${mN}; mass V = (${u1}×1 + 1×1) × ${u2} = ${mV}; Z = ${Z}. P(VN) = ${tr}/${Z} ≈ ${r3(pVN)}. Gradient = ${r3(pVN)} − 1 = <b>${r3(pVN - 1)}</b>, negative, so θ ← θ − η·g increases the V→N reward. In log space alternatives combine with log-sum-exp, e.g. LSE(ln 2, ln 8) = ln 10.` };
       } },
       { w: 6, t: 'Masked loss and head shapes (study slides 84–85)', f() {
         const ps = pick([[0.8, 0.5], [0.5, 0.25], [0.5, 0.5], [0.25, 0.5]]), L = pick([5, 6]), d = pick([4, 8, 768]), K = pick([3, 5, 7]);
         const loss = (-Math.log(ps[0]) - Math.log(ps[1])) / 2;
-        return { q: `${L} model positions; only 2 carry supervised labels (the rest are −100). The model gives the gold labels probabilities ${ps[0]} and ${ps[1]}. Compute the mean loss over supervised positions. Then: hidden size d = ${d}, K = ${K} labels. What is the shape of W, and how many logits does one sequence of ${L} positions produce?`,
+        return { fm: [['mean loss', D('−ln p₁ − ln p₂', 'etiketli konum sayısı'), D(`−ln ${X(ps[0])} − ln ${X(ps[1])}`, X(2))], ['W', 'W şekli = (K, d)', `(${X(K)}, ${X(d)})`], ['logits', 'L × K', `${X(L)} × ${X(K)}`]],
+          lg: '−100 konumları loss\'a girmez · K = etiket sayısı · d = gizli boyut · L = konum sayısı',
+          q: `${L} model positions; only 2 carry supervised labels (the rest are −100). The model gives the gold labels probabilities ${ps[0]} and ${ps[1]}. Compute the mean loss over supervised positions. Then: hidden size d = ${d}, K = ${K} labels. What is the shape of W, and how many logits does one sequence of ${L} positions produce?`,
           a: [['mean loss', loss], ['W rows', K], ['W columns', d], ['logits per sequence', L * K]],
           s: `loss = (−ln ${ps[0]} − ln ${ps[1]}) / 2 = <b>${r3(loss)}</b>: divide by the 2 supervised positions, not by ${L}. W has shape (K, d) = (${K}, ${d}) and b has K entries, so zᵢ = W hᵢ + b gives ${K} scores per position: ${L} × ${K} = ${L * K} per sequence. The attention mask and the loss mask are different things.` };
       } },
       { w: 4, t: 'Ambiguity, baseline and work counts (study slides 9, 11, 58)', f() {
         const nb = ri(2, 5), other = ri(2, 4), T = pick([5, 10]), K = pick([2, 3]);
         const n = pick([6, 8]), v = pick([2, 4]);
-        return { q: `(1) Corpus: "book" × ${nb} plus ${other} other word types once each; only "book" is ambiguous. Share of ambiguous types, and share of ambiguous tokens? (2) Training counts for "book": NOUN ${n}, VERB ${v}. Baseline P(NOUN | book)? (3) T = ${T} positions, K = ${K} labels: how many complete paths, and how many predecessor checks does Viterbi make after the first position?`,
+        return { fm: [['types', D('belirsiz kelime türü', 'bütün türler'), D(X(1), `1 + ${X(other)}`)], ['tokens', D('belirsiz token', 'bütün tokenlar'), D(X(nb), `${X(nb)} + ${X(other)}`)], ['baseline', D('count(NOUN, book)', 'count(book)'), D(X(n), `${X(n)} + ${X(v)}`)], ['paths', 'K<sup>T</sup>', `${X(K)}<sup>${X(T)}</sup>`], ['Viterbi', '(T − 1) · K²', `(${X(T)} − 1) · ${X(K)}²`]],
+          lg: 'type = farklı kelime · token = her geçiş · K = etiket sayısı · T = konum sayısı',
+          q: `(1) Corpus: "book" × ${nb} plus ${other} other word types once each; only "book" is ambiguous. Share of ambiguous types, and share of ambiguous tokens? (2) Training counts for "book": NOUN ${n}, VERB ${v}. Baseline P(NOUN | book)? (3) T = ${T} positions, K = ${K} labels: how many complete paths, and how many predecessor checks does Viterbi make after the first position?`,
           a: [['ambiguous types', 1 / (1 + other)], ['ambiguous tokens', nb / (nb + other)], ['P(NOUN|book)', n / (n + v)], ['paths Kᵀ', K ** T], ['Viterbi (T−1)K²', (T - 1) * K * K]],
           s: `(1) Types: 1/${1 + other} ≈ ${r3(1 / (1 + other))}; tokens: ${nb}/${nb + other} ≈ ${r3(nb / (nb + other))}. A frequent ambiguous type makes token ambiguity higher than type ambiguity (slide: 1/3 vs 3/5). (2) ${n}/${n + v} = ${r3(n / (n + v))}; the baseline always says NOUN and ignores context ("Book a flight" fails). (3) ${K}^${T} = ${K ** T} paths vs (${T} − 1) × ${K}² = ${(T - 1) * K * K} checks: O(TK²).` };
       } },
       { w: 3, t: 'Shapes: BiLSTM, BERT, logits (slides 37, 56, 69, 96; W6 slide 41)', f() {
         const H = pick([128, 256]), B = pick([2, 4, 8]), L = pick([5, 64, 128]), K = pick([2, 3, 4]), T = pick([7, 9]), k = 3;
-        return { q: `(1) A BiLSTM has ${H} hidden units per direction: width of the concatenated final summary? (2) A batch of B = ${B} texts, padded length L = ${L}, K = ${K} labels per token: how many logit scores? (3) A Conv1d with width ${k} over ${T} tokens, no padding: output length?`,
+        return { fm: [['BiLSTM', 'H<sub>ileri</sub> + H<sub>geri</sub>', `${X(H)} + ${X(H)}`], ['logits', 'B × L × K', `${X(B)} × ${X(L)} × ${X(K)}`], ['conv', 'T − k + 1', `${X(T)} − ${X(k)} + 1`]],
+          lg: 'B = batch · L = uzunluk · K = etiket · T = token · k = pencere',
+          q: `(1) A BiLSTM has ${H} hidden units per direction: width of the concatenated final summary? (2) A batch of B = ${B} texts, padded length L = ${L}, K = ${K} labels per token: how many logit scores? (3) A Conv1d with width ${k} over ${T} tokens, no padding: output length?`,
           a: [['BiLSTM width', 2 * H], ['logit scores', B * L * K], ['conv length', T - k + 1]],
           s: `(1) ${H} + ${H} = <b>${2 * H}</b> features; the number of tokens does not change. (2) B × L × K = ${B} × ${L} × ${K} = <b>${B * L * K}</b>. (3) ${T} − ${k} + 1 = <b>${T - k + 1}</b>.` };
       } },
@@ -230,6 +293,10 @@
         fill(box,
           el('div', { class: 'wk' }, `Week ${g.w}`), el('h3', {}, g.t),
           el('div', { class: 'q', html: cur.q }),
+          cur.fm ? el('div', { class: 'fm' },
+            el('div', { class: 'fh' }, el('span', {}, ''), el('span', {}, 'Formül'), el('span', {}, 'Bu sorunun sayılarıyla')),
+            cur.fm.map(([k, gen, plug]) => el('div', { class: 'fl' }, el('span', { class: 'k', html: k }), el('span', { html: gen }), el('span', { html: !plug ? '' : /\?$/.test(plug) ? plug.replace(/\?$/, '<b class="qm">?</b>') : `${plug} = <b class="qm">?</b>` }))),
+            cur.lg ? el('div', { class: 'lg', html: cur.lg }) : null) : null,
           el('div', { class: 'ans' }, cur.a.map(([lab], i) => el('label', {}, lab + ' ', inputs[i]))),
           el('div', { class: 'row' }, el('button', { class: 'primary', onclick: check }, 'Check'), el('button', { onclick: () => box.classList.toggle('open') }, 'Solution'), el('button', { class: 'chip', onclick: () => { box.classList.remove('open'); load(); } }, 'New numbers'), el('span', { class: 'small out' })),
           el('div', { class: 'sol callout', html: cur.s }));
