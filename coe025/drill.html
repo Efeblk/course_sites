@@ -69,7 +69,7 @@
 
     /* Each generator returns { q: html, a: [[label, value]], s: html solution }. Numbers mirror the study slides. */
     const G = [
-      { w: 1, t: 'TF-IDF weight (slides 4–5, 31)', f() {
+      { w: 1, t: 'TF-IDF weight (W3 study slides 4–5, 31)', f() {
         const N = pick([4, 8]), df = pick(N === 4 ? [1, 2, 4] : [1, 2, 4, 8]), c = ri(1, 3), r = N / df;
         const idf = Math.log(r);
         return { fm: [['idf', `idf = ln ${D('N', 'df')}`, `ln ${D(X(N), X(df))}`], ['weight', 'weight = count × idf', `${X(c)} × idf`]],
@@ -78,7 +78,7 @@
           a: [['idf(good)', idf], ['weight(good, d)', c * idf]],
           s: `idf = ln(${N}/${df}) = ${LN[r]} ≈ ${r3(idf)}. weight = ${c} × ${r3(idf)} = <b>${r3(c * idf)}</b>. df counts <i>documents</i>, not occurrences: repeating "good" inside d changes the count, not df.${r === 1 ? ' A word in every document gets weight 0.' : ''}` };
       } },
-      { w: 3, t: 'Naive Bayes: add-one likelihood (slide 10)', f() {
+      { w: 3, t: 'Naive Bayes: add-one likelihood (W3 study slide 10)', f() {
         const V = 3, tok = pick([5, 7, 9]), c = ri(0, Math.min(4, tok)), den = tok + V;
         return { fm: [['P(good | +)', `P(w | c) = ${D('count(w, c) + α', 'tokens(c) + α·|V|')}`, D(`${X(c)} + 1`, `${X(tok)} + 1·${X(V)}`)]],
           lg: 'count = kelimenin bu sınıftaki sayısı · tokens(c) = sınıftaki bütün tokenlar · |V| = sözlük boyu · α = 1',
@@ -86,7 +86,7 @@
           a: [['P(good | +)', (c + 1) / den]],
           s: `P(t|c) = (count + α) / (tokens(c) + α|V|) = (${c} + 1) / (${tok} + 3) = ${c + 1}/${den} = <b>${r3((c + 1) / den)}</b>.${c === 0 ? ' Without smoothing this would be 0 and wipe out the whole product.' : ''}` };
       } },
-      { w: 3, t: 'Naive Bayes: score and posterior (slides 12–13, 32)', f() {
+      { w: 3, t: 'Naive Bayes: score and posterior (W3 study slides 12–13, 32)', f() {
         const pg = pick([[1, 2, 1, 8], [1, 2, 1, 4], [1, 4, 1, 8], [3, 4, 1, 4]]); // P(good|+), P(good|−) as fractions
         const gp = pg[0] / pg[1], gn = pg[2] / pg[3], mv = pick([0.25, 0.5]);
         const sp = 0.5 * gp * mv, sn = 0.5 * gn * mv, post = sp / (sp + sn);
@@ -96,7 +96,7 @@
           a: [['s(+)', sp], ['s(−)', sn], ['P(+ | review)', post]],
           s: `s(+) = 0.5 × ${r3(gp)} × ${mv} = ${r3(sp)}. s(−) = 0.5 × ${r3(gn)} × ${mv} = ${r3(sn)}. P(+|d) = ${r3(sp)} / (${r3(sp)} + ${r3(sn)}) = <b>${r3(post)}</b>. The movie factor is the same for both classes, so it cannot change the winner. In logs: score = ln P(c) + Σ n ln P(t|c); the larger (less negative) score wins. The posterior is a model probability, not an accuracy.` };
       } },
-      { w: 3, t: 'Logistic regression: score, decision, gradient (slides 14, 17–18, 33)', f() {
+      { w: 3, t: 'Logistic regression: score, decision, gradient (W3 study slides 14, 17–18, 33)', f() {
         const g = ri(0, 3), b = ri(0, 2), wg = pick([0.5, 1, 2]), wb = pick([-1, -2]), bias = pick([-1, -0.5, 0, 0.5]);
         const z = wg * g + wb * b + bias, y = pick([0, 1]), p = pick([0.2, 0.25, 0.75, 0.8]);
         return { fm: [['z', 'z = w₁·x₁ + w₂·x₂ + b', `${X(wg)}·${X(g)} + (${X(wb)})·${X(b)} + (${X(bias)})`], ['label', 'z ≥ 0 → 1 (pos) · z &lt; 0 → 0 (neg)', 'z ≥ 0 mı?'], ['weight grad.', '(p − y) · x', `(${X(p)} − ${X(y)}) · ${X(g || 1)}`], ['bias grad.', 'p − y', `${X(p)} − ${X(y)}`]],
@@ -105,7 +105,7 @@
           a: [['z', z], ['label (1 = pos, 0 = neg)', z >= 0 ? 1 : 0], ['(p − y)x', (p - y) * (g || 1)], ['bias gradient', p - y]],
           s: `z = ${wg}×${g} + (${wb})×${b} + (${bias}) = <b>${r3(z)}</b> → ${z >= 0 ? 'z ≥ 0, p ≥ 0.5, positive (1)' : 'z < 0, p < 0.5, negative (0)'}. Gradient = (${p} − ${y}) × ${g || 1} = <b>${r3((p - y) * (g || 1))}</b>; bias gradient = p − y = <b>${r3(p - y)}</b>. Update: w ← w − η·gradient. With x = 0 the weight gradient is 0 but the bias still learns.` };
       } },
-      { w: 3, t: 'SVM: margin and hinge loss (slides 21–22, 34)', f() {
+      { w: 3, t: 'SVM: margin and hinge loss (W3 study slides 21–22, 34)', f() {
         const g = ri(0, 3), b = ri(0, 3), y = pick([1, -1]), f = g - b, m = y * f, L = Math.max(0, 1 - m);
         return { fm: [['f(x)', 'f = good − bad', `${X(g)} − ${X(b)}`], ['m', 'm = y · f(x)', `(${X(y)}) · f`], ['loss', 'loss = max(0, 1 − m)', 'max(0, 1 − m)']],
           lg: 'y = +1 veya −1 · m ≥ 1 → loss 0 · m &lt; 0 → yanlış taraf',
@@ -113,7 +113,7 @@
           a: [['f(x)', f], ['m', m], ['loss', L]],
           s: `f = ${g} − ${b} = ${f}; m = (${y}) × (${f}) = ${m}; loss = max(0, 1 − ${m}) = <b>${L}</b>. ${m >= 1 ? 'Correct side with enough margin: loss 0.' : m > 0 ? 'Correct sign but inside the margin: positive loss.' : 'Wrong side (or on the boundary): loss ≥ 1.'} The SVM score is not a probability.` };
       } },
-      { w: 3, t: 'Softmax / attention weights and output (slides 40, 78–79)', f() {
+      { w: 3, t: 'Softmax / attention weights and output (W3 study slides 40, 78–79)', f() {
         const e = pick([[1, 2, 1], [1, 1, 2], [2, 1, 1], [1, 3, 1], [1, 1, 1], [1, 2, 2]]); // exp(s): s = ln e
         const sc = e, S = e.reduce((a, b) => a + b, 0), a = e.map((x) => x / S);
         const V = [[2, 0], [0, 4], [2, 2]], z = [0, 1].map((r) => a.reduce((s, w, j) => s + w * V[j][r], 0));
@@ -123,7 +123,7 @@
           a: [['a₁', a[0]], ['a₂', a[1]], ['a₃', a[2]], ['z first coord', z[0]], ['z second coord', z[1]]],
           s: `exp(s) = [${e.join(', ')}], sum ${S}, so a = [${e.map((x) => frac(x, S)).join(', ')}]. z = ${a.map((w, j) => `${frac(e[j], S)}×[${V[j]}]`).join(' + ')} = <b>[${z.map(r3).join(', ')}]</b>. Each row of weights sums to 1; the output mixes value vectors.` };
       } },
-      { w: 3, t: 'Attention with a padding mask (slide 84)', f() {
+      { w: 3, t: 'Attention with a padding mask (W3 study slide 84)', f() {
         const s2 = pick([2, 3, 4]), pad = pick([0, 2]);
         const e = [1, s2, 1]; e[pad] = 0; const S = e.reduce((a, b) => a + b, 0);
         return { fm: [['aⱼ', `aⱼ = ${D('e<sup>sⱼ + Mⱼ</sup>', 'Σ e<sup>sₖ + Mₖ</sup>')}`, `exp: [${[1, s2, 1].map((x, j) => X(j === pad ? 'e<sup>−∞</sup>' : ex(x))).join(', ')}]`]],
@@ -132,7 +132,7 @@
           a: [['a₁', e[0] / S], ['a₂', e[1] / S], ['a₃', e[2] / S]],
           s: `exp(s + M) = [${e.join(', ')}] because exp(−∞) = 0. Sum ${S}, weights <b>[${e.map((x) => frac(x, S)).join(', ')}]</b>. The mask changes the denominator; the valid weights still sum to 1.` };
       } },
-      { w: 3, t: 'CNN filter response and window count (slides 51–52)', f() {
+      { w: 3, t: 'CNN filter response and window count (W3 study slides 51–52)', f() {
         const W = [[pick([1, -1]), pick([1, -1])], [pick([1, -1]), 1]], x1 = [ri(0, 1), ri(0, 1)], x2 = [ri(0, 1), ri(0, 1)];
         const v = W[0][0] * x1[0] + W[0][1] * x1[1] + W[1][0] * x2[0] + W[1][1] * x2[1], L = pick([5, 6, 7, 8]), k = pick([2, 3]);
         return { fm: [['ReLU output', 'max(0, Σ W ⊙ x)', `max(0, ${X(W[0][0])}·${X(x1[0])} + ${X(W[0][1])}·${X(x1[1])} + ${X(W[1][0])}·${X(x2[0])} + ${X(W[1][1])}·${X(x2[1])})`], ['windows', 'L − k + 1', `${X(L)} − ${X(k)} + 1`]],
@@ -141,7 +141,7 @@
           a: [['ReLU output', Math.max(0, v)], ['windows', L - k + 1]],
           s: `Sum of elementwise products: ${W[0][0]}×${x1[0]} + ${W[0][1]}×${x1[1]} + ${W[1][0]}×${x2[0]} + ${W[1][1]}×${x2[1]} = ${v}; ReLU(${v}) = <b>${Math.max(0, v)}</b>. Windows = L − k + 1 = ${L} − ${k} + 1 = <b>${L - k + 1}</b>. Max pooling then keeps only the largest response and drops the position.` };
       } },
-      { w: 3, t: 'LSTM cell update (slides 65–66)', f() {
+      { w: 3, t: 'LSTM cell update (W3 study slides 65–66)', f() {
         const co = pick([0.5, 0.4, 1]), f = pick([0.5, 0.8, 1]), i = pick([0.25, 0.5]), g = pick([-0.4, 0.4, -0.2, 0.6]);
         const c = f * co + i * g;
         return { fm: [['f·c_old', 'f × c<sub>old</sub>', `${X(f)} × ${X(co)}`], ['i·g', 'i × g', `${X(i)} × (${X(g)})`], ['new c', 'c = f × c<sub>old</sub> + i × g', 'tutulan + yazılan']],
@@ -150,7 +150,7 @@
           a: [['retained f·c_old', f * co], ['written i·g', i * g], ['new c', c]],
           s: `c = f×c_old + i×g = ${f}×${co} + ${i}×(${g}) = ${r3(f * co)} + (${r3(i * g)}) = <b>${r3(c)}</b>. h = o × tanh(c): apply tanh first, never o × c directly. A gate near 1 keeps the signal: 0.8²⁰ ≈ 0.0115 but 0.99²⁰ ≈ 0.82.` };
       } },
-      { w: 3, t: 'Residual + layer normalization (slide 89)', f() {
+      { w: 3, t: 'Residual + layer normalization (W3 study slide 89)', f() {
         const m = ri(1, 3), d = pick([0.5, 1, 2]), s = pick([[m - d, m + d], [m + d, m - d]]); // σ = d keeps the square root easy
         const mu = (s[0] + s[1]) / 2, v = ((s[0] - mu) ** 2 + (s[1] - mu) ** 2) / 2, n = s.map((q) => (q - mu) / Math.sqrt(v));
         return { fm: [['μ', `μ = ${D('x₁ + x₂', '2')}`, D(`${X(s[0])} + ${X(s[1])}`, '2')], ['σ²', `σ² = ${D('(x₁ − μ)² + (x₂ − μ)²', '2')}`, D(`(${X(s[0])} − μ)² + (${X(s[1])} − μ)²`, '2')], ['normalized', `x̂ = ${D('x − μ', '√σ²')}`, `[${D(X(s[0]) + ' − μ', '√σ²')}, ${D(X(s[1]) + ' − μ', '√σ²')}]`]],
@@ -159,7 +159,7 @@
           a: [['mean μ', mu], ['variance σ²', v], ['first coord', n[0]], ['second coord', n[1]]],
           s: `μ = (${s[0]} + ${s[1]})/2 = ${r3(mu)}. σ² = ((${s[0]} − ${r3(mu)})² + (${s[1]} − ${r3(mu)})²)/2 = ${r3(v)}. Normalized = (s − μ)/√σ² = <b>[${n.map(r3).join(', ')}]</b>. With two features the answer is always [−1, 1] or [1, −1]. Layer norm works within one token, not across the batch.` };
       } },
-      { w: 3, t: 'Precision, recall, F1, macro-F1, accuracy (slides 100–106)', f() {
+      { w: 3, t: 'Precision, recall, F1, macro-F1, accuracy (W3 study slides 100–106)', f() {
         const TP = pick([6, 8, 10, 30]), FP = pick([2, 4, 5]), FN = pick([2, 4, 10]), TN = pick([10, 20, 55]);
         const P = TP / (TP + FP), R = TP / (TP + FN), F = (2 * TP) / (2 * TP + FP + FN), Fn = (2 * TN) / (2 * TN + FN + FP);
         return { fm: [['precision', `P = ${D('TP', 'TP + FP')}`, D(X(TP), `${X(TP)} + ${X(FP)}`)], ['recall', `R = ${D('TP', 'TP + FN')}`, D(X(TP), `${X(TP)} + ${X(FN)}`)], ['F1 pos', `F1 = ${D('2·TP', '2·TP + FP + FN')}`, D(`2·${X(TP)}`, `2·${X(TP)} + ${X(FP)} + ${X(FN)}`)], ['F1 neg', `F1<sub>neg</sub> = ${D('2·TN', '2·TN + FN + FP')}`, D(`2·${X(TN)}`, `2·${X(TN)} + ${X(FN)} + ${X(FP)}`)], ['macro-F1', D('F1<sub>pos</sub> + F1<sub>neg</sub>', '2'), D('F1<sub>pos</sub> + F1<sub>neg</sub>', '2')], ['accuracy', D('TP + TN', 'hepsi'), D(`${X(TP)} + ${X(TN)}`, `${X(TP)} + ${X(FP)} + ${X(FN)} + ${X(TN)}`)]],
@@ -273,7 +273,7 @@
           a: [['ambiguous types', 1 / (1 + other)], ['ambiguous tokens', nb / (nb + other)], ['P(NOUN|book)', n / (n + v)], ['paths Kᵀ', K ** T], ['Viterbi (T−1)K²', (T - 1) * K * K]],
           s: `(1) Types: 1/${1 + other} ≈ ${r3(1 / (1 + other))}; tokens: ${nb}/${nb + other} ≈ ${r3(nb / (nb + other))}. A frequent ambiguous type makes token ambiguity higher than type ambiguity (slide: 1/3 vs 3/5). (2) ${n}/${n + v} = ${r3(n / (n + v))}; the baseline always says NOUN and ignores context ("Book a flight" fails). (3) ${K}^${T} = ${K ** T} paths vs (${T} − 1) × ${K}² = ${(T - 1) * K * K} checks: O(TK²).` };
       } },
-      { w: 3, t: 'Shapes: BiLSTM, BERT, logits (slides 37, 56, 69, 96; W6 slide 41)', f() {
+      { w: 3, t: 'Shapes: BiLSTM, BERT, logits (W3 study slides 37, 56, 69, 96; W6 slide 41)', f() {
         const H = pick([128, 256]), B = pick([2, 4, 8]), L = pick([5, 64, 128]), K = pick([2, 3, 4]), T = pick([7, 9]), k = 3;
         return { fm: [['BiLSTM', 'H<sub>ileri</sub> + H<sub>geri</sub>', `${X(H)} + ${X(H)}`], ['logits', 'B × L × K', `${X(B)} × ${X(L)} × ${X(K)}`], ['conv', 'T − k + 1', `${X(T)} − ${X(k)} + 1`]],
           lg: 'B = batch · L = uzunluk · K = etiket · T = token · k = pencere',
