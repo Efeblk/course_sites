@@ -9,7 +9,7 @@ every spoken line, so the layout can be checked line by line before the full ren
 out/<id>/NN.png. --out renders 1920x1080, re-encodes it to yuv420p H.264 (Remotion writes yuvj420p, which
 Firefox-based browsers refuse) and adds a VP9/Opus WebM copy, named like ENS010-L4.mp4 / .webm.
 """
-import json, subprocess, sys
+import json, os, subprocess, sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -33,7 +33,8 @@ def run(cmd, **kw):
 
 
 def remotion(vid, dest, extra=''):
-    run(f'npx remotion render src/index.ts {vid} "{dest}" --concurrency=12 --log=error {extra}', shell=True)
+    workers = min(12, os.cpu_count() or 1)
+    run(f'npx remotion render src/index.ts {vid} "{dest}" --concurrency={workers} --log=error {extra}', shell=True)
 
 
 def out_name(vid):
