@@ -141,9 +141,9 @@
 
   /* ---------- W5: ID3 grows the Play Tennis tree ---------- */
   def('id3', { w: 700, h: 380 }, (A) => {
-    // Mitchell's 14 days: outlook, humidity, wind, play
-    const D = [['S', 'H', 'W', 0], ['S', 'H', 'S', 0], ['O', 'H', 'W', 1], ['R', 'H', 'W', 1], ['R', 'N', 'W', 1], ['R', 'N', 'S', 0], ['O', 'N', 'S', 1],
-      ['S', 'H', 'W', 0], ['S', 'N', 'W', 1], ['R', 'N', 'W', 1], ['S', 'N', 'S', 1], ['O', 'H', 'S', 1], ['O', 'N', 'W', 1], ['R', 'H', 'S', 0]];
+    // slide 6's 14 days: outlook, humidity, wind, play
+    const D = [['S', 'H', 'W', 0], ['S', 'H', 'S', 0], ['O', 'H', 'W', 1], ['R', 'H', 'W', 1], ['R', 'N', 'W', 1], ['R', 'N', 'S', 0], ['O', 'N', 'W', 1],
+      ['S', 'H', 'W', 0], ['S', 'N', 'W', 1], ['R', 'N', 'S', 1], ['S', 'N', 'S', 1], ['O', 'H', 'S', 1], ['O', 'N', 'W', 1], ['R', 'H', 'S', 0]];
     const NODE = { root: [350, 46, 230], S: [120, 170, 170], O: [350, 170, 170], R: [580, 170, 170], SH: [62, 300, 112], SN: [182, 300, 112], RW: [518, 300, 112], RS: [638, 300, 112] };
     const EDGE = [['root', 'S', 'sunny'], ['root', 'O', 'overcast'], ['root', 'R', 'rain'], ['S', 'SH', 'high'], ['S', 'SN', 'normal'], ['R', 'RW', 'weak'], ['R', 'RS', 'strong']];
     for (const [a, b, lab] of EDGE) {
@@ -166,7 +166,7 @@
     const show = (...ids) => Object.fromEntries(ids.flatMap((id) => [[id, { o: 1 }], ['e' + id, { draw: 1 }], ['el' + id, { o: 1 }]]));
 
     A.step('14 days of Play Tennis: <b>9 yes</b> (green) and <b>5 no</b> (red). The mix at the root has entropy <b>0.940</b>.');
-    A.step('ID3 tries every attribute and computes the weighted entropy after the split: Outlook 0.694, Humidity 0.789, Wind 0.892, Temperature 0.911. <b>Outlook is lowest</b>, so it becomes the first question.',
+    A.step('ID3 tries every attribute and computes the weighted entropy after the split: Outlook 0.694, Humidity 0.788, Wind 0.892, Temperature 0.911. <b>Outlook is lowest</b>, so it becomes the first question.',
       { root: { text: 'Outlook?', fill: 'solid', sub: ' ' } }, { fx: ['root'] });
     A.step('Every day goes down the branch for its outlook.',
       { ...show('S', 'O', 'R'), S: { o: 1, text: 'Sunny: 2 yes, 3 no' }, O: { o: 1, text: 'Overcast: 4 yes, 0 no' }, R: { o: 1, text: 'Rain: 3 yes, 2 no' },
@@ -175,10 +175,75 @@
     A.step('<b>Sunny</b> is still mixed, so ID3 repeats the search inside it. <b>Humidity</b> wins: high → all no, normal → all yes.',
       { S: { text: 'Humidity?', fill: 'solid' }, ...show('SH', 'SN'), SH: { o: 1, text: 'No', c: 'c4' }, SN: { o: 1, text: 'Yes', c: 'c1' },
         ...place('SH', pick((d) => d[0] === 'S' && d[1] === 'H')), ...place('SN', pick((d) => d[0] === 'S' && d[1] === 'N')) }, { dur: 1200 });
-    A.step('<b>Rain</b> is mixed too. <b>Wind</b> wins there: weak → all yes, strong → all no.',
-      { R: { text: 'Wind?', fill: 'solid' }, ...show('RW', 'RS'), RW: { o: 1, text: 'Yes', c: 'c1' }, RS: { o: 1, text: 'No', c: 'c4' },
+    A.step('<b>Rain</b> is mixed too. <b>Wind</b> wins there (0.551): weak → 2 yes; strong → 1 yes, 2 no, still mixed.',
+      { R: { text: 'Wind?', fill: 'solid' }, ...show('RW', 'RS'), RW: { o: 1, text: 'Yes', c: 'c1' }, RS: { o: 1, text: '1 yes, 2 no', c: 'c2' },
         ...place('RW', pick((d) => d[0] === 'R' && d[2] === 'W')), ...place('RS', pick((d) => d[0] === 'R' && d[2] === 'S')) }, { dur: 1200 });
-    A.step('Every leaf is pure, so ID3 stops. Each path from the root is a rule, for example <b>IF Outlook = sunny AND Humidity = high THEN no</b>.',
+    A.step('Sunny, Overcast and Rain-weak end in pure leaves. Rain-strong (D6 no, D10 yes, D14 no) needs another question; slide 12 stops only at a single instance or when splitting raises the entropy. Each finished path is a rule, for example <b>IF Outlook = sunny AND Humidity = high THEN no</b>.',
       { S: { fill: 'soft' }, R: { fill: 'soft' }, root: { fill: 'soft' }, eS: { c: 'c4', sw: 3 }, eSH: { c: 'c4', sw: 3 } }, { fx: ['SH'] });
+  });
+
+  /* ---------- W6: transpose, then w^T x as one weighted sum (slide 11's AND unit) ---------- */
+  def('wtx', { w: 640, h: 330 }, (A) => {
+    const W = ['−1.5', '+1', '+1'], WN = ['w₀', 'w₁', 'w₂'], X = ['1', '1', '1'], XN = ['x₀', 'x₁', 'x₂'], P = ['−1.5', '+1', '+1'];
+    const colY = (i) => 120 + i * 58, rowX = (i) => 190 + i * 100;
+    A.text('wh', { tx: 70, ty: 82, text: 'w (column)', size: 13, weight: 700, c: 'c0' });
+    A.text('xh', { tx: 570, ty: 82, text: 'x (column)', size: 13, weight: 700, c: 'c1' });
+    W.forEach((v, i) => A.box('w' + i, { tx: 70, ty: colY(i), w: 84, h: 42, c: 'c0', text: v, sub: WN[i] }));
+    X.forEach((v, i) => A.box('x' + i, { tx: 570, ty: colY(i), w: 84, h: 42, c: 'c1', text: v, sub: XN[i] }));
+    A.text('wth', { tx: 290, ty: 52, text: 'wᵀ (a row)', size: 13, weight: 700, c: 'c0', o: 0 });
+    P.forEach((v, i) => {
+      A.line('lw' + i, { x1: rowX(i), y1: 117, x2: rowX(i), y2: 215, c: 'c0', o: 0, draw: 0 });
+      A.line('lx' + i, { x1: 528, y1: colY(i), x2: rowX(i) + 46, y2: 222, c: 'c1', o: 0, draw: 0, bend: 0.15 });
+      A.box('p' + i, { tx: rowX(i), ty: 240, w: 92, h: 40, c: 'c2', text: `${W[i]} × ${X[i]}`, o: 0, s: 0.6 });
+    });
+    A.box('sum', { tx: 290, ty: 305, w: 300, h: 40, c: 'c3', fill: 'solid', text: 'wᵀx = −1.5 + 1 + 1 = 0.5', o: 0, s: 0.6 });
+    A.step('In the slides every vector is a <b>column</b>. Here w holds the AND unit\'s weights (slide 11) and x is the input (x₁, x₂) = (1, 1) with the bias input x₀ = 1 on top.');
+    A.step('<b>Transpose</b>: the column of w is turned into a row, written <b>wᵀ</b>. Nothing else changes; the first entry stays first.',
+      { wh: { o: 0 }, wth: { o: 1 }, ...Object.fromEntries(W.map((_, i) => ['w' + i, { tx: rowX(i), ty: 95 }])) }, { dur: 1200 });
+    A.step('A row times a column pairs the entries in order: first with first, second with second. Each pair is multiplied.',
+      Object.fromEntries(P.flatMap((_, i) => [['lw' + i, { o: 0.5, draw: 1 }], ['lx' + i, { o: 0.5, draw: 1 }], ['p' + i, { o: 1, s: 1 }]])), { dur: 1100 });
+    A.step('Add the products: <b>wᵀx = 0.5</b>. A row times a column is always <b>one number</b>, the weighted sum. It is above 0, so the AND unit says 1.',
+      { sum: { o: 1, s: 1 } }, { fx: ['sum'] });
+  });
+
+  /* ---------- W6: learning rate, gradient descent on slide 17's one-weight example ---------- */
+  def('descent', { w: 640, h: 360, slider: { key: 'eta', label: 'learning rate η', min: 0.1, max: 1, step: 0.1, value: 0.1, fmt: (v) => v.toFixed(1) } }, (A, p) => {
+    const x = 1.5, r = 0.5, eta = Math.round(p.eta * 10) / 10;
+    const E = (w) => 0.5 * (r - x * w) ** 2, dE = (w) => x * -(r - x * w);
+    const W0 = -0.5, W1 = 1.2, EM = 0.5;
+    const PX = (w) => 50 + ((w - W0) / (W1 - W0)) * 560, PY = (e) => 320 - (Math.min(e, EM) / EM) * 280;
+    for (let i = 0; i < 50; i++) {
+      const a = W0 + ((W1 - W0) * i) / 50, b = W0 + ((W1 - W0) * (i + 1)) / 50;
+      if (E(a) > EM && E(b) > EM) continue;
+      A.line('c' + i, { x1: PX(a), y1: PY(E(a)), x2: PX(b), y2: PY(E(b)), c: 'mute', sw: 2 });
+    }
+    A.line('ax', { x1: 50, y1: 320, x2: 615, y2: 320, c: 'mute', sw: 1 });
+    A.text('axl', { tx: 615, ty: 342, text: 'w', size: 13, anchor: 'end', c: 'mute' });
+    A.text('eyl', { tx: 56, ty: 30, text: 'E = ½(r − xw)²', size: 12, anchor: 'start', c: 'mute' });
+    A.line('best', { x1: PX(1 / 3), y1: 320, x2: PX(1 / 3), y2: 300, c: 'ok', sw: 2 });
+    A.text('bestl', { tx: PX(1 / 3), ty: 342, text: 'best w ≈ 0.33', size: 12, c: 'ok' });
+    let w = 0.8;
+    const ws = [w];
+    for (let k = 0; k < 6; k++) { w = w - eta * dE(w); ws.push(w); }
+    const clampW = (v) => Math.max(W0, Math.min(W1, v));
+    ws.slice(1).forEach((v, k) => A.line('j' + k, { x1: PX(clampW(ws[k])), y1: PY(E(ws[k])), x2: PX(clampW(v)), y2: PY(E(v)), c: 'c2', sw: 1.6, head: true, o: 0, draw: 0, bend: 0.25 }));
+    A.dot('w', { tx: PX(0.8), ty: PY(E(0.8)), r: 8, c: 'c0' });
+    A.text('info', { tx: 615, ty: 30, text: `w = 0.800   E = ${E(0.8).toFixed(3)}`, size: 13, mono: true, anchor: 'end' });
+    const off = (v) => v < W0 || v > W1 || E(v) > EM;
+    A.step(`Slide 17: x = 1.5, r = 0.5, start at <b>w = 0.8</b>, so y = 1.2 and E = 0.245 (slide 19). The slope ∂E/∂w = 1.05 is positive: a smaller w lowers E. Learning rate <b>η = ${eta.toFixed(1)}</b>; move the slider to change it.`);
+    ws.slice(1).forEach((v, k) => {
+      const g = dE(ws[k]);
+      const msg = k === 0
+        ? `Step 1: w ← w − η·∂E/∂w = 0.8 − ${eta.toFixed(1)} × ${g.toFixed(2)} = <b>${v.toFixed(3)}</b>.${eta === 0.1 ? ' This is slide 20\'s 0.695.' : ''}`
+        : `Step ${k + 1}: slope ${g.toFixed(2)}, so w = <b>${v.toFixed(3)}</b>, E = ${E(v).toFixed(3)}.`;
+      A.step(msg + (off(v) ? ' The point has jumped off the chart.' : ''),
+        { ['j' + k]: { o: 0.8, draw: 1 }, w: { tx: PX(clampW(v)), ty: PY(E(v)), c: off(v) ? 'bad' : 'c0' }, info: { text: `w = ${v.toFixed(3)}   E = ${E(v).toFixed(3)}` } }, { dur: 900 });
+    });
+    const fin = ws[6], gap0 = Math.abs(0.8 - 1 / 3), gap = Math.abs(fin - 1 / 3);
+    const verdict = gap > gap0 ? 'The steps are <b>too big</b>: each one jumps past the minimum and lands higher up the other side, so E <b>grows</b>.'
+      : gap < 0.01 ? 'w has reached the bottom in a few steps.'
+      : eta <= 0.2 ? 'Each step is <b>small</b>: E falls every time, but slowly. Many more steps are needed.'
+      : 'The steps <b>overshoot</b> and w zig-zags around the minimum, settling slowly.';
+    A.step(`After 6 steps w = ${fin.toFixed(3)} (best ≈ 0.333). ${verdict} Try η = 0.1, 0.4, 0.8 and 1.0.`, {}, { fx: ['w'] });
   });
 })();

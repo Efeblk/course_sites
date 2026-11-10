@@ -161,7 +161,7 @@
             el('td', {}, ATTR[a]),
             el('td', { class: 'small' }, s.br.map((b) => { const [p, q] = yn(b); return `${D[b[0]][a]} ${p}/${q}`; }).join(' · ')),
             el('td', { class: 'num' }, show ? f3(s.Ip) : '?'), el('td', { class: 'num' }, show ? f3(s.gain) : '?')))),
-        n === root && show ? el('p', { class: 'small muted' }, 'Slide 11 lists Humidity as 0.789 and the gain of Outlook is often quoted as 0.246; both come from rounding the parts first. Unrounded: 0.7885 and 0.9403 − 0.6935 = 0.247.') : null);
+        n === root && show ? el('p', { class: 'small muted' }, 'Slides 7 and 11 round Humidity to 0.788 (unrounded 0.7885). The gain of Outlook is 0.9403 − 0.6935 = 0.247; subtracting the rounded 0.940 − 0.694 gives 0.246.') : null);
     }
     function choose(n, a, s, low) {
       const ok = Math.abs(s.Ip - low) < 1e-12;

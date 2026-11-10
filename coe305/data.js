@@ -5,11 +5,13 @@ window.COURSE = window.COE305 = {
   "name": "Machine Learning",
   "term": "Fall 2026-2027",
   "lecturer": "Asst. Prof. Muhammed Davud",
-  "examFormat": "Projects 30% · Midterm 30% · Final 40%. Midterm format not announced.",
+  "examFormat": "Projects 30% · Midterm 30% · Final 40%. Midterm: no formulas to write; understand each concept and why it is used (lecturer).",
   "textbooks": [
     "Ethem Alpaydın — Introduction to Machine Learning, 2nd ed. (MIT Press). The slides are this book's lecture notes."
   ],
-  "projects": [],
+  "projects": [
+    "Practical project (30%): cross-validation, feature selection, PCA, k-means on Spambase and Wholesale Customers. Due 20 November 2026, 17:00."
+  ],
   "chapters": [
     {
       "n": 1,
@@ -244,7 +246,7 @@ window.COURSE = window.COE305 = {
         ],
         [
           "Data mining",
-          "Applying ML to large databases: retail baskets, credit scoring, fraud, diagnosis, spam, web search."
+          "Slide 5's applications: market baskets and CRM, credit scoring and fraud, manufacturing control, medical diagnosis, spam filters and intrusion detection, search engines."
         ]
       ]
     },
@@ -400,7 +402,7 @@ window.COURSE = window.COE305 = {
             "4.2"
           ],
           "answer": 0,
-          "explain": "(25 + 4 + 25 + 25 + 9) / 5 = 88 / 5 = 17.6. RMSE = √17.6 ≈ 4.2."
+          "explain": "(25 + 4 + 25 + 25 + 9) / 5 = 88 / 5 = 17.6."
         },
         {
           "q": "Overfitting happens when…",
@@ -740,9 +742,9 @@ window.COURSE = window.COE305 = {
         "Clustering discovers groups without desired output labels.",
         "k-means alternates nearest-center assignment and mean updates.",
         "Reconstruction error measures squared distances to centers.",
-        "EM alternates responsibilities and weighted parameter updates.",
+        "EM alternates cluster probabilities (E-step) and parameter updates (M-step).",
         "Agglomerative clustering merges groups into a dendrogram.",
-        "Single-link uses minimum pair distance; complete-link uses maximum."
+        "Parametric methods assume a predefined mapping function; nonparametric ones do not."
       ],
       "traps": [
         [
@@ -750,12 +752,12 @@ window.COURSE = window.COE305 = {
           "k is an input. Use the elbow, PCA plots or the application to choose it."
         ],
         [
-          "k-means always finds the global optimum",
-          "It converges to a local minimum that depends on the initial mᵢ. Run several restarts and keep the lowest error."
+          "Parametric means the model has parameters; nonparametric means it has none",
+          "The difference is a predefined mapping function (slide 2). Applying that to week 5: a tree still has split thresholds; what it lacks is a form fixed in advance."
         ],
         [
           "The error always has a clear elbow",
-          "On data with no real clusters (the uniform slide demo) the curve bends smoothly; k-means still happily returns k groups."
+          "The elbow is one of slide 16's ways to choose k. The others: the application fixes k, plot the data after PCA, and check the clusters for meaning."
         ],
         [
           "EM gives each point one cluster",
@@ -763,7 +765,7 @@ window.COURSE = window.COE305 = {
         ],
         [
           "Single-link and complete-link give the same tree",
-          "Single-link (min) chains clusters together; complete-link (max) makes compact clusters. The dendrogram heights differ."
+          "Single-link measures the closest pair between two groups, complete-link the farthest pair (slide 14). They can merge in a different order and draw different dendrograms."
         ]
       ],
       "activities": [
@@ -797,6 +799,17 @@ window.COURSE = window.COE305 = {
           ],
           "answer": 0,
           "explain": "Classes Cᵢ come from labels; clusters Gᵢ are discovered."
+        },
+        {
+          "q": "By slide 2, a parametric method learns…",
+          "options": [
+            "Without any assumptions at all",
+            "Using a predefined mapping function",
+            "Only from unlabelled examples",
+            "Only by growing a decision tree"
+          ],
+          "answer": 1,
+          "explain": "Parametric: learning using a predefined mapping-function/assumptions. Nonparametric: learning without them."
         },
         {
           "q": "In k-means, the reference vectors mⱼ are also called…",
@@ -851,7 +864,7 @@ window.COURSE = window.COE305 = {
             "The error E"
           ],
           "answer": 1,
-          "explain": "Decoder looks up mᵢ and outputs x′ = mᵢ. With k codewords, an index needs log₂ k bits."
+          "explain": "Decoder looks up mᵢ and outputs x′ = mᵢ."
         },
         {
           "q": "Soft clustering means…",
@@ -870,7 +883,7 @@ window.COURSE = window.COE305 = {
             "Moves the Gaussians to fit their elements",
             "Picks k",
             "Merges the two closest clusters",
-            "Computes responsibilities"
+            "Computes cluster probabilities"
           ],
           "answer": 3,
           "explain": "The M-step adjusts (μᵢ, σᵢ²) to fit the elements assigned to them."
@@ -1001,8 +1014,8 @@ window.COURSE = window.COE305 = {
           "Pure = entropy 0 (all one class). Entropy 1 bit is the most impure two-class node (50/50)."
         ],
         [
-          "Decision trees need scaled features",
-          "Univariate splits compare one feature with a threshold, so scaling does not change the tree."
+          "ID3 keeps splitting until every leaf is pure",
+          "Slide 12 also stops when a leaf holds a single instance, or when the children's entropy is greater than the parent's."
         ],
         [
           "A deeper tree is always better",
@@ -1013,7 +1026,7 @@ window.COURSE = window.COE305 = {
         {
           "id": "w5-id3",
           "title": "ID3 Tree Builder",
-          "desc": "Play the slides' entropy game: compute 𝓘 = 0.940, compare Outlook 0.694, Humidity 0.789, Wind 0.892 and Temperature 0.911, choose splits node by node, and extract the IF-THEN rules.",
+          "desc": "Play the slides' entropy game: compute 𝓘 = 0.940, compare Outlook 0.694, Humidity 0.788, Wind 0.892 and Temperature 0.911, choose splits node by node, and extract the IF-THEN rules.",
           "href": "w5/id3.html"
         },
         {
@@ -1093,13 +1106,13 @@ window.COURSE = window.COE305 = {
         {
           "q": "Which attribute becomes the root in the slides?",
           "options": [
-            "Humidity (0.789)",
+            "Humidity (0.788)",
             "Wind (0.892)",
             "Outlook",
             "Temperature (0.911)"
           ],
           "answer": 2,
-          "explain": "Select the attribute with the lowest entropy after the split: 0.694 < 0.789 < 0.892 < 0.911 < 0.940."
+          "explain": "Select the attribute with the lowest entropy after the split: 0.694 < 0.788 < 0.892 < 0.911 < 0.940."
         },
         {
           "q": "Information gain of Outlook at the root is…",
@@ -1154,7 +1167,7 @@ window.COURSE = window.COE305 = {
             "Before / after full growth"
           ],
           "answer": 3,
-          "explain": "Prepruning stops while growing. Postpruning removes subtrees after growing, using a separate pruning set; improvement is not guaranteed on every dataset."
+          "explain": "Prepruning stops while growing. Postpruning removes subtrees after growing, using a separate pruning set."
         }
       ],
       "cards": [
@@ -1196,7 +1209,7 @@ window.COURSE = window.COE305 = {
         ],
         [
           "Play Tennis root",
-          "Outlook 0.694 < Humidity 0.789 < Wind 0.892 < Temp 0.911 < parent 0.940."
+          "Outlook 0.694 < Humidity 0.788 < Wind 0.892 < Temp 0.911 < parent 0.940."
         ],
         [
           "Regression tree",
@@ -1213,6 +1226,266 @@ window.COURSE = window.COE305 = {
         [
           "Rule extraction",
           "Each root-to-leaf path → an IF-THEN rule (C4.5Rules). Interpretable."
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "title": "Multilayer Perceptrons",
+      "summary": "The perceptron as a weighted sum wᵀx with a bias, activation functions (sigmoid for two classes, softmax for K classes, tanh, ReLU), AND/OR with one unit, XOR with a hidden layer, training by gradient descent with a learning rate, and backpropagation on the slides' worked example.",
+      "takeaways": [
+        "A perceptron computes the weighted sum wᵀx; the bias w₀ rides on an input fixed at 1.",
+        "The bias shifts the boundary line; without it the line must pass through the origin.",
+        "Sigmoid gives one probability for two classes; softmax gives K probabilities that sum to 1.",
+        "The learning rate η is the step size in w ← w − η·∂E/∂w.",
+        "One perceptron draws one line, so XOR needs a hidden layer.",
+        "Backpropagation uses the chain rule to send the error back to every weight."
+      ],
+      "traps": [
+        [
+          "The bias is a weight on one of the real inputs",
+          "It is the weight w₀ on x₀, an extra input that is always 1. It shifts the boundary; AND and OR differ only in w₀ (slides 11 and 12)."
+        ],
+        [
+          "Activation functions prepare the data before training",
+          "They are inside the network. Every forward pass applies them, in training and in prediction, and backpropagation uses their derivative (slide 29)."
+        ],
+        [
+          "Softmax outputs are separate yes/no answers",
+          "They share one total and sum to 1. Choose the class with the largest output (slide 7)."
+        ],
+        [
+          "A bigger learning rate always trains faster",
+          "Too big a step jumps past the minimum. On slide 17's example η = 1.0 makes the error grow every step."
+        ],
+        [
+          "One perceptron can learn any Boolean function",
+          "It draws one line. XOR's classes sit on opposite diagonals, so it needs a hidden layer (slides 13 and 15)."
+        ]
+      ],
+      "activities": [
+        {
+          "id": "w6-perceptron",
+          "title": "Perceptron Lab",
+          "desc": "Move w₁, w₂ and the bias w₀ and watch the boundary line. Reproduce AND and OR from the slides, see that only the bias separates them, fail at XOR, then switch on slide 15's hidden layer.",
+          "href": "w6/perceptron.html"
+        }
+      ],
+      "quiz": [
+        {
+          "q": "In the perceptron of slide 4, x₀ is…",
+          "options": [
+            "An input that changes from example to example",
+            "The bias unit, always equal to 1",
+            "The output of the first hidden unit",
+            "The learning rate of the unit"
+          ],
+          "answer": 1,
+          "explain": "Slide 4: x₀ is the bias unit that always has the value 1. Its weight w₀ is the bias."
+        },
+        {
+          "q": "Why is the weight vector written w = [w₀, w₁, …, w_d]ᵀ?",
+          "options": [
+            "It is a column printed as a row",
+            "T marks the weights after training ends",
+            "T stands for the threshold of the unit",
+            "The weights are added over time"
+          ],
+          "answer": 0,
+          "explain": "Transpose turns columns into rows. The slides' vectors are columns, written flat with ᵀ."
+        },
+        {
+          "q": "w and x each have d + 1 entries. What is wᵀx?",
+          "options": [
+            "A row of d + 1 products",
+            "A (d + 1) × (d + 1) table of products",
+            "One number, the weighted sum",
+            "The transpose of x"
+          ],
+          "answer": 2,
+          "explain": "A row times a column multiplies matching entries and adds them: Σ wⱼxⱼ + w₀, one number."
+        },
+        {
+          "q": "AND (slide 11) and OR (slide 12) both use w₁ = w₂ = +1. What makes them different?",
+          "options": [
+            "The activation function of the unit",
+            "The number of inputs",
+            "Only the bias (−1.5 vs −0.5)",
+            "OR needs an extra hidden layer"
+          ],
+          "answer": 2,
+          "explain": "Same weights, different bias. w₀ = −1.5 puts the line at x₁ + x₂ = 1.5 (AND); w₀ = −0.5 moves it to x₁ + x₂ = 0.5 (OR)."
+        },
+        {
+          "q": "Why does y = wx + w₀ need the bias w₀?",
+          "options": [
+            "It makes training converge faster",
+            "It keeps every weight above zero",
+            "It turns regression into classification",
+            "It shifts the line off the origin"
+          ],
+          "answer": 3,
+          "explain": "Without w₀ the line y = wx always passes through (0, 0). The bias moves it up or down; the weight only sets the slope."
+        },
+        {
+          "q": "Why does a two-class output use the sigmoid?",
+          "options": [
+            "It is the only function with a derivative",
+            "Its output can be any real number at all",
+            "It removes the need for a bias weight",
+            "Its output is a probability in (0, 1)"
+          ],
+          "answer": 3,
+          "explain": "Slide 10: single sigmoid output for two classes. The output is a probability of class 1; sigmoid(0) = 0.5."
+        },
+        {
+          "q": "Which output layer does slide 10 use for K > 2 classes?",
+          "options": [
+            "Softmax",
+            "One sigmoid output",
+            "A linear output per class",
+            "ReLU"
+          ],
+          "answer": 0,
+          "explain": "K > 2: softmax outputs. Each yᵢ is in (0, 1), they sum to 1, and slide 7 chooses Cᵢ with the largest yᵢ."
+        },
+        {
+          "q": "Softmax outputs for three classes are 0.66, 0.24 and 0.10. What does the network predict?",
+          "options": [
+            "Class 2",
+            "No class, since none is above 0.9",
+            "Class 1",
+            "All three classes"
+          ],
+          "answer": 2,
+          "explain": "Choose the class with the largest output (slide 7): 0.66, class 1."
+        },
+        {
+          "q": "Which activation has the range (−1, 1)?",
+          "options": [
+            "Sigmoid",
+            "ReLU",
+            "Softmax",
+            "tanh"
+          ],
+          "answer": 3,
+          "explain": "Slide 5: sigmoid (0, 1), tanh (−1, 1), ReLU max(0, a), softmax (0, 1)."
+        },
+        {
+          "q": "When are activation functions used?",
+          "options": [
+            "Before training, to scale the inputs",
+            "In every forward pass",
+            "Only after training, on the test set",
+            "Only inside the loss function E"
+          ],
+          "answer": 1,
+          "explain": "They are part of the network. Slides 26 and 27 apply the sigmoid in the forward pass; slide 29 uses its derivative to update w₅."
+        },
+        {
+          "q": "w = 0.8, ∂E/∂w = 1.05 and η = 0.1. What is the new weight (slide 20)?",
+          "options": [
+            "0.905",
+            "1.05",
+            "0.8",
+            "0.695"
+          ],
+          "answer": 3,
+          "explain": "w − η·∂E/∂w = 0.8 − 0.1 × 1.05 = 0.695."
+        },
+        {
+          "q": "On slide 17's example the learning rate is raised to 1.0. What happens?",
+          "options": [
+            "w overshoots and E grows",
+            "w reaches the minimum in one single step",
+            "w stops changing after the first step",
+            "The loss becomes exactly zero at once"
+          ],
+          "answer": 0,
+          "explain": "Each step overshoots: 0.8 → −0.25 → 1.06 → …, further from the best w ≈ 0.33 every time. Try it in the lesson's animation."
+        },
+        {
+          "q": "Why can't one perceptron learn XOR?",
+          "options": [
+            "XOR has too many training examples",
+            "No single line splits its classes",
+            "XOR needs a linear regression output",
+            "Its bias would have to be exactly zero"
+          ],
+          "answer": 1,
+          "explain": "Slide 13: the 1s sit on one diagonal and the 0s on the other. No w₀, w₁, w₂ satisfy all four conditions."
+        },
+        {
+          "q": "In slide 15's XOR network the two hidden units compute…",
+          "options": [
+            "x₁ AND x₂, and then x₁ OR x₂",
+            "Two copies of x₁ XOR x₂",
+            "x₁ AND ~x₂, and ~x₁ AND x₂",
+            "The softmax of the inputs x₁ and x₂"
+          ],
+          "answer": 2,
+          "explain": "x₁ XOR x₂ = (x₁ AND ~x₂) OR (~x₁ AND x₂). The output unit ORs the two hidden units."
+        },
+        {
+          "q": "Online learning (slide 8) means…",
+          "options": [
+            "Update after each instance",
+            "Use the whole sample for each update",
+            "Train on data streamed from the internet",
+            "Never change the model after training"
+          ],
+          "answer": 0,
+          "explain": "Online: instances are seen one by one. No need to store the whole sample, and the model can follow a problem that changes in time."
+        }
+      ],
+      "cards": [
+        [
+          "Perceptron",
+          "One unit: y = Σ wⱼxⱼ + w₀ = wᵀx. Inputs x, weights w, output y (slide 4)."
+        ],
+        [
+          "Bias w₀",
+          "Weight on the bias unit x₀ = 1. Shifts the boundary away from the origin; AND (w₀ = −1.5) and OR (w₀ = −0.5) differ only here."
+        ],
+        [
+          "Transpose (ᵀ)",
+          "Turns columns into rows. wᵀ is a row, x a column, so wᵀx is one number: the weighted sum."
+        ],
+        [
+          "Activation function",
+          "Turns the sum wᵀx into the unit's output: linear (regression), step (slide 11), sigmoid, tanh, ReLU, softmax."
+        ],
+        [
+          "Sigmoid",
+          "1/(1 + e⁻ᵃ), range (0, 1). One sigmoid output for two classes; read as the probability of class 1."
+        ],
+        [
+          "Softmax",
+          "K outputs, each in (0, 1), summing to 1. For K > 2 classes; choose the largest."
+        ],
+        [
+          "tanh and ReLU",
+          "tanh: range (−1, 1). ReLU: max(0, a), zero for negative sums (slide 5)."
+        ],
+        [
+          "Learning rate η",
+          "Step size of gradient descent: w ← w − η·∂E/∂w. Too small: slow. Too large: jumps past the minimum."
+        ],
+        [
+          "Online vs batch",
+          "Online: update after each instance. Batch: use the whole sample for each update (slide 8)."
+        ],
+        [
+          "XOR",
+          "Not separable by one line; needs a hidden layer: (x₁ AND ~x₂) OR (~x₁ AND x₂)."
+        ],
+        [
+          "Multilayer perceptron",
+          "Inputs → hidden units z_h = sigmoid(w_hᵀx) → outputs y_i = v_iᵀz (slide 14)."
+        ],
+        [
+          "Backpropagation",
+          "Forward pass computes outputs and E; backward pass multiplies derivatives along each path (chain rule) and updates every weight."
         ]
       ]
     }
@@ -1237,10 +1510,6 @@ window.COURSE = window.COE305 = {
           "The rule is known and fixed."
         ],
         [
-          "Sorting a list of numbers",
-          0
-        ],
-        [
           "Navigating a rover on Mars",
           1
         ],
@@ -1249,25 +1518,13 @@ window.COURSE = window.COE305 = {
           2
         ],
         [
-          "Reading handwritten digits",
-          2
-        ],
-        [
           "Routing packets on a computer network",
-          3
-        ],
-        [
-          "Predicting tomorrow's stock demand",
           3
         ],
         [
           "Recognizing a user by fingerprint",
           4,
           "User biometrics."
-        ],
-        [
-          "Personal music recommendations",
-          4
         ]
       ]
     },
@@ -1611,6 +1868,53 @@ window.COURSE = window.COE305 = {
           "Start with all, remove one at a time"
         ]
       ]
+    },
+    "activations": {
+      "ch": 6,
+      "type": "match",
+      "title": "Activation Functions",
+      "intro": "Match each activation with what it does.",
+      "pairs": [
+        [
+          "Sigmoid",
+          "Output in (0, 1); one output for two classes"
+        ],
+        [
+          "Softmax",
+          "K outputs in (0, 1) that sum to 1"
+        ],
+        [
+          "tanh",
+          "Output in (−1, 1)"
+        ],
+        [
+          "ReLU",
+          "max(0, a): zero for negative sums"
+        ],
+        [
+          "Linear output",
+          "y = wᵀx for regression"
+        ],
+        [
+          "Step / threshold",
+          "1 if wᵀx > 0, else 0 (slide 11)"
+        ]
+      ]
+    },
+    "backprop-steps": {
+      "ch": 6,
+      "type": "order",
+      "title": "One Round of Backpropagation",
+      "intro": "Put one training round of slides 26 to 38 in order.",
+      "items": [
+        "Forward: hidden sums and sigmoids, h₁ = 0.593",
+        "Forward: outputs y₁ = 0.751, y₂ = 0.773",
+        "Error E = ½(r₁ − y₁)² + ½(r₂ − y₂)² = 0.298",
+        "Backward: ∂E/∂w for output weights by the chain rule",
+        "Backward: ∂E/∂w for hidden weights, through both outputs",
+        "Update every weight: w ← w − η·∂E/∂w",
+        "Repeat: E falls to 0.291 after one round"
+      ]
     }
   }
 };
@@ -1618,22 +1922,28 @@ window.COURSE = window.COE305 = {
 Object.assign(window.COURSE, {
   "exam": {
     "title": "Midterm",
-    "scope": "Weeks 1–5 currently built: Introduction, Supervised Learning, Dimensionality Reduction, Clustering, Decision Trees. Official exam scope and format not announced. Projects 30%, midterm 30%, final 40%.",
+    "scope": "Weeks 1–6 · the lecturer's topic list",
+    "length": "Concepts and why, no formulas",
     "plan": [
       [
-        "learn.html?ch=1",
-        "Follow the five-week lesson route",
-        "150 min"
+        "learn.html?ch=6",
+        "Week 6 lesson: bias, transpose, activations, learning rate",
+        "40 min"
+      ],
+      [
+        "learn.html?ch=4&step=1",
+        "Week 4, step 2: parametric vs nonparametric",
+        "10 min"
       ],
       [
         "ozet.html",
-        "Midterm özeti: hide answers and recall",
-        "25 min"
+        "Midterm özeti: the lecturer's nine topics, then hide the answers",
+        "30 min"
       ],
       [
         "mock.html",
-        "Practice one mixed mock paper",
-        "30 min"
+        "Mock midterm: 20 questions + 8 explain-why",
+        "35 min"
       ]
     ]
   },
@@ -1642,15 +1952,15 @@ Object.assign(window.COURSE, {
       "kind": "summary",
       "href": "ozet.html",
       "title": "Midterm özeti",
-      "meta": "Türkçe · Weeks 1–5",
-      "desc": "Topic summaries, worked calculations and a hide-answers recall table."
+      "meta": "Türkçe · lecturer's topic list",
+      "desc": "One section per topic the lecturer named, each with a short English answer, and a hide-answers recall table."
     },
     {
       "kind": "mock",
       "href": "mock.html",
       "title": "Mock midterm",
-      "meta": "25 items · instant feedback",
-      "desc": "20 multiple-choice items and five short worked or explanation questions."
+      "meta": "28 items · instant feedback",
+      "desc": "20 multiple-choice questions and 8 explain-why questions with keyword model answers."
     }
   ]
 });

@@ -67,9 +67,10 @@ stale statements (for example "format not announced").
 
 ## Course recipe (every new course, from 2026-11-10)
 
-Use this for every course. All six courses were rebuilt to it on 2026-11-10. The raw materials of COE303, COE025,
-COE305, UNI480 and ENS010 are not on the Windows PC (they were built elsewhere), so those rebuilds used the existing
-course content as their source; re-verify against the slides when the materials are back. Guiding rule from the owner: **nothing bloated**. Every piece must earn
+Use this for every course. All six courses were rebuilt to it on 2026-11-10. The raw materials of COE025,
+UNI480 and ENS010 are not on the Windows PC (they were built elsewhere), so those rebuilds used the existing course
+content as their source; re-verify against the slides when the materials are back. COE303 (2026-11-10) and COE305
+(2026-11-11, slides 01–06 plus the lecturer's midterm topic list) have their slides in `materials/` and were re-checked. Guiding rule from the owner: **nothing bloated**. Every piece must earn
 its place; when in doubt, cut.
 
 A course is three things, built in this order:

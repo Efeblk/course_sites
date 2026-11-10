@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perceptron Lab · COE305</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sl { display: grid; grid-template-columns: 92px 1fr 64px; gap: 8px; align-items: center; margin: 6px 0; }
+    .sl input[type=range] { width: 100%; }
+    #tbl td, #tbl th { padding: 4px 8px; text-align: center; }
+    #tbl tr { cursor: pointer; }
+    #tbl tr.sel td { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    .ok { color: var(--ok); font-weight: 600; } .bad { color: var(--bad); font-weight: 600; }
+    #score { font-size: 1.15rem; }
+    #work { font-family: var(--mono); font-size: .92rem; line-height: 1.7; overflow-x: auto; }
+    .hid[hidden] { display: none; }
+    svg.plot { max-width: 460px; width: 100%; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe305" data-chapter="6" data-title="Perceptron Lab" data-activity="w6-perceptron">
+  <main>
+    <h1>Perceptron Lab</h1>
+    <p class="lead">One unit with a step output: <b>y = 1 if w₁x₁ + w₂x₂ + w₀ &gt; 0</b>, else 0. The line w₁x₁ + w₂x₂ + w₀ = 0 is its boundary. Change the weights, watch the line move, and check the four rows of the truth table (slides 11 to 15).</p>
+
+    <div class="cols">
+      <div class="panel">
+        <div class="row" role="group" aria-label="Target function">
+          <b>Target:</b>
+          <button data-t="AND">AND</button><button data-t="OR">OR</button><button data-t="XOR">XOR</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button id="pAnd">Slide 11 weights (AND)</button>
+          <button id="pOr">Slide 12 weights (OR)</button>
+        </div>
+        <div style="margin-top:10px">
+          <div class="sl"><label for="w1">w₁</label><input type="range" id="w1" min="-2" max="2" step="0.1"><code id="w1V"></code></div>
+          <div class="sl"><label for="w2">w₂</label><input type="range" id="w2" min="-2" max="2" step="0.1"><code id="w2V"></code></div>
+          <div class="sl"><label for="w0">bias w₀</label><input type="range" id="w0" min="-3" max="3" step="0.1"><code id="w0V"></code></div>
+        </div>
+        <label><input type="checkbox" id="hidden"> Hidden layer (slide 15's XOR network)</label>
+        <svg id="plot"></svg>
+        <p class="small muted">Filled background: where the unit outputs 1. Coral points have target r = 1, blue points r = 0.</p>
+      </div>
+      <div class="panel">
+        <p id="score"></p>
+        <div style="overflow-x:auto"><table class="t" id="tbl"></table></div>
+        <p class="small muted">Click a row to see its sum worked out.</p>
+        <div id="work"></div>
+        <div id="note"></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/plot.js"></script>
+  <script>
+    const { $, el, fill } = CS;
+    const T = { AND: [0, 0, 0, 1], OR: [0, 1, 1, 1], XOR: [0, 1, 1, 0] };
+    const X = [[0, 0], [0, 1], [1, 0], [1, 1]];
+    const st = { t: 'AND', w1: 1, w2: 1, w0: -1.5, sel: 3, hid: false };
+    const step = (a) => (a > 0 ? 1 : 0);
+    const f1 = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+    const f2 = (v) => (v < 0 ? '−' : '') + Math.abs(Math.round(v * 100) / 100).toString();
+    // slide 15: z1 = x1 AND ~x2, z2 = ~x1 AND x2, y = z1 OR z2
+    const H = { z1: [1, -1, -0.5], z2: [-1, 1, -0.5], y: [1, 1, -0.5] };
+    const out = (x) => {
+      if (!st.hid) return { s: st.w1 * x[0] + st.w2 * x[1] + st.w0 };
+      const z1 = step(H.z1[0] * x[0] + H.z1[1] * x[1] + H.z1[2]), z2 = step(H.z2[0] * x[0] + H.z2[1] * x[1] + H.z2[2]);
+      return { z1, z2, s: H.y[0] * z1 + H.y[1] * z2 + H.y[2] };
+    };
+
+    function draw() {
+      ['w1', 'w2', 'w0'].forEach((k) => { $('#' + k).value = st[k]; $('#' + k + 'V').textContent = f1(st[k]); $('#' + k).disabled = st.hid; });
+      document.querySelectorAll('[data-t]').forEach((b) => b.classList.toggle('primary', b.dataset.t === st.t));
+      const P = Plot($('#plot'), { x: [-0.5, 1.6], y: [-0.5, 1.6], w: 420, h: 400, pad: [12, 12, 30, 34] });
+      const n = 42, d = 2.1 / n;
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+        const a = -0.5 + (i + 0.5) * d, b = -0.5 + (j + 0.5) * d;
+        if (step(out([a, b]).s)) P.rect(a - d / 2, b - d / 2, a + d / 2, b + d / 2, { fill: 'var(--accent)', opacity: 0.13, stroke: 'none' });
+      }
+      P.axes({ xticks: [0, 1], yticks: [0, 1], xlabel: 'x₁', ylabel: 'x₂' });
+      const lines = st.hid ? [[...H.z1, 'z₁'], [...H.z2, 'z₂']] : [[st.w1, st.w2, st.w0, '']];
+      for (const [a, b, c, lab] of lines) {
+        let p1, p2;
+        if (Math.abs(b) > 1e-9) { p1 = [-0.5, (-c - a * -0.5) / b]; p2 = [1.6, (-c - a * 1.6) / b]; }
+        else if (Math.abs(a) > 1e-9) { p1 = [-c / a, -0.5]; p2 = [-c / a, 1.6]; }
+        else continue;
+        P.seg(p1[0], p1[1], p2[0], p2[1], { stroke: 'var(--f-c3)', 'stroke-width': 2.5 });
+        if (lab) P.text(P.sx(Math.min(1.5, Math.max(-0.4, p2[0]))) - 22, P.sy(Math.min(1.5, Math.max(-0.4, p2[1]))) + 4, lab, { fill: 'var(--f-c3)' });
+      }
+      X.forEach((x, i) => P.dot(x[0], x[1], { r: i === st.sel ? 10 : 8, fill: T[st.t][i] ? 'var(--f-c4)' : 'var(--f-c0)', stroke: i === st.sel ? 'var(--text)' : 'none', 'stroke-width': 2 }));
+
+      let right = 0;
+      const head = st.hid ? ['x₁', 'x₂', 'z₁', 'z₂', 'sum', 'y', 'r', ''] : ['x₁', 'x₂', 'sum', 'y', 'r', ''];
+      const rows = X.map((x, i) => {
+        const o = out(x), y = step(o.s), r = T[st.t][i], good = y === r;
+        right += good;
+        const cells = st.hid ? [x[0], x[1], o.z1, o.z2, f2(o.s), y, r] : [x[0], x[1], f2(o.s), y, r];
+        return el('tr', { class: i === st.sel ? 'sel' : '', onclick: () => { st.sel = i; draw(); } },
+          cells.map((c) => el('td', {}, String(c))), el('td', { class: good ? 'ok' : 'bad' }, good ? 'right' : 'wrong'));
+      });
+      fill($('#tbl'), el('tr', {}, head.map((h) => el('th', {}, h))), rows);
+      fill($('#score'), el('b', {}, `${right} / 4 right`), right === 4 ? ` · these weights compute ${st.t}.` : '');
+
+      const x = X[st.sel], o = out(x);
+      fill($('#work'), st.hid ? [
+        el('div', {}, `z₁ = step(+1·${x[0]} − 1·${x[1]} − 0.5) = ${o.z1}   (x₁ AND ~x₂)`),
+        el('div', {}, `z₂ = step(−1·${x[0]} + 1·${x[1]} − 0.5) = ${o.z2}   (~x₁ AND x₂)`),
+        el('div', {}, `y  = step(+1·${o.z1} + 1·${o.z2} − 0.5) = ${step(o.s)}   (z₁ OR z₂)`),
+      ] : [
+        el('div', {}, `wᵀ = [w₀, w₁, w₂] = [${f1(st.w0)}, ${f1(st.w1)}, ${f1(st.w2)}]   x = [1, ${x[0]}, ${x[1]}]ᵀ`),
+        el('div', {}, `wᵀx = ${f1(st.w0)}·1 ${f1(st.w1)}·${x[0]} ${f1(st.w2)}·${x[1]} = ${f2(o.s)}`),
+        el('div', {}, `y = 1(wᵀx > 0) = ${step(o.s)}`),
+      ]);
+      let note = '';
+      if (!st.hid && st.t === 'XOR') note = 'XOR: the two coral points sit on one diagonal and the two blue points on the other. No single line separates them, so no w₀, w₁, w₂ reach 4 / 4 (slide 13). Tick the hidden layer.';
+      else if (!st.hid && st.w0 === 0) note = 'w₀ = 0: the boundary has to pass through (0, 0). The bias is what shifts it away from the origin.';
+      else if (st.hid) note = 'Two hidden units draw two lines; the output unit ORs them. In (z₁, z₂) space XOR is separable (slide 15).';
+      fill($('#note'), note ? el('p', { class: 'callout' }, note) : null);
+    }
+    ['w1', 'w2', 'w0'].forEach((k) => $('#' + k).addEventListener('input', (e) => { st[k] = Math.round(Number(e.target.value) * 10) / 10; draw(); }));
+    document.querySelectorAll('[data-t]').forEach((b) => (b.onclick = () => { st.t = b.dataset.t; if (st.t !== 'XOR') st.hid = false; $('#hidden').checked = st.hid; draw(); }));
+    $('#pAnd').onclick = () => { Object.assign(st, { t: 'AND', w1: 1, w2: 1, w0: -1.5, hid: false }); $('#hidden').checked = false; draw(); };
+    $('#pOr').onclick = () => { Object.assign(st, { t: 'OR', w1: 1, w2: 1, w0: -0.5, hid: false }); $('#hidden').checked = false; draw(); };
+    $('#hidden').onchange = (e) => { st.hid = e.target.checked; if (st.hid) st.t = 'XOR'; draw(); };
+    draw();
+  </script>
+</body>
+</html>

@@ -5,11 +5,11 @@ window.GUIDE = {
     "time": "25–35 min",
     "steps": [
       {
-        "t": "Five weeks connect tasks, data and models",
+        "t": "Six weeks connect tasks, data and models",
         "key": "Start with the <b>learning task</b>; then choose a representation and evaluate a model.",
         "fig": {
           "type": "flow",
-          "t": "Weeks 1–5: the study route",
+          "t": "Weeks 1–6: the study route",
           "items": [
             [
               "",
@@ -40,10 +40,16 @@ window.GUIDE = {
               "5 · Build a tree",
               "Which questions predict an output?",
               "c0"
+            ],
+            [
+              "",
+              "6 · Learn weights",
+              "How does a network of weighted sums learn?",
+              "c1"
             ]
           ]
         },
-        "html": "<p>Week 1 asks what a computer can learn from examples. Week 2 turns labelled examples into hypotheses and checks new-data error. Week 3 changes the features. Week 4 finds groups without labels. Week 5 learns a sequence of questions that predicts a class or a number.</p><p>Follow this route with the course examples: shopping baskets, family cars, height and weight, clusters, and Play Tennis.</p>",
+        "html": "<p>Week 1 asks what a computer can learn from examples. Week 2 turns labelled examples into hypotheses and checks new-data error. Week 3 changes the features. Week 4 finds groups without labels. Week 5 learns a sequence of questions that predicts a class or a number. Week 6 builds a network of weighted sums and trains its weights step by step.</p><p>Follow this route with the course examples: shopping baskets, family cars, students' features, clusters, Play Tennis, and the AND and XOR units.</p>",
         "check": {
           "q": "Which week asks how to represent data using fewer features?",
           "o": [
@@ -65,8 +71,8 @@ window.GUIDE = {
               "icon": "",
               "t": "Normal programming",
               "pts": [
-                "rules + data → answers",
-                "a human writes IF … THEN …"
+                "payroll: the rule is known",
+                "write it once; nothing to learn"
               ],
               "c": "c0"
             },
@@ -74,8 +80,8 @@ window.GUIDE = {
               "icon": "",
               "t": "Machine learning",
               "pts": [
-                "data + answers → rules (a model)",
-                "the computer learns from examples"
+                "optimize a performance criterion",
+                "using example data or past experience"
               ],
               "c": "c1"
             }
@@ -342,41 +348,41 @@ window.GUIDE = {
     "time": "35–45 min",
     "steps": [
       {
-        "t": "Where week 2 fits in the course",
-        "key": "<b>Supervised Learning</b> answers the next question in our study route.",
+        "t": "Week 2 learns from labelled examples and judges new ones",
+        "key": "<b>Supervised learning</b> learns a rule from examples with known answers. The real test is how it does on <b>new</b> examples.",
         "fig": {
           "type": "flow",
-          "t": "From earlier weeks to this week",
+          "t": "Where week 2 sits",
           "items": [
             [
               "",
-              "1 · Choose a learning task",
-              "Examples and the kind of output",
+              "1 · Introduction",
+              "what kinds of learning exist",
               "c0"
             ],
             [
               "",
               "2 · Supervised Learning",
-              "Week 1 identified labelled tasks. Week 2 asks how a hypothesis learned from those examples will perform on new cases.",
+              "learn from labelled examples, judge on new ones",
               "c1"
             ],
             [
               "",
-              "Next · feature representation",
-              "Choose useful inputs before fitting",
+              "3 · Dimensionality Reduction",
+              "which inputs to use",
               "c2"
             ]
           ]
         },
-        "html": "<p>Week 1 identified labelled tasks. Week 2 asks how a hypothesis learned from those examples will perform on new cases.</p>",
+        "html": "<p>Week 1 listed the kinds of learning. Week 2 takes the one with a teacher: every example comes with the right answer, like the family cars marked + or −.</p><p>Fitting the examples is the easy part. This week asks how to pick a hypothesis that will also be right on cars it has never seen, and how to measure that.</p>",
         "check": {
-          "q": "What is the main evaluation target?",
+          "q": "What is the real goal of a supervised learner?",
           "o": [
-            "New-data performance",
-            "Memorizing the training labels",
-            "Counting features only"
+            "Being right on new examples",
+            "Zero error on the training set",
+            "Using as many features as possible"
           ],
-          "why": "Week 1 identified labelled tasks. Week 2 asks how a hypothesis learned from those examples will perform on new cases."
+          "why": "Generalization: slide 13 defines it as how well a model performs on new data. Zero training error can be overfitting."
         }
       },
       {
@@ -465,7 +471,7 @@ window.GUIDE = {
           ],
           "cap": "Green = family car (r = 1), coral = not (r = 0). The hypothesis class H is all axis-aligned rectangles; each rectangle is one hypothesis h."
         },
-        "html": "<p>A car has price x₁ and engine power x₂. Its label r is 1 for a family car, otherwise 0. Each axis-aligned rectangle is one hypothesis h in H: inside predicts 1, outside predicts 0.</p><p>Empirical error E(h | X) = Σ 1(h(xᵗ) ≠ rᵗ) counts training mistakes.</p><div class=\"callout warn\">False positive: predict 1 when r = 0. False negative: predict 0 when r = 1.</div>",
+        "html": "<p>A car has price x₁ and engine power x₂. Its label r is 1 for a family car, otherwise 0. Each axis-aligned rectangle is one hypothesis h in H: inside predicts 1, outside predicts 0.</p><p>Empirical error E(h | X) = Σ 1(h(xᵗ) ≠ rᵗ) counts training mistakes.</p><div class=\"callout warn\">False positive: predict 1 when r = 0. False negative: predict 0 when r = 1.</div><div class=\"callout\">Slide 6's prediction column is for counting practice only. Car E (140k, 2400) lies between A (100k, 1000) and C (200k, 3000), so no rectangle can call A and C family cars and leave E out. Count the errors from the table as printed: E = 2.</div>",
         "check": {
           "q": "A sports car is predicted to be a family car. What is the mistake?",
           "o": [
@@ -696,7 +702,7 @@ window.GUIDE = {
               "label": "quadratic"
             }
           ],
-          "cap": "One-vs-rest for K classes: train K classifiers, each with its own class against all the others."
+          "cap": "Linear and quadratic g(x) fitted to used-car prices (slide 11)."
         },
         "html": "<p>Fit g(x) to a noisy target r = f(x) + ε. A line uses g(x) = w₁x + w₀. For residuals −5, 2, 5, −5, 3:</p><ol><li>MAE = (5 + 2 + 5 + 5 + 3)/5 = 4.</li><li>MSE = (25 + 4 + 25 + 25 + 9)/5 = 17.6.</li></ol><div class=\"callout warn\">Signed errors can cancel. Squaring or taking absolute values prevents cancellation.</div>",
         "check": {
@@ -925,41 +931,41 @@ window.GUIDE = {
     "time": "25–35 min",
     "steps": [
       {
-        "t": "Where week 3 fits in the course",
-        "key": "<b>Dimensionality Reduction</b> answers the next question in our study route.",
+        "t": "Week 3 asks which inputs to keep",
+        "key": "<b>Dimensionality reduction</b> uses fewer features while keeping as much useful information as possible.",
         "fig": {
           "type": "flow",
-          "t": "From earlier weeks to this week",
+          "t": "Where week 3 sits",
           "items": [
             [
               "",
-              "2 · Fit and evaluate",
-              "Examples and the kind of output",
+              "2 · Supervised Learning",
+              "learn and evaluate a model",
               "c0"
             ],
             [
               "",
               "3 · Dimensionality Reduction",
-              "Week 2 learned and evaluated a model. Week 3 asks whether fewer features can provide a simpler, more useful representation.",
+              "fewer inputs, same information",
               "c1"
             ],
             [
               "",
-              "Next · unlabelled structure",
-              "Explore groups in the reduced representation",
+              "4 · Clustering",
+              "groups without labels",
               "c2"
             ]
           ]
         },
-        "html": "<p>Week 2 learned and evaluated a model. Week 3 asks whether fewer features can provide a simpler, more useful representation.</p>",
+        "html": "<p>Week 2 fitted models to examples described by features, such as price and engine power. Week 3 looks at the features themselves. A student described by age, GPA, attendance, study hours and income has d = 5.</p><p>The question is whether a smaller set, or a few new combined features, can describe the same students as well. Fewer inputs mean less computation, cheaper data and simpler models.</p>",
         "check": {
-          "q": "What does dimensionality count?",
+          "q": "A student is described by 5 features. What is the dimensionality d?",
           "o": [
-            "Features per example",
-            "Training examples",
-            "Classes"
+            "5",
+            "The number of students",
+            "1"
           ],
-          "why": "Week 2 learned and evaluated a model. Week 3 asks whether fewer features can provide a simpler, more useful representation."
+          "why": "Dimensionality counts the features of one example (slide 2), not the number of examples."
         }
       },
       {
@@ -1145,13 +1151,13 @@ window.GUIDE = {
         },
         "html": "<p>Height and weight form a cloud. Center it by subtracting its mean. Project each centered x to z = wᵀx. Rotate the unit direction w and choose the largest Var(z). PC2 is perpendicular to PC1 and captures the next-largest variance.</p><p>Explained-variance ratios measure retained variance: 92% plus 8% gives 100% across the two components.</p><div class=\"callout warn\">Variance is not class separation. PCA ignores the labels.</div>",
         "check": {
-          "q": "What does a 92% explained-variance ratio describe?",
+          "q": "Slide 12 reports PC1 + PC2 = 97.77% for the iris data. What does the number describe?",
           "o": [
-            "Retained variance",
+            "The share of the variance kept",
             "Classification accuracy",
-            "Share of labels retained"
+            "The share of the labels kept"
           ],
-          "why": "It measures spread, not prediction accuracy."
+          "why": "Explained variance measures spread kept by the components, not prediction accuracy."
         },
         "lab": {
           "href": "w3/pca.html",
@@ -1188,7 +1194,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Moving from (150, 4) to (150, 2) retains all 150 examples and reduces four features to two coordinates. A high-variance projection can lose a direction useful for classification.</p><p>In the course map, feature reduction follows evaluation and supports the plots used in clustering next week. It changes columns; clustering organizes rows.</p>",
+        "html": "<p>Slide 12's code reduces the iris data to two principal components (n_components = 2). Every example is kept; each one is now described by two numbers, and together they keep 97.77% of the variance.</p><p>Keeping variance is not the same as keeping what separates the classes: PCA uses only the spread of x, never the labels. LDA (slide 13) is the method that looks for class separation. Check a reduced representation the way week 2 checks any model: on validation data.</p><p>In the course map, feature reduction changes the columns; clustering next week organizes the rows.</p>",
         "check": {
           "q": "Does reducing from four features to two halve the number of examples?",
           "o": [
@@ -1206,41 +1212,81 @@ window.GUIDE = {
     "time": "30–40 min",
     "steps": [
       {
-        "t": "Where week 4 fits in the course",
-        "key": "<b>Clustering</b> answers the next question in our study route.",
+        "t": "Week 4 finds groups when there are no labels",
+        "key": "<b>Clustering</b> is unsupervised: it groups similar instances without any desired output.",
         "fig": {
           "type": "flow",
-          "t": "From earlier weeks to this week",
+          "t": "Where week 4 sits",
           "items": [
             [
               "",
-              "3 · Reduce features",
-              "Represent each example with useful coordinates",
+              "3 · Dimensionality Reduction",
+              "groups features",
               "c0"
             ],
             [
               "",
               "4 · Clustering",
-              "Week 3 changed the features. Week 4 groups the examples themselves without desired output labels.",
+              "groups instances, no labels",
               "c1"
             ],
             [
               "",
-              "Next · decision trees",
-              "Return to prediction using class labels",
+              "5 · Decision Trees",
+              "back to labelled prediction",
               "c2"
             ]
           ]
         },
-        "html": "<p>Week 3 changed the features. Week 4 groups the examples themselves without desired output labels.</p>",
+        "html": "<p>Week 3 worked on the columns of the data: which features to keep. Week 4 works on the rows: which instances belong together (slide 12).</p><p>There is no teacher now. Supervised data is X = {xᵗ, rᵗ}; clustering data is only X = {xᵗ} (slide 3). The groups it finds are clusters, not classes: nobody has named them.</p>",
         "check": {
-          "q": "What is supplied to unsupervised clustering?",
+          "q": "What does clustering receive?",
           "o": [
-            "Inputs without labels",
-            "Inputs with target classes",
-            "Only target classes"
+            "Inputs only, no labels",
+            "Inputs with their classes",
+            "Only the class names"
           ],
-          "why": "Week 3 changed the features. Week 4 groups the examples themselves without desired output labels."
+          "why": "Unsupervised: X = {xᵗ} with no rᵗ (slide 3)."
+        }
+      },
+      {
+        "t": "Parametric methods fix the form of the answer in advance",
+        "key": "<b>Parametric</b>: learning with a <b>predefined mapping function</b> and assumptions. <b>Nonparametric</b>: learning without one.",
+        "fig": {
+          "type": "compare",
+          "vs": true,
+          "cols": [
+            {
+              "icon": "",
+              "t": "Parametric",
+              "pts": [
+                "the form is chosen before the data",
+                "learning fills in a fixed set of parameters",
+                "e.g. y = wx + w₀: learn w and w₀"
+              ],
+              "c": "c0"
+            },
+            {
+              "icon": "",
+              "t": "Nonparametric",
+              "pts": [
+                "no form fixed in advance",
+                "the shape of the model comes from the data",
+                "e.g. a tree: its questions and depth come from the data"
+              ],
+              "c": "c1"
+            }
+          ]
+        },
+        "html": "<p>Slide 2 opens the clustering chapter with one distinction. A <b>parametric</b> method learns using a <b>predefined mapping function</b> and assumptions. A <b>nonparametric</b> method learns without them.</p><p>Week 2's regression is parametric: before seeing any car we decide the answer has the form y = wx + w₀. Learning only fills in w and w₀, and more data never changes the form. The perceptron of week 6 is the same: its weights are the parameters.</p><p>A decision tree (week 5) fixes no such formula. Which questions it asks and how deep it grows come from the data. The slide gives only the definition; these examples apply it to models from other weeks.</p>",
+        "check": {
+          "q": "By slide 2's definition, which model is parametric?",
+          "o": [
+            "Linear regression y = wx + w₀",
+            "A decision tree grown from the data",
+            "Neither: the definition only covers clustering"
+          ],
+          "why": "The form y = wx + w₀ is fixed before learning; learning only finds w and w₀. A tree's structure comes from the data."
         }
       },
       {
@@ -1299,7 +1345,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>The assignment bᵢᵗ is 1 for the nearest center and 0 otherwise. The error is E = Σₜ Σᵢ bᵢᵗ ‖xᵗ − mᵢ‖². Assign and update steps do not increase it.</p><p>Colour quantisation stores an index rather than a full colour vector. The decoder replaces it with the chosen reference colour.</p>",
+        "html": "<p>The assignment bᵢᵗ is 1 for the nearest center and 0 otherwise. The error is E = Σₜ Σᵢ bᵢᵗ ‖xᵗ − mᵢ‖². Assign and update steps do not increase it.</p><p>Colour quantisation stores an index rather than a full colour vector. The decoder replaces it with the chosen reference colour.</p><div class=\"callout\">Slide 4 prints the reconstruction error with the plain distance ‖xᵗ − mᵢ‖; slide 16's elbow plot uses the within-cluster sum of squares. This page and the lab use the squared form.</div>",
         "check": {
           "q": "What does the encoder send?",
           "o": [
@@ -1311,7 +1357,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "EM replaces a hard choice with responsibilities",
+        "t": "EM replaces a hard choice with probabilities",
         "key": "The <b>E-step</b> computes memberships; the <b>M-step</b> refits the components.",
         "fig": {
           "type": "flow",
@@ -1342,7 +1388,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>k-means gives a point to one cluster. A Gaussian mixture allows soft memberships, such as 70% in A and 30% in B.</p><ol><li>Begin with component means and variances.</li><li>E-step: compute each point’s responsibility for each component.</li><li>M-step: update component parameters using those weights.</li><li>Repeat.</li></ol>",
+        "html": "<p>k-means gives a point to one cluster. A Gaussian mixture allows soft memberships, such as 70% in A and 30% in B.</p><ol><li>Begin with component means and variances.</li><li>E-step: compute each point’s probability for each component.</li><li>M-step: update component parameters using those weights.</li><li>Repeat.</li></ol>",
         "check": {
           "q": "Which step updates Gaussian parameters?",
           "o": [
@@ -1350,7 +1396,7 @@ window.GUIDE = {
             "E-step",
             "Dendrogram cut"
           ],
-          "why": "The M-step refits parameters using E-step responsibilities."
+          "why": "The M-step refits parameters using E-step probabilities."
         },
         "lab": {
           "href": "w4/em.html",
@@ -1612,41 +1658,41 @@ window.GUIDE = {
     "time": "30–40 min",
     "steps": [
       {
-        "t": "Where week 5 fits in the course",
-        "key": "<b>Decision Trees</b> answers the next question in our study route.",
+        "t": "Week 5 learns a model that asks questions",
+        "key": "A <b>decision tree</b> predicts by asking one question at a time; learning chooses the questions.",
         "fig": {
           "type": "flow",
-          "t": "From earlier weeks to this week",
+          "t": "Where week 5 sits",
           "items": [
             [
               "",
-              "2 · Fit and evaluate",
-              "Examples and the kind of output",
+              "2 · Supervised Learning",
+              "model + loss + optimization",
               "c0"
             ],
             [
               "",
               "5 · Decision Trees",
-              "Week 2 supplied model, loss and evaluation. Week 5 uses a decision tree as the model and chooses questions by impurity or numeric error.",
+              "a model that asks questions",
               "c1"
             ],
             [
               "",
-              "Return · evaluate the fitted tree",
-              "Control complexity on held-out data",
+              "6 · Multilayer Perceptrons",
+              "a model of weighted sums",
               "c2"
             ]
           ]
         },
-        "html": "<p>Week 2 supplied model, loss and evaluation. Week 5 uses a decision tree as the model and chooses questions by impurity or numeric error.</p>",
+        "html": "<p>Back to labelled data. Week 2 used rectangles and lines as hypotheses. Week 5 uses a tree: each internal node asks about one attribute, each leaf gives the answer.</p><p>Learning a tree means choosing which question to ask at each node. For classes the slides measure how mixed a node is with entropy; for numbers they use the error around the mean.</p>",
         "check": {
-          "q": "What does a classification leaf provide?",
+          "q": "What does a leaf of a classification tree give?",
           "o": [
-            "A class output",
-            "A new feature axis",
-            "An unlabelled cluster center"
+            "A class label or class proportions",
+            "A new feature",
+            "A cluster centre"
           ],
-          "why": "Week 2 supplied model, loss and evaluation. Week 5 uses a decision tree as the model and chooses questions by impurity or numeric error."
+          "why": "Slide 3: classification leaves hold class labels or proportions; regression leaves hold numbers."
         }
       },
       {
@@ -1677,7 +1723,7 @@ window.GUIDE = {
               "c1"
             ],
             "w": [
-              570,
+              560,
               150,
               "Wind?",
               "c0"
@@ -1695,13 +1741,13 @@ window.GUIDE = {
               "c1"
             ],
             "n2": [
-              500,
+              470,
               250,
-              "No",
-              "c4"
+              "1 yes, 2 no: split again",
+              "c2"
             ],
             "y3": [
-              640,
+              650,
               250,
               "Yes",
               "c1"
@@ -1745,7 +1791,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Play Tennis first tests Outlook. Overcast goes to Yes. Sunny tests Humidity; Rain tests Wind. Follow exactly one branch at each decision.</p><p>A univariate numeric test xᵢ &gt; wₘ has two branches. A discrete test can have one branch per value. A multivariate node tests a combination of attributes.</p><p>Each root-to-leaf path gives an IF-THEN rule: IF Outlook = sunny AND Humidity = high THEN no.</p>",
+        "html": "<p>Play Tennis first tests Outlook. Overcast goes to Yes. Sunny tests Humidity; Rain tests Wind. On the slide's table the Rain and Strong branch still mixes D6 (no), D10 (yes) and D14 (no), so the tree is not finished there. Follow exactly one branch at each decision.</p><p>A univariate numeric test xᵢ &gt; wₘ has two branches. A discrete test can have one branch per value. A multivariate node tests a combination of attributes.</p><p>Each root-to-leaf path gives an IF-THEN rule: IF Outlook = sunny AND Humidity = high THEN no.</p>",
         "check": {
           "q": "What rule follows the Sunny then High path?",
           "o": [
@@ -1873,7 +1919,7 @@ window.GUIDE = {
           "name": "id3",
           "t": "ID3 grows the Play Tennis tree"
         },
-        "html": "<p>Outlook gives Sunny (2 yes, 3 no), Overcast (4 yes, 0 no), Rain (3 yes, 2 no).</p><ol><li>Child entropies are 0.971, 0 and 0.971.</li><li>Weight by child sizes: I′ = (5/14)0.971 + (4/14)0 + (5/14)0.971 ≈ 0.694.</li><li>Gain ≈ 0.940 − 0.694 = 0.246 using rounded values.</li></ol><p>Outlook beats Humidity 0.789, Wind 0.892 and Temperature 0.911. Recurse within the remaining mixed branches.</p><div class=\"callout warn\">Do not average child entropies equally when branch sizes differ.</div>",
+        "html": "<p>Outlook gives Sunny (2 yes, 3 no), Overcast (4 yes, 0 no), Rain (3 yes, 2 no).</p><ol><li>Child entropies are 0.971, 0 and 0.971.</li><li>Weight by child sizes: I′ = (5/14)0.971 + (4/14)0 + (5/14)0.971 ≈ 0.694.</li><li>Gain ≈ 0.940 − 0.694 = 0.246 using rounded values.</li></ol><p>Outlook beats Humidity 0.788, Wind 0.892 and Temperature 0.911. Recurse within the remaining mixed branches.</p><div class=\"callout warn\">Do not average child entropies equally when branch sizes differ.</div><p>Slide 12 repeats the search inside every branch and stops when a leaf holds a single instance, or when the children's entropy is greater than the parent's.</p><div class=\"callout\">Two slide typos: slide 8 weights the Weak branch by N₁₂/N₁; it should be N₁₁/N₁ = 8/14, which is what gives 0.892. Slide 9 calls Temperature's third value Cold; the table says Cool.</div>",
         "check": {
           "q": "Which child becomes a leaf immediately?",
           "o": [
@@ -2049,7 +2095,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Early stopping controls growth before the tree is complete. Postpruning first grows the tree, then removes subtrees using separate pruning evidence.</p><p>The course map ends where week 2 began: a fitted model must work on new examples. Representation from week 3 affects the inputs; tree structure controls model complexity. Clustering from week 4 answers a different question when labels are absent.</p>",
+        "html": "<p>Early stopping controls growth before the tree is complete. Postpruning first grows the tree, then removes subtrees using a separate pruning set (slide 14).</p><p>A pruned tree is judged on new examples, like week 2's hypotheses. Week 6 keeps the same three parts, model, loss and optimization, but swaps the tree for a network of weighted sums.</p>",
         "check": {
           "q": "Which method removes subtrees after growth?",
           "o": [
@@ -2063,3 +2109,97 @@ window.GUIDE = {
     ]
   }
 };
+
+/* Week 6: Multilayer Perceptrons (deck 06). */
+(function () {
+  const curve = (f, a, b, n = 60) => Array.from({ length: n + 1 }, (_, i) => { const x = a + ((b - a) * i) / n; return [x, f(x)]; });
+  const sig = (a) => 1 / (1 + Math.exp(-a));
+  window.GUIDE['6'] = {
+    goal: 'explain what a perceptron computes, why it needs a bias and an activation function, why XOR needs a hidden layer, and what the learning rate does in backpropagation.',
+    time: '35–45 min',
+    steps: [
+      {
+        t: 'Week 6 builds the model out of simple units',
+        key: 'A <b>multilayer perceptron</b> is a new kind of model. Week 2\'s <b>loss</b> and <b>optimization</b> still do the training.',
+        fig: { type: 'flow', t: 'Where week 6 sits', items: [
+          ['', '2 · Fit and evaluate', 'model + loss + optimization', 'c0'],
+          ['', '5 · Decision Trees', 'a model that asks questions', 'c0'],
+          ['', '6 · Multilayer Perceptrons', 'a model made of weighted sums', 'c1'],
+        ] },
+        html: '<p>Week 2 said every supervised learner has three parts: a <b>model</b>, a <b>loss function</b> and an <b>optimization procedure</b> that finds the best parameters. Week 5 used a tree as the model. Week 6 uses a network of small units called neurons.</p><p>Each unit only multiplies its inputs by weights and adds them up. Put many units in layers and the network can draw boundaries a single line cannot. Training changes the weights, a small step at a time, so that the error goes down.</p>',
+        check: { q: 'Gradient descent changes the weights to lower the error. Which of week 2\'s three parts is it?', o: ['The optimization procedure', 'The model', 'The loss function'], why: 'The network is the model and E = ½(r − y)² is the loss. The procedure that searches for the best weights is the optimization.' },
+      },
+      {
+        t: 'A perceptron outputs the weighted sum wᵀx',
+        key: '<b>y = wᵀx</b>: multiply each input by its <b>weight</b> and add. <b>Transpose (ᵀ)</b> turns a column into a row, so wᵀx is <b>one number</b>.',
+        fig: { type: 'anim', name: 'wtx', t: 'Transpose, then multiply and add' },
+        html: '<p>A perceptron (slide 4) has inputs x₁ … x_d, one output y, and a <b>weight</b> on each connection. It computes y = w₁x₁ + … + w_dx_d + w₀. The extra weight w₀ sits on the <b>bias unit</b> x₀, an input that is always 1.</p><p>The slides write vectors as <b>columns</b>. To save space they print a column as a row with a T: x = [1, x₁, …, x_d]ᵀ. <b>Transpose</b> swaps rows and columns. wᵀ is w laid flat as a row, and a row times a column pairs the entries, multiplies each pair and adds. That is the whole sum in three symbols.</p><p>Week 3 used the same product: PCA\'s z = wᵀx is one number per student.</p>',
+        check: { q: 'w and x each have 3 entries. What kind of thing is wᵀx?', o: ['A single number', 'A row of 3 numbers', 'A 3 × 3 table'], why: 'A row times a column: three products added into one number, the weighted sum.' },
+      },
+      {
+        t: 'The bias shifts the line away from the origin',
+        key: 'Without the <b>bias w₀</b> the boundary must pass through (0, 0). Changing w₀ <b>shifts</b> the line: AND and OR differ <b>only</b> in the bias.',
+        fig: { type: 'plot', t: 'Same weights w₁ = w₂ = +1, two biases', w: 380, h: 330, x: [-0.3, 1.8], y: [-0.3, 1.8], xl: 'x₁', yl: 'x₂',
+          lines: [{ pts: [[-0.3, 1.8], [1.8, -0.3]], c: 'c3' }, { pts: [[-0.3, 0.8], [0.8, -0.3]], c: 'c2', dash: true }],
+          pts: [[0, 0, 'c0', '(0,0)'], [0, 1, 'c0', '(0,1)'], [1, 0, 'c0', '(1,0)'], [1, 1, 'c4', '(1,1)']],
+          cap: 'Solid purple: w₀ = −1.5, only (1, 1) is above it (AND). Dashed orange: w₀ = −0.5, everything but (0, 0) is above it (OR). Moving w₀ slides the line without turning it.' },
+        html: '<p>For regression the perceptron is y = wx + w₀ (slide 6). w sets the slope; w₀ moves the whole line up or down. Without w₀ every line would have to go through (0, 0), whatever the data look like.</p><p>For classification the unit outputs 1 when w₁x₁ + w₂x₂ + w₀ &gt; 0, so its boundary is the line w₁x₁ + w₂x₂ + w₀ = 0. Slides 11 and 12 keep w₁ = w₂ = +1. With w₀ = −1.5 the line is x₁ + x₂ = 1.5 and only (1, 1) is above it: <b>AND</b>. With w₀ = −0.5 the line moves down to x₁ + x₂ = 0.5: <b>OR</b>.</p><p>This is <b>bias shifting</b>: the weights choose the direction of the line, the bias chooses where it sits.</p>',
+        lab: { href: 'w6/perceptron.html', todo: [
+          'Press <b>Slide 11 weights (AND)</b>: 4 / 4 right. Click row (1, 1) and read wᵀx = 0.5.',
+          'Change <b>only w₀</b> to −0.5 and pick target <b>OR</b>: still 4 / 4. Only the bias changed.',
+          'Set w₀ = 0 and target AND. Try any w₁, w₂: you never reach 4 / 4, because the line must pass through (0, 0).',
+        ] },
+        check: { q: 'Set w₀ = 0 in the AND unit. What happens to its boundary line?', o: ['It must pass through the origin', 'It disappears', 'It turns into a curve'], why: 'w₁x₁ + w₂x₂ = 0 always contains (0, 0). The bias is the only thing that can move the line away from it.' },
+      },
+      {
+        t: 'Sigmoid turns the sum into a probability for two classes',
+        key: 'The <b>activation function</b> turns wᵀx into the output. <b>Sigmoid</b> squeezes any sum into (0, 1), read as a probability: one sigmoid output for <b>binary classification</b>.',
+        fig: { type: 'plot', t: 'Three activation functions from slide 5', w: 520, h: 300, x: [-4, 4], y: [-1.2, 2.2], xl: 'a = wᵀx', yl: 'output',
+          lines: [{ pts: [[-4, 1], [4, 1]], c: 'mute', dash: true }, { pts: [[-4, -1], [4, -1]], c: 'mute', dash: true }, { pts: [[-4, 0], [4, 0]], c: 'mute', dash: true }, { pts: curve(sig, -4, 4), c: 'c0' }, { pts: curve(Math.tanh, -4, 4), c: 'c2', dash: true }, { pts: [[-4, 0], [0, 0], [2.2, 2.2]], c: 'c1' }],
+          texts: [[-3.75, 1.07, '1'], [-3.75, 0.07, '0'], [-3.7, -0.93, '−1'], [-2.2, 0.62, 'sigmoid(0) = 0.5', 'c0']],
+          pts: [[0, 0.5, 'c0']],
+          cap: 'Blue: sigmoid, between 0 and 1. Dashed orange: tanh, between −1 and 1. Green: ReLU, 0 for negative sums, then a straight line. Softmax is not one curve: it works on all K outputs at once (next step).' },
+        html: '<p>The sum wᵀx can be any number. The activation decides what the unit outputs. Slide 5 lists the common ones: <b>sigmoid</b> 1/(1 + e⁻ᵃ) with range (0, 1), <b>tanh</b> with range (−1, 1), <b>ReLU</b> max(0, a), and <b>softmax</b>.</p><p>For regression the output stays linear, y = wᵀx. For two classes we use one sigmoid output: y = sigmoid(wᵀx) is read as the probability of class 1 (slide 10). sigmoid(0) = 0.5, so "choose class 1 if y &gt; 0.5" is the same as wᵀx &gt; 0: the step rule of slide 11, made smooth.</p><p>Activations are part of the network, not a step before training. Every forward pass applies them, in training and in prediction, and backpropagation uses their derivative (slide 29).</p>',
+        check: { q: 'A spam filter has one output: spam or not spam. Which output activation fits?', o: ['Sigmoid', 'Softmax over many classes', 'Linear, no activation'], why: 'Two classes: one sigmoid output in (0, 1), read as P(spam). Linear outputs are for regression.' },
+      },
+      {
+        t: 'Softmax turns K scores into K probabilities',
+        key: 'For <b>K &gt; 2 classes</b> use <b>softmax</b>: every output is in (0, 1), the outputs <b>sum to 1</b>, and the network chooses the class with the <b>largest</b>.',
+        fig: { type: 'bars', t: 'Scores 2, 1, 0 after softmax', max: 1, items: [['C₁ (score 2)', 0.665, 'c1', '0.67'], ['C₂ (score 1)', 0.245, 'c0', '0.24'], ['C₃ (score 0)', 0.09, 'c0', '0.09']], cap: '0.67 + 0.24 + 0.09 = 1. Choose C₁.' },
+        html: '<p>With K classes the network has K outputs, one per class (slide 7). Each output first computes its own score oᵢ = wᵢᵀx. Softmax turns the scores into probabilities: raise e to each score, then divide each by the total.</p><p>Example: scores 2, 1 and 0 give e² ≈ 7.39, e¹ ≈ 2.72 and e⁰ = 1. The total is 11.11, so the outputs are 0.67, 0.24 and 0.09. They add up to 1, and the network chooses C₁ because y₁ is the largest.</p><p>Why softmax and not K separate sigmoids? Every softmax output shares the same total, so the classes compete: raising one score lowers all the other probabilities. The answer is one distribution over the K classes.</p>',
+        check: { q: 'Softmax outputs for four classes are 0.1, 0.5, 0.3 and one more. What is the fourth?', o: ['0.1', '0.5', 'It cannot be known'], why: 'Softmax outputs always sum to 1: 1 − 0.9 = 0.1.' },
+      },
+      {
+        t: 'One line cannot separate XOR, so we add a hidden layer',
+        key: 'A perceptron draws <b>one line</b>. XOR needs two, so a <b>multilayer perceptron</b> adds <b>hidden units</b> between input and output.',
+        fig: { type: 'plot', t: 'XOR and the two hidden lines of slide 15', w: 380, h: 330, x: [-0.3, 1.8], y: [-0.3, 1.8], xl: 'x₁', yl: 'x₂',
+          lines: [{ pts: [[0.2, -0.3], [1.8, 1.3]], c: 'c3' }, { pts: [[-0.3, 0.2], [1.3, 1.8]], c: 'c2' }],
+          pts: [[0, 0, 'c0', '0'], [1, 1, 'c0', '0'], [0, 1, 'c4', '1'], [1, 0, 'c4', '1']],
+          cap: 'Coral points: XOR = 1; blue: XOR = 0. Purple line: hidden unit z₁ (x₁ AND ~x₂) cuts off (1, 0). Orange line: z₂ (~x₁ AND x₂) cuts off (0, 1).' },
+        html: '<p>XOR is 1 when exactly one input is 1 (slide 13). On the plane the two 1s sit on one diagonal and the two 0s on the other. No single straight line puts both 1s on one side and both 0s on the other, so no w₀, w₁, w₂ work (Minsky and Papert, 1969).</p><p>The fix is a <b>hidden layer</b> (slide 15). Write x₁ XOR x₂ = (x₁ AND ~x₂) OR (~x₁ AND x₂). Hidden unit z₁ computes the first bracket and z₂ the second; each is one line. The output unit computes z₁ OR z₂.</p><p>This works only because each hidden unit applies its activation. Without it z₁ and z₂ would be plain weighted sums, the output a sum of sums, and the whole network one line again. Slide 14\'s general MLP uses sigmoid hidden units, z_h = sigmoid(w_hᵀx).</p>',
+        lab: { href: 'w6/perceptron.html', todo: [
+          'Pick target <b>XOR</b> and move all three sliders: no setting reaches 4 / 4.',
+          'Tick <b>Hidden layer</b>. Read z₁ and z₂ in each row, then check y = z₁ OR z₂.',
+        ] },
+        check: { q: 'Why does slide 15\'s network solve XOR when one perceptron cannot?', o: ['Two hidden units draw two lines and the output ORs them', 'Its bias is larger', 'It uses softmax at the output'], why: 'Each hidden unit is one line. Together they cut off both 1s, and the output combines them with OR.' },
+      },
+      {
+        t: 'The learning rate sets the size of each training step',
+        key: 'Training moves each weight against the slope of the error: <b>w ← w − η·∂E/∂w</b>. The <b>learning rate η</b> is the step size.',
+        fig: { type: 'anim', name: 'descent', t: 'Gradient descent on slide 17\'s example' },
+        html: '<p>Slide 17 has one weight: y = xw with x = 1.5, target r = 0.5 and w = 0.8. The output is y = 1.2 and the error E = ½(r − y)² = 0.245 (slide 19).</p><p>The slope ∂E/∂w = x·(−(r − y)) = 1.05 is positive, so a smaller w lowers E. Gradient descent takes w_new = 0.8 − 0.1 × 1.05 = 0.695 (slide 20).</p><p>η decides how far each step goes. Move the slider: a small η creeps towards the best w; a medium η arrives in a few steps; a too large η jumps past the minimum and E grows.</p><div class="callout warn">Slides 8 to 10 print Δw = −η(r − y)x. The worked example needs Δw = +η(r − y)x = 0.1 × (−0.7) × 1.5 = −0.105, which takes w from 0.8 to 0.695. The slides disagree on the sign; the worked example is the one that lowers E. The error is also printed three ways: 0.249 on slide 17, 0.245 on slide 19 and 0.49 on slide 20; ½ × 0.7² = 0.245 is right.</div>',
+        check: { q: 'In the animation η = 1.0 makes E grow. Why?', o: ['Each step jumps past the minimum, further every time', 'The slope becomes zero', 'The bias is missing'], why: 'The step is too big: w lands on the other side of the bowl, higher up than before.' },
+      },
+      {
+        t: 'Backpropagation passes the error back through every layer',
+        key: '<b>Backpropagation</b> uses the <b>chain rule</b>: multiply the derivatives along the path from E back to a weight, then take a gradient step with η.',
+        fig: { type: 'graph', t: 'Slide 26\'s 2-2-2 network', w: 640, h: 260,
+          nodes: { x1: [80, 70, 'x₁ = 0.05', 'c0'], x2: [80, 190, 'x₂ = 0.10', 'c0'], h1: [320, 70, 'h₁ = 0.593', 'c3'], h2: [320, 190, 'h₂ = 0.597', 'c3'], y1: [560, 70, 'y₁ = 0.751', 'c1'], y2: [560, 190, 'y₂ = 0.773', 'c1'] },
+          edges: [['x1', 'h1', 'w₁'], ['x1', 'h2', 'w₃', -40], ['x2', 'h1', 'w₂', -40], ['x2', 'h2', 'w₄'], ['h1', 'y1', 'w₅'], ['h1', 'y2', 'w₇', -40], ['h2', 'y1', 'w₆', -40], ['h2', 'y2', 'w₈']],
+          cap: 'Targets r₁ = 0.01, r₂ = 0.99. Forward pass left to right; the error travels back right to left.' },
+        html: '<p>A hidden weight changes E only through the units after it. Slide 23\'s chain shows the rule: the slope for a deeper weight is the product of the slopes along its path, so the error signal travels backwards, layer by layer.</p><p>Slides 26 to 38 run it with sigmoid units (slide 26 prints h₂′ = 0.3775, a copy of h₁′; the true sum is 0.3925, which is what gives its h₂ = 0.597). <b>Forward pass</b>: h₁ = 0.593, y₁ = 0.751, y₂ = 0.773, total error E = 0.298. <b>Backward pass</b> for w₅: ∂E/∂w₅ = 0.741 × 0.187 × 0.593, so w₅ = 0.4 − 0.5 × 0.082 = 0.359. The middle factor is the sigmoid\'s derivative. After one round E = 0.291; with more training slide 38 shows it near 0.</p><p>Back to the map: the MLP is the model, E is the loss, backpropagation with η is the optimization.</p>',
+        check: { q: 'Why is it called backpropagation?', o: ['The error derivative is passed from the output back towards the inputs', 'The inputs are fed in backwards', 'Training runs the data set in reverse order'], why: 'The forward pass computes outputs; the backward pass sends ∂E back through each layer with the chain rule.' },
+      },
+    ],
+  };
+})();

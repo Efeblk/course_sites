@@ -35,10 +35,11 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
 - **COE025 — Natural Language Processing** (`coe025/`): Weeks 1–4 and 6 (Week 5 was the midterm)
   - 18 simulations (`coe025/wN/*.html`); Week 6 adds a span scorer, an HMM/Viterbi lab and a CRF score lab
   - 25 games, a quiz and flashcards per week, driven by `coe025/data.js`
-- **COE305 — Machine Learning** (`coe305/`): Weeks 1–5
-  - 12 simulations (`coe305/wN/*.html`): credit scoring, baskets, hypothesis rectangles,
-    overfitting, K-fold CV, PCA, subset selection, k-means, EM, hierarchical clustering, ID3, regression trees
-  - 21 games, a quiz and flashcards per week, driven by `coe305/data.js`
+- **COE305 — Machine Learning** (`coe305/`): Weeks 1–6
+  - 13 simulations (`coe305/wN/*.html`): credit scoring, baskets, hypothesis rectangles,
+    overfitting, K-fold CV, PCA, subset selection, k-means, EM, hierarchical clustering, ID3, regression trees,
+    perceptron (bias, AND/OR/XOR)
+  - 12 games, a quiz and flashcards per week, driven by `coe305/data.js`
 - **UNI480 — AI in Health Management** (`uni480/`): Weeks 1–4
   - 10 simulations (`uni480/wN/*.html`): ward monitoring agent, hospital-manager scenario, clinical-note NLP,
     vision tasks across hospitals, verifying an AI draft, data-quality inspector, interoperability ("1.8"),
