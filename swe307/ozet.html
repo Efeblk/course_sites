@@ -1,515 +1,221 @@
-<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vize özeti · SWE307</title><link rel="stylesheet" href="../assets/css/style.css"><style>h2{margin-top:40px;border-top:1px solid var(--text);padding-top:16px}.topic{border-top:1px solid var(--line);padding:20px 0}.write{border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--panel);padding:12px 18px;margin:12px 0}.write ol{margin:4px 0;padding-left:22px}.trap{font-size:.92rem}.source{font: .78rem var(--mono);color:var(--muted)}table.t{width:100%;margin:12px 0}td,th{vertical-align:top}.scroll{overflow-x:auto}.hidden-answer{visibility:hidden}.step td:first-child{width:55%}button{margin:3px}textarea{width:100%;min-height:100px;font:inherit;background:var(--panel);color:var(--text);border:1px solid var(--line);padding:10px}.feedback{border-left:3px solid var(--accent);padding:8px 12px;margin:10px 0}.options{display:grid;gap:6px}.options button{text-align:left;width:100%;margin:0}.options button[aria-pressed="true"]{border:2px solid var(--accent)}.qcard,.drill{border-top:1px solid var(--line);padding:22px 0}.qcard h2,.drill h2{border:0;margin:8px 0;font-size:1.25rem}.model{border-left:3px solid var(--accent);padding:10px 18px}.progress{font: .88rem var(--mono);padding:10px 0}details{margin:10px 0}summary{cursor:pointer}@media(max-width:600px){h1{font-size:1.9rem}td,th{padding:6px!important}}</style></head>
-<body data-root=".." data-course="swe307" data-title="Vize özeti" data-activity="swe307-vize">
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWE307 — Midterm özeti · Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .part { margin: 46px 0 0; padding-top: 16px; border-top: 2px solid var(--text); }
+    .part > h2 { margin: 0; }
+    .part .pts { font: .85rem var(--mono); color: var(--muted); margin: 2px 0 10px; }
+    .topic { border-top: 1px solid var(--line); padding: 16px 0 6px; }
+    .topic h3 { margin: 0 0 6px; }
+    .topic ul { margin: 6px 0; padding-left: 22px; }
+    .topic li { margin: 3px 0; }
+    table.t { width: 100%; margin: 10px 0; }
+    td, th { vertical-align: top; }
+    .scroll { overflow-x: auto; }
+    .ans.hid, .ans.hid * { color: transparent !important; background: var(--panel-2); border-radius: 4px; user-select: none; }
+    .tf b.f { color: var(--bad); } .tf b.tr { color: var(--ok); }
+    .src { font: .76rem var(--mono); color: var(--muted); }
+    svg.fish { width: 100%; max-width: 820px; height: auto; color: var(--text); }
+  </style>
+</head>
+<body data-root=".." data-course="swe307" data-title="Midterm özeti" data-activity="swe307-vize">
 <main>
-<div class="mono small muted">SWE307 · Dr. Alper Öner · Chapters 1–7</div>
-<h1>Vize özeti</h1>
-<nav class="row"><a href="index.html">Course</a><a href="ozet.html">Vize özeti</a><a href="mock.html">Mock midterm</a><a href="drill.html">Hesap pratiği</a><a href="videos.html">Videolar</a><a href="past.html">Geçmiş vizeler</a></nav>
-<p class="lead">Vize 8. haftada, ağırlığı %30. Kapsam <b>Chapters 1–7</b>, 50 dakika.</p><div class="callout"><b>Geçmiş vizelere göre kalıp:</b> 1) <b>Discussion</b> 30p (Systems Analyst rolü, Verification vs Validation, Waterfall vs Agile, FR vs NFR) · 2) <b>True/False + boşluk doldurma</b> 20p · 3) <b>Function Point Analysis</b> 30p (UFP → VAF → AFP) · 4) <b>Fishbone</b> 20p (amaç, çizim, bir senaryoya uygula). Çözümlü kâğıtlar: <a href="past.html">Geçmiş vizeler</a>.</div><p class="lead"> Açıklamalar Türkçe; sınavda tanıyacağın terimler İngilizce.</p>
-<h2>Büyük resim</h2>
-<p>Bir kurum siparişlerini daha iyi yönetmek istesin. <b>SAD</b> önce neyin düzelmesi gerektiğini sorar. <b>SDLC</b> bu işi evrelere ve belgelere ayırır. <b>Waterfall</b> bu evreleri sırayla, <b>Iterative</b> tekrarlarla yürütür. <b>Agile</b>, <b>XP</b> ve <b>Scrum</b> çalışan üründen erken geri bildirim toplar.</p>
-<p>Sonra “Kaç kişi, ne kadar süre?” sorusu gelir. <b>LOC</b>, <b>FP</b>, <b>COCOMO</b> ve <b>Engineering rules</b> tahmin üretir; <b>Scheduling</b> ve <b>Critical path</b> işleri zamana bağlar. Doğru şeyi tahmin edebilmek için önce <b>Requirements</b> gerekir. <b>FR</b> hizmeti, <b>NFR</b> kaliteyi ve koşulları anlatır. <b>Fishbone</b> nedenleri araştırır; <b>Fact-finding</b> kullanıcıdan kanıt toplar.</p>
-<p><b>Use case</b> bu ihtiyaçları aktörün amacı ve adımlarıyla yazar. <b>User story</b> küçük bir kullanıcı faydasına odaklanır. <b>Design</b> ihtiyacı teknik yapıya çevirir. <b>UML</b> ile akışı <b>Activity</b>, mesajları <b>Sequence</b>, durumları <b>State machine</b>, nesne yapısını <b>Class</b>, parçaların sözleşmelerini <b>Component diagram</b> üzerinden okuruz. Yedi bölüm aynı sistemin farklı sorularını cevaplar.</p>
-<nav class="row"><a href="#map">Tek bakışta</a><a href="#topics">Konu kartları</a><a href="#calculations">Hesap adımları</a><a href="#glossary">Sözlük</a></nav>
-<h2 id="map">Tek bakışta: cevabı kapat, kendin söyle</h2>
-<button id="hide" aria-pressed="false">Cevapları gizle</button><div class="scroll"><table class="t"><thead><tr><th><b>Konu / kendine sor</b></th><th><b>Kısa cevap</b></th></tr>
-</thead>
-<tbody><tr><td><a href="#t0">SAD ve dört P</a><br><small>Ch1 · 8, 17–25</small></td><td class="answer"><b>Software Engineering</b>: systematic, disciplined, quantifiable<br><b>Analysis</b> → what; <b>Design</b> → how<br><b>People</b> · <b>Product</b> · <b>Project</b> · <b>Process</b><br><b>Information System</b>: hardware, software, data, process, people</td></tr>
-<tr><td><a href="#t1">Stakeholders</a><br><small>Ch1 · 27–35</small></td><td class="answer"><b>System owner</b>: funding, vision, priorities<br><b>Project manager</b>: schedule, budget, quality<br><b>Systems analyst</b>: problems, opportunities, directives<br><b>System designer</b>: technical solution; <b>System builder</b>: construction<br><b>Software tester</b>: defects; <b>System user</b>: daily interaction</td></tr>
-<tr><td><a href="#t2">SDLC ve belgeler</a><br><small>Ch2 · 4–40</small></td><td class="answer"><b>Planning → SPMP</b>: scope, feasibility, resources, schedule, cost<br><b>Requirements Analysis → SRS</b>: what to build<br><b>Software Design → SDD</b>: how to build<br><b>Development → program code</b>; <b>Testing → tested system</b><br><b>Deployment → delivered system</b>, release description, trained users<br><b>Maintenance</b>: fixes, enhancements; outputs = those of the related phases</td></tr>
-<tr><td><a href="#t3">Test ve kalite</a><br><small>Ch1 · 41–45; Ch2 · 30–32</small></td><td class="answer"><b>Verification</b>: building the product right; inspections, reviews<br><b>Validation</b>: building the right product; testing<br><b>Unit</b>: individual modules; <b>Integration</b>: interfaces<br><b>Regression</b>: existing features after change; <b>System</b>: whole system<br><b>Beta</b>: users; <b>Acceptance</b>: owner after beta<br><b>Defect density</b>: defects / size; <b>Mean time to failure</b>: time between crashes</td></tr>
-<tr><td><a href="#t4">Waterfall ve Iterative</a><br><small>Ch2 · 41–52; Ch3 · 3–5</small></td><td class="answer"><b>Waterfall</b>: sequential, once per phase<br><b>Feedback loops</b>: adjacent phases in practice<br><b>Iterative</b>: analysis, design, development, testing in each iteration<br><b>Prototyping</b> · <b>Spiral</b>: process models listed in Ch2</td></tr>
-<tr><td><a href="#t5">Agile</a><br><small>Ch3 · 6–14</small></td><td class="answer"><b>Individuals and interactions</b> over processes and tools<br><b>Working software</b> over comprehensive documentation<br><b>Customer collaboration</b> over contract negotiation<br><b>Responding to change</b> over following a plan<br><b>User stories</b>, small teams, frequent feedback</td></tr>
-<tr><td><a href="#t6">Extreme Programming (XP)</a><br><small>Ch3 · 15–31</small></td><td class="answer"><b>Weekly cycle</b>: iteration; <b>Quarterly cycle</b>: release<br><b>Values</b>: Communication, Simplicity, Feedback, Respect, Courage<br><b>TDD</b>: failing test → code → passing test<br><b>Pair programming</b>: driver + navigator<br><b>Collective ownership</b> · <b>Continuous integration</b> · <b>Small releases</b><br><b>Simple design</b> · <b>System metaphor</b> · <b>Whole team</b> · <b>Coding standard</b> · <b>Sustainable pace</b></td></tr>
-<tr><td><a href="#t7">Scrum</a><br><small>Ch3 · 32–34, 45</small></td><td class="answer"><b>Backlog</b>: customer wants and needs; user stories<br><b>Sprint</b>: 30 days in these slides<br><b>Daily scrum</b>: at most 15 minutes<br><b>Scrum master</b>: daily meeting, progress<br><b>Sprint end</b>: customer demonstration, integrated and tested software</td></tr>
-<tr><td><a href="#t8">Yönetim, takım ve maliyet</a><br><small>Ch3 · 35–47</small></td><td class="answer"><b>Project-oriented</b>: dedicated project; less reuse<br><b>Function-oriented</b>: functional groups; staff shifting delays<br><b>Matrix</b>: functional group + project; efficient resources<br><b>Brooks’s law</b>: adding people to a failing project makes matters worse<br><b>Development costs</b>: one time; <b>Operating costs</b>: recurring<br><b>Fixed costs</b>: regular, relatively fixed; <b>Variable costs</b>: usage</td></tr>
-<tr><td><a href="#t9">LOC ve FP</a><br><small>Ch3 · 48–52; Ch4 · 3–5, 31–34</small></td><td class="answer"><b>LOC</b>: physical, technology dependent; <b>KLOC = LOC / 1000</b><br><b>FP</b>: functional size, technology independent<br><b>Gearing factor</b>: LOC per FP<br><b>Duration</b>: months; <b>Effort</b>: person-months</td></tr>
-<tr><td><a href="#t10">FP: neyi sayıyoruz?</a><br><small>Ch4 · 9–25</small></td><td class="answer"><b>EI</b>: outside → inside; add/change/delete<br><b>EO</b>: derived data → outside<br><b>EQ</b>: retrieve data<br><b>ILF</b>: logically related data inside boundary<br><b>EIF</b>: reference data; another application’s ILF<br><b>FTR</b>: files referenced; <b>DET</b>: recognizable fields; <b>RET</b>: data subgroup</td></tr>
-<tr><td><a href="#t11">FP: ağırlık ve düzeltme</a><br><small>Ch4 · 14–30</small></td><td class="answer"><b>UFP = Σ(count × complexity weight)</b><br><b>VAF = Σ GSC weights</b> (slides’ notation)<br><b>GSC</b>: none 0, incidental 1, moderate 2, average 3, significant 4, essential 5<br><b>AFP = UFP × (0.65 + 0.01 × VAF)</b></td></tr>
-<tr><td><a href="#t12">Estimation modelleri</a><br><small>Ch4 · 32–43</small></td><td class="answer"><b>Organic</b>: small, known environment; <b>Semi-detached</b>: medium/web<br><b>Embedded</b>: tight hardware–software constraints<br><b>COCOMO I</b>: E = a × KLOC^b; D = c × E^d<br><b>Engineering rules</b>: D = FP^A; Staff = FP/150; E = Staff × D<br><b>Simple</b>: A=.32; <b>Average</b>: A=.40; <b>Complex/Embedded</b>: A=.45<br><b>Size</b>: <500 simple; 500–999 average; ≥1000 complex</td></tr>
-<tr><td><a href="#t13">Beklenti ve iş planı</a><br><small>Ch4 · 44–53</small></td><td class="answer"><b>Expectations management matrix</b>: Constrain / Accept / Max or Min<br><b>Lunar example</b>: Schedule Constrain; Cost Accept; Scope/Quality Max or Min<br><b>WBS</b>: hierarchical decomposition; task ≤40 working hours; ≤6 subtasks<br><b>PERT</b>: network, dependencies; <b>Gantt</b>: calendar bars, progress</td></tr>
-<tr><td><a href="#t14">Critical path</a><br><small>Ch4 · 54–65</small></td><td class="answer"><b>TE</b>: duration + max(predecessor TE)<br><b>TL</b>: min(successor TL − successor duration)<br><b>Slack = TL − TE</b><br><b>Critical task</b>: zero slack; <b>Critical path</b>: longest duration path</td></tr>
-<tr><td><a href="#t15">Requirements: FR ve NFR</a><br><small>Ch5 · 9–25</small></td><td class="answer"><b>Business requirements</b>: goals; <b>Stakeholder requirements</b>: expectations<br><b>Solution requirements</b>: FR + NFR<br><b>Functional requirement (FR)</b>: activities, services, behavior<br><b>Nonfunctional requirement (NFR)</b>: qualities, constraints, interfaces, error handling</td></tr>
-<tr><td><a href="#t16">Quality attributes</a><br><small>Ch5 · 13–20</small></td><td class="answer"><b>Reliability</b>: failures over time; <b>Availability</b>: accessible at a point in time<br><b>Maintainability</b>: ease of modification/repair<br><b>Performance</b>: response time under workload<br><b>Security</b>: protection from malicious access<br><b>Portability</b>: platforms; <b>Compatibility</b>: coexistence<br><b>Usability</b>: how hard to use</td></tr>
-<tr><td><a href="#t17">Fishbone ve Fact-finding</a><br><small>Ch5 · 26–35, 45–61</small></td><td class="answer"><b>Fishbone / Ishikawa</b>: effect at head; 4–8 main causes; subcauses<br><b>Research</b>: similar solutions; <b>Observation</b>: actual work<br><b>Prototyping</b>: representative working model<br><b>Questionnaire</b>: open/closed; many people, cheap, anonymous; but <b>return rate often low</b><br><b>Interview</b>: structured/unstructured; probe and reword<br><b>JRP</b>: joint user/IT workshop; Facilitator, Sponsor, Users/Managers, IT Staff</td></tr>
-<tr><td><a href="#t18">Sampling ve soru biçimleri</a><br><small>Ch5 · 36–50</small></td><td class="answer"><b>Random</b>: equal chance; <b>Systematic</b>: every x/n-th<br><b>Stratified</b>: subgroups, then sample within each<br><b>SampleSize = .25 × (Certainty Factor / Acceptable Error)²</b><br><b>Open ended</b>: free response; <b>Closed ended</b>: predefined<br><b>Likert</b>: frequency example; <b>Rating</b>: agreement example; <b>Ranking</b>: order items</td></tr>
-<tr><td><a href="#t19">Use case ve Actors</a><br><small>Ch6 · 3–17</small></td><td class="answer"><b>Use case</b>: single meaningful business task; verb phrase<br><b>Actor</b>: external entity; noun phrase<br><b>Primary actor</b>: goal; <b>Supporting actor</b>: service<br><b>Fully dressed</b>: name, description, actors, trigger<br><b>Preconditions</b> · <b>Postconditions</b> · <b>Normal flow</b> · <b>Alternate flows</b> · <b>Business rules</b></td></tr>
-<tr><td><a href="#t20">Include, Extend, Generalization</a><br><small>Ch6 · 25–35</small></td><td class="answer"><b>Association</b>: actor — use case<br><b>Include</b>: base → included use case; dashed arrow<br><b>Extend</b>: extension → base; optional / conditional<br><b>Generalization</b>: child → parent; hollow triangle</td></tr>
-<tr><td><a href="#t21">User story ve INVEST</a><br><small>Ch6 · 38–48</small></td><td class="answer"><b>As a role, I can capability, so that benefit</b><br><b>INVEST</b>: Independent, Negotiable, Valuable, Estimable, Small, Testable<br><b>Acceptance criteria</b>: completion checks<br><b>Initiative → Epic → Story</b><br><b>Backlog</b>: ordered product functions</td></tr>
-<tr><td><a href="#t22">Design ve UML</a><br><small>Ch6 · 50–58</small></td><td class="answer"><b>Architectural design</b>: modules, interfaces, dependencies<br><b>Detailed design</b>: internal logic, algorithms, data structures<br><b>UML</b>: Unified Modeling Language; implementation-language independent<br><b>Structural</b>: Class, Component, Deployment, Object, Package, Profile, Composite Structure<br><b>Behavioral</b>: Use Case, Activity, Sequence, State Machine, Communication, Interaction Overview, Timing</td></tr>
-<tr><td><a href="#t23">Activity diagram</a><br><small>Ch6 · 59–69; Ch7 · 3–12</small></td><td class="answer"><b>Action</b>: atomic step; rounded rectangle<br><b>Partition / Swimlane</b>: responsibility<br><b>Initial</b>: filled circle; <b>Flow final</b>: circle with X<br><b>Activity final</b>: bull’s-eye; stops ALL flows<br><b>Decision / Merge</b>: alternatives; diamond<br><b>Fork / Join</b>: concurrent flows / synchronization; bar<br><b>Accept event action</b>: waits for event; <b>Object flow</b>: data between actions</td></tr>
-<tr><td><a href="#t24">Sequence diagram</a><br><small>Ch7 · 13–24</small></td><td class="answer"><b>Lifeline</b>: participant; <b>Execution / Activation</b>: active period<br><b>Message</b>: sender, receiver, communication<br><b>alt</b>: alternatives; <b>opt</b>: happens or nothing<br><b>loop</b>: repeat; <b>break</b>: replaces enclosing remainder<br><b>par</b>: parallel; <b>ref</b>: reuse interaction<br><b>Guard</b>: condition; <b>Destruction occurrence</b>: instance ends</td></tr>
-<tr><td><a href="#t25">State machine diagram</a><br><small>Ch7 · 33–50</small></td><td class="answer"><b>State</b>: invariant situation; <b>Transition</b>: state change<br><b>Simple state</b>: no substates; <b>Composite state</b>: substates<br><b>Region</b>: states and transitions; concurrent regions<br><b>Initial pseudostate</b> · <b>Final state</b> · <b>Fork / Join</b><br><b>Shallow history</b>: re-enter last active substate<br><b>Behavioral</b>: discrete behavior; <b>Protocol</b>: usage lifecycle</td></tr>
-<tr><td><a href="#t26">Class diagram</a><br><small>Ch7 · 51–52</small></td><td class="answer"><b>Class</b>: shared features, constraints, semantics<br><b>Name</b> → <b>Attributes</b> → <b>Operations / Methods</b><br><b>Class diagram</b>: structural; classes and relationships</td></tr>
-<tr><td><a href="#t27">Component diagram</a><br><small>Ch7 · 53–64</small></td><td class="answer"><b>Component</b>: modular, encapsulated unit<br><b>Provided interface</b>: ball, complete circle<br><b>Required interface</b>: socket, half circle<br><b>Port</b>: interaction point<br><b>Assembly connector</b>: provider to consumer<br><b>Delegation connector</b>: external contract to internal realization<br><b>Dependency</b>: needs another element</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="topics">Konu kartları</h2>
-<article class="topic" id="t0"><h3><b>SAD ve dört P</b></h3>
-<p class="source">Ch1 · 8, 17–25</p>
-<p>Bir kurumun işini iyileştirmek için önce ihtiyacı anlarız, sonra çözümü kurarız.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Software Engineering: systematic, disciplined, quantifiable</b></li>
-<li><b>Analysis → what; Design → how</b></li>
-<li><b>People · Product · Project · Process</b></li>
-<li><b>Information System: hardware, software, data, process, people</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Product = code only</b> yanlış; belgeler de ürüne dahildir. <b>Process</b> evrelerin sırasını, sıklığını ve çıktılarını belirler.</p>
-</article>
-<article class="topic" id="t1"><h3><b>Stakeholders</b></h3>
-<p class="source">Ch1 · 27–35</p>
-<p>Aynı sisteme herkes başka bir soruyla bakar: kim öder, kim çözer, kim kullanır?</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>System owner: funding, vision, priorities</b></li>
-<li><b>Project manager: schedule, budget, quality</b></li>
-<li><b>Systems analyst: problems, opportunities, directives</b></li>
-<li><b>System designer: technical solution; System builder: construction</b></li>
-<li><b>Software tester: defects; System user: daily interaction</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Stakeholder = user only</b> yanlış; sistemde çıkarı olan herkes kapsama girer.</p>
-</article>
-<article class="topic" id="t2"><h3><b>SDLC ve belgeler</b></h3>
-<p class="source">Ch2 · 4–40</p>
-<p>Her evre bir sonraki evrenin kullanacağı somut bir çıktı bırakır.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Planning → SPMP: scope, feasibility, resources, schedule, cost</b></li>
-<li><b>Requirements Analysis → SRS: what to build</b></li>
-<li><b>Software Design → SDD: how to build</b></li>
-<li><b>Development → program code; Testing → tested system</b></li>
-<li><b>Deployment → delivered system, release description, trained users</b></li>
-<li><b>Maintenance: fixes, enhancements; outputs = those of the related phases</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>SRS = how to implement</b> yanlış; nasıl sorusunun teknik karşılığı <b>SDD</b> içindedir. <b>Planning</b> tahminleri proje boyunca güncellenir.</p>
-</article>
-<article class="topic" id="t3"><h3><b>Test ve kalite</b></h3>
-<p class="source">Ch1 · 41–45; Ch2 · 30–32</p>
-<p>Önce tanıma uygun üretip üretmediğini, sonra ihtiyacı karşılayıp karşılamadığını sorgula.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Verification: building the product right; inspections, reviews</b></li>
-<li><b>Validation: building the right product; testing</b></li>
-<li><b>Unit: individual modules; Integration: interfaces</b></li>
-<li><b>Regression: existing features after change; System: whole system</b></li>
-<li><b>Beta: users; Acceptance: owner after beta</b></li>
-<li><b>Defect density: defects / size; Mean time to failure: time between crashes</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Validation = building the product right</b> yanlış; bu <b>Verification</b>. Erken bulunan hata daha ucuza düzeltilir.</p>
-</article>
-<article class="topic" id="t4"><h3><b>Waterfall ve Iterative</b></h3>
-<p class="source">Ch2 · 41–52; Ch3 · 3–5</p>
-<p>Birincisi evreleri sırayla tamamlar; ikincisi her turda ürünü yeniden geliştirir.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Waterfall: sequential, once per phase</b></li>
-<li><b>Feedback loops: adjacent phases in practice</b></li>
-<li><b>Iterative: analysis, design, development, testing in each iteration</b></li>
-<li><b>Prototyping · Spiral: process models listed in Ch2</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Iterations must be serial</b> yanlış; slayt ayrı takımlarla paralel geliştirmeye izin verir. <b>Prototyping</b> ve <b>Spiral</b> için slaytta verilmemiş ayrıntılar eklenmedi.</p>
-</article>
-<article class="topic" id="t5"><h3><b>Agile</b></h3>
-<p class="source">Ch3 · 6–14</p>
-<p>Çalışan küçük bir parça göster, geri bildirim al ve yönünü düzelt.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Individuals and interactions over processes and tools</b></li>
-<li><b>Working software over comprehensive documentation</b></li>
-<li><b>Customer collaboration over contract negotiation</b></li>
-<li><b>Responding to change over following a plan</b></li>
-<li><b>User stories, small teams, frequent feedback</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>No documentation</b> yanlış; belge gerektiği kadar üretilir. <b>Refactoring</b> dış davranışı değiştirmeden iç yapıyı düzeltir.</p>
-</article>
-<article class="topic" id="t6"><h3><b>Extreme Programming (XP)</b></h3>
-<p class="source">Ch3 · 15–31</p>
-<p>Kısa aralıklarla çalışan ürün çıkarabilmek için günlük geliştirme alışkanlıklarını sıkı tut.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Weekly cycle: iteration; Quarterly cycle: release</b></li>
-<li><b>Values: Communication, Simplicity, Feedback, Respect, Courage</b></li>
-<li><b>TDD: failing test → code → passing test</b></li>
-<li><b>Pair programming: driver + navigator</b></li>
-<li><b>Collective ownership · Continuous integration · Small releases</b></li>
-<li><b>Simple design · System metaphor · Whole team · Coding standard · Sustainable pace</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>TDD = code first</b> yanlış; önce başarısız test yazılır. Ch3 s26, <b>Sustainable pace</b> yanında sürüm sonu aşırı çalışma cümlesi de içerir; tutarsız ifadeyi genel kural yapma.</p>
-</article>
-<article class="topic" id="t7"><h3><b>Scrum</b></h3>
-<p class="source">Ch3 · 32–34, 45</p>
-<p>Bekleyen işleri görünür tut; her turda seçilen işleri gösterilebilir bir ürüne dönüştür.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Backlog: customer wants and needs; user stories</b></li>
-<li><b>Sprint: 30 days in these slides</b></li>
-<li><b>Daily scrum: at most 15 minutes</b></li>
-<li><b>Scrum master: daily meeting, progress</b></li>
-<li><b>Sprint end: customer demonstration, integrated and tested software</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Daily scrum = 30 minutes</b> yanlış. Takım sayısı s32’de 6–9, s45’te 3–9; geliştirici sayısı genellikle 2–5. Bunları tek kesin sayı gibi ezberleme. Ch6 s45 ayrıca 1–2 haftalık <b>story</b> örneği verir; burada <b>Scrum</b> sorularında Ch3’ün 30 günü esas alınır.</p>
-</article>
-<article class="topic" id="t8"><h3><b>Yönetim, takım ve maliyet</b></h3>
-<p class="source">Ch3 · 35–47</p>
-<p>İşi bölmek hız kazandırabilir; iletişimin bedeli de büyür.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Project-oriented: dedicated project; less reuse</b></li>
-<li><b>Function-oriented: functional groups; staff shifting delays</b></li>
-<li><b>Matrix: functional group + project; efficient resources</b></li>
-<li><b>Brooks’s law: adding people to a failing project makes matters worse</b></li>
-<li><b>Development costs: one time; Operating costs: recurring</b></li>
-<li><b>Fixed costs: regular, relatively fixed; Variable costs: usage</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>More people always shorten duration</b> yanlış; yeni iletişim ve öğrenme yükü doğar.</p>
-</article>
-<article class="topic" id="t9"><h3><b>LOC ve FP</b></h3>
-<p class="source">Ch3 · 48–52; Ch4 · 3–5, 31–34</p>
-<p>Boyutu kod satırıyla da kullanıcıya sağlanan işlevle de ölçebilirsin; aynı şey değildir.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>LOC: physical, technology dependent; KLOC = LOC / 1000</b></li>
-<li><b>FP: functional size, technology independent</b></li>
-<li><b>Gearing factor: LOC per FP</b></li>
-<li><b>Duration: months; Effort: person-months</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>FP counts programming functions</b> yanlış; kullanıcı düzeyindeki işlevi sayar. <b>LOC</b> karşılaştırmasında boş satır ve yorum sayma kuralları aynı olmalıdır.</p>
-</article>
-<article class="topic" id="t10"><h3><b>FP: neyi sayıyoruz?</b></h3>
-<p class="source">Ch4 · 9–25</p>
-<p>Önce sınırı çiz; sonra sınırdan geçen işi ve tutulan veriyi ayır.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>EI: outside → inside; add/change/delete</b></li>
-<li><b>EO: derived data → outside</b></li>
-<li><b>EQ: retrieve data</b></li>
-<li><b>ILF: logically related data inside boundary</b></li>
-<li><b>EIF: reference data; another application’s ILF</b></li>
-<li><b>FTR: files referenced; DET: recognizable fields; RET: data subgroup</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>EIF = internally maintained file</b> yanlış; başka uygulamanın verisine başvurulur. Başka uygulamadan veri çekip kaydetme hem <b>EQ</b> hem <b>EI</b> sayısını artırabilir.</p>
-</article>
-<article class="topic" id="t11"><h3><b>FP: ağırlık ve düzeltme</b></h3>
-<p class="source">Ch4 · 14–30</p>
-<p>Her sayımı karmaşıklığıyla çarp; sonra sistemin genel özelliklerine göre düzelt.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>UFP = Σ(count × complexity weight)</b></li>
-<li><b>VAF = Σ GSC weights (slides’ notation)</b></li>
-<li><b>GSC: none 0, incidental 1, moderate 2, average 3, significant 4, essential 5</b></li>
-<li><b>AFP = UFP × (0.65 + 0.01 × VAF)</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>VAF = 1.05</b> bu slaytların adlandırmasında yanlış; hava durumu örneğinde <b>VAF = 40</b>, çarpan 1.05’tir.</p>
-</article>
-<article class="topic" id="t12"><h3><b>Estimation modelleri</b></h3>
-<p class="source">Ch4 · 32–43</p>
-<p>Aynı boyut için iki ayrı yöntem iş yükü tahmini verir; ağırlıkla birleştirebilirsin.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Organic: small, known environment; Semi-detached: medium/web</b></li>
-<li><b>Embedded: tight hardware–software constraints</b></li>
-<li><b>COCOMO I: E = a × KLOC^b; D = c × E^d</b></li>
-<li><b>Engineering rules: D = FP^A; Staff = FP/150; E = Staff × D</b></li>
-<li><b>Simple: A=.32; Average: A=.40; Complex/Embedded: A=.45</b></li>
-<li><b>Size: <500 simple; 500–999 average; ≥1000 complex</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>500 FP = simple</b> yanlış; sınır dahil olduğundan <b>average</b>. Türüne göre standalone basit, web/mobile/client-server orta, embedded karmaşıktır. <b>COCOMO II</b> adı geçer; bu kapsamda sayısal katsayı eklenmedi.</p>
-</article>
-<article class="topic" id="t13"><h3><b>Beklenti ve iş planı</b></h3>
-<p class="source">Ch4 · 44–53</p>
-<p>Her şeyi aynı anda en iyi yapamazsın; önceliği ve işlerin bağımlılığını açık yaz.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Expectations management matrix: Constrain / Accept / Max or Min</b></li>
-<li><b>Lunar example: Schedule Constrain; Cost Accept; Scope/Quality Max or Min</b></li>
-<li><b>WBS: hierarchical decomposition; task ≤40 working hours; ≤6 subtasks</b></li>
-<li><b>PERT: network, dependencies; Gantt: calendar bars, progress</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Gantt = hierarchy</b> yanlış; hiyerarşi <b>WBS</b>. Matrisin her ölçütünde ve her sütununda bir işaret bulunur.</p>
-</article>
-<article class="topic" id="t14"><h3><b>Critical path</b></h3>
-<p class="source">Ch4 · 54–65</p>
-<p>Bir işin gecikmesi bütün bitişi geciktiriyorsa o işin zaman payı yoktur.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>TE: duration + max(predecessor TE)</b></li>
-<li><b>TL: min(successor TL − successor duration)</b></li>
-<li><b>Slack = TL − TE</b></li>
-<li><b>Critical task: zero slack; Critical path: longest duration path</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Shortest path</b> yanlış; en uzun bağımlı yol projenin en erken bitişini belirler. Birleşmede ileri giderken en büyük, geri giderken en küçük değeri seç.</p>
-</article>
-<article class="topic" id="t15"><h3><b>Requirements: FR ve NFR</b></h3>
-<p class="source">Ch5 · 9–25</p>
-<p>Önce sistemin yaptığı hizmeti, sonra o hizmetin koşullarını söyle.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Business requirements: goals; Stakeholder requirements: expectations</b></li>
-<li><b>Solution requirements: FR + NFR</b></li>
-<li><b>Functional requirement (FR): activities, services, behavior</b></li>
-<li><b>Nonfunctional requirement (NFR): qualities, constraints, interfaces, error handling</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Implemented in Java = FR</b> yanlış; bir <b>software constraint</b>. Slaytta üç başarısız girişten sonra engelleme de <b>NFR / error handling</b> olarak sınıflanır.</p>
-</article>
-<article class="topic" id="t16"><h3><b>Quality attributes</b></h3>
-<p class="source">Ch5 · 13–20</p>
-<p>İyi çalışıyor demek yerine hangi açıdan, hangi sınır içinde iyi olduğunu yaz.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Reliability: failures over time; Availability: accessible at a point in time</b></li>
-<li><b>Maintainability: ease of modification/repair</b></li>
-<li><b>Performance: response time under workload</b></li>
-<li><b>Security: protection from malicious access</b></li>
-<li><b>Portability: platforms; Compatibility: coexistence</b></li>
-<li><b>Usability: how hard to use</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>98% available = Reliability</b> yanlış; bu <b>Availability</b>. Yanıt süresinin yanında iş yükü de verilmelidir.</p>
-</article>
-<article class="topic" id="t17"><h3><b>Fishbone ve Fact-finding</b></h3>
-<p class="source">Ch5 · 26–35, 45–61</p>
-<p>Belirtiyi çözüm sanma; önce nedenlerini ve kullanıcıların gerçekte ne yaptığını araştır.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Fishbone / Ishikawa: effect at head; 4–8 main causes; subcauses</b></li>
-<li><b>Research: similar solutions; Observation: actual work</b></li>
-<li><b>Prototyping: representative working model</b></li>
-<li><b>Questionnaire: open/closed; many people, cheap, anonymous; disadvantage: return rate often low, cannot reword questions</b></li>
-<li><b>Interview: structured/unstructured; probe and reword</b></li>
-<li><b>JRP: joint user/IT workshop; Facilitator, Sponsor, Users/Managers, IT Staff</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Observation never changes behavior</b> yanlış; izlenen kişi farklı davranabilir. <b>Prototype = finished system</b> yanlış beklenti yaratır. <b>Interview</b> sorusuna kendi cevabını yerleştirme.</p>
-</article>
-<article class="topic" id="t18"><h3><b>Sampling ve soru biçimleri</b></h3>
-<p class="source">Ch5 · 36–50</p>
-<p>Az sayıda kayıtla bütünü anlamak istiyorsan seçim kuralını bilmelisin.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Random: equal chance; Systematic: every x/n-th</b></li>
-<li><b>Stratified: subgroups, then sample within each</b></li>
-<li><b>Open ended: free response; Closed ended: predefined</b></li>
-<li><b>Likert: frequency example; Rating: agreement example; Ranking: order items</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Systematic sampling is always unbiased</b> yanlış; kayıt düzeni sonucu çarpıtabilir. <b>Stratified</b> alt grupların temsilini korur.</p>
-</article>
-<article class="topic" id="t19"><h3><b>Use case ve Actors</b></h3>
-<p class="source">Ch6 · 3–17</p>
-<p>Kullanıcının bir amacını seç; sistemle karşılıklı adımları yaz.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Use case: single meaningful business task; verb phrase</b></li>
-<li><b>Actor: external entity; noun phrase</b></li>
-<li><b>Primary actor: goal; Supporting actor: service</b></li>
-<li><b>Fully dressed: name, description, actors, trigger</b></li>
-<li><b>Preconditions · Postconditions · Normal flow · Alternate flows · Business rules</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Actor must be human</b> yanlış; dış sistem, cihaz veya zaman olabilir. Rol, çizdiğin <b>system boundary</b> ile değişir.</p>
-</article>
-<article class="topic" id="t20"><h3><b>Include, Extend, Generalization</b></h3>
-<p class="source">Ch6 · 25–35</p>
-<p>Zorunlu ortak işi ayır; koşullu ek işi ayrı göster.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Association: actor — use case</b></li>
-<li><b>Include: base → included use case; dashed arrow</b></li>
-<li><b>Extend: extension → base; optional / conditional</b></li>
-<li><b>Generalization: child → parent; hollow triangle</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Include arrow points to base</b> yanlış; ok dahil edilen işe gider. <b>Extend always runs</b> yanlış; ana iş tek başına anlamlıdır.</p>
-</article>
-<article class="topic" id="t21"><h3><b>User story ve INVEST</b></h3>
-<p class="source">Ch6 · 38–48</p>
-<p>Bir özelliği kullanıcının diliyle ve sağlayacağı faydayla anlat.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>As a role, I can capability, so that benefit</b></li>
-<li><b>INVEST: Independent, Negotiable, Valuable, Estimable, Small, Testable</b></li>
-<li><b>Acceptance criteria: completion checks</b></li>
-<li><b>Initiative → Epic → Story</b></li>
-<li><b>Backlog: ordered product functions</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Story = rigid implementation workflow</b> yanlış; <b>Negotiable</b> uygulama kararına yer bırakır. <b>Epic</b> birden çok küçük işe bölünür.</p>
-</article>
-<article class="topic" id="t22"><h3><b>Design ve UML</b></h3>
-<p class="source">Ch6 · 50–58</p>
-<p>İhtiyaç belgesinden uygulanabilir yapıya geçerken farklı bakışları farklı çizimlerle göster.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Architectural design: modules, interfaces, dependencies</b></li>
-<li><b>Detailed design: internal logic, algorithms, data structures</b></li>
-<li><b>UML: Unified Modeling Language; implementation-language independent</b></li>
-<li><b>Structural: Class, Component, Deployment, Object, Package, Profile, Composite Structure</b></li>
-<li><b>Behavioral: Use Case, Activity, Sequence, State Machine, Communication, Interaction Overview, Timing</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>UML = programming language</b> yanlış; modelleme dilidir. Slayt UML 2.5’i belirtir; bu tarihsel slayt bilgisidir.</p>
-</article>
-<article class="topic" id="t23"><h3><b>Activity diagram</b></h3>
-<p class="source">Ch6 · 59–69; Ch7 · 3–12</p>
-<p>İşin hangi adımlardan, koşullardan ve eşzamanlı kollardan geçtiğini izle.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Action: atomic step; rounded rectangle</b></li>
-<li><b>Partition / Swimlane: responsibility</b></li>
-<li><b>Initial: filled circle; Flow final: circle with X</b></li>
-<li><b>Activity final: bull’s-eye; stops ALL flows</b></li>
-<li><b>Decision / Merge: alternatives; diamond</b></li>
-<li><b>Fork / Join: concurrent flows / synchronization; bar</b></li>
-<li><b>Accept event action: waits for event; Object flow: data between actions</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Merge synchronizes concurrent flows</b> yanlış; bunu <b>Join</b> yapar. <b>Flow final stops all</b> yanlış; yalnız ulaşılan kolu durdurur.</p>
-</article>
-<article class="topic" id="t24"><h3><b>Sequence diagram</b></h3>
-<p class="source">Ch7 · 13–24</p>
-<p>Bu kez iş akışından çok katılımcılar arasındaki mesaj sırasını oku.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Lifeline: participant; Execution / Activation: active period</b></li>
-<li><b>Message: sender, receiver, communication</b></li>
-<li><b>alt: alternatives; opt: happens or nothing</b></li>
-<li><b>loop: repeat; break: replaces enclosing remainder</b></li>
-<li><b>par: parallel; ref: reuse interaction</b></li>
-<li><b>Guard: condition; Destruction occurrence: instance ends</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>opt = two alternative branches</b> yanlış; iki seçenek için <b>alt</b>. <b>ref</b> tekrar döngüsü değil, başka etkileşimin kullanımıdır.</p>
-</article>
-<article class="topic" id="t25"><h3><b>State machine diagram</b></h3>
-<p class="source">Ch7 · 33–50</p>
-<p>Tek bir varlığın olaylara göre hangi durumda kaldığına bak.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>State: invariant situation; Transition: state change</b></li>
-<li><b>Simple state: no substates; Composite state: substates</b></li>
-<li><b>Region: states and transitions; concurrent regions</b></li>
-<li><b>Initial pseudostate · Final state · Fork / Join</b></li>
-<li><b>Shallow history: re-enter last active substate</b></li>
-<li><b>Behavioral: discrete behavior; Protocol: usage lifecycle</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>State = message order</b> yanlış; mesaj sırası <b>Sequence</b> bakışıdır. ATM örneğinde <b>exit / ejectCard</b>, çıkışın nedeni ne olursa olsun çalışır.</p>
-</article>
-<article class="topic" id="t26"><h3><b>Class diagram</b></h3>
-<p class="source">Ch7 · 51–52</p>
-<p>Sistemin hangi nesne türlerinden oluştuğunu ve aralarındaki bağı göster.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Class: shared features, constraints, semantics</b></li>
-<li><b>Name → Attributes → Operations / Methods</b></li>
-<li><b>Class diagram: structural; classes and relationships</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Class diagram = behavior diagram</b> yanlış; yapıyı gösterir. Üç bölmeyi isim, veri ve işlem sırasıyla oku.</p>
-</article>
-<article class="topic" id="t27"><h3><b>Component diagram</b></h3>
-<p class="source">Ch7 · 53–64</p>
-<p>Büyük parçaların birbirinden hangi hizmeti aldığını ve sunduğunu göster.</p>
-<div class="write"><strong>Kâğıda yaz</strong><ol><li><b>Component: modular, encapsulated unit</b></li>
-<li><b>Provided interface: ball, complete circle</b></li>
-<li><b>Required interface: socket, half circle</b></li>
-<li><b>Port: interaction point</b></li>
-<li><b>Assembly connector: provider to consumer</b></li>
-<li><b>Delegation connector: external contract to internal realization</b></li>
-<li><b>Dependency: needs another element</b></li>
-</ol>
-</div>
-<p class="trap"><strong>Şık tuzağı:</strong> <b>Required = ball</b> yanlış; gereken hizmet yarım çemberdir. <b>Component</b> sınıftan daha yüksek soyutlamadır; <b>CBSE</b> ve <b>SOA</b> tasarımında kullanılır.</p>
-</article>
-<h2 id="calculations">Hesaplar: adım ve anlam</h2>
-<h3><b>FP complexity weights · Ch4 s26</b></h3>
-<div class="scroll"><table class="t"><thead><tr><th><b>Functional unit</b></th><th><b>Low</b></th><th><b>Average</b></th><th><b>High</b></th></tr>
-</thead>
-<tbody><tr><td><b>EI</b></td><td>3</td><td>4</td><td>6</td></tr>
-<tr><td><b>EO</b></td><td>4</td><td>5</td><td>7</td></tr>
-<tr><td><b>EQ</b></td><td>3</td><td>4</td><td>6</td></tr>
-<tr><td><b>ILF</b></td><td>7</td><td>10</td><td>15</td></tr>
-<tr><td><b>EIF</b></td><td>5</td><td>7</td><td>10</td></tr>
-</tbody>
-</table>
-</div>
-<p><b>EI</b> için <b>DET</b> aralıkları 1–4 / 5–15 / 16+, <b>FTR</b> satırları 0–1 / 2 / 3+. <b>EO/EQ</b> için 1–5 / 6–19 / 20+ ve 0–1 / 2–3 / 4+. <b>ILF/EIF</b> için <b>DET</b> 1–19 / 20–50 / 51+, <b>RET</b> 1 / 2–5 / 6+. Her üç satırlı tabloda karmaşıklık deseni: Low–Low–Average; Low–Average–High; Average–High–High. (Ch4 s14, 17, 19, 21, 24.)</p>
-<h3><b>Hava durumu uygulaması · Ch4 s6–30</b></h3>
-<div class="scroll"><table class="t"><thead><tr><th><b>Adım</b></th><th><b>Bu ne demek?</b></th></tr>
-</thead>
-<tbody><tr><td><b>UFP</b> = 3×3 + 1×4 + 1×3 + 1×7 = 23</td><td>3 düşük <b>EI</b>, birer düşük <b>EO, EQ, ILF</b>; <b>EIF</b> yok.</td></tr>
-<tr><td><b>VAF</b> = 5+5+5+5+5+4+3+4+4 = 40</td><td>Genel özelliklerin ağırlık toplamı.</td></tr>
-<tr><td><b>AFP</b> = 23×(0.65+0.01×40) = 24.15 ≈ 24</td><td>23 işlev puanı, 1.05 ile düzeltilir.</td></tr>
-</tbody>
-</table>
-</div>
-<h3><b>COCOMO I katsayıları · Ch4 s38</b></h3>
-<div class="scroll"><table class="t"><thead><tr><th><b>Class</b></th><th><b>a</b></th><th><b>b</b></th><th><b>c</b></th><th><b>d</b></th></tr>
-</thead>
-<tbody><tr><td><b>Organic</b></td><td>2.4</td><td>1.05</td><td>2.5</td><td>0.38</td></tr>
-<tr><td><b>Semi-detached</b></td><td>3</td><td>1.12</td><td>2.5</td><td>0.35</td></tr>
-<tr><td><b>Embedded</b></td><td>3.6</td><td>1.2</td><td>2.5</td><td>0.32</td></tr>
-</tbody>
-</table>
-</div>
-<h3><b>500 FP örneği · Ch4 s40–43</b></h3>
-<p>Slayt tutarsızlığı: soru metni 7 <b>complex inquiries</b> diyor; çözüm 11×6 kullanıyor. Aşağıda slayt sonucunu izliyoruz. 7 alınırsa aynı sonuç çıkmaz.</p>
-<div class="scroll"><table class="t"><thead><tr><th><b>Adım</b></th><th><b>Bu ne demek?</b></th></tr>
-</thead>
-<tbody><tr><td><b>UFP</b> = 77+58+60+145+216 = 556</td><td>Slayt çözümündeki 11 karmaşık sorgu esas.</td></tr>
-<tr><td><b>VAF</b> = 3+4+5+4+4+5 = 25; <b>AFP</b> = 556×.90 = 500.4 ≈ 500</td><td>Web uygulaması ve boyut sınırı <b>average</b>.</td></tr>
-<tr><td><b>Duration</b> = 500^.40 = 12.01 months</td><td>Takvim süresi.</td></tr>
-<tr><td><b>Staff</b> = 500/150 ≈ 3.33; <b>Effort</b> ≈ 3.33×12.01 ≈ 40 person-months</td><td>İş yükü; 40 takvim ayı değil.</td></tr>
-<tr><td><b>LOC</b> = 500×.60×53 + 500×.25×37 + 500×.15×24 = 22,325</td><td>Java / PL/SQL / Perl payları, kendi <b>gearing factor</b> değerleriyle çarpılır.</td></tr>
-<tr><td><b>KLOC</b> ≈ 22.3; <b>E</b> = 3×22.3^1.12 ≈ 97.1; <b>D</b> = 2.5×97.1^.35 ≈ 12.4</td><td><b>Semi-detached COCOMO I</b> ile ayrı tahmin.</td></tr>
-<tr><td><b>Weighted effort</b> = (7×40+3×97)/10 = 57.1 ≈ 57 person-months</td><td>Slayttaki ağırlıklar: 7 (engineering rules) ve 3 (COCOMO I); slayt gerekçe vermiyor. İki süreyi toplamıyoruz.</td></tr>
-</tbody>
-</table>
-</div>
-<h3><b>Critical path · Ch4 s62–65</b></h3>
-<p>Bağımlılıklar: 1 → {2,3} → 4 → {5,6}; 6 → 7; {5,7} → 8.</p>
-<div class="scroll"><table class="t"><thead><tr><th><b>Task</b></th><th><b>D (weeks)</b></th><th><b>TE</b></th><th><b>TL</b></th><th><b>Slack</b></th></tr>
-</thead>
-<tbody><tr><td>1</td><td>5</td><td>5</td><td>5</td><td>0</td></tr>
-<tr><td>2</td><td>4</td><td>9</td><td>11</td><td>2</td></tr>
-<tr><td>3</td><td>6</td><td>11</td><td>11</td><td>0</td></tr>
-<tr><td>4</td><td>2</td><td>13</td><td>13</td><td>0</td></tr>
-<tr><td>5</td><td>5.5</td><td>18.5</td><td>21</td><td>2.5</td></tr>
-<tr><td>6</td><td>5</td><td>18</td><td>18</td><td>0</td></tr>
-<tr><td>7</td><td>3</td><td>21</td><td>21</td><td>0</td></tr>
-<tr><td>8</td><td>1</td><td>22</td><td>22</td><td>0</td></tr>
-</tbody>
-</table>
-</div>
-<div class="scroll"><table class="t"><thead><tr><th><b>Adım</b></th><th><b>Bu ne demek?</b></th></tr>
-</thead>
-<tbody><tr><td><b>TE₄</b> = max(9,11)+2 = 13; <b>TE₈</b> = max(18.5,21)+1 = 22</td><td>Birleşen bütün ön işler bitmeli.</td></tr>
-<tr><td><b>TL₄</b> = min(21−5.5,18−5) = 13</td><td>Ardılları geciktirmeyecek en dar sınır seçilir.</td></tr>
-<tr><td><b>Slack₂</b> = 11−9 = 2; <b>Slack₅</b> = 21−18.5 = 2.5</td><td>Bu işler projeyi geciktirmeden bu kadar kayabilir.</td></tr>
-<tr><td><b>Critical path</b>: 1–3–4–6–7–8; 5+6+2+5+3+1 = 22 weeks</td><td>Sıfır zaman paylı yol en erken bitişi belirler.</td></tr>
-</tbody>
-</table>
-</div>
-<h3><b>İletişim ve örneklem</b></h3>
-<div class="scroll"><table class="t"><thead><tr><th><b>Adım</b></th><th><b>Bu ne demek?</b></th></tr>
-</thead>
-<tbody><tr><td><b>Channels</b> = N(N−1)/2; N=8 → 8×7/2 = 28 (Ch3 s44)</td><td>Her kişi çifti bir kanal; 3→3, 4→6, 5→10.</td></tr>
-<tr><td><b>Systematic interval</b> = x/n; 1000/100 = 10 (Ch5 s39)</td><td>Her 10. kaydı seç; 6800/68 = 100 için her 100. kayıt (s44).</td></tr>
-</tbody>
-</table>
-</div>
-<h3><b>Sample size</b> · Ch5 s43–44</h3><p>Aralık ile örnek sayısı ayrı sorulardır. Önce kaç kayıt gerektiğini, sonra hangi aralıkla seçeceğini bul.</p><div class="scroll"><table class="t"><tr><th>Adım</th><th>Bu ne demek?</th></tr><tr><td><b>Certainty Factor</b>: 95% → 1.960; 90% → 1.645; 80% → 1.281</td><td>Slayttaki güven düzeyi tablosu.</td></tr><tr><td><b>SampleSize = .25 × (Certainty Factor / Acceptable Error)²</b></td><td>Önce gerekli örnek sayısını bul; hata payını ondalık olarak yaz.</td></tr><tr><td>90%, 10% hata: .25×(1.645/.10)² = 67.65 → 68</td><td>68 kayıt için 6800/68 = 100; her 100. kayıt.</td></tr></table></div>
-<h2 id="glossary">Kısa sözlük</h2>
-<div class="scroll"><table class="t"><thead><tr><th><b>Terim</b></th><th><b>Hatırlatma</b></th></tr>
-</thead>
-<tbody><tr><td><b>SAD</b></td><td>Kurumsal sistemi anlama, çözümleme ve tasarlama.</td></tr>
-<tr><td><b>SDLC</b></td><td>Sistemin geliştirme ve değişim yaşam döngüsü.</td></tr>
-<tr><td><b>SPMP</b></td><td>Kapsam, kaynak, süre ve maliyet planı.</td></tr>
-<tr><td><b>SRS</b></td><td>Sistemin ne yapacağını belirten belge.</td></tr>
-<tr><td><b>SDD</b></td><td>Sistemin nasıl kurulacağını belirten belge.</td></tr>
-<tr><td><b>Verification</b></td><td>Üretimin tanıma uygunluğunu kontrol.</td></tr>
-<tr><td><b>Validation</b></td><td>Ürünün kullanıcı ihtiyacını karşıladığını kontrol.</td></tr>
-<tr><td><b>Iteration</b></td><td>Çözümü tekrar geliştirip sınayan tur.</td></tr>
-<tr><td><b>Refactoring</b></td><td>Dış davranışı koruyarak iç yapıyı düzeltme.</td></tr>
-<tr><td><b>Backlog</b></td><td>Sıralanmış ürün işleri.</td></tr>
-<tr><td><b>Sprint</b></td><td>Seçilmiş işlerin geliştirildiği tur.</td></tr>
-<tr><td><b>LOC / KLOC</b></td><td>Kod satırı / bin kod satırı.</td></tr>
-<tr><td><b>FP / UFP / AFP</b></td><td>İşlev puanı / düzeltilmemiş / düzeltilmiş işlev puanı.</td></tr>
-<tr><td><b>EI / EO / EQ</b></td><td>Dış girdi / türetilmiş dış çıktı / veri sorgusu.</td></tr>
-<tr><td><b>ILF / EIF</b></td><td>İç mantıksal veri / başka uygulamadaki başvuru verisi.</td></tr>
-<tr><td><b>DET / FTR / RET</b></td><td>Tanınabilir alan / başvurulan dosya / veri alt grubu.</td></tr>
-<tr><td><b>GSC / VAF</b></td><td>Genel sistem özelliği / slaytta bu özelliklerin ağırlık toplamı.</td></tr>
-<tr><td><b>Gearing factor</b></td><td>İşlev puanı başına kod satırı.</td></tr>
-<tr><td><b>Effort / Duration / Staff</b></td><td>İş yükü / takvim süresi / çalışan sayısı.</td></tr>
-<tr><td><b>WBS / PERT / Gantt</b></td><td>İşin hiyerarşisi / bağımlılık ağı / takvim çubukları.</td></tr>
-<tr><td><b>TE / TL / Slack</b></td><td>En erken bitiş / en geç bitiş / gecikme payı.</td></tr>
-<tr><td><b>FR / NFR</b></td><td>Sağlanan hizmet / kalite ve kısıt koşulları.</td></tr>
-<tr><td><b>Fishbone</b></td><td>Sorunun olası nedenlerini dallandıran çizim.</td></tr>
-<tr><td><b>JRP</b></td><td>Kullanıcılar ve teknik ekiple ortak ihtiyaç çalışması.</td></tr>
-<tr><td><b>Actor</b></td><td>Sistemle etkileşen dış varlık.</td></tr>
-<tr><td><b>Use case / Scenario</b></td><td>Anlamlı tek iş / o işin metinsel adımları.</td></tr>
-<tr><td><b>Trigger / Preconditions / Postconditions</b></td><td>Başlatan olay / önce gereken durum / sonunda oluşan durum.</td></tr>
-<tr><td><b>Include / Extend</b></td><td>Zorunlu ortak iş / koşullu ek davranış.</td></tr>
-<tr><td><b>INVEST</b></td><td>Bağımsız, görüşülebilir, değerli, tahmin edilebilir, küçük, sınanabilir iş ölçütleri.</td></tr>
-<tr><td><b>Acceptance criteria</b></td><td>İşin tamamlandığını sınayan ölçütler.</td></tr>
-<tr><td><b>UML</b></td><td>Yazılımı farklı bakışlarla gösteren modelleme dili.</td></tr>
-<tr><td><b>Action / Activity</b></td><td>Bölünmeyen tek adım / eşgüdümlü adımların akışı.</td></tr>
-<tr><td><b>Fork / Join</b></td><td>Eşzamanlı kollara ayırma / onları eşzamanlama.</td></tr>
-<tr><td><b>Decision / Merge</b></td><td>Alternatif seçme / alternatifleri bir araya getirme.</td></tr>
-<tr><td><b>Lifeline / Activation</b></td><td>Etkileşim katılımcısı / etkin olduğu dönem.</td></tr>
-<tr><td><b>Guard</b></td><td>Davranışın gerçekleşme koşulu.</td></tr>
-<tr><td><b>State / Transition</b></td><td>Varlığın durumu / durum değişimi.</td></tr>
-<tr><td><b>Class</b></td><td>Ortak özellikleri olan nesnelerin türü.</td></tr>
-<tr><td><b>Component / Port</b></td><td>Kapsüllenmiş modül / etkileşim noktası.</td></tr>
-<tr><td><b>Provided / Required interface</b></td><td>Sunulan hizmet / ihtiyaç duyulan hizmet.</td></tr>
-</tbody>
-</table>
-</div>
+  <div class="mono small muted">SWE307 · Dr. Alper Öner · Chapters 1–7</div>
+  <h1>Midterm özeti</h1>
+  <nav class="row"><a href="index.html">Course</a><a href="past.html">Geçmiş vizeler</a><a href="drill.html">Hesap pratiği</a><a href="mock.html">Mock midterm</a><a href="videos.html">Videolar</a></nav>
+  <p class="lead">Bu sayfa sadece vize için: sınavın 4 bölümüne göre sıralı. Açıklamalar Türkçe, sınavda yazacağın terimler İngilizce. 50 dakika, kapsam Chapters 1–7.</p>
+  <div class="scroll"><table class="t">
+    <tr><th>Bölüm</th><th>Puan</th><th>Ne yapacaksın</th></tr>
+    <tr><td><a href="#p1"><b>1. Discussion</b></a></td><td>30</td><td>2 konuyu karşılaştır / açıkla (15 dk)</td></tr>
+    <tr><td><a href="#p2"><b>2. True/False + Fill-in</b></a></td><td>20</td><td>kısa tanımlar; her False'a bir cümle sebep (10 dk)</td></tr>
+    <tr><td><a href="#p3"><b>3. Function Point Analysis</b></a></td><td>30</td><td>tablodan UFP → VAF → AFP (15 dk)</td></tr>
+    <tr><td><a href="#p4"><b>4. Fishbone</b></a></td><td>20</td><td>amaç + çizim + bir senaryoya uygula (10 dk)</td></tr>
+  </table></div>
+
+  <!-- ===================================================== 1 -->
+  <section class="part" id="p1">
+    <h2>1. Discussion</h2>
+    <div class="pts">30 puan · iki kâğıtta da 2 alt soru</div>
+    <p>Nasıl yazılır: önce iki kavramı <b>birer cümleyle tanımla</b>, sonra farkı ya da artı/eksiyi <b>madde madde</b> yaz, sonda slayttaki <b>kilit cümleyi</b> ekle. Paragraf ezberleme; anahtar kelimeler yeter.</p>
+
+    <div class="topic"><h3>Systems Analyst <span class="src">sorulmuş · Ch1 s30–31</span></h3>
+      <p>İşletmenin ihtiyacı ile teknik ekip arasındaki köprü.</p>
+      <ul>
+        <li>studies <b>problems</b> (düzeltilmesi gereken durum), <b>opportunities</b> (şikâyet yokken iyileştirme), <b>directives</b> (yasal/zorunlu değişiklik) and <b>needs</b></li>
+        <li>decides how <b>people, data, processes and IT</b> can improve the business</li>
+        <li>must understand the <b>organizational model</b>: who is responsible for which process/decision, <b>what information is required by whom</b></li>
+        <li>must know <b>techniques and tools</b> to plan, design, implement; works in a <b>team</b></li>
+      </ul></div>
+
+    <div class="topic"><h3>Verification vs Validation <span class="src">sorulmuş · Ch1 s41–45</span></h3>
+      <div class="scroll"><table class="t">
+        <tr><th></th><th>Verification</th><th>Validation</th></tr>
+        <tr><td>Soru</td><td><b>"Are we building the product right?"</b></td><td><b>"Are we building the right product?"</b></td></tr>
+        <tr><td>Neyi kontrol eder</td><td>built according to requirements and specifications (kod tasarıma uyuyor mu?)</td><td>system meets the <b>user requirements</b></td></tr>
+        <tr><td>Etkinlik</td><td><b>inspections, reviews</b></td><td><b>software testing</b></td></tr>
+      </table></div>
+      <p>İlişki: ikisi birlikte <b>software quality</b>'yi destekler (quality = degree to which software satisfies its requirements). Sıra: <b>first verification, then validation</b>. Hata ne kadar erken bulunursa o kadar ucuz.</p></div>
+
+    <div class="topic"><h3>Waterfall vs Agile <span class="src">sorulmuş · Ch2 s43–60</span></h3>
+      <div class="scroll"><table class="t">
+        <tr><th></th><th>Waterfall: sequential, each phase once</th><th>Agile: highly iterative, respond to change</th></tr>
+        <tr><td><b>+</b></td><td>simple, easy to manage (deliverable per phase), long experience, easy resource allocation, good for <b>small projects with well-understood requirements</b></td><td>always <b>working software</b> to show, developers more motivated, customers give <b>better requirements</b></td></tr>
+        <tr><td><b>−</b></td><td>requirements must be known <b>up front</b>, hard to estimate, problems found <b>late (testing)</b>, no parallelism, people idle</td><td>problematic for <b>very small and very large</b> projects, <b>documentation</b> takes second place</td></tr>
+      </table></div></div>
+
+    <div class="topic"><h3>Functional vs Nonfunctional <span class="src">sorulmuş · Ch5 s10–25</span></h3>
+      <ul>
+        <li><b>Functional</b> = sistemin <b>ne yaptığı</b>: activities and services, how the product must behave. e.g. "The student shall display his/her weekly schedule."</li>
+        <li><b>Nonfunctional</b> = <b>ne kadar iyi / hangi sınırlar içinde</b>: quality attributes, constraints, interfaces, error handling. e.g. <b>performance</b> "≤ 6 s response for 5,000 users/hour", <b>security</b> "password ≥ 8 chars, 1 upper case, 1 digit", <b>availability</b> "98% of business hours", <b>reliability</b> "≤ 2 level-one faults per month", <b>portability</b> "Windows and Linux".</li>
+      </ul></div>
+
+    <div class="topic"><h3>Henüz sorulmamış ama aynı tarzda gelebilir</h3>
+      <ul>
+        <li><b>SDLC phases + outputs</b>: Planning → <b>SPMP</b>; Analysis → <b>SRS</b>; Design → <b>SDD</b>; Development → code; Testing → tested system; Deployment → delivered system, trained users; Maintenance → fixes, enhancements.</li>
+        <li><b>Testing levels</b>: unit (one module) → integration (modules together) → regression (change broke nothing) → system (whole vs user requirements) → beta (users, real world) → acceptance (project owner, release decision).</li>
+        <li><b>XP vs Scrum</b>: XP = weekly cycles, <b>TDD</b>, <b>pair programming</b> (driver + navigator), continuous integration, 40-hour week. Scrum = <b>backlog</b> of user stories, <b>30-day sprint</b>, <b>daily scrum ≤ 15 min</b> by the scrum master, 6–9 people, demo at the end.</li>
+        <li><b>Include vs Extend</b>: include = <b>always</b> called, dotted arrow from base to included use case. Extend = <b>optional, conditional</b>; base must make sense on its own (Calculate Bonus: deposits over 10,000 or age over 55).</li>
+        <li><b>Fact-finding</b>: observation (reliable, people act differently), questionnaire (cheap, many people, low return rate), interview (probe and reword, time-consuming), prototyping, sampling, research, JRP.</li>
+      </ul></div>
+  </section>
+
+  <!-- ===================================================== 2 -->
+  <section class="part" id="p2">
+    <h2>2. True/False + Fill-in-the-blank</h2>
+    <div class="pts">20 puan · cevapları gizle, kendin söyle</div>
+    <button class="chip" id="hide" aria-pressed="false">Cevapları gizle</button>
+
+    <h3 style="margin-top:18px">Boşluk doldurma</h3>
+    <div class="scroll"><table class="t">
+      <tr><th>Tanım</th><th>Cevap</th></tr>
+      <tr><td>any person with an interest in an existing or proposed information system</td><td class="ans"><b>stakeholder</b></td></tr>
+      <tr><td>requirements that specify activities and services an application must provide</td><td class="ans"><b>functional</b></td></tr>
+      <tr><td>short agile cycle (Scrum, 30 days) delivering a set of stories</td><td class="ans"><b>sprint</b></td></tr>
+      <tr><td>degree to which components depend on each other (lower = easier to maintain)</td><td class="ans"><b>coupling</b> <span class="small muted">(slaytta yok ama soruldu)</span></td></tr>
+      <tr><td>ordered list of customer wants and needs, each a user story</td><td class="ans"><b>backlog</b></td></tr>
+      <tr><td>restructuring code without changing its external behavior</td><td class="ans"><b>refactoring</b></td></tr>
+      <tr><td>two programmers at one workstation, driver and navigator</td><td class="ans"><b>pair programming</b></td></tr>
+      <tr><td>delay a task can take without delaying the project</td><td class="ans"><b>slack time</b> (TL − TE)</td></tr>
+      <tr><td>tasks with zero slack form the …</td><td class="ans"><b>critical path</b></td></tr>
+      <tr><td>hierarchical breakdown of the project into phases, activities, tasks</td><td class="ans"><b>WBS</b> (work breakdown structure)</td></tr>
+      <tr><td>document produced by requirements analysis</td><td class="ans"><b>SRS</b></td></tr>
+      <tr><td>document produced by planning</td><td class="ans"><b>SPMP</b></td></tr>
+      <tr><td>cause-and-effect diagram for finding a root cause</td><td class="ans"><b>fishbone / Ishikawa</b></td></tr>
+      <tr><td>anyone or anything outside the system that interacts with it</td><td class="ans"><b>actor</b></td></tr>
+      <tr><td>a deviation from requirements</td><td class="ans"><b>defect</b></td></tr>
+      <tr><td>agile story criteria: Independent, Negotiable, Valuable, Estimable, Small, Testable</td><td class="ans"><b>INVEST</b></td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">True / False (False ise sebebini yaz)</h3>
+    <div class="scroll"><table class="t tf">
+      <tr><th>İfade</th><th>Cevap ve sebep</th></tr>
+      <tr><td>In XP, TDD follows: develop code → write tests → run tests.</td><td class="ans"><b class="f">False</b>: write a failing test first, run it, then code, run again.</td></tr>
+      <tr><td>A task is critical if its slack time is greater than zero.</td><td class="ans"><b class="f">False</b>: critical = <b>zero</b> slack.</td></tr>
+      <tr><td>A class diagram represents the dynamic behavior of a system.</td><td class="ans"><b class="f">False</b>: class diagram is <b>structural</b>; behavior = sequence, activity, state machine.</td></tr>
+      <tr><td>LOC estimation is independent of the programming language.</td><td class="ans"><b class="f">False</b>: LOC <b>depends</b> on the language; FP is language-independent.</td></tr>
+      <tr><td>Function Point Analysis is independent of the implementation technology.</td><td class="ans"><b class="tr">True</b>: it counts user-level functions from the requirements.</td></tr>
+      <tr><td>Verification asks "Are we building the right product?"</td><td class="ans"><b class="f">False</b>: that is <b>validation</b>; verification = "building the product right".</td></tr>
+      <tr><td>Adding people to a late project always speeds it up.</td><td class="ans"><b class="f">False</b>: <b>Brooks's law</b>, communication channels N(N−1)/2 grow.</td></tr>
+      <tr><td>An include relationship is optional and triggered by a condition.</td><td class="ans"><b class="f">False</b>: that is <b>extend</b>; include is always called.</td></tr>
+      <tr><td>An activity final node stops every flow in the activity.</td><td class="ans"><b class="tr">True</b>: a flow final stops only one flow.</td></tr>
+      <tr><td>A daily scrum meeting should last no more than 15 minutes.</td><td class="ans"><b class="tr">True</b></td></tr>
+      <tr><td>In the waterfall model, each phase is executed only once.</td><td class="ans"><b class="tr">True</b>: sequential, output of one phase is input to the next.</td></tr>
+      <tr><td>Acceptance testing is done by the end users in the real world.</td><td class="ans"><b class="f">False</b>: that is <b>beta</b>; acceptance is done by the <b>project owner</b>.</td></tr>
+    </table></div>
+  </section>
+
+  <!-- ===================================================== 3 -->
+  <section class="part" id="p3">
+    <h2>3. Function Point Analysis</h2>
+    <div class="pts">30 puan · ağırlık tablosu soruda verilir · <a href="drill.html">Hesap pratiği</a></div>
+    <ol>
+      <li><b>UFP</b>: her satırda <b>count × weight</b>, satır toplamı, sonra hepsini topla.</li>
+      <li><b>VAF</b>: GSC ağırlıklarının <b>toplamı</b> (0 none … 5 essential). Ortalama değil!</li>
+      <li><b>AFP = UFP × (0.65 + 0.01 × VAF)</b>. Kontrol: çarpan 0.65 ile 1.35 arasında olmalı.</li>
+    </ol>
+    <div class="scroll"><table class="t">
+      <tr><th>Weights</th><th>Low</th><th>Average</th><th>High</th></tr>
+      <tr><td>External Inputs (EI)</td><td>3</td><td>4</td><td>6</td></tr>
+      <tr><td>External Outputs (EO)</td><td>4</td><td>5</td><td>7</td></tr>
+      <tr><td>External Inquiries (EQ)</td><td>3</td><td>4</td><td>6</td></tr>
+      <tr><td>Internal Logical Files (ILF)</td><td>7</td><td>10</td><td>15</td></tr>
+      <tr><td>External Interface Files (EIF)</td><td>5</td><td>7</td><td>10</td></tr>
+    </table></div>
+    <p><b>2025 vizesinden örnek</b> (counts L/A/H: EI 12/8/3, EO 5/10/2, EQ 15/4/0, ILF 2/3/1, EIF 1/0/0; GSC 5, 4, 3, 2, 1, 5):</p>
+    <div class="scroll"><table class="t">
+      <tr><th>Unit</th><th>Hesap</th><th>Toplam</th></tr>
+      <tr><td>EI</td><td>12×3 + 8×4 + 3×6 = 36 + 32 + 18</td><td>86</td></tr>
+      <tr><td>EO</td><td>5×4 + 10×5 + 2×7 = 20 + 50 + 14</td><td>84</td></tr>
+      <tr><td>EQ</td><td>15×3 + 4×4 + 0×6 = 45 + 16</td><td>61</td></tr>
+      <tr><td>ILF</td><td>2×7 + 3×10 + 1×15 = 14 + 30 + 15</td><td>59</td></tr>
+      <tr><td>EIF</td><td>1×5</td><td>5</td></tr>
+      <tr><td colspan="2"><b>UFP</b></td><td><b>295</b></td></tr>
+      <tr><td colspan="2"><b>VAF</b> = 5 + 4 + 3 + 2 + 1 + 5</td><td><b>20</b></td></tr>
+      <tr><td colspan="2"><b>AFP</b> = 295 × (0.65 + 0.20) = 295 × 0.85</td><td><b>250.75</b></td></tr>
+    </table></div>
+    <p class="small muted">Tanımlar (soru gelirse): <b>EI</b> data crosses the boundary from outside to inside · <b>EO</b> derived data goes out (report) · <b>EQ</b> retrieves data · <b>ILF</b> data group inside the application · <b>EIF</b> another application's data, reference only. Ranking: EI, EO, EQ use <b>FTR</b> (files referenced) + <b>DET</b> (fields); ILF, EIF use <b>RET</b> (record element types) + <b>DET</b>.</p>
+    <p class="small muted">Yedek hesaplar (şimdiye kadar sorulmadı): <b>critical path</b>: TE ileri (birleşmede büyüğü al), TL geri (ayrılmada küçüğü al), slack = TL − TE, slack 0 olanlar kritik. <b>Channels</b> = N(N−1)/2.</p>
+  </section>
+
+  <!-- ===================================================== 4 -->
+  <section class="part" id="p4">
+    <h2>4. Fishbone (Ishikawa)</h2>
+    <div class="pts">20 puan · 10 teori + 10 senaryo · Ch5 s26–30</div>
+    <ul>
+      <li><b>Purpose</b>: a <b>cause-and-effect</b> tool for a quality problem; shows all possible causes visually to find the <b>root cause</b>. In SAD it is the <b>problem discovery</b> tool of requirements analysis.</li>
+      <li><b>How to draw</b>: 1) <b>head on the right</b> with the problem (effect) · 2) <b>backbone</b> to the left · 3) branches for <b>4–8 main causes</b> · 4) attach <b>sub-causes</b>, found by <b>brainstorming</b>.</li>
+      <li><b>Parts</b>: head = effect · spine = backbone · main bones = cause categories · small bones = sub-causes.</li>
+    </ul>
+    <svg class="fish" viewBox="0 0 820 260" role="img" aria-label="Fishbone layout">
+      <defs><marker id="fh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+      <line x1="20" y1="130" x2="640" y2="130" stroke="currentColor" stroke-width="3" marker-end="url(#fh)"/>
+      <rect x="645" y="95" width="165" height="70" rx="8" fill="none" stroke="currentColor" stroke-width="2.5"/>
+      <text x="727" y="127" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">EFFECT</text>
+      <text x="727" y="148" text-anchor="middle" font-size="12" fill="currentColor">(the problem)</text>
+      <g font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">
+        <line x1="120" y1="25" x2="180" y2="130" stroke="currentColor" stroke-width="2"/><text x="115" y="18">main cause</text>
+        <line x1="300" y1="25" x2="360" y2="130" stroke="currentColor" stroke-width="2"/><text x="295" y="18">main cause</text>
+        <line x1="480" y1="25" x2="540" y2="130" stroke="currentColor" stroke-width="2"/><text x="475" y="18">main cause</text>
+        <line x1="120" y1="235" x2="180" y2="130" stroke="currentColor" stroke-width="2"/><text x="115" y="252">main cause</text>
+        <line x1="300" y1="235" x2="360" y2="130" stroke="currentColor" stroke-width="2"/><text x="295" y="252">main cause</text>
+        <line x1="480" y1="235" x2="540" y2="130" stroke="currentColor" stroke-width="2"/><text x="475" y="252">main cause</text>
+      </g>
+      <g stroke="currentColor" stroke-width="1.5" opacity=".6">
+        <line x1="88" y1="60" x2="140" y2="60"/><line x1="105" y1="95" x2="160" y2="95"/>
+        <line x1="268" y1="60" x2="320" y2="60"/><line x1="285" y1="95" x2="340" y2="95"/>
+      </g>
+      <text x="40" y="62" font-size="11" fill="currentColor">sub-cause</text>
+    </svg>
+    <p><b>Senaryoya uygularken</b> ana kemikleri sorunun kendisi söylüyor: <b>IS'in 5 bileşeni</b> (Ch1 s17) ve <b>SAD etkinlikleri</b> (Ch2):</p>
+    <div class="scroll"><table class="t">
+      <tr><th>Main cause</th><th>Alt neden fikirleri (örnek; senaryoya göre kendin de yazabilirsin)</th></tr>
+      <tr><td><b>Hardware</b></td><td>server capacity too small for peak load; no backup / load balancing</td></tr>
+      <tr><td><b>Software</b></td><td>no error-handling requirement met (crashes); memory leaks, unhandled errors</td></tr>
+      <tr><td><b>Data</b></td><td>unindexed large tables; data entry / conversion errors at deployment</td></tr>
+      <tr><td><b>People</b></td><td>users not trained; inexperienced team</td></tr>
+      <tr><td><b>Process</b></td><td>rushed go-live without beta testing; no post-deployment review</td></tr>
+      <tr><td><b>Requirements</b></td><td>no measurable performance NFR; no reliability / availability NFR</td></tr>
+      <tr><td><b>Design</b></td><td>architecture not designed for peak workload; weak database design</td></tr>
+      <tr><td><b>Testing</b></td><td>no system testing under real load; no regression testing</td></tr>
+    </table></div>
+    <p>Effect'i senaryodan aynen yaz (2025 vizesindeki örnek: "PSRAS: high instability and unreliable performance"). 4–8 ana kemik, her birinde <b>en az 2 somut</b> alt neden. Tam çözüm: <a href="past.html#a4b">Geçmiş vizeler, soru 4b</a>.</p>
+  </section>
+
+  <p class="src" style="margin-top:40px">Kaynak: Chapter 1–7 slaytları ve iki geçmiş vize kâğıdı.</p>
 </main>
 <script src="data.js"></script>
 <script src="../assets/js/common.js"></script>
-<script>document.getElementById('hide').addEventListener('click',function(){const hide=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',String(hide));this.textContent=hide?'Cevapları göster':'Cevapları gizle';document.querySelectorAll('.answer').forEach(n=>n.classList.toggle('hidden-answer',hide));});</script>
-</body></html>
+<script>
+  document.getElementById('hide').addEventListener('click', function () {
+    const hide = this.getAttribute('aria-pressed') !== 'true';
+    this.setAttribute('aria-pressed', String(hide));
+    this.textContent = hide ? 'Cevapları göster' : 'Cevapları gizle';
+    document.querySelectorAll('.ans').forEach((n) => n.classList.toggle('hid', hide));
+  });
+</script>
+</body>
+</html>
