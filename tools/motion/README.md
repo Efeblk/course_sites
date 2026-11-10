@@ -37,8 +37,8 @@ python render.py ens010-L2 ens010-L3 ens010-L4 ens010-L5 ens010-L6 ens010-L7 --j
 
 `npx remotion studio src/index.ts` opens the live preview with a timeline scrubber.
 
-The rendered videos go to `materials/<CODE>/video/`. That folder is local only and is never committed, because the
-repo is public and the material is copyrighted. `<course>/videos.html` plays them from there. The scripts, scenes and
+The rendered videos go to `materials/<CODE>/video/`, the one part of `materials/` that is committed (our own renders,
+not course material). `<course>/videos.html` plays them from there. The scripts, scenes and
 timelines in this folder are committed. `public/audio/` and `out/` are not committed: `prep.py` recreates the audio
 from the script.
 

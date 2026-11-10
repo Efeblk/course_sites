@@ -2,6 +2,10 @@
 # and large. They stay on the local machine only; the repo is public.
 materials/*
 !materials/README.md
+# Exception: our own rendered explainer videos (materials/<CODE>/video/) are committed.
+!materials/*/
+materials/*/*
+!materials/*/video/
 
 .DS_Store
 Thumbs.db

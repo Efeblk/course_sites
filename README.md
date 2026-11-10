@@ -49,7 +49,7 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
   - 23 games, a quiz and flashcards per lecture, driven by `ens010/data.js`
   - `ozet.html` (Turkish midterm summary with English terms) and `mock.html` (mock midterm with written questions)
   - `videos.html`: narrated English study videos, one per lecture, made with Remotion in `tools/motion/`
-    (illustrated scenes that move with the voice, no slides) into `materials/ENS010/video/` (local only)
+    (illustrated scenes that move with the voice, no slides) into `materials/ENS010/video/`
 
 ## Layout
 
@@ -79,7 +79,7 @@ assets/js/ml.js       seeded RNG, least squares, entropy, colors (COE305, UNI480
 assets/js/hub.js      the course hub layout: next exam + "start here" plan, everything the course has (with counts),
                       then one row per chapter; reads COURSE.exam and COURSE.resources from data.js
 coe303/chN/, coe025/wN/, coe305/wN/, uni480/wN/, ens010/lN/   custom simulations per chapter / week / lecture
-materials/            raw course files — local only, gitignored (copyrighted)
+materials/            raw course files — local only, gitignored (copyrighted); only <CODE>/video/ is committed
 ```
 
 ## Study videos

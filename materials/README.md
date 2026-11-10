@@ -1,8 +1,10 @@
 # Course materials
 
 Raw course files live here, one folder per course. Everything in this folder
-except this README is gitignored, because the files are copyrighted and the
-repo is public. They exist only on the local machine.
+except this README and the `<CODE>/video/` folders is gitignored, because the
+files are copyrighted and the repo is public. They exist only on the local
+machine. The `video/` folders hold our own rendered explainer videos and are
+committed.
 
 ```
 materials/

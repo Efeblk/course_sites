@@ -60,4 +60,4 @@ python sheet.py SweFpa                                          # contact sheet 
 node render_all.mjs C:/Users/efeba/course_sites/materials/SWE307/video [SweFpa ...]   # 1080p mp4 + jpg poster
 ```
 
-The rendered files stay in `materials/SWE307/video/` (local only); `swe307/videos.html` plays them.
+The rendered files go to `materials/SWE307/video/` (committed with the course); `swe307/videos.html` plays them.

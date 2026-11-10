@@ -15,9 +15,11 @@ SWE307 (Software Engineering Analysis and Design). Each lives in `<course>/`.
 
 ## Hard rules
 
-1. **Never commit `materials/`.** The repo is public and the slides, transcripts, past exams and rendered videos are
-   copyrighted. Raw files live in `materials/<CODE>/` in the main checkout (`C:\Users\efeba\course_sites`) and are
-   gitignored. Never copy slide text or images into tracked files beyond short paraphrases.
+1. **Never commit raw course material.** The repo is public and the slides, transcripts and past exams are
+   copyrighted. They live in `materials/<CODE>/` in the main checkout (`C:\Users\efeba\course_sites`) and are
+   gitignored. Never copy slide text or images into tracked files beyond short paraphrases. The one exception is our
+   own rendered explainer videos in `materials/<CODE>/video/`: the owner asked for them to be pushed (2026-11-10), so
+   `.gitignore` lets that folder through. Commit new renders there with the course.
 2. **Content comes only from the course material** (slides, lecture transcripts, past papers the owner sends). No facts
    from outside. When the slides contradict themselves, say so on the page instead of picking a side silently.
 3. **Stay in exam scope.** When the owner names the scope or the lecturer announces it, follow it exactly.
@@ -147,7 +149,7 @@ slow, intuition first, the course's own examples. Two Remotion pipelines exist:
 - `tools/motion/` (ENS010 and COE025; edge-tts), recipe in its README.
 
 Always check the contact sheet for overlaps and clipped labels before rendering. Rendered files go to
-`materials/<CODE>/video/` (local only); `<course>/videos.html` plays them.
+`materials/<CODE>/video/` (committed, see hard rule 1); `<course>/videos.html` plays them.
 
 ## Working with other agents
 
