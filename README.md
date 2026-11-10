@@ -1,5 +1,7 @@
 # course_sites
 
+> Working on this repo (person or agent)? Read [`AGENTS.md`](AGENTS.md) first: the owner's rules and conventions.
+
 Guided lessons, interactive simulations, games, quizzes and flashcards built from my course
 materials, to understand the material rather than memorize it.
 
@@ -20,7 +22,11 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
 
 ## Courses
 
-- **SWE307 — Software Engineering Analysis and Design** (`swe307/`): Chapters 1–7; guided lessons, calculation and UML labs, quizzes, cards and games.
+- **SWE307 — Software Engineering Analysis and Design** (`swe307/`): Chapters 1–7, kept short and aimed at the midterm
+  - `past.html` (two past midterms with model answers), `ozet.html` ("Midterm özeti": the four exam parts in Turkish with
+    English terms), `drill.html` (FPA, VAF/AFP, critical path, channels), `mock.html` (mock papers in the real format)
+  - `videos.html`: 16 explainer videos made in `tools/video/src/swe/` (rendered locally into `materials/SWE307/video/`)
+  - short guided lessons, 14 labs (function points, critical path, use cases, UML symbols, ATM, component interfaces)
 
 - **COE303 — Operating Systems** (`coe303/`): Chapters 1–4
   - 11 simulations (`coe303/chN/*.html`)
@@ -93,6 +99,9 @@ Made so far: ENS010 lectures 2–7 and COE025 weeks 1, 2, 3, 4 and 6 (`<course>/
 Pages opened inside a lesson (in an iframe) hide their top bar and report their height to the lesson (`common.js`, embed mode).
 
 ## Adding a course
+
+New courses follow the **course recipe in [`AGENTS.md`](AGENTS.md)** (chapters that teach the whole picture, a compact
+Turkish/English *Midterm özeti*, a practice-mode mock midterm, size limits). The steps below are the mechanics.
 
 1. Copy `coe303/{index,learn,test,quiz,cards,game}.html` into the new folder unchanged.
 2. Write its `data.js` (`window.COURSE = { id, code, name, chapters, games, ... }`) and `guide.js`.
