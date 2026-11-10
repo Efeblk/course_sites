@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Critical Section Lab · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+    .prog { border: 1px solid var(--line); padding: 10px 12px; background: var(--panel); }
+    .prog h3 { margin: 0 0 6px; font-size: 1rem; }
+    .prog ol { margin: 0; padding-left: 26px; font: .86rem var(--mono); }
+    .prog li { padding: 2px 4px; }
+    .prog li.cs { border-left: 3px solid var(--line); }
+    .prog li.at { background: color-mix(in srgb, var(--accent) 18%, var(--panel)); font-weight: 700; }
+    .prog li.done { color: var(--muted); }
+    .shared { display: flex; flex-wrap: wrap; gap: 8px 16px; font: .9rem var(--mono); margin: 12px 0; }
+    .shared span { border: 1px solid var(--line); padding: 4px 9px; background: var(--panel); }
+    .log { font: .82rem var(--mono); max-height: 220px; overflow: auto; border-top: 1px solid var(--line); padding-top: 6px; }
+    .modes { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+    .modes button[aria-pressed="true"] { border: 2px solid var(--accent); font-weight: 700; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="6" data-title="Critical Section Lab" data-activity="ch6-critical">
+  <main>
+    <h1>Critical Section Lab</h1>
+    <p class="lead">The producer runs <code>count++</code>, the consumer runs <code>count--</code>, and <code>count</code> starts at <b>5</b> (the producer–consumer deck). The correct final value is 5. You are the scheduler: each click runs one line of one process.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Entry and exit sections</h2>
+      <div class="modes" id="modes"></div>
+      <p class="small" id="modeNote"></p>
+      <div class="cols">
+        <div class="prog" id="p0"></div>
+        <div class="prog" id="p1"></div>
+      </div>
+      <div class="shared" id="shared"></div>
+      <div class="row">
+        <button class="primary" id="run0">Run one Producer line</button>
+        <button class="primary" id="run1">Run one Consumer line</button>
+        <button id="slide">Play the deck's order (P, P, C, C, P, C)</button>
+        <button id="reset">Reset</button>
+      </div>
+      <div class="callout" id="verdict">Pick a process to run.</div>
+      <div class="log" id="log"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">What to notice</h2>
+      <ul class="small">
+        <li><b>No protection</b>: both processes can be between <code>register = count</code> and <code>count = register</code> at the same time. That is two processes in the critical section, so <b>mutual exclusion</b> fails and the result can be 4 or 6.</li>
+        <li><b>Mutex lock</b>: <code>acquire()</code> refuses while the other process holds the lock. The waiting process does not advance; with a spinlock it would keep looping here (<b>busy waiting</b>).</li>
+        <li><b>Peterson</b>: when both set their flag, the process that wrote <code>turn</code> <i>last</i> waits, because it gave the turn away.</li>
+      </ul>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el } = CS;
+    const NAMES = ['Producer', 'Consumer'], REG = ['register1', 'register2'], OP = ['+', '-'];
+    const body = (i) => [
+      { t: `${REG[i]} = count`, k: 'load', cs: true },
+      { t: `${REG[i]} = ${REG[i]} ${OP[i]} 1`, k: 'op', cs: true },
+      { t: `count = ${REG[i]}`, k: 'store', cs: true },
+    ];
+    const MODES = {
+      none: { label: 'No protection', note: 'Only the three machine instructions of count++ and count--. Nothing stops an interleaving.',
+        prog: (i) => body(i) },
+      mutex: { label: 'Mutex lock', note: 'acquire() waits until the lock is free and takes it; release() frees it. Both must be atomic.',
+        prog: (i) => [{ t: 'acquire(lock)', k: 'acq' }, ...body(i), { t: 'release(lock)', k: 'rel' }] },
+      peterson: { label: "Peterson's solution", note: 'flag[i] = true says "I want to enter"; turn = j says "but you go first". Wait while the other wants in and it is its turn.',
+        prog: (i) => { const j = 1 - i; return [{ t: `flag[${i}] = true`, k: 'flag' }, { t: `turn = ${j}`, k: 'turn' }, { t: `while (flag[${j}] && turn == ${j}) ;`, k: 'spin' }, ...body(i), { t: `flag[${i}] = false`, k: 'unflag' }]; } },
+    };
+    let mode = 'none', S;
+
+    function reset() {
+      S = { pc: [0, 0], reg: [null, null], count: 5, flag: [false, false], turn: 0, lock: null, log: [], both: false, blocked: [false, false] };
+      render();
+    }
+    function step(i) {
+      const prog = MODES[mode].prog(i);
+      if (S.pc[i] >= prog.length) return;
+      const line = prog[S.pc[i]], j = 1 - i;
+      let msg = `${NAMES[i]}: ${line.t}`, adv = true;
+      S.blocked[i] = false;
+      switch (line.k) {
+        case 'load': S.reg[i] = S.count; msg += `  → ${REG[i]} = ${S.count}`; break;
+        case 'op': S.reg[i] += i ? -1 : 1; msg += `  → ${REG[i]} = ${S.reg[i]}`; break;
+        case 'store': S.count = S.reg[i]; msg += `  → count = ${S.count}`; break;
+        case 'acq': if (S.lock === null) { S.lock = i; msg += '  → lock taken'; } else { adv = false; S.blocked[i] = true; msg += `  → lock held by ${NAMES[S.lock]}: waits`; } break;
+        case 'rel': S.lock = null; msg += '  → lock free'; break;
+        case 'flag': S.flag[i] = true; break;
+        case 'turn': S.turn = j; break;
+        case 'spin': if (S.flag[j] && S.turn === j) { adv = false; S.blocked[i] = true; msg += `  → flag[${j}] is true and turn is ${j}: waits`; } else msg += '  → condition false: enters'; break;
+        case 'unflag': S.flag[i] = false; break;
+      }
+      if (adv) S.pc[i]++;
+      S.log.unshift(msg);
+      // inside = has loaded count but not yet stored it back
+      const inCS = [0, 1].map((k) => { const pr = MODES[mode].prog(k), L = pr.findIndex((l) => l.k === 'load'), St = pr.findIndex((l) => l.k === 'store'); return S.pc[k] > L && S.pc[k] <= St; });
+      if (inCS[0] && inCS[1]) S.both = true;
+      render();
+    }
+    function render() {
+      $('#modes').replaceChildren(...Object.entries(MODES).map(([k, m]) => el('button', { 'aria-pressed': String(k === mode), onclick: () => { mode = k; reset(); } }, m.label)));
+      $('#modeNote').textContent = MODES[mode].note;
+      [0, 1].forEach((i) => {
+        const prog = MODES[mode].prog(i);
+        $('#p' + i).replaceChildren(el('h3', {}, `${NAMES[i]} (${i ? 'count--' : 'count++'})${S.blocked[i] ? ' · waiting' : ''}`),
+          el('ol', {}, ...prog.map((l, k) => el('li', { class: [l.cs ? 'cs' : '', k === S.pc[i] ? 'at' : '', k < S.pc[i] ? 'done' : ''].join(' ') }, l.t))),
+          el('div', { class: 'small mono', style: { marginTop: '6px' } }, `${REG[i]} = ${S.reg[i] ?? '–'}`));
+        $('#run' + i).disabled = S.pc[i] >= prog.length;
+      });
+      const sh = [`count = ${S.count}`];
+      if (mode === 'mutex') sh.push(`lock = ${S.lock === null ? 'free' : 'held by ' + NAMES[S.lock]}`);
+      if (mode === 'peterson') sh.push(`flag[0] = ${S.flag[0]}`, `flag[1] = ${S.flag[1]}`, `turn = ${S.turn}`);
+      $('#shared').replaceChildren(...sh.map((x) => el('span', {}, x)));
+      const fin = [0, 1].every((i) => S.pc[i] >= MODES[mode].prog(i).length);
+      const v = $('#verdict');
+      if (fin) {
+        const ok = S.count === 5;
+        v.className = 'callout ' + (ok ? 'ok' : 'bad');
+        v.innerHTML = ok ? `Final count = <b>5</b>. Correct.${S.both ? ' Both were inside the critical section at once, so this was luck, not protection.' : ''}`
+          : `Final count = <b>${S.count}</b>, but one ++ and one -- should leave 5. A <b>race condition</b>: one update overwrote the other.`;
+      } else if (S.both) {
+        v.className = 'callout warn';
+        v.innerHTML = 'Both processes are inside the <b>critical section</b> at the same time: mutual exclusion is broken.';
+      } else { v.className = 'callout'; v.textContent = S.blocked.some(Boolean) ? 'A process is waiting in its entry section. Run the other one.' : 'Pick a process to run.'; }
+      $('#log').replaceChildren(...S.log.map((x) => el('div', {}, x)));
+    }
+    $('#run0').onclick = () => step(0);
+    $('#run1').onclick = () => step(1);
+    $('#reset').onclick = reset;
+    $('#slide').onclick = () => { reset(); for (const i of [0, 0, 1, 1, 0, 1]) step(i); };
+    reset();
+  </script>
+</body>
+</html>

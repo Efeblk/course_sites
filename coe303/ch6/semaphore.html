@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Semaphore and Deadlock Lab · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .sval { font: 700 2rem var(--mono); }
+    .procs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+    .proc { border: 1px solid var(--line); background: var(--panel); padding: 10px; }
+    .proc b { font-family: var(--mono); }
+    .proc .st { font: .82rem var(--mono); margin: 4px 0 8px; }
+    .proc.inside { border-color: var(--ok); }
+    .proc.waiting { border-color: var(--warn); }
+    .queue { font: .9rem var(--mono); }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+    .prog { border: 1px solid var(--line); padding: 10px 12px; background: var(--panel); }
+    .prog ol { margin: 0; padding-left: 26px; font: .86rem var(--mono); }
+    .prog li.at { background: color-mix(in srgb, var(--accent) 18%, var(--panel)); font-weight: 700; }
+    .prog li.done { color: var(--muted); }
+    .ctl { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+    .ctl select { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); padding: 4px 6px; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="6" data-title="Semaphore and Deadlock Lab" data-activity="ch6-semaphore">
+  <main>
+    <h1>Semaphore and Deadlock Lab</h1>
+    <p class="lead">A semaphore is an integer with two atomic operations. This lab uses the version without busy waiting (slide 29): <code>wait()</code> decrements and blocks the caller if the value drops below 0; <code>signal()</code> increments and wakes one waiting process.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · A counting semaphore</h2>
+      <div class="ctl">
+        <label>Initial value S <select id="init"><option>1</option><option selected>2</option><option>3</option></select></label>
+        <button id="reset1">Reset</button>
+      </div>
+      <p>S = <span class="sval" id="sval"></span> <span class="small" id="smean"></span></p>
+      <p class="queue" id="queue"></p>
+      <div class="procs" id="procs"></div>
+      <div class="callout" id="note1">Each process calls wait() before using the resource and signal() when it is done.</div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Two semaphores, two orders: deadlock</h2>
+      <p class="small">S = Q = 1. P0 takes S then Q; P1 takes Q then S (slide 37). Run one line at a time.</p>
+      <div class="ctl"><label><input type="checkbox" id="fix"> Fix: P1 also takes S before Q (same lock order)</label><button id="reset2">Reset</button></div>
+      <div class="cols" style="margin-top:10px">
+        <div class="prog" id="d0"></div>
+        <div class="prog" id="d1"></div>
+      </div>
+      <p class="mono small" id="dsem"></p>
+      <div class="row"><button class="primary" id="go0">Run one P0 line</button><button class="primary" id="go1">Run one P1 line</button><button id="bad">Play P0, P1, P0, P1</button></div>
+      <div class="callout" id="note2">Find an order that makes both processes wait forever.</div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script>
+    const { $, el } = CS;
+    /* ---------- part 1 ---------- */
+    let S, st, queue, note;
+    const N = 4;
+    function reset1() { S = Number($('#init').value); st = Array(N).fill('outside'); queue = []; note = 'Each process calls wait() before using the resource and signal() when it is done.'; draw1(); }
+    function wait(i) {
+      S--;
+      if (S < 0) { st[i] = 'waiting'; queue.push(i); note = `P${i + 1}: wait() → S = ${S} < 0, so P${i + 1} is blocked and joins the waiting queue. No CPU time is wasted.`; }
+      else { st[i] = 'inside'; note = `P${i + 1}: wait() → S = ${S} ≥ 0, so P${i + 1} goes ahead.`; }
+      draw1();
+    }
+    function signal(i) {
+      S++; st[i] = 'outside';
+      if (S <= 0 && queue.length) { const w = queue.shift(); st[w] = 'inside'; note = `P${i + 1}: signal() → S = ${S} ≤ 0, so a process was waiting: wakeup(P${w + 1}), which goes ahead.`; }
+      else note = `P${i + 1}: signal() → S = ${S}. Nobody was waiting.`;
+      draw1();
+    }
+    function draw1() {
+      $('#sval').textContent = S;
+      $('#smean').textContent = S > 0 ? `(${S} resource${S > 1 ? 's' : ''} still free)` : S === 0 ? '(none free, nobody waiting)' : `(negative: ${-S} process${S < -1 ? 'es' : ''} waiting)`;
+      $('#queue').textContent = 'Waiting queue: ' + (queue.length ? queue.map((i) => 'P' + (i + 1)).join(' → ') : 'empty');
+      $('#procs').replaceChildren(...st.map((s, i) => el('div', { class: 'proc ' + s }, el('b', {}, 'P' + (i + 1)),
+        el('div', { class: 'st' }, s === 'inside' ? 'using the resource' : s === 'waiting' ? 'blocked in wait()' : 'outside'),
+        el('button', { disabled: s !== 'outside', onclick: () => wait(i) }, 'wait(S)'), ' ',
+        el('button', { disabled: s !== 'inside', onclick: () => signal(i) }, 'signal(S)'))));
+      $('#note1').textContent = note;
+    }
+    $('#init').onchange = reset1; $('#reset1').onclick = reset1;
+    reset1();
+
+    /* ---------- part 2 ---------- */
+    let D;
+    const progs = () => [['wait(S)', 'wait(Q)', '/* use both */', 'signal(Q)', 'signal(S)'], $('#fix').checked ? ['wait(S)', 'wait(Q)', '/* use both */', 'signal(Q)', 'signal(S)'] : ['wait(Q)', 'wait(S)', '/* use both */', 'signal(S)', 'signal(Q)']];
+    function reset2() { D = { pc: [0, 0], sem: { S: 1, Q: 1 }, holder: { S: null, Q: null }, blocked: [false, false], msg: 'Find an order that makes both processes wait forever.' }; draw2(); }
+    function go(i) {
+      const line = progs()[i][D.pc[i]];
+      if (!line) return;
+      const m = line.match(/(wait|signal)\((\w)\)/);
+      D.blocked[i] = false;
+      if (m && m[1] === 'wait') {
+        if (D.sem[m[2]] > 0) { D.sem[m[2]]--; D.holder[m[2]] = i; D.pc[i]++; D.msg = `P${i} holds ${m[2]}.`; }
+        else { D.blocked[i] = true; D.msg = `P${i} waits for ${m[2]}, which P${D.holder[m[2]]} holds.`; }
+      } else if (m) { D.sem[m[2]]++; D.holder[m[2]] = null; D.pc[i]++; D.msg = `P${i} releases ${m[2]}.`; D.blocked = D.blocked.map(() => false); }
+      else D.pc[i]++;
+      draw2();
+    }
+    function draw2() {
+      const P = progs();
+      [0, 1].forEach((i) => {
+        $('#d' + i).replaceChildren(el('b', {}, `P${i}${D.blocked[i] ? ' · waiting' : D.pc[i] >= P[i].length ? ' · finished' : ''}`),
+          el('ol', {}, ...P[i].map((l, k) => el('li', { class: k === D.pc[i] ? 'at' : k < D.pc[i] ? 'done' : '' }, l))));
+        $('#go' + i).disabled = D.pc[i] >= P[i].length;
+      });
+      $('#dsem').textContent = `S = ${D.sem.S}${D.holder.S !== null ? ' (held by P' + D.holder.S + ')' : ''} · Q = ${D.sem.Q}${D.holder.Q !== null ? ' (held by P' + D.holder.Q + ')' : ''}`;
+      const stuck = [0, 1].every((i) => {
+        const l = P[i][D.pc[i]], m = l && l.match(/wait\((\w)\)/);
+        return m && D.sem[m[1]] === 0 && D.holder[m[1]] === 1 - i;
+      });
+      const n = $('#note2');
+      if (stuck) { n.className = 'callout bad'; n.innerHTML = '<b>Deadlock.</b> P0 holds S and waits for Q; P1 holds Q and waits for S. Each waits for a signal() only the other can execute. Tick the fix and try again.'; }
+      else if (D.pc.every((p, i) => p >= P[i].length)) { n.className = 'callout ok'; n.textContent = 'Both finished.' + ($('#fix').checked ? ' With one lock order, whoever gets S first also gets Q; the other waits at S without holding anything.' : ''); }
+      else { n.className = 'callout'; n.textContent = D.msg; }
+    }
+    $('#go0').onclick = () => go(0); $('#go1').onclick = () => go(1);
+    $('#reset2').onclick = reset2; $('#fix').onchange = reset2;
+    $('#bad').onclick = () => { reset2(); for (const i of [0, 1, 0, 1]) go(i); };
+    reset2();
+  </script>
+</body>
+</html>

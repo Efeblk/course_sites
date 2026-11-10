@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gantt chart drill · COE303</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .ctl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 12px 0; }
+    .ctl select, .ctl input { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); padding: 4px 6px; }
+    table.t { border-collapse: collapse; margin: 10px 0; }
+    table.t td, table.t th { padding: 5px 12px; border-bottom: 1px solid var(--line); text-align: right; font-family: var(--mono); font-size: .9rem; }
+    table.t td:first-child, table.t th:first-child { text-align: left; }
+    .scroll { overflow-x: auto; }
+    .stepbox { border-left: 3px solid var(--accent); background: var(--panel); padding: 10px 16px; margin: 12px 0; }
+    .stepbox h3 { margin: 0 0 6px; font-size: 1rem; }
+    .hint { color: var(--muted); font-size: .9rem; }
+  </style>
+</head>
+<body data-root=".." data-course="coe303" data-title="Gantt chart drill" data-activity="coe303-drill">
+  <main>
+    <div class="mono small muted">COE303 · Chapter 5 · hesap pratiği</div>
+    <h1>Gantt chart drill</h1>
+    <nav class="row"><a href="index.html">Course</a><a href="ozet.html">Midterm özeti</a><a href="mock.html">Mock midterm</a><a href="drill.html">Gantt drill</a><a href="exercises.html">Guide exercises</a></nav>
+    <p class="lead">Slaytlar Chapter 5 için "Gantt chart çiz, ortalama bekleme süresini hesapla" diyor. Her soru yeni sayılarla gelir. Önce kâğıtta çiz, cevabını yaz, sonra adımları tek tek aç.</p>
+    <p class="hint">Kurallar slaytlardaki gibi: zaman ms, küçük priority sayısı = yüksek öncelik, eşitlikte önce gelen. RR'de yeni gelen process, kesilen process'ten önce kuyruğa girer.</p>
+
+    <div class="ctl">
+      <label>Algorithm <select id="alg"><option value="ANY">Mixed</option></select></label>
+      <button class="primary" id="new">New numbers</button>
+    </div>
+    <div id="card"></div>
+  </main>
+  <script src="../assets/js/common.js"></script>
+  <script src="sched.js"></script>
+  <script>
+    const { $, el } = CS;
+    const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+    const pick = (a) => a[ri(0, a.length - 1)];
+    const ALGS = ['FCFS', 'SJF', 'SRTF', 'RR', 'PRI'];
+    $('#alg').append(...ALGS.map((a) => el('option', { value: a }, CPUS.NAMES[a])));
+    const HINT = {
+      FCFS: 'Geliş sırasına göre; her process bitene kadar çalışır.',
+      SJF: 'CPU boşalınca, gelmiş olanlar içinden burst\'ü en kısa olanı seç. Çalışan kesilmez.',
+      SRTF: 'Her yeni gelişte kalan süreleri karşılaştır; daha kısası gelirse çalışanı kes.',
+      RR: 'Her process en fazla q kadar çalışır, sonra kuyruğun sonuna gider.',
+      PRI: 'Gelmiş olanlar içinden en küçük priority sayısını seç. Çalışan kesilmez.',
+    };
+
+    function problem() {
+      const chosen = $('#alg').value;
+      const alg = chosen === 'ANY' ? pick(ALGS) : chosen;
+      const n = ri(4, 5);
+      const allZero = alg !== 'SRTF' && Math.random() < 0.5;
+      let arr = Array.from({ length: n }, (_, i) => (allZero ? 0 : i === 0 ? 0 : ri(1, 8)));
+      if (!allZero) arr = [0, ...arr.slice(1).sort((a, b) => a - b)];
+      const pris = [1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+      const procs = arr.map((a, i) => ({ id: 'P' + (i + 1), arr: a, burst: ri(1, 9), pri: pris[i] }));
+      const q = alg === 'RR' ? ri(2, 4) : undefined;
+      return { alg, procs, q, r: CPUS.run(procs, alg, { q }) };
+    }
+
+    function show(P) {
+      const { alg, procs, q, r } = P;
+      const f = CPUS.fmt;
+      const head = el('tr', {}, el('th', {}, 'Process'), el('th', {}, 'Arrival'), el('th', {}, 'Burst'), alg === 'PRI' ? el('th', {}, 'Priority') : null);
+      const rows = procs.map((p) => el('tr', {}, el('td', {}, p.id), el('td', {}, p.arr), el('td', {}, p.burst), alg === 'PRI' ? el('td', {}, p.pri) : null));
+      const order = r.slices.filter((s) => s.id).map((s) => s.id);
+      const steps = [
+        ['1 · Gantt chart', () => [el('p', { class: 'hint' }, HINT[alg]), CPUS.gantt(r.slices), el('p', { class: 'mono small' }, 'Order: ' + order.join(' → '))]],
+        ['2 · Completion times', () => [el('p', { class: 'mono' }, procs.map((p) => `${p.id} = ${r.done[p.id]}`).join(' · ')), el('p', { class: 'hint' }, 'Her process\'in son çubuğunun bittiği an.')]],
+        ['3 · Turnaround = completion − arrival', () => [el('p', { class: 'mono' }, procs.map((p) => `${p.id}: ${r.done[p.id]} − ${p.arr} = ${r.tat[p.id]}`).join(' · '))]],
+        ['4 · Waiting = turnaround − burst', () => [el('p', { class: 'mono' }, procs.map((p) => `${p.id}: ${r.tat[p.id]} − ${p.burst} = ${r.wait[p.id]}`).join(' · ')), el('p', { class: 'hint' }, 'Bekleme = hazır kuyruğunda geçen süre. Burst süresini çıkarmayı unutma.')]],
+        ['5 · Average waiting time', () => [el('p', { class: 'mono' }, `(${procs.map((p) => r.wait[p.id]).join(' + ')}) / ${procs.length} = ${f(r.avgWait)} ms`), el('p', { class: 'mono small' }, `Average turnaround = ${f(r.avgTat)} ms`)]],
+      ];
+      let shown = 0;
+      const stepsBox = el('div');
+      const next = () => {
+        if (shown < steps.length) { const [t, body] = steps[shown++]; stepsBox.append(el('div', { class: 'stepbox' }, el('h3', {}, t), ...body())); }
+        if (shown >= steps.length) { nextBtn.disabled = true; allBtn.disabled = true; }
+      };
+      const nextBtn = el('button', { onclick: next }, 'Show next step');
+      const allBtn = el('button', { onclick: () => { while (shown < steps.length) next(); } }, 'Show all steps');
+      const guess = el('input', { type: 'text', inputmode: 'decimal', placeholder: 'e.g. 6.25', style: { width: '7em' } });
+      const fb = el('div');
+      const check = el('button', { class: 'primary', onclick: () => {
+        const g = Number(guess.value.trim().replace(',', '.'));
+        const ok = guess.value.trim() !== '' && Math.abs(g - r.avgWait) < 0.006;
+        fb.replaceChildren(el('div', { class: 'callout ' + (ok ? 'ok' : 'bad') }, ok ? `Doğru: ${f(r.avgWait)} ms.` : `Değil. Adımları aç ve hangi satırda ayrıldığını bul.`));
+      } }, 'Check');
+      $('#card').replaceChildren(
+        el('h2', {}, CPUS.NAMES[alg] + (q ? `, q = ${q}` : '')),
+        el('p', {}, `Draw the Gantt chart and compute the average waiting time.${procs.every((p) => p.arr === 0) ? ' All processes arrive at time 0, in the order listed.' : ''}`),
+        el('div', { class: 'scroll' }, el('table', { class: 't' }, head, ...rows)),
+        el('div', { class: 'ctl' }, el('label', {}, 'Average waiting time ', guess), check),
+        fb,
+        el('div', { class: 'ctl' }, nextBtn, allBtn),
+        stepsBox);
+    }
+    $('#new').onclick = () => show(problem());
+    $('#alg').onchange = () => show(problem());
+    show(problem());
+  </script>
+</body>
+</html>

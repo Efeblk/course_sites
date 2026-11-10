@@ -37,17 +37,23 @@ materials/
 For `.pptx` decks, extract text and speaker notes with python-pptx. Some decks are
 mostly images (COE025 weeks 1–2); export them to PNG with PowerPoint to read them.
 
-## COE303 inventory (as of 2026-10-23)
+## COE303 inventory (as of 2026-11-10)
 
 | File | Pages | Content |
 |---|---|---|
-| slides/chapter1.pdf | 80 | Ch.1 Introduction |
+| slides/chapter1.pdf | 80 | Ch.1 Introduction (exam-prep slide 94: "Midterm: 10 short questions + 2 long questions") |
 | slides/chapter2.pdf | 69 | Ch.2 Operating-System Structures |
 | slides/chapter3.pdf | 93 | Ch.3 Processes |
 | slides/chapter4.pdf | 61 | Ch.4 Threads & Concurrency |
-| projects/project1_phase1.pdf | 13 | Project 1 Phase 1: VirtualBox + Ubuntu + GCC setup |
-| textbooks/silberschatz-os-concepts-10e.pdf | 1259 | Primary textbook |
-| textbooks/stallings-os-internals-9e.pdf | 1128 | Secondary textbook |
+| slides/chapter5.pdf | 60 | Ch.5 CPU Scheduling (30 Oct 2026); multiprocessor section (slides 31–34) is image-only |
+| slides/chapter6.pdf | 52 | Ch.6 Synchronization Tools (6 Nov 2026); "the midterm is hand-written" |
+| slides/PCP.pptx | 13 | Producer–consumer race on count (count++ / count-- interleaving, count = 5 → 4) |
+| guides/midterm-guide_opt.pdf | 19 | Midterm guide: textbook exercises with answers, chapters 1–5 (2.8 and 3.5 answers cut off) |
+| guides/midterm_study_guide.pdf | 4 | Study guide (Silberschatz 8e), chapters 1–5 summary |
+| past/mock_final*.jpg | 4 photos | Phone photos of a past final, too low-resolution to read except pages 5 and 8 (see NOTES.md) |
+| projects/project1_phase1.pdf | 13 | Project 1 Phase 1: VirtualBox + Ubuntu + GCC setup (not on this PC) |
+| textbooks/silberschatz-os-concepts-10e.pdf | 1259 | Primary textbook (not on this PC) |
+| textbooks/stallings-os-internals-9e.pdf | 1128 | Secondary textbook (not on this PC) |
 
 ## COE025 inventory (as of 2026-11-08)
 

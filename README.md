@@ -28,9 +28,10 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
   - `videos.html`: 16 explainer videos made in `tools/video/src/swe/` (rendered locally into `materials/SWE307/video/`)
   - short guided lessons, 14 labs (function points, critical path, use cases, UML symbols, ATM, component interfaces)
 
-- **COE303 — Operating Systems** (`coe303/`): Chapters 1–4
-  - 11 simulations (`coe303/chN/*.html`)
-  - 24 order/sort/match games, a quiz and flashcards per chapter, all driven by `coe303/data.js`
+- **COE303 — Operating Systems** (`coe303/`): Chapters 1–6 (5 CPU scheduling, 6 synchronization tools)
+  - 14 labs (`coe303/chN/*.html`); `coe303/sched.js` is the scheduling engine behind the Gantt Chart Lab and the drill
+  - 12 order/sort/match games, a quiz and flashcards per chapter, all driven by `coe303/data.js`
+  - midterm pages: `ozet.html`, `mock.html`, `drill.html` (Gantt charts), `exercises.html` (midterm guide exercises)
 - **COE025 — Natural Language Processing** (`coe025/`): Weeks 1–4 and 6 (Week 5 was the midterm)
   - 18 simulations (`coe025/wN/*.html`); Week 6 adds a span scorer, an HMM/Viterbi lab and a CRF score lab
   - 25 games, a quiz and flashcards per week, driven by `coe025/data.js`

@@ -26,7 +26,7 @@
 
   const R = {
     flow(f) {
-      return el('div', { class: 'f-flow' + (f.down ? ' down' : '') }, f.items.map(([icon, t, sub, c], i) => [
+      return el('div', { class: 'f-flow' + (f.down ? ' down' : f.items.length >= 6 ? ' many' : '') }, f.items.map(([icon, t, sub, c], i) => [
         i ? el('div', { class: 'f-arrow' }, f.down ? '↓' : '→') : null,
         el('div', { class: 'f-box', style: { '--c': col(c) } },
           icon ? el('div', { class: 'f-icon' }, icon) : null,

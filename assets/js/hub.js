@@ -2,7 +2,7 @@
  *
  * Reads window.COURSE (data.js) and window.GUIDE (guide.js). Optional fields in data.js:
  *   COURSE.exam = { title, when, scope, length, parts: [[name, points, note]], plan: [[href, label, minutes]], done }
- *   COURSE.resources = [{ kind, href, title, desc, meta }]   kind: past | summary | mock | drill | scenarios | videos
+ *   COURSE.resources = [{ kind, href, title, desc, meta }]   kind: past | exercises | summary | mock | drill | scenarios | videos
  * The page shows, top to bottom: the exam and what to do first, everything the course contains (with counts),
  * then one compact row per chapter with its lesson progress and practice links.
  */
@@ -14,7 +14,7 @@
   const games = Object.entries(C.games || {});
   const lessonSteps = (ch) => (G[ch.n] ? G[ch.n].steps.length + 1 : 0);
   const lessonDone = (ch) => Math.min((progress.get(`guide:${C.id}:${ch.n}`) || []).length, lessonSteps(ch));
-  const KIND = { past: 'Past exams', summary: 'Summary', mock: 'Mock exam', drill: 'Drill', scenarios: 'Scenarios', videos: 'Videos' };
+  const KIND = { past: 'Past exams', exercises: 'Exercises', summary: 'Summary', mock: 'Mock exam', drill: 'Drill', scenarios: 'Scenarios', videos: 'Videos' };
 
   document.title = `${C.code} — ${C.name} · Course Sites`;
   const main = document.querySelector('main');

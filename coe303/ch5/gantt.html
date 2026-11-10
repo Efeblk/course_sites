@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gantt Chart Lab · COE303</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .ptable input { width: 4.2em; font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); padding: 3px 5px; }
+    .ptable td, .ptable th { padding: 5px 8px; text-align: left; }
+    .scroll { overflow-x: auto; }
+    .ctl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 10px 0; }
+    .ctl select, .ctl input { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); padding: 4px 6px; }
+    .calc td, .calc th { padding: 5px 10px; text-align: right; font-family: var(--mono); font-size: .88rem; }
+    .calc td:first-child, .calc th:first-child { text-align: left; }
+    .best { font-weight: 700; }
+  </style>
+</head>
+<body data-root="../.." data-course="coe303" data-chapter="5" data-title="Gantt Chart Lab" data-activity="ch5-gantt">
+  <main>
+    <h1>Gantt Chart Lab</h1>
+    <p class="lead">Pick a process table and an algorithm. Work out the average waiting time on paper, type it in, then draw the chart. Times are in ms; a smaller priority number means a higher priority.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">1 · The process table</h2>
+      <div class="ctl">
+        <label>Example <select id="preset"></select></label>
+        <button id="add">Add process</button>
+        <button id="del">Remove last</button>
+      </div>
+      <div class="scroll"><table class="ptable" id="ptable"></table></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">2 · Schedule it</h2>
+      <div class="ctl">
+        <label>Algorithm <select id="alg"></select></label>
+        <label id="qbox">Quantum q <input id="q" type="number" min="1" max="20" value="4" style="width:4em"></label>
+      </div>
+      <div class="ctl">
+        <label>Your average waiting time <input id="guess" type="text" inputmode="decimal" placeholder="e.g. 17" style="width:7em"></label>
+        <button class="primary" id="go">Draw the Gantt chart</button>
+      </div>
+      <div id="out"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">3 · Same table, every algorithm</h2>
+      <p class="small">One table, six schedules. The slides say <b>SJF</b> gives the minimum average waiting time when all processes are waiting, and <b>SRTF</b> can do even better because it preempts.</p>
+      <button id="all">Compare all algorithms</button>
+      <div class="scroll" id="cmp"></div>
+    </div>
+  </main>
+  <script src="../../assets/js/common.js"></script>
+  <script src="../sched.js"></script>
+  <script>
+    const { $, el } = CS;
+    const P = (...rows) => rows.map(([arr, burst, pri], i) => ({ id: 'P' + (i + 1), arr, burst, pri: pri ?? 1 }));
+    const PRESETS = [
+      ['Slide 16: FCFS 24, 3, 3', P([0, 24], [0, 3], [0, 3]), 'FCFS'],
+      ['Slide 17: arrival order P2, P3, P1', [{ id: 'P2', arr: 0, burst: 3, pri: 1 }, { id: 'P3', arr: 0, burst: 3, pri: 1 }, { id: 'P1', arr: 0, burst: 24, pri: 1 }], 'FCFS'],
+      ['Slide 18: SJF 6, 8, 7, 3', P([0, 6], [0, 8], [0, 7], [0, 3]), 'SJF'],
+      ['Slide 19: SRTF with arrivals', P([0, 8], [1, 4], [2, 9], [3, 5]), 'SRTF'],
+      ['Slide 20: RR 24, 3, 3', P([0, 24], [0, 3], [0, 3]), 'RR', 4],
+      ['Slide 23: Priority', P([0, 10, 3], [0, 1, 1], [0, 2, 4], [0, 1, 5], [0, 5, 2]), 'PRI'],
+      ['Slide 24: Priority + RR', P([0, 4, 3], [0, 5, 2], [0, 8, 2], [0, 7, 1], [0, 3, 3]), 'PRR', 2],
+      ['Midterm guide 5.4', P([0, 10, 3], [0, 1, 1], [0, 2, 3], [0, 1, 4], [0, 5, 2]), 'RR', 1],
+      ['Slide 60 Q1: 8, 4, 2', P([0, 8], [0, 4], [0, 2]), 'RR', 2],
+    ];
+    let procs = [];
+    $('#preset').append(...PRESETS.map((p, i) => el('option', { value: i }, p[0])));
+    $('#alg').append(...Object.entries(CPUS.NAMES).map(([k, v]) => el('option', { value: k }, v)));
+
+    function table() {
+      const inp = (p, k) => el('input', { type: 'number', min: 0, max: 99, value: p[k], oninput: (e) => { p[k] = Math.max(k === 'burst' ? 1 : 0, Number(e.target.value) || 0); } });
+      $('#ptable').replaceChildren(
+        el('tr', {}, el('th', {}, 'Process'), el('th', {}, 'Arrival'), el('th', {}, 'Burst'), el('th', {}, 'Priority')),
+        ...procs.map((p) => el('tr', {}, el('td', { class: 'mono' }, p.id), el('td', {}, inp(p, 'arr')), el('td', {}, inp(p, 'burst')), el('td', {}, inp(p, 'pri')))));
+    }
+    function load(i) {
+      const [, ps, alg, q] = PRESETS[i];
+      procs = ps.map((p) => ({ ...p }));
+      $('#alg').value = alg;
+      if (q) $('#q').value = q;
+      qVis(); table(); $('#out').replaceChildren(); $('#cmp').replaceChildren(); $('#guess').value = '';
+    }
+    const qVis = () => { $('#qbox').style.display = ['RR', 'PRR'].includes($('#alg').value) ? '' : 'none'; };
+    $('#preset').onchange = (e) => load(Number(e.target.value));
+    $('#alg').onchange = qVis;
+    $('#add').onclick = () => { if (procs.length < 6) { const n = Math.max(0, ...procs.map((p) => Number(p.id.slice(1)))) + 1; procs.push({ id: 'P' + n, arr: 0, burst: 3, pri: 2 }); table(); } };
+    $('#del').onclick = () => { if (procs.length > 1) { procs.pop(); table(); } };
+
+    $('#go').onclick = () => {
+      const alg = $('#alg').value, q = Number($('#q').value) || 4;
+      const r = CPUS.run(procs, alg, { q });
+      const f = CPUS.fmt;
+      const rows = procs.map((p) => el('tr', {},
+        el('td', {}, p.id), el('td', {}, p.arr), el('td', {}, p.burst), el('td', {}, r.done[p.id]),
+        el('td', {}, `${r.done[p.id]} − ${p.arr} = ${r.tat[p.id]}`), el('td', {}, `${r.tat[p.id]} − ${p.burst} = ${r.wait[p.id]}`)));
+      const sumW = procs.map((p) => r.wait[p.id]);
+      const g = $('#guess').value.trim().replace(',', '.');
+      let verdict = null;
+      if (g) {
+        const ok = Math.abs(Number(g) - r.avgWait) < 0.01 || Math.abs(Number(g) - Math.round(r.avgWait * 100) / 100) < 0.011;
+        verdict = el('div', { class: 'callout ' + (ok ? 'ok' : 'bad') }, ok ? `Right: ${f(r.avgWait)}.` : `Not quite: you wrote ${g}, the chart gives ${f(r.avgWait)}. Check the completion times row by row.`);
+      }
+      $('#out').replaceChildren(
+        el('h3', {}, CPUS.NAMES[alg] + (['RR', 'PRR'].includes(alg) ? `, q = ${q}` : '')),
+        CPUS.gantt(r.slices),
+        el('div', { class: 'scroll' }, el('table', { class: 'calc' },
+          el('tr', {}, el('th', {}, 'Process'), el('th', {}, 'Arrival'), el('th', {}, 'Burst'), el('th', {}, 'Completion'), el('th', {}, 'Turnaround = completion − arrival'), el('th', {}, 'Waiting = turnaround − burst')),
+          ...rows)),
+        el('p', { class: 'mono small' }, `Average waiting time = (${sumW.join(' + ')}) / ${procs.length} = ${f(r.avgWait)} ms · average turnaround = ${f(r.avgTat)} ms`),
+        verdict);
+    };
+
+    $('#all').onclick = () => {
+      const q = Number($('#q').value) || 4;
+      const res = Object.keys(CPUS.NAMES).map((a) => [a, CPUS.run(procs, a, { q })]);
+      const best = Math.min(...res.map(([, r]) => r.avgWait));
+      $('#cmp').replaceChildren(el('table', { class: 'calc' },
+        el('tr', {}, el('th', {}, 'Algorithm'), el('th', {}, 'Average waiting'), el('th', {}, 'Average turnaround')),
+        ...res.map(([a, r]) => el('tr', { class: Math.abs(r.avgWait - best) < 1e-9 ? 'best' : '' },
+          el('td', {}, CPUS.NAMES[a] + (['RR', 'PRR'].includes(a) ? ` (q = ${q})` : '')), el('td', {}, CPUS.fmt(r.avgWait)), el('td', {}, CPUS.fmt(r.avgTat))))),
+        el('p', { class: 'small muted' }, 'Bold = lowest average waiting time for this table. Priority rows use the Priority column.'));
+    };
+    load(0);
+  </script>
+</body>
+</html>

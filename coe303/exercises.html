@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Midterm guide exercises · COE303</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .q { border-top: 1px solid var(--line); padding: 18px 0 6px; }
+    .q h3 { margin: 0 0 6px; font-size: 1.05rem; }
+    .q .num { font: .82rem var(--mono); color: var(--muted); margin-right: 6px; }
+    .how { margin: 6px 0; color: var(--muted); }
+    .model { border-left: 3px solid var(--accent); background: var(--panel); padding: 10px 16px; margin: 10px 0; }
+    .model ul { margin: 4px 0; padding-left: 20px; }
+    .model[hidden] { display: none; }
+    h2 { margin-top: 40px; border-top: 1px solid var(--text); padding-top: 14px; }
+    table.t { border-collapse: collapse; margin: 8px 0; }
+    table.t td, table.t th { padding: 4px 10px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: .86rem; text-align: right; }
+    table.t td:first-child, table.t th:first-child { text-align: left; }
+    .scroll { overflow-x: auto; }
+  </style>
+</head>
+<body data-root=".." data-course="coe303" data-title="Midterm guide exercises" data-activity="coe303-exercises">
+  <main>
+    <div class="mono small muted">COE303 · midterm guide · Chapters 1–5</div>
+    <h1>Midterm guide exercises</h1>
+    <nav class="row"><a href="index.html">Course</a><a href="ozet.html">Midterm özeti</a><a href="mock.html">Mock midterm</a><a href="drill.html">Gantt drill</a><a href="exercises.html">Guide exercises</a></nav>
+    <p class="lead">Elindeki midterm kılavuzundaki bütün alıştırmalar (Chapters 1–5). Soru kısaltılmış İngilizce; altında nasıl düşüneceğin (Türkçe) ve kâğıda yazılacak kısa İngilizce cevap var. Önce kendin yaz, sonra cevabı aç.</p>
+    <p class="small muted">Kılavuzun iki cevabı yarım (2.8 ve 3.5); orada eksik kısmı Chapter 3 slaytlarından tamamladık ve bunu belirttik. Chapter 6 için kılavuzda alıştırma yok: <a href="learn.html?ch=6">Chapter 6 dersi</a> ve <a href="mock.html">mock</a> onu kapsıyor.</p>
+    <p><button id="all">Show all answers</button></p>
+    <div id="list"></div>
+  </main>
+  <script src="../assets/js/common.js"></script>
+  <script src="sched.js"></script>
+  <script>
+    const { $, el } = CS;
+    // [number, question (paraphrased), Turkish hint, [answer lines], extra?]
+    const EX = [
+      ['Chapter 1 · Introduction', [
+        ['1.1', 'Multiprogramming and time sharing let several users share one machine. (a) Name two security problems. (b) Is a time-shared machine as secure as a dedicated one?', 'Paylaşılan makinede biri diğerinin verisine ya da kaynağına uzanabilir.', ['(a) Stealing or copying another user\'s programs or data; using resources (CPU, memory, disk, peripherals) without proper accounting.', '(b) Probably not: any human-made protection scheme can be broken, and the more complex it is, the harder it is to trust.']],
+        ['1.2', 'Which resources must be managed carefully on (a) mainframes, (b) workstations connected to servers, (c) handheld computers?', 'Her ortamda en kıt kaynağı düşün.', ['(a) Mainframes: memory, CPU, storage, network bandwidth.', '(b) Workstations: memory and CPU.', '(c) Handhelds: power consumption and memory.']],
+        ['1.4', 'Which of batch programming, virtual memory and time sharing must the OS support on (a) handheld devices and (b) real-time systems?', 'Kılavuzun cevabını olduğu gibi öğren.', ['Real-time: virtual memory and time sharing (in a fair manner).', 'Handheld: virtual memory, but no time sharing.', 'Batch programming: needed in neither.']],
+        ['1.5', 'Symmetric vs asymmetric multiprocessing. Three advantages and one disadvantage of multiprocessor systems.', 'Eşit işlemciler mi, master/slave mı? Sonra artı/eksi.', ['Symmetric: all processors equal; I/O can run on any CPU.', 'Asymmetric: one master CPU assigns tasks to the others; usually only the master does I/O.', 'Advantages: save money (shared power supply, housing, peripherals); run programs faster; more reliable.', 'Disadvantage: more complex hardware and software.']],
+        ['1.6', 'How do clustered systems differ from multiprocessor systems? What do two cluster machines need to offer a highly available service?', 'Gevşek bağlı ayrı bilgisayarlar mı, tek kutuda çok CPU mu?', ['Cluster: several computers joined to share a task; less tightly coupled; communicate by messages.', 'Multiprocessor: one physical system with several CPUs; can communicate through shared memory.', 'High availability: replicate the state on both machines and keep it consistently updated, so one can take over when the other fails.']],
+        ['1.7', 'Client–server vs peer-to-peer distributed systems.', 'Roller sabit mi? Kılavuz yemek tarifi örneğini kullanıyor.', ['Client–server: fixed roles; clients request, the server provides (all recipes on the server).', 'Peer-to-peer: every node is a peer and may act as client, server or both (a peer asks other peers for a recipe).']],
+        ['1.9', 'How do network computers differ from personal computers? When are network computers a good choice?', 'Hizmetleri merkezden mi alıyor, kendi mi yapıyor?', ['Network computer: relies on a central computer for most services, so it needs only a minimal OS.', 'Personal computer: must provide everything stand-alone.', 'Good choice: when administration costs are high and sharing uses resources more efficiently.']],
+        ['1.11', 'DMA: (a) how does the CPU start the transfer, (b) how does it learn the transfer is done, (c) does DMA interfere with user programs?', 'Başlat → bitince kesme → bellek yolu paylaşımı.', ['(a) The CPU writes values into special registers the device can access; the device starts on that command.', '(b) The device interrupts the CPU when it finishes.', '(c) Yes: the device and the CPU both use memory; the memory controller shares the bus fairly, so the CPU may not reach peak memory speed.']],
+        ['1.13', 'Two reasons caches are useful. What problems do they solve and cause? Why not make a cache as large as the device it caches?', 'Hızlı ile yavaş arasında tampon; tutarlılık sorunu; maliyet.', ['Useful when components of different speeds exchange data: the cache is a buffer of intermediate speed, so the fast device need not wait.', 'Problem caused: cached data must stay consistent with the original, especially on multiprocessors.', 'Replacing the device works only if the cache keeps data without power (same state-saving capacity) and is affordable; faster storage costs more.']],
+        ['1.15', 'Describe a mechanism that stops a program from modifying another program\'s memory.', 'Chapter 1: base ve limit register.', ['Track which addresses belong to each process with base and limit registers.', 'Check every memory access against them; deny accesses outside the program\'s range.']],
+        ['1.17', 'Essential properties of batch, interactive, time-sharing, real-time, network, parallel (SMP), distributed, clustered and handheld systems.', 'Her biri için tek cümle yeter.', ['Batch: similar jobs grouped and run without interaction; keep CPU and I/O busy.', 'Interactive: many short transactions; short response time.', 'Time sharing: CPU scheduling + multiprogramming; switches rapidly between users.', 'Real time: dedicated; reads sensors and must respond within a fixed time.', 'Network: OS features such as file sharing across a network.', 'Parallel (SMP): several CPUs running the same OS copy; communicate over the system bus.', 'Distributed: processors without shared memory or clock; communicate over lines (bus, LAN).', 'Clustered: several computers combined for one task.', 'Handheld: small system for simple tasks; small memory and screen, slow processor.']],
+        ['1.18', 'What are the trade-offs of handheld computers?', 'Küçüklük bir artı, bir eksi.', ['Smaller memory, smaller screen, slower processor: only basic tasks.', 'But portable, and with wireless access they reach e-mail and the web.']],
+      ]],
+      ['Chapter 2 · Operating-System Structures', [
+        ['2.1', 'OS services fall into two categories. Describe them and how they differ.', 'Biri korur, diğeri donanımda olmayanı ekler.', ['Protection: processes access only their own memory, cannot corrupt other users\' files, cannot use devices directly.', 'New functionality not in the hardware: e.g. virtual memory and file systems.']],
+        ['2.2', 'Five user-convenience services of an OS, and why user-level programs could not provide them.', 'Program çalıştırma, I/O, dosya, iletişim, hata. Ortak sebep: kullanıcı programına güvenilmez.', ['Program execution: a user program cannot be trusted to allocate CPU time.', 'I/O operations: user programs cannot be trusted to access only their own devices, only when free.', 'File-system manipulation: could not enforce protection or be trusted to allocate and free blocks correctly.', 'Communications: might not coordinate the network device, or might receive other processes\' packets.', 'Error detection: errors are often process-independent, so one global program (the OS) must handle them.', 'Note: Chapter 2 slide 6 lists error detection under system services, not user services.']],
+        ['2.5', 'Five major OS activities for file management.', 'Dosya ve dizin, ilkel işlemler, eşleme, yedek.', ['Create and delete files.', 'Create and delete directories.', 'Primitives for manipulating files and directories.', 'Map files onto secondary storage.', 'Back up files on stable (nonvolatile) storage.']],
+        ['2.7', 'Purpose of the command interpreter; why it is separate from the kernel; could a user write a new one?', 'Komutları system call\'a çevirir; sık değişir.', ['Reads commands (from the user or a file) and runs them, usually as system calls.', 'Kept out of the kernel because it changes often.', 'Yes: everything it does is available through the system-call interface.']],
+        ['2.8', 'The two models of interprocess communication, with strengths and weaknesses.', 'Kılavuz yalnızca iki modeli adlandırıyor; artı/eksi Chapter 3 slaytlarından.', ['Message passing and shared memory.', 'Shared memory (Ch.3 slides): fast after setup; needs synchronization.', 'Message passing (Ch.3 slides): kernel-mediated, simpler and safer, works across machines; slower.']],
+        ['2.12', 'Main advantage of a microkernel; how user programs and services interact; disadvantages.', 'Hizmetler user space\'te, iletişim mesajla.', ['Advantages: new services without changing the kernel; more secure (more work in user mode); simpler kernel, more reliable.', 'Interaction: interprocess communication (messages) relayed by the OS.', 'Disadvantage: IPC overhead from frequent messaging.']],
+        ['2.13', 'How is the modular kernel similar to and different from the layered approach?', 'İkisinde de dar arayüz; katmanlıda sıra katı.', ['Similar: subsystems talk through narrow, well-defined interfaces.', 'Different: layers have a strict order (lower layers cannot call upper ones); modules may call each other freely.']],
+      ]],
+      ['Chapter 3 · Processes', [
+        ['3.1', 'Short-term, medium-term and long-term scheduling.', 'Ne seçer, ne sıklıkla çalışır?', ['Short-term (CPU scheduler): picks a ready job in memory and gives it the CPU; runs very often.', 'Medium-term: swapping; removes partly run programs from memory and brings them back later.', 'Long-term (job scheduler): decides which jobs are brought into memory; runs much less often.']],
+        ['3.2', 'Actions a kernel takes to context-switch between processes.', 'Kaydet, seç, yükle.', ['Save the state of the running process (CPU registers, memory-management information) in its PCB.', 'Restore the saved state of the next process.', 'Architecture-specific work such as flushing data and instruction caches.']],
+        ['3.5', 'Benefits and drawbacks of symmetric vs asymmetric communication (the guide\'s answer is cut off).', 'Kılavuz "symmetric" diyor ve rendezvous\'dan söz ediyor; bu senkron (blocking) iletişim demek. Cevap yarım kalmış; kalan kısım için çalışma rehberindeki blocking / non-blocking ayrımı.', ['Benefit of the blocking (synchronous) side: sender and receiver meet (rendezvous).', 'Drawback: a rendezvous may not be needed; the message could have been delivered asynchronously.', 'Study guide: blocking = synchronous, non-blocking = asynchronous.']],
+      ]],
+      ['Chapter 4 · Threads', [
+        ['4.1', 'Two programs where multithreading is no faster than one thread.', 'Sıralı işler ve kendi ortamını sıkı izleyen programlar.', ['A purely sequential program, e.g. computing one tax return.', 'A shell (C-shell, Korn shell) that must closely track its working space: open files, environment variables, current directory.']],
+        ['4.2', 'What does a thread library do to switch between user-level threads?', 'Process\'e benzer, ama register kaydı.', ['Similar to switching kernel threads; depends on how the library maps user threads to kernel threads.', 'Basically: save the registers of one user thread and restore those of another.']],
+      ]],
+      ['Chapter 5 · CPU Scheduling', [
+        ['5.1', 'Why should the scheduler tell I/O-bound and CPU-bound programs apart?', 'Kim quantum\'unu bitirmez?', ['I/O-bound programs compute briefly and then do I/O; they rarely use a whole quantum.', 'CPU-bound programs use the whole quantum.', 'Giving I/O-bound programs higher priority uses the machine\'s resources better.']],
+        ['5.2', 'How do these criteria conflict? (a) CPU utilization vs response time, (b) average turnaround vs maximum waiting time, (c) I/O device utilization vs CPU utilization.', 'Her çiftte biri iyileşince diğeri kötüleşir.', ['(a) Fewer context switches raise utilization but lengthen response time.', '(b) Shortest tasks first minimizes average turnaround but can starve long tasks, raising their waiting time.', '(c) CPU utilization peaks when CPU-bound tasks run without switches; I/O utilization peaks when I/O-bound jobs run as soon as they are ready, which costs switches.']],
+        ['5.4', 'All arrive at 0 in the order P1–P5. Draw Gantt charts for FCFS, SJF, nonpreemptive priority (smaller number = higher) and RR (q = 1); give turnaround and waiting times; which has the minimum average waiting time?', 'Dört Gantt chart çiz; waiting = turnaround − burst. Laboratuvarda "Midterm guide 5.4" örneği aynı tablo.', ['Minimum average waiting time: SJF (3.2).'], 'gantt54'],
+        ['5.5', 'Which can cause starvation: FCFS, SJF, RR, priority?', 'Kim sürekli atlanabilir?', ['Shortest job first and priority scheduling.']],
+        ['5.6', 'RR where the ready queue holds pointers to PCBs: (a) effect of two pointers to the same process, (b) advantages and disadvantages, (c) how to get the same effect without duplicates?', 'İki işaretçi = iki kat sıra.', ['(a) That process gets the CPU more often: its priority effectively rises.', '(b) More important jobs get more time; shorter jobs suffer.', '(c) Give higher-priority processes a longer quantum (two or more quantum sizes).']],
+        ['5.7', 'Ten I/O-bound tasks (1 ms CPU, then 10 ms I/O) and one CPU-bound task; context switch 0.1 ms. CPU utilization under RR with (a) q = 1 ms, (b) q = 10 ms?', 'Faydalı süre / toplam süre.', ['(a) Every switch costs 0.1 ms after 1 ms of work: 1 / 1.1 ≈ 91%.', '(b) One cycle: 10 × 1.1 (I/O tasks) + 10.1 (CPU task) = 21.1 ms, of which 20 ms is work: 20 / 21.1 ≈ 94%.']],
+        ['5.8', 'In a multilevel queue, how can a user get more CPU time for a process?', 'Quantum\'u bitirmeden bırak.', ['Use most of each quantum but give up the CPU just before it ends, so the process keeps (or raises) its priority.']],
+        ['5.10', 'How much do FCFS, RR and multilevel feedback queues favour short processes?', 'Kısa iş uzun işin arkasına düşerse?', ['FCFS: against short jobs; one arriving after a long job waits long.', 'RR: treats all jobs equally, so short jobs leave sooner.', 'Multilevel feedback queues: work like RR; favour short jobs.']],
+      ]],
+    ];
+
+    function gantt54() {
+      const P = [[10, 3], [1, 1], [2, 3], [1, 4], [5, 2]].map(([b, p], i) => ({ id: 'P' + (i + 1), arr: 0, burst: b, pri: p }));
+      const algs = [['FCFS', 'FCFS'], ['SJF', 'SJF'], ['PRI', 'Priority'], ['RR', 'RR, q = 1']];
+      const runs = algs.map(([a]) => CPUS.run(P, a, { q: 1 }));
+      const table = (title, key) => el('table', { class: 't' },
+        el('tr', {}, el('th', {}, title), ...algs.map(([, n]) => el('th', {}, n))),
+        ...P.map((p) => el('tr', {}, el('td', {}, p.id), ...runs.map((r) => el('td', {}, r[key][p.id])))),
+        el('tr', {}, el('td', {}, 'average'), ...runs.map((r) => el('td', {}, CPUS.fmt(key === 'wait' ? r.avgWait : r.avgTat)))));
+      return [
+        el('div', { class: 'scroll' }, el('table', { class: 't' }, el('tr', {}, el('th', {}, 'Process'), el('th', {}, 'Burst'), el('th', {}, 'Priority')), ...P.map((p) => el('tr', {}, el('td', {}, p.id), el('td', {}, p.burst), el('td', {}, p.pri))))),
+        ...algs.flatMap(([a, n], i) => [el('div', { class: 'mono small' }, n), CPUS.gantt(runs[i].slices)]),
+        el('div', { class: 'scroll' }, table('Turnaround', 'tat')),
+        el('div', { class: 'scroll' }, table('Waiting', 'wait')),
+      ];
+    }
+
+    const models = [];
+    $('#list').append(...EX.flatMap(([title, qs]) => [el('h2', {}, title), ...qs.map(([num, q, how, ans, extra]) => {
+      const model = el('div', { class: 'model', hidden: true }, extra === 'gantt54' ? gantt54() : null, el('ul', {}, ...ans.map((a) => el('li', {}, a))));
+      models.push(model);
+      const btn = el('button', { onclick: () => { model.hidden = !model.hidden; btn.textContent = model.hidden ? 'Show answer' : 'Hide answer'; } }, 'Show answer');
+      return el('div', { class: 'q' }, el('h3', {}, el('span', { class: 'num' }, num), q), el('p', { class: 'how' }, how), btn, model);
+    })]));
+    let open = false;
+    $('#all').onclick = () => { open = !open; models.forEach((m) => { m.hidden = !open; }); document.querySelectorAll('.q button').forEach((b) => { b.textContent = open ? 'Hide answer' : 'Show answer'; }); $('#all').textContent = open ? 'Hide all answers' : 'Show all answers'; };
+  </script>
+</body>
+</html>

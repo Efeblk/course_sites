@@ -1,5 +1,5 @@
-/* Source: existing COE303 content, originally derived from lecture slides.
- * Checked for internal consistency; raw slides unavailable on this machine. */
+/* Source: COE303 lecture slides, chapters 1–6, the producer–consumer deck and the midterm guide
+ * (materials/COE303, not committed). Chapters 5–6 added 2026-11-10 from the slides. */
 window.COURSE = window.COE303 = {
   "id": "coe303",
   "code": "COE303",
@@ -10,7 +10,7 @@ window.COURSE = window.COE303 = {
     "Silberschatz, Galvin, Gagne — Operating System Concepts, 10th ed. (primary)",
     "Stallings — Operating Systems: Internals and Design Principles (secondary)"
   ],
-  "examFormat": "Midterm: 10 short questions + 2 long questions.",
+  "examFormat": "Midterm: 10 short questions + 2 long questions (chapter 1 and 4 slides); handwritten (chapter 6 slides).",
   "chapters": [
     {
       "n": 1,
@@ -235,7 +235,7 @@ window.COURSE = window.COE303 = {
         ],
         [
           "Privileged instruction",
-          "An instruction only allowed in kernel mode: I/O control, timer management, disabling interrupts, modifying MMU registers."
+          "An instruction only allowed in kernel mode: direct hardware access, disabling interrupts, modifying MMU registers. The OS arms the timer before handing over the CPU."
         ],
         [
           "Trap",
@@ -256,7 +256,7 @@ window.COURSE = window.COE303 = {
       "title": "Operating-System Structures",
       "summary": "OS services, user interfaces, system calls and their types, system programs, design principles, kernel structures, booting and debugging.",
       "takeaways": [
-        "User-facing services include UI, execution, I/O, files, communication and error detection; allocation, accounting and protection support efficient operation.",
+        "User services: UI, program execution, I/O, files, communication. System services: error detection (slide 6; the midterm guide lists it under user), resource allocation, accounting, protection.",
         "A system call is a controlled entry point into the kernel — the mode bit changes twice.",
         "Parameters go to the kernel in registers, a memory block (address in a register), or the stack.",
         "Six syscall types: process control, file mgmt, device mgmt, information maintenance, communications, protection.",
@@ -426,7 +426,7 @@ window.COURSE = window.COE303 = {
             "Resource allocation"
           ],
           "answer": 3,
-          "explain": "The lesson groups resource allocation, logging/accounting and protection/security under system efficiency; error detection is listed with user-facing services."
+          "explain": "Slide 6 groups error detection, resource allocation, accounting and protection under the system; the midterm guide lists error detection with the user services instead."
         }
       ],
       "cards": [
@@ -966,7 +966,7 @@ window.COURSE = window.COE303 = {
         ],
         [
           "Many-to-many",
-          "Many user threads → many (≤) kernel threads. Flexible, rare (Windows ThreadFiber)."
+          "Many user threads → a sufficient number of kernel threads. Flexible, rare (Windows ThreadFiber)."
         ],
         [
           "pthread_create",
@@ -983,6 +983,544 @@ window.COURSE = window.COE303 = {
         [
           "Fork-join",
           "Fork subtasks into threads, join to collect results (merge sort, parallel sum)."
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "title": "CPU Scheduling",
+      "summary": "The CPU–I/O burst cycle, when the scheduler decides (preemptive or not), the five criteria, Gantt charts for FCFS, SJF, SRTF, RR and Priority, multilevel queues, thread scope, real-time scheduling and real OS schedulers.",
+      "takeaways": [
+        "Decisions happen when a process blocks (1), is preempted (2), becomes ready after I/O (3) or terminates (4); nonpreemptive scheduling uses only 1 and 4.",
+        "Maximize CPU utilization and throughput; minimize turnaround, waiting and response time.",
+        "Turnaround = completion − arrival; waiting = turnaround − burst; average = sum / n.",
+        "FCFS suffers the convoy effect; SJF gives the minimum average wait but needs the next burst length; SRTF is preemptive SJF.",
+        "RR: quantum q, no wait longer than (n − 1)q; q too large behaves like FCFS, q too small wastes time on context switches.",
+        "Priority scheduling starves low priorities (cure: aging); MLFQ moves processes between queues; real time means predictable."
+      ],
+      "traps": [
+        [
+          "\"SJF is the best algorithm in practice.\"",
+          "It is optimal for average waiting time only on paper; the next burst length is unknown."
+        ],
+        [
+          "\"Round Robin is always fair.\"",
+          "A tiny q spends the CPU on context switches; a huge q behaves like FCFS."
+        ],
+        [
+          "\"Priority scheduling solves starvation.\"",
+          "It causes starvation; aging is the cure."
+        ],
+        [
+          "\"Real-time means fast.\"",
+          "Real-time means predictable: deadlines are guaranteed, even if the average is slower."
+        ],
+        [
+          "\"Waiting time = completion time.\"",
+          "Waiting = completion − arrival − burst: only the time spent in the ready queue."
+        ]
+      ],
+      "activities": [
+        {
+          "id": "ch5-gantt",
+          "title": "Gantt Chart Lab",
+          "desc": "Load a slide example or your own table, predict the average waiting time, then draw FCFS, SJF, SRTF, RR or Priority and compare all six.",
+          "href": "ch5/gantt.html"
+        }
+      ],
+      "quiz": [
+        {
+          "q": "Which transition triggers a scheduling decision only in a preemptive scheduler?",
+          "options": [
+            "Running → Waiting (I/O request)",
+            "The process terminates",
+            "Running → Ready (timer interrupt)",
+            "Ready → Running (dispatch)"
+          ],
+          "answer": 2,
+          "explain": "Cases 2 and 3 involve a choice; nonpreemptive scheduling decides only when a process blocks or terminates."
+        },
+        {
+          "q": "Which criterion should be maximized?",
+          "options": [
+            "Waiting time",
+            "Throughput",
+            "Turnaround time",
+            "Response time"
+          ],
+          "answer": 1,
+          "explain": "Maximize CPU utilization and throughput; minimize turnaround, waiting and response time."
+        },
+        {
+          "q": "Waiting time is…",
+          "options": [
+            "Time spent in the ready queue",
+            "The completion time",
+            "Time until the first response",
+            "The CPU burst length"
+          ],
+          "answer": 0,
+          "explain": "Waiting = turnaround − burst: the time a process is ready but not running."
+        },
+        {
+          "q": "FCFS, all arrive at 0 in the order P1 = 24, P2 = 3, P3 = 3. Average waiting time?",
+          "options": [
+            "3",
+            "17",
+            "27",
+            "10"
+          ],
+          "answer": 1,
+          "explain": "Waiting 0, 24 and 27; (0 + 24 + 27) / 3 = 17 (slide 16)."
+        },
+        {
+          "q": "The same three processes arrive in the order P2, P3, P1. Average waiting time?",
+          "options": [
+            "17",
+            "6",
+            "9",
+            "3"
+          ],
+          "answer": 3,
+          "explain": "Waiting P2 = 0, P3 = 3, P1 = 6; average 3. Short jobs first removes the convoy effect (slide 17)."
+        },
+        {
+          "q": "SJF, all arrive at 0: P1 = 6, P2 = 8, P3 = 7, P4 = 3. Average waiting time?",
+          "options": [
+            "7",
+            "6",
+            "10.25",
+            "8"
+          ],
+          "answer": 0,
+          "explain": "Order P4, P1, P3, P2; waiting 3, 16, 9, 0; 28 / 4 = 7 (slide 18). FCFS would give 10.25."
+        },
+        {
+          "q": "SRTF: P1 (arrival 0, burst 8), P2 (1, 4), P3 (2, 9), P4 (3, 5). Which process runs from 5 to 10?",
+          "options": [
+            "P1",
+            "P2",
+            "P3",
+            "P4"
+          ],
+          "answer": 3,
+          "explain": "At 5 the remaining times are P1 = 7, P3 = 9, P4 = 5, so P4 runs (slide 19)."
+        },
+        {
+          "q": "RR with q = 4: P1 = 24, P2 = 3, P3 = 3, all at 0. When does P3 finish?",
+          "options": [
+            "7",
+            "30",
+            "10",
+            "14"
+          ],
+          "answer": 2,
+          "explain": "P1 0–4, P2 4–7, P3 7–10."
+        },
+        {
+          "q": "What happens to RR when q is made very large?",
+          "options": [
+            "It behaves like FCFS",
+            "It behaves like SJF",
+            "Starvation becomes certain",
+            "Context switches increase"
+          ],
+          "answer": 0,
+          "explain": "If every burst fits in one quantum, nobody is preempted: FCFS."
+        },
+        {
+          "q": "Which algorithms can cause starvation?",
+          "options": [
+            "FCFS and RR",
+            "SJF and Priority",
+            "RR only",
+            "FCFS only"
+          ],
+          "answer": 1,
+          "explain": "Shortest job first and priority scheduling can starve long or low-priority jobs (midterm guide 5.5)."
+        },
+        {
+          "q": "Priority (smaller number = higher): P1 10/3, P2 1/1, P3 2/4, P4 1/5, P5 5/2 (burst/priority), all at 0. Which runs second?",
+          "options": [
+            "P1",
+            "P3",
+            "P5",
+            "P4"
+          ],
+          "answer": 2,
+          "explain": "Order P2 (1), P5 (2), P1 (3), P3 (4), P4 (5); average waiting 8.2 (slide 23)."
+        },
+        {
+          "q": "What can a multilevel feedback queue do that a multilevel queue cannot?",
+          "options": [
+            "Move processes between queues",
+            "Use more than one queue",
+            "Give each queue its own algorithm",
+            "Run system processes first"
+          ],
+          "answer": 0,
+          "explain": "In a multilevel queue processes stay in their queue; MLFQ demotes CPU-heavy ones and promotes long waiters."
+        },
+        {
+          "q": "In rate-monotonic scheduling, a task's priority is…",
+          "options": [
+            "Set by its earliest deadline, changing over time",
+            "Inversely proportional to its period, and fixed",
+            "Chosen at random for each period",
+            "Proportional to its burst length"
+          ],
+          "answer": 1,
+          "explain": "Shorter period = higher static priority. EDF is the one with dynamic, deadline-based priorities."
+        },
+        {
+          "q": "Which contention scope is the only one Linux and macOS allow?",
+          "options": [
+            "PTHREAD_SCOPE_PROCESS",
+            "SCHED_FIFO",
+            "PTHREAD_SCOPE_SYSTEM",
+            "SCHED_OTHER"
+          ],
+          "answer": 2,
+          "explain": "Only system-contention scope: the kernel schedules every thread. SCHED_* are policies, not scopes."
+        },
+        {
+          "q": "Which job is NOT done by the dispatcher?",
+          "options": [
+            "Switching context",
+            "Switching to user mode",
+            "Jumping to the right place in the program",
+            "Choosing which process runs next"
+          ],
+          "answer": 3,
+          "explain": "The CPU scheduler chooses; the dispatcher gives the CPU to the chosen process."
+        }
+      ],
+      "cards": [
+        [
+          "CPU burst / I/O burst",
+          "A process alternates CPU execution and I/O wait; most CPU bursts are short."
+        ],
+        [
+          "Preemptive vs nonpreemptive",
+          "Nonpreemptive: decides only when a process blocks or terminates (cases 1, 4). Preemptive: also on Running → Ready and Waiting → Ready (cases 2, 3)."
+        ],
+        [
+          "Dispatcher",
+          "Gives the CPU to the chosen process: switch context, switch to user mode, jump to its PC. Dispatch latency = time to stop one process and start another."
+        ],
+        [
+          "Turnaround time",
+          "Completion − arrival: from submission to completion."
+        ],
+        [
+          "Waiting time",
+          "Turnaround − burst: time spent in the ready queue."
+        ],
+        [
+          "Response time",
+          "From submission until the first response; matters most for interactive systems."
+        ],
+        [
+          "Convoy effect",
+          "FCFS: short processes stuck behind a long one."
+        ],
+        [
+          "SJF / SRTF",
+          "Shortest next CPU burst first: minimum average waiting time, but needs the burst length. SRTF is the preemptive version."
+        ],
+        [
+          "Round Robin",
+          "Each process runs at most q, then joins the back of the queue; no wait longer than (n − 1)q; q must be much larger than a context switch."
+        ],
+        [
+          "Aging",
+          "Gradually raise the priority of waiting processes so they cannot starve."
+        ],
+        [
+          "Multilevel feedback queue",
+          "Several queues; a process moves down if it uses too much CPU, up if it waits too long (slide 25: Q0 RR 8 ms, Q1 RR 16 ms, Q2 FCFS)."
+        ],
+        [
+          "PCS vs SCS",
+          "PCS: the thread library schedules threads within one process. SCS: the kernel schedules among all threads (the only option on Linux)."
+        ],
+        [
+          "Rate-monotonic vs EDF",
+          "RM: fixed priority, shorter period = higher; can fail above about 69% use. EDF: earliest deadline first, priorities change; up to 100%."
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "title": "Synchronization Tools",
+      "summary": "Race conditions in the producer–consumer problem, the critical-section problem and its three requirements, Peterson's solution and memory barriers, test_and_set and compare_and_swap, mutex locks, semaphores, monitors with condition variables, and liveness failures.",
+      "takeaways": [
+        "A race condition: unsynchronized access to shared data makes the result depend on timing (count = 5 can end as 4 or 6).",
+        "A critical-section solution needs mutual exclusion, progress and bounded waiting.",
+        "Peterson: flag[i] = true; turn = j; while (flag[j] && turn == j); correct on paper, broken by instruction reordering without memory barriers.",
+        "test_and_set and compare_and_swap are atomic; they build spinlocks and C11 atomic variables.",
+        "Mutex: acquire/release, has an owner. Semaphore: wait/signal on an integer, counting or binary, no owner; also used for ordering.",
+        "Liveness failures: deadlock (fix: one lock order), starvation, priority inversion (fix: priority inheritance)."
+      ],
+      "traps": [
+        [
+          "\"A mutex and a binary semaphore are exactly the same.\"",
+          "A mutex has an owner (only the locker unlocks it); any thread can post a semaphore."
+        ],
+        [
+          "\"Spinlocks are always bad.\"",
+          "For very short critical sections spinning costs less than a context switch."
+        ],
+        [
+          "\"Condition variables work without a mutex.\"",
+          "pthread_cond_wait needs the mutex: lock → while (!cond) wait → unlock."
+        ],
+        [
+          "\"Atomic operations remove every race condition.\"",
+          "They protect single variables; invariants across several variables still need locks."
+        ],
+        [
+          "\"Deadlock only happens with semaphores.\"",
+          "Any tool can deadlock: every circular wait is a deadlock."
+        ]
+      ],
+      "activities": [
+        {
+          "id": "ch6-critical",
+          "title": "Critical Section Lab",
+          "desc": "Schedule count++ and count-- line by line: watch the race, then protect it with a mutex lock or Peterson's flag and turn.",
+          "href": "ch6/critical.html"
+        },
+        {
+          "id": "ch6-semaphore",
+          "title": "Semaphore and Deadlock Lab",
+          "desc": "Call wait() and signal() on a counting semaphore and watch its queue, then deadlock two processes on S and Q and fix the lock order.",
+          "href": "ch6/semaphore.html"
+        }
+      ],
+      "quiz": [
+        {
+          "q": "What is a race condition?",
+          "options": [
+            "Outcome depends on access timing to shared data",
+            "Two processes run on two different CPU cores",
+            "A process blocks while it waits for disk I/O",
+            "The scheduler prefers the shortest CPU burst"
+          ],
+          "answer": 0,
+          "explain": "Concurrent access to shared data without synchronization makes the result depend on the interleaving."
+        },
+        {
+          "q": "count = 5. T0 producer: reg1 = count; T1: reg1 = reg1 + 1; T2 consumer: reg2 = count; T3: reg2 = reg2 − 1; T4 producer: count = reg1; T5 consumer: count = reg2. Final count?",
+          "options": [
+            "5",
+            "6",
+            "4",
+            "3"
+          ],
+          "answer": 2,
+          "explain": "The consumer stores 4 last and overwrites the producer's 6 (producer–consumer deck)."
+        },
+        {
+          "q": "Which requirement says that only one process may be in its critical section at a time?",
+          "options": [
+            "Progress",
+            "Mutual exclusion",
+            "Bounded waiting",
+            "Aging"
+          ],
+          "answer": 1,
+          "explain": "Mutual exclusion. Progress: no endless postponement. Bounded waiting: no starvation."
+        },
+        {
+          "q": "Nobody is in the critical section, two processes want in, but the decision is postponed forever. Which requirement fails?",
+          "options": [
+            "Bounded waiting",
+            "Mutual exclusion",
+            "Progress",
+            "Atomicity"
+          ],
+          "answer": 2,
+          "explain": "Progress: if nobody is inside, the choice of who enters cannot be postponed indefinitely."
+        },
+        {
+          "q": "In Peterson's solution, what does turn = j mean for process Pi?",
+          "options": [
+            "Pi lets Pj go first",
+            "Pi enters immediately",
+            "Pj must leave its critical section",
+            "Pi clears its own flag"
+          ],
+          "answer": 0,
+          "explain": "flag[i] = true says \"I want in\"; turn = j politely gives priority to Pj."
+        },
+        {
+          "q": "Why can Peterson's solution fail on modern computers?",
+          "options": [
+            "It needs more than two processes",
+            "Processors and compilers may reorder instructions",
+            "It uses too much memory",
+            "It has no exit section"
+          ],
+          "answer": 1,
+          "explain": "Reordered loads and stores break the proof; memory barriers prevent it."
+        },
+        {
+          "q": "What does test_and_set(&lock) do atomically?",
+          "options": [
+            "Sets lock to false, then returns true",
+            "Adds 1 to lock and returns the sum",
+            "Blocks the caller in the lock's queue",
+            "Returns old value, sets lock to true"
+          ],
+          "answer": 3,
+          "explain": "It returns the original value and sets the word to true in one uninterruptible step."
+        },
+        {
+          "q": "Which requirement does the simple test_and_set spinlock NOT meet?",
+          "options": [
+            "Mutual exclusion",
+            "Progress",
+            "Bounded waiting",
+            "None: it meets all three"
+          ],
+          "answer": 2,
+          "explain": "Mutual exclusion and progress hold, but a process can lose every time: no bounded waiting (slide 17)."
+        },
+        {
+          "q": "compare_and_swap(&lock, 0, 1) changes lock only when…",
+          "options": [
+            "lock is 1",
+            "lock is 0",
+            "the caller owns lock",
+            "the queue is empty"
+          ],
+          "answer": 1,
+          "explain": "It writes the new value only if the current value equals the expected one, and returns the old value."
+        },
+        {
+          "q": "A lock whose acquire() loops until the lock is free is called a…",
+          "options": [
+            "Monitor",
+            "Condition variable",
+            "Semaphore",
+            "Spinlock"
+          ],
+          "answer": 3,
+          "explain": "Busy waiting = spinning; the slides call this lock a spinlock."
+        },
+        {
+          "q": "Thread 1 locks A then B; thread 2 locks B then A. What can happen?",
+          "options": [
+            "Starvation only",
+            "A race on A",
+            "Deadlock",
+            "Priority inversion"
+          ],
+          "answer": 2,
+          "explain": "Each holds one lock and waits for the other. Fix: always lock in the same order, or use a timed lock."
+        },
+        {
+          "q": "Semaphore synch = 0 makes S1 in P1 run before S2 in P2. What does P2 do just before S2?",
+          "options": [
+            "wait(synch)",
+            "signal(synch)",
+            "sem_init(synch)",
+            "Nothing"
+          ],
+          "answer": 0,
+          "explain": "P1: S1; signal(synch). P2: wait(synch); S2. P2 blocks until P1 has signalled."
+        },
+        {
+          "q": "How does a mutex differ from a binary semaphore?",
+          "options": [
+            "A semaphore can only count down to −1",
+            "A mutex can be released by any thread",
+            "They are identical in every way",
+            "A mutex has an owner; only it unlocks"
+          ],
+          "answer": 3,
+          "explain": "Ownership: only the thread that locked a mutex unlocks it; any thread may post a semaphore."
+        },
+        {
+          "q": "Why is pthread_cond_wait called inside a while loop?",
+          "options": [
+            "To re-check the condition after a spurious wakeup",
+            "To release the mutex twice",
+            "Because C forbids if around it",
+            "So that no mutex is needed"
+          ],
+          "answer": 0,
+          "explain": "A thread can wake without a signal; while re-checks the condition before going on."
+        },
+        {
+          "q": "A low-priority process holds a lock a high-priority process needs, while a medium-priority process keeps running. Name and fix?",
+          "options": [
+            "Deadlock; lock ordering",
+            "Priority inversion; priority inheritance",
+            "Starvation; aging",
+            "Race condition; atomics"
+          ],
+          "answer": 1,
+          "explain": "The holder inherits the high priority until it releases the lock (slide 38)."
+        }
+      ],
+      "cards": [
+        [
+          "Race condition",
+          "The result depends on the timing of access to shared data; e.g. count++ and count-- giving 4 or 6 instead of 5."
+        ],
+        [
+          "Critical section",
+          "Code that accesses shared data. Structure: entry → critical → exit → remainder."
+        ],
+        [
+          "Mutual exclusion",
+          "Only one process in its critical section at a time."
+        ],
+        [
+          "Progress",
+          "If nobody is inside and some want in, the choice cannot be postponed forever."
+        ],
+        [
+          "Bounded waiting",
+          "After a request, others can enter only a bounded number of times first (no starvation)."
+        ],
+        [
+          "Peterson's solution",
+          "flag[i] = true; turn = j; while (flag[j] && turn == j); … flag[i] = false. Two processes; assumes atomic load and store."
+        ],
+        [
+          "Memory barrier",
+          "Makes every earlier load and store complete and become visible before any later one; stops reordering."
+        ],
+        [
+          "test_and_set",
+          "Atomically returns the old value and sets the word to true."
+        ],
+        [
+          "compare_and_swap",
+          "Atomically sets the value to new_value only if it equals expected; returns the old value."
+        ],
+        [
+          "Spinlock vs sleeping mutex",
+          "Spin: busy-waits, good for very short sections. Sleep: blocks, good for long ones. Adaptive: spin, then sleep."
+        ],
+        [
+          "Semaphore",
+          "Integer + atomic wait() (P: decrement, block if negative) and signal() (V: increment, wake one)."
+        ],
+        [
+          "Counting vs binary semaphore",
+          "Counting: any range, counts resources. Binary: 0 or 1, like a mutex but without an owner."
+        ],
+        [
+          "Condition variable",
+          "x.wait() sleeps and releases the lock; x.signal() wakes one waiter. Pthreads: pthread_cond_wait / pthread_cond_signal."
+        ],
+        [
+          "Priority inversion",
+          "A low-priority lock holder blocks a high-priority process; fix: priority inheritance."
         ]
       ]
     }
@@ -1036,7 +1574,8 @@ window.COURSE = window.COE303 = {
         ],
         [
           "Set the hardware timer",
-          1
+          1,
+          "The OS arms the timer before it hands the CPU to a user process (Chapter 1, hardware timer slide)."
         ],
         [
           "Modify MMU / page-table registers",
@@ -1315,6 +1854,124 @@ window.COURSE = window.COE303 = {
           1
         ]
       ]
+    },
+    "algo-weakness": {
+      "ch": 5,
+      "type": "match",
+      "title": "Algorithm → Weakness",
+      "intro": "Match each scheduling algorithm to its weakness (slide 26).",
+      "pairs": [
+        [
+          "FCFS",
+          "Convoy effect: short jobs wait behind long ones"
+        ],
+        [
+          "SJF",
+          "Needs the length of the next CPU burst"
+        ],
+        [
+          "SRTF",
+          "High context-switch overhead"
+        ],
+        [
+          "Round Robin",
+          "Overhead when the quantum is small"
+        ],
+        [
+          "Priority",
+          "Starvation of low-priority processes"
+        ],
+        [
+          "MLFQ",
+          "Complex"
+        ]
+      ]
+    },
+    "preempt-or-not": {
+      "ch": 5,
+      "type": "bucket",
+      "title": "Preemptive or Not?",
+      "intro": "Can the scheduler take the CPU away from a running process?",
+      "buckets": [
+        "Preemptive",
+        "Nonpreemptive"
+      ],
+      "items": [
+        [
+          "FCFS",
+          1
+        ],
+        [
+          "SJF (slide 18)",
+          1
+        ],
+        [
+          "Scheduling only in cases 1 and 4",
+          1
+        ],
+        [
+          "SRTF",
+          0
+        ],
+        [
+          "Round Robin",
+          0
+        ],
+        [
+          "Rate-monotonic",
+          0
+        ],
+        [
+          "EDF",
+          0
+        ]
+      ]
+    },
+    "peterson-order": {
+      "ch": 6,
+      "type": "order",
+      "title": "Peterson's Solution for Pi",
+      "intro": "Put the lines of process Pi in order (slide 12).",
+      "items": [
+        "flag[i] = true",
+        "turn = j",
+        "while (flag[j] && turn == j) ;",
+        "critical section",
+        "flag[i] = false",
+        "remainder section"
+      ]
+    },
+    "sync-match": {
+      "ch": 6,
+      "type": "match",
+      "title": "Tool → What It Does",
+      "intro": "Match each synchronization tool to its job.",
+      "pairs": [
+        [
+          "Memory barrier",
+          "Makes earlier memory changes visible before later ones"
+        ],
+        [
+          "compare_and_swap",
+          "Writes a new value only if the old one matches"
+        ],
+        [
+          "Mutex lock",
+          "acquire() before and release() after the critical section"
+        ],
+        [
+          "Counting semaphore",
+          "Counts the free resources"
+        ],
+        [
+          "Condition variable",
+          "Waits inside a monitor until a condition holds"
+        ],
+        [
+          "Priority inheritance",
+          "Lends a high priority to the lock holder"
+        ]
+      ]
     }
   }
 };
@@ -1323,7 +1980,7 @@ Object.assign(window.COURSE, {
   "exam": {
     "title": "Midterm",
     "label": "Exam format",
-    "scope": "Chapters 1–4",
+    "scope": "Chapters 1–6",
     "parts": [
       [
         "10 short questions",
@@ -1333,23 +1990,28 @@ Object.assign(window.COURSE, {
       [
         "2 long questions",
         null,
-        "Explain a process or work through an example"
+        "Explain a process or work through an example (Gantt chart, synchronization code)"
       ]
     ],
     "plan": [
       [
         "ozet.html",
-        "Review the two exam parts",
-        "20–30 min"
+        "Read the Midterm özeti",
+        "25–30 min"
+      ],
+      [
+        "drill.html",
+        "Draw 3 Gantt charts in the drill",
+        "15 min"
       ],
       [
         "mock.html",
-        "Practise two short papers",
+        "Practise the two mock papers",
         ""
       ],
       [
-        "learn.html?ch=1",
-        "Revisit a weak chapter",
+        "exercises.html",
+        "Answer the midterm guide exercises",
         ""
       ]
     ],
@@ -1360,8 +2022,8 @@ Object.assign(window.COURSE, {
       "kind": "summary",
       "href": "ozet.html",
       "title": "Midterm özeti",
-      "meta": "Türkçe · Chapters 1–4",
-      "desc": "Short definitions, comparisons and worked examples for the two exam parts."
+      "meta": "Türkçe · Chapters 1–6",
+      "desc": "Short definitions, comparisons, Gantt-chart steps and synchronization code for the two exam parts."
     },
     {
       "kind": "mock",
@@ -1369,6 +2031,20 @@ Object.assign(window.COURSE, {
       "title": "Mock midterm",
       "meta": "2 papers · 10 short + 2 long each",
       "desc": "Instant feedback for short checks; keyword models for written answers."
+    },
+    {
+      "kind": "drill",
+      "href": "drill.html",
+      "title": "Gantt chart drill",
+      "meta": "FCFS · SJF · SRTF · RR · Priority",
+      "desc": "New process tables each time: compute the waiting times, then reveal the chart step by step."
+    },
+    {
+      "kind": "exercises",
+      "href": "exercises.html",
+      "title": "Midterm guide exercises",
+      "meta": "Chapters 1–5 · from the guide you received",
+      "desc": "Every exercise from the midterm guide with a Turkish hint and a short English answer."
     }
   ]
 });

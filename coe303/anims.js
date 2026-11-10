@@ -232,4 +232,115 @@
     });
     A.step(`The dashed line is the wall: however many cores you buy, the run can never be shorter than the serial ${p.S}%. Move the slider to see a smaller S raise the limit.`, { lim: { o: 1 } });
   });
+
+  /* ---------- Ch5: Gantt charts (shared helper) ---------- */
+  const PCOL = { P1: 'c0', P2: 'c2', P3: 'c1', P4: 'c3', P5: 'c4' };
+  // one chart row: bars grow left to right; returns a function that reveals bar k (plus its end time)
+  function ganttRow(A, key, y, slices, unit, x0, title) {
+    A.text(key + 'T', { tx: x0, ty: y - 14, text: title, size: 12, c: 'mute', anchor: 'start' });
+    A.area(key + 'G', { tx: x0, ty: y, w: slices[slices.length - 1][2] * unit, h: 36, c: 'mute' });
+    A.text(key + 't0', { tx: x0, ty: y + 52, text: '0', size: 11, mono: true, c: 'mute', o: 0 });
+    slices.forEach(([id, s, e], k) => {
+      A.area(`${key}b${k}`, { tx: x0 + s * unit, ty: y, w: 0, h: 36, c: PCOL[id], solid: true });
+      A.text(`${key}l${k}`, { tx: x0 + ((s + e) / 2) * unit, ty: y + 18, text: id, size: 12, weight: 700, mono: true, c: 'text', o: 0 });
+      A.text(`${key}t${k + 1}`, { tx: x0 + e * unit, ty: y + 52, text: String(e), size: 11, mono: true, c: 'mute', o: 0 });
+    });
+    return (k, first) => {
+      const [, s, e] = slices[k];
+      const ch = { [`${key}b${k}`]: { w: (e - s) * unit }, [`${key}l${k}`]: { o: 1 }, [`${key}t${k + 1}`]: { o: 1 } };
+      if (first) Object.assign(ch, { [key + 'T']: { o: 1 }, [key + 't0']: { o: 1 } });
+      return ch;
+    };
+  }
+  const merge = (...objs) => Object.assign({}, ...objs);
+
+  def('fcfs', { w: 680, h: 300 }, (A) => {
+    const U = 20, X = 50;
+    const r1 = ganttRow(A, 'a', 70, [['P1', 0, 24], ['P2', 24, 27], ['P3', 27, 30]], U, X, 'arrival order P1, P2, P3');
+    const r2 = ganttRow(A, 'b', 200, [['P2', 0, 3], ['P3', 3, 6], ['P1', 6, 30]], U, X, 'arrival order P2, P3, P1');
+    A.step('Three processes are all waiting at time 0. Bursts: <b>P1 = 24</b>, <b>P2 = 3</b>, <b>P3 = 3</b> ms. <b>FCFS</b> runs them in arrival order, each to the end of its burst.');
+    A.step('P1 arrived first, so it runs from 0 to 24. Its waiting time is <b>0</b>.', r1(0, true));
+    A.step('P2 has been in the ready queue since 0 and starts at 24: waiting time <b>24</b>.', r1(1));
+    A.step('P3 starts at 27: waiting time <b>27</b>. Average = (0 + 24 + 27) / 3 = <b>17 ms</b>.', r1(2));
+    A.step('Same processes, but they arrive as P2, P3, P1. The two short jobs run first.', merge(r2(0, true), r2(1)));
+    A.step('Waiting times: P2 = 0, P3 = 3, P1 = 6. Average = (0 + 3 + 6) / 3 = <b>3 ms</b>. Short jobs stuck behind a long one is the <b>convoy effect</b>.', r2(2));
+  });
+
+  def('sjf', { w: 680, h: 300 }, (A) => {
+    const U = 23, X = 40;
+    const r1 = ganttRow(A, 'a', 70, [['P4', 0, 3], ['P1', 3, 9], ['P3', 9, 16], ['P2', 16, 24]], U, X, 'SJF: P1 = 6, P2 = 8, P3 = 7, P4 = 3, all at time 0');
+    const r2 = ganttRow(A, 'b', 200, [['P1', 0, 1], ['P2', 1, 5], ['P4', 5, 10], ['P1', 10, 17], ['P3', 17, 26]], U, X, 'SRTF: P1 0/8, P2 1/4, P3 2/9, P4 3/5 (arrival/burst)');
+    A.step('<b>SJF</b> looks at the length of each process\'s next CPU burst and runs the shortest first.');
+    A.step('Order by burst: P4 (3), P1 (6), P3 (7), P2 (8).', merge(r1(0, true), r1(1), r1(2), r1(3)));
+    A.step('Waiting: P1 = 3, P2 = 16, P3 = 9, P4 = 0. Average = 28 / 4 = <b>7 ms</b>, the minimum possible for this set.');
+    A.step('<b>SRTF</b> is preemptive SJF. P1 starts at 0. At 1, P2 arrives needing 4, less than P1\'s remaining 7, so P2 takes the CPU.', merge(r2(0, true), r2(1)));
+    A.step('P2 ends at 5. Remaining work: P1 = 7, P3 = 9, P4 = 5. P4 is shortest, then P1, then P3.', merge(r2(2), r2(3), r2(4)));
+    A.step('Waiting = completion − arrival − burst: P1 = 17 − 0 − 8 = 9, P2 = 0, P3 = 26 − 2 − 9 = 15, P4 = 10 − 3 − 5 = 2. Average = 26 / 4 = <b>6.5 ms</b>.');
+  });
+
+  def('rr', { w: 680, h: 230 }, (A) => {
+    const U = 20, X = 50;
+    const sl = [['P1', 0, 4], ['P2', 4, 7], ['P3', 7, 10], ['P1', 10, 14], ['P1', 14, 18], ['P1', 18, 22], ['P1', 22, 26], ['P1', 26, 30]];
+    const r = ganttRow(A, 'a', 80, sl, U, X, 'Round Robin, q = 4: P1 = 24, P2 = 3, P3 = 3');
+    A.step('<b>Round Robin</b>: each process runs for at most one <b>time quantum</b> q, then goes to the back of the ready queue. Here q = 4 ms.');
+    A.step('P1 uses its full quantum, 0 to 4, and is preempted with 20 ms left.', r(0, true));
+    A.step('P2 needs only 3 ms, so it finishes at 7 before the quantum ends. P3 does the same and finishes at 10.', merge(r(1), r(2)));
+    A.step('Only P1 is left. It gets quantum after quantum until it finishes at 30.', merge(r(3), r(4), r(5), r(6), r(7)));
+    A.step('Waiting: P1 = 30 − 24 = 6, P2 = 4, P3 = 7. Average = 17 / 3 = <b>5.67 ms</b> (slide 20 prints 5.3, but 17 / 3 is 5.67). With q = 6 the average is 7. A very large q behaves like FCFS; a very small q spends its time on context switches.');
+  });
+
+  /* ---------- Ch6: producer and consumer race on count ---------- */
+  def('pcrace', { w: 680, h: 330 }, (A) => {
+    const X = { P: 120, C: 560 }, MEM = [340, 60];
+    A.box('mem', { tx: MEM[0], ty: MEM[1], w: 170, h: 58, text: 'count = 5', sub: 'shared memory', c: 'c5' });
+    A.box('tP', { tx: X.P, ty: 60, w: 170, h: 44, text: 'Producer: count++', c: 'c0', fs: 12 });
+    A.box('tC', { tx: X.C, ty: 60, w: 170, h: 44, text: 'Consumer: count--', c: 'c2', fs: 12 });
+    A.box('rP', { tx: X.P, ty: 128, w: 170, h: 34, fs: 12, text: 'register1: –', c: 'c0', fill: 'ghost' });
+    A.box('rC', { tx: X.C, ty: 128, w: 170, h: 34, fs: 12, text: 'register2: –', c: 'c2', fill: 'ghost' });
+    const rows = [
+      ['P', 'T0  producer  register1 = count', 'register1: 5'],
+      ['P', 'T1  producer  register1 = register1 + 1', 'register1: 6'],
+      ['C', 'T2  consumer  register2 = count', 'register2: 5'],
+      ['C', 'T3  consumer  register2 = register2 − 1', 'register2: 4'],
+      ['P', 'T4  producer  count = register1', null, 'count = 6'],
+      ['C', 'T5  consumer  count = register2', null, 'count = 4'],
+    ];
+    rows.forEach(([w, t], i) => A.text('L' + i, { tx: 40, ty: 196 + i * 21, text: t, mono: true, size: 12, anchor: 'start', c: w === 'P' ? 'c0' : 'c2', o: 0 }));
+    A.step('One producer and one consumer share <code>count = 5</code>. In machine code, <code>count++</code> and <code>count--</code> are each three steps: load into a register, change the register, store it back.');
+    const caps = [
+      'T0: the producer loads count (5) into register1.',
+      'T1: it adds 1 in its register. Memory still says 5. Now its time slice ends: an <b>interrupt</b>, and the consumer runs.',
+      'T2: the consumer loads count. Memory still holds <b>5</b>, an old value.',
+      'T3: it subtracts 1 in its own register: 4.',
+      'T4: the producer resumes and stores 6.',
+      'T5: the consumer stores 4, overwriting the 6. The producer\'s update is lost.',
+    ];
+    rows.forEach(([w, , reg, mem], i) => {
+      const ch = { ['L' + i]: { o: 1 }, tP: { fill: w === 'P' ? 'solid' : 'soft' }, tC: { fill: w === 'C' ? 'solid' : 'soft' } };
+      if (reg) ch['r' + w] = { text: reg, fill: 'soft' };
+      if (mem) ch.mem = { text: mem };
+      A.step(caps[i], ch, { fx: [mem ? 'mem' : 'r' + w] });
+    });
+    A.step('One item in, one item out: count should still be <b>5</b>, but it is <b>4</b>. Had T4 and T5 swapped, it would be 6. The result depends on timing: a <b>race condition</b>. The three lines that touch count form the <b>critical section</b>.',
+      { mem: { c: 'bad', fill: 'solid', sub: 'should be 5' }, tP: { fill: 'soft' }, tC: { fill: 'soft' } }, { fx: ['mem'] });
+  });
+
+  /* ---------- Ch6: semaphore with a waiting queue ---------- */
+  def('semaphore', { w: 680, h: 300 }, (A) => {
+    A.area('outA', { tx: 20, ty: 90, w: 180, h: 190, c: 'mute', label: 'remainder section' });
+    A.area('csA', { tx: 250, ty: 90, w: 180, h: 190, c: 'ok', label: 'critical section' });
+    A.area('qA', { tx: 480, ty: 90, w: 180, h: 190, c: 'warn', label: 'waiting queue of S' });
+    A.box('S', { tx: 340, ty: 38, w: 150, h: 46, text: 'S = 1', sub: 'semaphore value', c: 'c5' });
+    const home = { P1: [110, 140], P2: [110, 190], P3: [110, 240] };
+    for (const [id, [x, y]] of Object.entries(home)) A.box(id, { tx: x, ty: y, w: 80, h: 32, text: id, c: PCOL[id], fs: 13 });
+    const CS = [340, 185], Q = [[570, 140], [570, 190]];
+    const at = ([x, y]) => ({ tx: x, ty: y });
+    A.step('<code>S = 1</code>. Each process runs <code>wait(S)</code> before its critical section and <code>signal(S)</code> after it. No busy waiting: a blocked process sleeps in the semaphore\'s queue.');
+    A.step('P1: <code>wait(S)</code> makes S = 0. Not negative, so P1 enters.', { S: { text: 'S = 0' }, P1: at(CS) }, { fx: ['S'] });
+    A.step('P2: <code>wait(S)</code> makes S = −1. Negative, so P2 is <b>blocked</b> and joins the queue.', { S: { text: 'S = −1' }, P2: at(Q[0]) }, { fx: ['S'] });
+    A.step('P3: <code>wait(S)</code> makes S = −2. A negative value counts the waiting processes: <b>2</b>.', { S: { text: 'S = −2' }, P3: at(Q[1]) }, { fx: ['S'] });
+    A.step('P1: <code>signal(S)</code> makes S = −1. S ≤ 0 means someone waits, so <code>wakeup(P2)</code>: P2 enters.', { S: { text: 'S = −1' }, P1: at(home.P1), P2: at(CS), P3: at(Q[0]) }, { fx: ['S'] });
+    A.step('P2: <code>signal(S)</code> makes S = 0 and wakes P3.', { S: { text: 'S = 0' }, P2: at(home.P2), P3: at(CS) }, { fx: ['S'] });
+    A.step('P3: <code>signal(S)</code> makes S = 1. The queue is empty and S is back at its start value. Only one process was ever inside: <b>mutual exclusion</b>.', { S: { text: 'S = 1' }, P3: at(home.P3) }, { fx: ['S'] });
+  });
 })();

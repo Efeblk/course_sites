@@ -337,6 +337,9 @@ figure.fig figcaption { font-family: var(--serif); font-style: italic; font-size
 .f-flow.down { flex-direction: column; align-items: center; }
 .f-flow .f-box { flex: 1 1 0; min-width: 104px; max-width: 200px; text-align: center; padding: 10px 8px; border-radius: 4px; border: 1.5px solid var(--c); background: color-mix(in srgb, var(--c) 9%, var(--panel)); }
 .f-flow.down .f-box { max-width: 460px; width: 100%; flex: none; }
+.f-flow.many { gap: 4px; }
+.f-flow.many .f-box { min-width: 84px; padding: 8px 5px; }
+.f-flow.many .f-t { font-size: .92em; }
 .f-arrow { align-self: center; color: var(--muted); font-size: 1.2rem; }
 .f-icon { font-size: 1.35rem; line-height: 1.2; }
 .f-icon.big { font-size: 1.8rem; }
