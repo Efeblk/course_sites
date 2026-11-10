@@ -1,0 +1,84 @@
+{
+ "fps": 30,
+ "total": 2152,
+ "beats": {
+  "what": {
+   "start": 18,
+   "dur": 291,
+   "file": "vo/swe-userstory/what.wav",
+   "text": "A user story describes a feature from the end user's point of view. It's the agile way to capture requirements: a sentence or two, plus a conversation."
+  },
+  "template": {
+   "start": 322,
+   "dur": 148,
+   "file": "vo/swe-userstory/template.wav",
+   "text": "The common template: as a role, I want a capability, so that I get a benefit."
+  },
+  "ex": {
+   "start": 483,
+   "dur": 187,
+   "file": "vo/swe-userstory/ex.wav",
+   "text": "As a passenger, I want to link my credit card to my profile, so that I can pay for a ride faster."
+  },
+  "backlog": {
+   "start": 684,
+   "dur": 156,
+   "file": "vo/swe-userstory/backlog.wav",
+   "text": "Stories live in the backlog, an ordered list, often on index cards or sticky notes."
+  },
+  "tree": {
+   "start": 853,
+   "dur": 370,
+   "file": "vo/swe-userstory/tree.wav",
+   "text": "Big goals break down. An initiative holds epics. An epic is a large body of work, delivered over several sprints. It breaks into stories, small enough for a one or two week sprint."
+  },
+  "invest": {
+   "start": 1245,
+   "dur": 47,
+   "file": "vo/swe-userstory/invest.wav",
+   "text": "Good stories are INVEST."
+  },
+  "i": {
+   "start": 1305,
+   "dur": 70,
+   "file": "vo/swe-userstory/i.wav",
+   "text": "Independent: build them in any order."
+  },
+  "n": {
+   "start": 1389,
+   "dur": 72,
+   "file": "vo/swe-userstory/n.wav",
+   "text": "Negotiable: the team decides how."
+  },
+  "v": {
+   "start": 1474,
+   "dur": 90,
+   "file": "vo/swe-userstory/v.wav",
+   "text": "Valuable: each one delivers value to users."
+  },
+  "e": {
+   "start": 1577,
+   "dur": 63,
+   "file": "vo/swe-userstory/e.wav",
+   "text": "Estimable: easy to estimate."
+  },
+  "s": {
+   "start": 1653,
+   "dur": 57,
+   "file": "vo/swe-userstory/s.wav",
+   "text": "Small: done within one sprint."
+  },
+  "t": {
+   "start": 1724,
+   "dur": 73,
+   "file": "vo/swe-userstory/t.wav",
+   "text": "Testable: clear acceptance criteria."
+  },
+  "accept": {
+   "start": 1819,
+   "dur": 253,
+   "file": "vo/swe-userstory/accept.wav",
+   "text": "Acceptance criteria tell the team when a story is done. Ensure the bidder can log in, reach the auction page, and select a product."
+  }
+ }
+}

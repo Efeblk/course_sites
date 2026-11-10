@@ -1,0 +1,56 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "intro",
+   "text": "A hospital wants a new appointment system. Before anyone writes code, two questions must be answered."
+  },
+  {
+   "id": "what",
+   "text": "First: what should the system do? That is analysis. Collect the facts, find the problems, and break the system into its parts."
+  },
+  {
+   "id": "how",
+   "text": "Second: how will the system do it? That is design. Plan the modules, the screens, the databases, and the interfaces."
+  },
+  {
+   "id": "order",
+   "text": "Analysis specifies what. Design focuses on how. Always in that order.",
+   "pause": 0.6
+  },
+  {
+   "id": "fourp",
+   "text": "Every project has four P's. People: the stakeholders. Product: the software, plus its documents. Project: the activities. And process: the framework that orders those activities."
+  },
+  {
+   "id": "success",
+   "text": "A project succeeds when the system meets the user needs, is delivered on time, and stays within budget.",
+   "pause": 0.5
+  },
+  {
+   "id": "defect",
+   "text": "Quality means meeting the requirements. A defect is a deviation from the requirements."
+  },
+  {
+   "id": "cost",
+   "text": "And the earlier a defect is found, the less it costs to repair.",
+   "pause": 0.6
+  },
+  {
+   "id": "verif",
+   "text": "Two checks protect quality. Verification asks: are we building the product right? Does the code follow the design? Inspections and reviews are verification."
+  },
+  {
+   "id": "valid",
+   "text": "Validation asks: are we building the right product? Does the system meet the user requirements? Testing is validation."
+  },
+  {
+   "id": "first",
+   "text": "First verification. Then validation.",
+   "pause": 1.0
+  }
+ ]
+}

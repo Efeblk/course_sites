@@ -1,0 +1,58 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "what",
+   "text": "A sequence diagram shows the messages between participants, in time order, from top to bottom."
+  },
+  {
+   "id": "lifeline",
+   "text": "Each participant is a lifeline: a head box, with a dashed line going down."
+  },
+  {
+   "id": "exec",
+   "text": "While a participant is busy, a thin bar appears on its line: the execution, also called activation."
+  },
+  {
+   "id": "msg",
+   "text": "Messages are arrows between lifelines. Each one has a sender and a receiver."
+  },
+  {
+   "id": "frag",
+   "text": "Combined fragments are boxes with an operator in the corner.",
+   "pause": 0.2
+  },
+  {
+   "id": "alt",
+   "text": "alt: alternatives. If this, else that."
+  },
+  {
+   "id": "opt",
+   "text": "opt: an option. It happens, or nothing happens."
+  },
+  {
+   "id": "loop",
+   "text": "loop: repeat."
+  },
+  {
+   "id": "brk",
+   "text": "break: do this instead of the rest. In the login example, after more than three failed attempts, break ends the process."
+  },
+  {
+   "id": "par",
+   "text": "par: parallel."
+  },
+  {
+   "id": "ref",
+   "text": "And ref, an interaction use, calls another diagram, so big diagrams stay simple."
+  },
+  {
+   "id": "destroy",
+   "text": "Finally, an X at the bottom of a lifeline is a destruction occurrence: that participant is gone.",
+   "pause": 1.0
+  }
+ ]
+}

@@ -1,0 +1,53 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "intro",
+   "text": "Every software project travels through the same seven phases. Think of a relay race, where each phase hands something to the next."
+  },
+  {
+   "id": "plan",
+   "text": "Planning comes first. The goal is a plan for the whole project. Its output is the Software Project Management Plan: the S P M P."
+  },
+  {
+   "id": "analysis",
+   "text": "Requirements analysis defines what to build. Its output is the Software Requirements Specification: the S R S."
+  },
+  {
+   "id": "design",
+   "text": "Design describes how to build it. Its output is the Software Design Document: the S D D."
+  },
+  {
+   "id": "dev",
+   "text": "Development turns the design into program code, and integrates the parts."
+  },
+  {
+   "id": "unit",
+   "text": "Testing checks that code, level by level. Unit tests check single modules. Integration tests check that modules work together."
+  },
+  {
+   "id": "regress",
+   "text": "Regression tests check that a new change broke nothing old. System tests check the whole system against the user requirements."
+  },
+  {
+   "id": "users",
+   "text": "Then the users. Beta testing is real-world use by the users. Acceptance testing is done by the project owner, to decide if the product is ready for release."
+  },
+  {
+   "id": "deploy",
+   "text": "Deployment puts the product into production. Its outputs: the delivered system, a release description, and trained users."
+  },
+  {
+   "id": "maint",
+   "text": "Maintenance keeps going after the release. It fixes defects, adds enhancements, and improves things like performance and reliability."
+  },
+  {
+   "id": "recap",
+   "text": "Remember the three documents. S P M P from planning. S R S from analysis. S D D from design.",
+   "pause": 1.0
+  }
+ ]
+}

@@ -1,0 +1,78 @@
+{
+ "fps": 30,
+ "total": 2496,
+ "beats": {
+  "what": {
+   "start": 18,
+   "dur": 127,
+   "file": "vo/swe-requirements/what.wav",
+   "text": "A requirement is something the system must do, or a property it must have."
+  },
+  "levels": {
+   "start": 158,
+   "dur": 337,
+   "file": "vo/swe-requirements/levels.wav",
+   "text": "Business requirements state high-level goals. Stakeholder requirements say what end users expect. Solution requirements describe the product, and they come in two kinds."
+  },
+  "fr": {
+   "start": 509,
+   "dur": 305,
+   "file": "vo/swe-requirements/fr.wav",
+   "text": "Functional requirements describe behavior: what the system does. The student shall display his weekly schedule. The mailing service shall send a welcome email."
+  },
+  "nfr": {
+   "start": 827,
+   "dur": 177,
+   "file": "vo/swe-requirements/nfr.wav",
+   "text": "Nonfunctional requirements describe qualities and constraints: how well, and within which limits."
+  },
+  "s1": {
+   "start": 1026,
+   "dur": 120,
+   "file": "vo/swe-requirements/s1.wav",
+   "text": "No more than two level-one faults per month. That's reliability."
+  },
+  "s2": {
+   "start": 1159,
+   "dur": 120,
+   "file": "vo/swe-requirements/s2.wav",
+   "text": "Available ninety-eight percent of business hours. Availability."
+  },
+  "s3": {
+   "start": 1293,
+   "dur": 127,
+   "file": "vo/swe-requirements/s3.wav",
+   "text": "Six seconds or less, for five thousand users an hour. Performance."
+  },
+  "s4": {
+   "start": 1434,
+   "dur": 175,
+   "file": "vo/swe-requirements/s4.wav",
+   "text": "A password of at least eight characters, with one upper-case letter and one digit. Security."
+  },
+  "s5": {
+   "start": 1623,
+   "dur": 96,
+   "file": "vo/swe-requirements/s5.wav",
+   "text": "Runs on both Windows and Linux. Portability."
+  },
+  "s6": {
+   "start": 1732,
+   "dur": 314,
+   "file": "vo/swe-requirements/s6.wav",
+   "text": "Implemented in Java: a constraint. Talks to a bar code reader: an external interface. Locks the login page after three failed attempts: error handling."
+  },
+  "test": {
+   "start": 2060,
+   "dur": 242,
+   "file": "vo/swe-requirements/test.wav",
+   "text": "So ask one question. Does it say what the system does? Functional. Does it say how well, or under which limits? Nonfunctional."
+  },
+  "srs": {
+   "start": 2316,
+   "dur": 100,
+   "file": "vo/swe-requirements/srs.wav",
+   "text": "All of them go into the Software Requirements Specification."
+  }
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "what",
+   "text": "An activity diagram shows a flow: the steps of a business process or a use case, in order, with their conditions."
+  },
+  {
+   "id": "token",
+   "text": "Picture a token moving through it. It starts at the initial node: a solid black dot."
+  },
+  {
+   "id": "action",
+   "text": "Each action is a rounded rectangle, named with a verb. The token moves along the arrows, called edges."
+  },
+  {
+   "id": "decision",
+   "text": "At a decision node, a diamond, the token takes exactly one path, chosen by a condition. A merge node, also a diamond, brings the alternate paths back together."
+  },
+  {
+   "id": "fork",
+   "text": "A fork, a thick bar, splits one flow into parallel flows. A join, another bar, waits until every parallel flow arrives, then continues as one."
+  },
+  {
+   "id": "finals",
+   "text": "Two endings. A flow final node, a circle with an X, stops only that one flow. An activity final node, a bullseye, stops every flow in the activity."
+  },
+  {
+   "id": "accept",
+   "text": "An accept event action, a concave pentagon, waits for an event to happen."
+  },
+  {
+   "id": "lanes",
+   "text": "Partitions, or swimlanes, show who does each action. For example: author, reviewer, and approver."
+  },
+  {
+   "id": "trap",
+   "text": "So: decision and merge are about choice. Fork and join are about parallel work.",
+   "pause": 1.0
+  }
+ ]
+}

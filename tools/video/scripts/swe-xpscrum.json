@@ -1,0 +1,50 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "intro",
+   "text": "Two well-known agile methods: Extreme Programming, called X P, and Scrum."
+  },
+  {
+   "id": "weekly",
+   "text": "X P works in weekly cycles. On the first day, the customer picks the stories for that week. By the end of the week, there are running, tested features. A quarterly cycle is a release."
+  },
+  {
+   "id": "tdd",
+   "text": "X P writes the test first. Write a failing test. Run it and watch it fail. Write code until it passes. Run it again. Repeat. That is test-driven development."
+  },
+  {
+   "id": "pair",
+   "text": "All production code is pair programmed. The driver types. The navigator reviews every line."
+  },
+  {
+   "id": "more",
+   "text": "Code is integrated many times a day, anyone may change any code, and the pace is sustainable: a forty-hour week."
+  },
+  {
+   "id": "scrum",
+   "text": "Scrum starts with a backlog: the customer's wants and needs, each one a user story.",
+   "pause": 0.3
+  },
+  {
+   "id": "sprint",
+   "text": "A sprint is a thirty-day cycle. It takes a set of stories from the backlog."
+  },
+  {
+   "id": "daily",
+   "text": "Every day, the scrum master runs the daily scrum. No more than fifteen minutes."
+  },
+  {
+   "id": "team",
+   "text": "A scrum team has no more than six to nine members."
+  },
+  {
+   "id": "demo",
+   "text": "At the end of the sprint, the team shows the customer a demonstration of working, integrated, tested software.",
+   "pause": 1.0
+  }
+ ]
+}

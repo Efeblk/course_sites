@@ -1,0 +1,51 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "late",
+   "text": "Your project is late. The deliverables are not ready. Should you add more people?",
+   "pause": 0.5
+  },
+  {
+   "id": "channels",
+   "text": "Every pair of people on a team needs a communication channel. With N people, there are N times N minus one, over two channels."
+  },
+  {
+   "id": "grow",
+   "text": "Three people: three channels. Four people: six. Five people: ten. Eight people: twenty-eight."
+  },
+  {
+   "id": "brooks",
+   "text": "Fred Brooks, in The Mythical Man-Month: adding people to a failing project makes matters worse."
+  },
+  {
+   "id": "why",
+   "text": "The cost of more communication can outweigh the gain from dividing the work."
+  },
+  {
+   "id": "size",
+   "text": "So teams stay small. The slides give optimal sizes between three and nine people. A scrum team: three to nine, usually with two to five developers.",
+   "pause": 0.4
+  },
+  {
+   "id": "org",
+   "text": "Teams also sit inside an organization, in one of three structures."
+  },
+  {
+   "id": "proj",
+   "text": "Project-oriented: each person is dedicated to one project. Performance and schedules improve, but engineers are isolated, and reuse goes down."
+  },
+  {
+   "id": "func",
+   "text": "Function-oriented: groups by function, and functional managers act as project managers. Clear decisions, but moving people between projects causes delay."
+  },
+  {
+   "id": "matrix",
+   "text": "Matrix: people belong to a functional group, but are loaned to projects for their expertise. The main advantage: efficient use of resources.",
+   "pause": 1.0
+  }
+ ]
+}

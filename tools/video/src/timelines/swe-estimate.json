@@ -1,0 +1,66 @@
+{
+ "fps": 30,
+ "total": 3367,
+ "beats": {
+  "size": {
+   "start": 18,
+   "dur": 319,
+   "file": "vo/swe-estimate/size.wav",
+   "text": "Once we know the size, we can estimate effort and duration. Size comes in two units: lines of code, a physical measure, and function points, a functional one."
+  },
+  "loc": {
+   "start": 350,
+   "dur": 356,
+   "file": "vo/swe-estimate/loc.wav",
+   "text": "Lines of code depend on the language. To convert, use a gearing factor: the average lines of code per function point. In Java, one function point is about fifty-three lines."
+  },
+  "cls": {
+   "start": 720,
+   "dur": 264,
+   "file": "vo/swe-estimate/cls.wav",
+   "text": "Then classify the project. Under five hundred function points: simple. Under a thousand: average. A thousand or more: complex."
+  },
+  "rules": {
+   "start": 998,
+   "dur": 368,
+   "file": "vo/swe-estimate/rules.wav",
+   "text": "From function points, use the engineering rules. Duration equals F P to the power A. Staff equals F P over one hundred fifty. Effort equals staff times duration."
+  },
+  "rulesEx": {
+   "start": 1380,
+   "dur": 349,
+   "file": "vo/swe-estimate/rulesEx.wav",
+   "text": "For five hundred function points, an average project, A is zero point four. Duration: about twelve months. Staff: three point three. Effort: about forty person-months."
+  },
+  "cocomo": {
+   "start": 1754,
+   "dur": 397,
+   "file": "vo/swe-estimate/cocomo.wav",
+   "text": "From lines of code, use COCOMO one. Effort equals a, times K LOC to the power b. Duration equals c, times effort to the power d. The idea: effort grows faster than size."
+  },
+  "classes": {
+   "start": 2165,
+   "dur": 328,
+   "file": "vo/swe-estimate/classes.wav",
+   "text": "Organic projects are small, with an experienced team. Semi-detached are medium, like a web app. Embedded are tied to hardware, like an antilock braking system."
+  },
+  "cocomoEx": {
+   "start": 2507,
+   "dur": 298,
+   "file": "vo/swe-estimate/cocomoEx.wav",
+   "text": "The same project is about twenty-two thousand lines. As semi-detached: effort, about ninety-seven person-months. Duration, about twelve months."
+  },
+  "weighted": {
+   "start": 2830,
+   "dur": 320,
+   "file": "vo/swe-estimate/weighted.wav",
+   "text": "Two methods, two answers. The slide weights them seven to three: seven times forty, plus three times ninety-seven, over ten. About fifty-seven person-months."
+  },
+  "units": {
+   "start": 3164,
+   "dur": 124,
+   "file": "vo/swe-estimate/units.wav",
+   "text": "Remember the units. Duration in months. Effort in person-months."
+  }
+ }
+}

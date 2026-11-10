@@ -1,0 +1,54 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "wf",
+   "text": "The waterfall model runs the phases in order. Each phase is done once, and the next starts only when the previous one is complete."
+  },
+  {
+   "id": "wfgood",
+   "text": "It is simple, easy to manage, and it works well for small projects whose requirements are well understood."
+  },
+  {
+   "id": "wfbad",
+   "text": "But every requirement must be known up front. And major problems are found late, in testing.",
+   "pause": 0.4
+  },
+  {
+   "id": "idle",
+   "text": "There is no parallelism, so people sit idle, waiting for others."
+  },
+  {
+   "id": "iter",
+   "text": "The fix is iterative development. Build a part, test it, get feedback, then build more. Each iteration does some analysis, some design, some coding, and some testing."
+  },
+  {
+   "id": "par",
+   "text": "Iterations can even run in parallel, with separate teams."
+  },
+  {
+   "id": "agile",
+   "text": "Agile is a highly iterative process. Its purpose: speed up development, and respond to change."
+  },
+  {
+   "id": "v1",
+   "text": "Agile values individuals and interactions over processes and tools. And working software over comprehensive documentation."
+  },
+  {
+   "id": "v2",
+   "text": "Customer collaboration over contract negotiation. And responding to change over following a plan."
+  },
+  {
+   "id": "agpro",
+   "text": "Every iteration produces working software. So the customer can see the project, and give better requirements."
+  },
+  {
+   "id": "agcon",
+   "text": "The risks: agile is problematic for very small and very large projects, and documentation takes second place.",
+   "pause": 1.0
+  }
+ ]
+}

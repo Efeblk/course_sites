@@ -1,0 +1,72 @@
+{
+ "fps": 30,
+ "total": 2540,
+ "beats": {
+  "intro": {
+   "start": 18,
+   "dur": 189,
+   "file": "vo/swe-whathow/intro.wav",
+   "text": "A hospital wants a new appointment system. Before anyone writes code, two questions must be answered."
+  },
+  "what": {
+   "start": 221,
+   "dur": 230,
+   "file": "vo/swe-whathow/what.wav",
+   "text": "First: what should the system do? That is analysis. Collect the facts, find the problems, and break the system into its parts."
+  },
+  "how": {
+   "start": 464,
+   "dur": 221,
+   "file": "vo/swe-whathow/how.wav",
+   "text": "Second: how will the system do it? That is design. Plan the modules, the screens, the databases, and the interfaces."
+  },
+  "order": {
+   "start": 698,
+   "dur": 153,
+   "file": "vo/swe-whathow/order.wav",
+   "text": "Analysis specifies what. Design focuses on how. Always in that order."
+  },
+  "fourp": {
+   "start": 883,
+   "dur": 378,
+   "file": "vo/swe-whathow/fourp.wav",
+   "text": "Every project has four P's. People: the stakeholders. Product: the software, plus its documents. Project: the activities. And process: the framework that orders those activities."
+  },
+  "success": {
+   "start": 1274,
+   "dur": 191,
+   "file": "vo/swe-whathow/success.wav",
+   "text": "A project succeeds when the system meets the user needs, is delivered on time, and stays within budget."
+  },
+  "defect": {
+   "start": 1494,
+   "dur": 166,
+   "file": "vo/swe-whathow/defect.wav",
+   "text": "Quality means meeting the requirements. A defect is a deviation from the requirements."
+  },
+  "cost": {
+   "start": 1673,
+   "dur": 108,
+   "file": "vo/swe-whathow/cost.wav",
+   "text": "And the earlier a defect is found, the less it costs to repair."
+  },
+  "verif": {
+   "start": 1812,
+   "dur": 311,
+   "file": "vo/swe-whathow/verif.wav",
+   "text": "Two checks protect quality. Verification asks: are we building the product right? Does the code follow the design? Inspections and reviews are verification."
+  },
+  "valid": {
+   "start": 2137,
+   "dur": 228,
+   "file": "vo/swe-whathow/valid.wav",
+   "text": "Validation asks: are we building the right product? Does the system meet the user requirements? Testing is validation."
+  },
+  "first": {
+   "start": 2378,
+   "dur": 83,
+   "file": "vo/swe-whathow/first.wav",
+   "text": "First verification. Then validation."
+  }
+ }
+}

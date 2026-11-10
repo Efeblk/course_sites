@@ -1,0 +1,66 @@
+{
+ "fps": 30,
+ "total": 2047,
+ "beats": {
+  "what": {
+   "start": 18,
+   "dur": 162,
+   "file": "vo/swe-state/what.wav",
+   "text": "A state machine diagram shows the states of one thing, and the events that move it between them."
+  },
+  "water": {
+   "start": 193,
+   "dur": 229,
+   "file": "vo/swe-state/water.wav",
+   "text": "Water can be liquid, vapor, or ice. Freezing moves it from liquid to ice. Condensation, from vapor to liquid."
+  },
+  "off": {
+   "start": 436,
+   "dur": 150,
+   "file": "vo/swe-state/off.wav",
+   "text": "Now an A T M. It starts Off. The black dot is the initial pseudostate."
+  },
+  "on": {
+   "start": 600,
+   "dur": 95,
+   "file": "vo/swe-state/on.wav",
+   "text": "Power on. It runs its startup and enters Self Test."
+  },
+  "fail": {
+   "start": 709,
+   "dur": 164,
+   "file": "vo/swe-state/fail.wav",
+   "text": "If the test fails: Out of Service. Otherwise, with no trigger at all, it moves to Idle."
+  },
+  "card": {
+   "start": 887,
+   "dur": 202,
+   "file": "vo/swe-state/card.wav",
+   "text": "A customer inserts a card. The A T M moves to Serving Customer, and on entry, it reads the card."
+  },
+  "composite": {
+   "start": 1103,
+   "dur": 297,
+   "file": "vo/swe-state/composite.wav",
+   "text": "Serving Customer is a composite state. Inside are three substates in sequence: authentication, selecting a transaction, and the transaction."
+  },
+  "cancel": {
+   "start": 1413,
+   "dur": 118,
+   "file": "vo/swe-state/cancel.wav",
+   "text": "The customer can cancel at any time. That goes straight back to Idle."
+  },
+  "exit": {
+   "start": 1544,
+   "dur": 121,
+   "file": "vo/swe-state/exit.wav",
+   "text": "And whatever the reason for leaving, the exit action ejects the card."
+  },
+  "kinds": {
+   "start": 1691,
+   "dur": 277,
+   "file": "vo/swe-state/kinds.wav",
+   "text": "A simple state has no substates. A composite state has substates. And a shallow history state returns to the last substate that was active."
+  }
+ }
+}

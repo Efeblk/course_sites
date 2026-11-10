@@ -1,0 +1,66 @@
+{
+ "fps": 30,
+ "total": 2583,
+ "beats": {
+  "uml": {
+   "start": 18,
+   "dur": 342,
+   "file": "vo/swe-structure/uml.wav",
+   "text": "U M L, the Unified Modeling Language, has fourteen diagrams. Seven are behavioral: they show what happens. Use case, activity, sequence, state machine, and three more."
+  },
+  "struct": {
+   "start": 374,
+   "dur": 284,
+   "file": "vo/swe-structure/struct.wav",
+   "text": "Seven are structural: they show what the system is made of. Class, component, deployment, object, package, profile, and composite structure."
+  },
+  "class": {
+   "start": 671,
+   "dur": 364,
+   "file": "vo/swe-structure/class.wav",
+   "text": "The class diagram is the main building block of object-oriented design. Each class is a box with three parts: the name at the top, attributes in the middle, operations at the bottom."
+  },
+  "rel": {
+   "start": 1048,
+   "dur": 97,
+   "file": "vo/swe-structure/rel.wav",
+   "text": "Lines between the classes show their relationships."
+  },
+  "comp": {
+   "start": 1159,
+   "dur": 211,
+   "file": "vo/swe-structure/comp.wav",
+   "text": "A component diagram zooms out. A component is a modular part of the system, one level above a class."
+  },
+  "iface": {
+   "start": 1383,
+   "dur": 279,
+   "file": "vo/swe-structure/iface.wav",
+   "text": "Components talk through interfaces. A provided interface is a full circle: a ball. A required interface is a half circle: a socket."
+  },
+  "plug": {
+   "start": 1675,
+   "dur": 157,
+   "file": "vo/swe-structure/plug.wav",
+   "text": "Order requires an item code. Product provides it. The ball fits into the socket."
+  },
+  "assembly": {
+   "start": 1846,
+   "dur": 172,
+   "file": "vo/swe-structure/assembly.wav",
+   "text": "That link is an assembly connector: one component provides the service another one uses."
+  },
+  "delegation": {
+   "start": 2031,
+   "dur": 223,
+   "file": "vo/swe-structure/delegation.wav",
+   "text": "A delegation connector links a subsystem's outside contract to the component inside that really does the work."
+  },
+  "soa": {
+   "start": 2267,
+   "dur": 236,
+   "file": "vo/swe-structure/soa.wav",
+   "text": "Component diagrams belong to component-based software engineering, and are used especially for service-oriented architecture."
+  }
+ }
+}

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWE307 — Geçmiş vizeler · Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .exam { margin: 48px 0 0; padding-top: 18px; border-top: 1px solid var(--text); }
+    .q { border-top: 1px solid var(--line); padding: 22px 0 8px; }
+    .q h3 { margin: 0 0 6px; }
+    .q .pts { font: .82rem var(--mono); color: var(--muted); }
+    .stem { border-left: 3px solid var(--line); padding: 4px 0 4px 16px; margin: 10px 0; }
+    .how { margin: 10px 0; }
+    .model { border-left: 3px solid var(--accent); background: var(--panel); padding: 12px 18px; margin: 10px 0; }
+    .model ol, .model ul { margin: 4px 0; padding-left: 22px; }
+    .model[hidden] { display: none; }
+    table.t { width: 100%; margin: 10px 0; }
+    .scroll { overflow-x: auto; }
+    td, th { vertical-align: top; }
+    svg.fish { width: 100%; max-width: 980px; height: auto; color: var(--text); }
+    .fmt td:first-child { white-space: nowrap; }
+    .src { font: .78rem var(--mono); color: var(--muted); }
+  </style>
+</head>
+<body data-root=".." data-course="swe307" data-title="Geçmiş vizeler" data-activity="swe307-past">
+  <main>
+    <div class="mono small muted">SWE307 · Dr. Alper Öner · geçmiş vize kâğıtları</div>
+    <h1>Geçmiş vizeler: soru tipi belli</h1>
+    <nav class="row"><a href="index.html">Course</a><a href="ozet.html">Vize özeti</a><a href="mock.html">Mock midterm</a><a href="drill.html">Hesap pratiği</a><a href="videos.html">Videolar</a></nav>
+    <p class="lead">İki eski vize kâğıdı geldi (biri 12.11.2025). İkisi de <b>aynı kalıpta</b>: 50 dakika, dört bölüm. Her soruda önce nasıl düşüneceğini (Türkçe), sonra kâğıda yazılacak kısa İngilizce cevabı görürsün. Cevabı açmadan önce kendin yaz.</p>
+
+    <h2>Sınavın kalıbı</h2>
+    <div class="scroll"><table class="t fmt">
+      <tr><th>Bölüm</th><th>Puan · süre</th><th>Ne soruluyor (iki kâğıtta)</th></tr>
+      <tr><td><b>1. Discussion</b></td><td>30 · 15 dk</td><td>Systems Analyst'in rolü; Verification vs Validation; Waterfall vs Agile artı/eksi; Functional vs Non-functional (örnekli)</td></tr>
+      <tr><td><b>2. True/False + Fill-in-the-blank</b></td><td>20 · 10 dk</td><td>stakeholder, functional, sprint, coupling; TDD sırası, kritik görev = slack 0, class diagram yapısaldır, LOC dile bağlıdır</td></tr>
+      <tr><td><b>3. Function Point Analysis</b></td><td>30 · 15 dk</td><td>Tablodan <b>UFP</b>, GSC ağırlıklarından <b>VAF</b>, sonra <b>AFP = UFP × (0.65 + 0.01 × VAF)</b></td></tr>
+      <tr><td><b>4. Fishbone diagram</b></td><td>20 · 10 dk</td><td>Amacı, nasıl çizilir, parçaları; sonra bir senaryoya çiz: head, 4–8 ana neden, her birine ≥ 2 alt neden</td></tr>
+    </table></div>
+    <div class="callout">Puanın yarısı (<b>FPA 30 + Fishbone 20</b>) iki <b>kalıp</b> sorudan geliyor. Bunları <a href="drill.html">Hesap pratiği</a>nde birkaç kez çöz; tablo ağırlıkları soruda verilir, formülü bilmen yeter.</div>
+
+    <!-- ========================================================= 2025 -->
+    <section class="exam" id="y2025">
+      <h2>Vize 12.11.2025</h2>
+
+      <div class="q" id="a1a"><h3>1a. Systems Analyst'in rolü</h3><div class="pts">Discussion · Ch1 s30–31</div>
+        <div class="stem">Explain the role of a Systems Analyst, detailing what they study and the required understanding they must possess to perform their job effectively.</div>
+        <p class="how">Tanımı yaz, sonra <b>ne inceler</b> (problems, opportunities, directives, needs) ve <b>neyi bilmeli</b> (organizational model, techniques and tools, team work). Üç kelimeyi de birer cümleyle açıkla.</p>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li>A <b>systems analyst</b> is a specialist who studies the <b>problems, opportunities, directives and needs</b> of an organization to decide how <b>people, data, processes and IT</b> can best improve the business.</li>
+          <li><b>Problems</b>: real or expected situations that need corrective action. <b>Opportunities</b>: chances to improve even without complaints. <b>Directives</b>: (legal) orders to change, whether or not anyone complained.</li>
+          <li>Must understand the company's <b>organizational model</b>: who is responsible for which processes and decisions, and <b>what information is required by whom</b>.</li>
+          <li>Must know a variety of <b>techniques and tools</b> to plan, design and implement information systems, and work in a <b>team</b>.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a1b"><h3>1b. Verification ve Validation</h3><div class="pts">Discussion · Ch1 s41–45</div>
+        <div class="stem">Discuss the relationship between Verification and Validation in ensuring Software Quality, including the core question each activity seeks to answer.</div>
+        <p class="how">İkisini ayrı tanımla, <b>çekirdek sorularını</b> tırnakla yaz, birer etkinlik örneği ver. "İlişki" kısmı: ikisi birlikte software quality assurance'ı destekler ve <b>önce verification, sonra validation</b>.</p>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>Software quality</b> = the degree to which software satisfies its requirements; quality assurance is supported by verification and validation.</li>
+          <li><b>Verification</b>: checks that the product is built according to the requirements and specifications (does the code implement the design?). Question: <b>"Are we building the product right?"</b> Activities: <b>inspections and reviews</b>.</li>
+          <li><b>Validation</b>: checks that the finished system meets the specified user requirements. Question: <b>"Are we building the right product?"</b> Activity: <b>software testing</b>.</li>
+          <li>Relationship: <b>first verification, then validation</b>; together they remove defects, and defects found earlier cost less to repair.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a2"><h3>2. Fill-in-the-blank ve True/False</h3><div class="pts">20 puan</div>
+        <div class="stem">a. A ______ is any person who has an interest in an existing or proposed information system.<br>b. ______ requirements specify activities and services an application must provide, describing ways a product must behave.<br>T/F a. In XP, Test-driven Development follows the path: develop code → write tests → run tests.<br>T/F b. A task is considered critical in Critical Path Analysis if its slack time is greater than zero.</div>
+        <p class="how">T/F'de "False" yazıp <b>doğrusunu</b> bir cümleyle söyle; açıklamasız F yarım puan.</p>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><ol type="a">
+          <li><b>stakeholder</b> (Ch1 s22, s27)</li>
+          <li><b>Functional</b> (Ch5 s10)</li>
+          <li><b>False.</b> TDD writes the test first: write a failing automated test → run it (fails) → write code to pass → run the test → repeat (Ch3 s22).</li>
+          <li><b>False.</b> A critical task has <b>zero</b> slack; slack &gt; 0 means non-critical (Ch4 s56).</li>
+        </ol></div>
+      </div>
+
+      <div class="q" id="a3"><h3>3. Function Point Analysis: CRM modülü</h3><div class="pts">30 puan · Ch4 s26–30</div>
+        <div class="stem">Counts (Low / Average / High): EI 12 / 8 / 3 · EO 5 / 10 / 2 · EQ 15 / 4 / 0 · ILF 2 / 3 / 1 · EIF 1 / 0 / 0.<br>GSC: data communications 5, transaction rate 4, end-user efficiency 3, operational ease 2, reusability 1, critical performance 5.<br>a. UFP? b. VAF? c. AFP = UFP × (0.65 + 0.01 × VAF)?</div>
+        <p class="how">Her satırda <b>sayı × ağırlık</b>, satır toplamı, sonra hepsini topla. VAF = GSC ağırlıklarının <b>toplamı</b> (ortalaması değil). Ağırlık tablosu: EI 3/4/6, EO 4/5/7, EQ 3/4/6, ILF 7/10/15, EIF 5/7/10.</p>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden>
+          <div class="scroll"><table class="t">
+            <tr><th>Unit</th><th>Low</th><th>Average</th><th>High</th><th>Total</th></tr>
+            <tr><td>EI</td><td>12 × 3 = 36</td><td>8 × 4 = 32</td><td>3 × 6 = 18</td><td><b>86</b></td></tr>
+            <tr><td>EO</td><td>5 × 4 = 20</td><td>10 × 5 = 50</td><td>2 × 7 = 14</td><td><b>84</b></td></tr>
+            <tr><td>EQ</td><td>15 × 3 = 45</td><td>4 × 4 = 16</td><td>0 × 6 = 0</td><td><b>61</b></td></tr>
+            <tr><td>ILF</td><td>2 × 7 = 14</td><td>3 × 10 = 30</td><td>1 × 15 = 15</td><td><b>59</b></td></tr>
+            <tr><td>EIF</td><td>1 × 5 = 5</td><td>0</td><td>0</td><td><b>5</b></td></tr>
+          </table></div>
+          <ol type="a">
+            <li><b>UFP</b> = 86 + 84 + 61 + 59 + 5 = <b>295 FP</b></li>
+            <li><b>VAF</b> = 5 + 4 + 3 + 2 + 1 + 5 = <b>20</b></li>
+            <li><b>AFP</b> = 295 × (0.65 + 0.01 × 20) = 295 × 0.85 = <b>250.75 ≈ 251 FP</b></li>
+          </ol>
+          <p class="small muted">Kontrol: 0.65 + 0.20 = 0.85; 295 × 0.85 = 250.75. Çarpan 0.65 ile 1.35 arasında kalmalı.</p>
+        </div>
+      </div>
+
+      <div class="q" id="a4a"><h3>4a. Fishbone: amacı, çizimi, parçaları</h3><div class="pts">10 puan · Ch5 s26–28</div>
+        <div class="stem">Define the purpose of the Fishbone (Ishikawa) diagram within the context of SAD. Describe the process required to construct it, detailing the function and placement of its main components.</div>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>Purpose</b>: a <b>cause-and-effect</b> tool for a quality issue that has arisen or may arise; it shows <b>all possible causes</b> visually to find the <b>root cause</b>. In SAD it is the <b>problem discovery</b> tool of the requirements analysis phase (to identify, analyze and solve problems).</li>
+          <li><b>Process</b>: (1) draw the <b>head on the right</b> and write the problem (effect) in it; (2) draw the <b>backbone to the left</b>; (3) draw branches for <b>4–8 main causes</b>; (4) attach <b>causes and sub-causes</b> to each main cause, usually from a <b>brainstorming</b> session.</li>
+          <li><b>Components</b>: head = effect/problem (right) · spine/backbone = leads to the effect · main bones = cause categories · small bones = sub-causes.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a4b"><h3>4b. Fishbone senaryosu: PSRAS</h3><div class="pts">10 puan</div>
+        <div class="stem">PSRAS (Project Scheduling and Resource Allocation System): after one month in production, <b>High Instability and Unreliable Performance</b>: frequent crashes and very slow response at peak hours. 1) Define the effect. 2) 4–8 main cause categories from the IS components and SAD activities. 3) Draw it. 4) At least two specific sub-causes under each category.</div>
+        <p class="how">Ana kemikleri ezberleme: soru sana söylüyor. <b>IS'in 5 bileşeni</b> (hardware, software, data, process, people; Ch1 s17) + <b>SAD etkinlikleri</b> (requirements, design, testing, deployment; Ch2). Alt nedenleri slayt kavramlarından seç: performance / reliability NFR, testing levels, training, data conversion.</p>
+        <button class="chip" data-show>Model cevabı ve çizimi göster</button>
+        <div class="model" hidden>
+          <p><b>Effect (head):</b> PSRAS: high instability and unreliable performance (frequent crashes, slow response at peak hours).</p>
+          <svg class="fish" viewBox="0 0 1000 470" role="img" aria-label="Fishbone diagram for PSRAS">
+            <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+            <line x1="30" y1="235" x2="790" y2="235" stroke="currentColor" stroke-width="4" marker-end="url(#fa)"/>
+            <rect x="795" y="185" width="195" height="100" rx="10" fill="none" stroke="currentColor" stroke-width="3"/>
+            <text x="892" y="215" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">PSRAS: high</text>
+            <text x="892" y="235" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">instability, unreliable</text>
+            <text x="892" y="255" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">performance</text>
+            <g font-size="13" fill="currentColor">
+              <!-- top bones -->
+              <line x1="110" y1="40" x2="190" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="105" y="30" font-weight="700" text-anchor="middle">Hardware</text>
+              <text x="140" y="80">small server for peak</text><text x="160" y="125">no load balancing</text>
+              <line x1="290" y1="40" x2="370" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="285" y="30" font-weight="700" text-anchor="middle">Software</text>
+              <text x="320" y="80">memory leaks, crashes</text><text x="340" y="125">tightly coupled</text>
+              <line x1="470" y1="40" x2="550" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="465" y="30" font-weight="700" text-anchor="middle">Data</text>
+              <text x="500" y="80">unindexed tables</text><text x="520" y="125">conversion errors</text>
+              <line x1="650" y1="40" x2="730" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="645" y="30" font-weight="700" text-anchor="middle">People</text>
+              <text x="680" y="80">users not trained</text><text x="700" y="125">inexperienced team</text>
+              <!-- bottom bones -->
+              <line x1="110" y1="430" x2="190" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="105" y="455" font-weight="700" text-anchor="middle">Requirements</text>
+              <text x="140" y="390">no performance NFR</text><text x="160" y="345">no reliability NFR</text>
+              <line x1="290" y1="430" x2="370" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="285" y="455" font-weight="700" text-anchor="middle">Design</text>
+              <text x="320" y="390">not sized for peak</text><text x="340" y="345">weak database design</text>
+              <line x1="470" y1="430" x2="550" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="465" y="455" font-weight="700" text-anchor="middle">Testing</text>
+              <text x="500" y="390">no load test at peak</text><text x="520" y="345">no regression test</text>
+              <line x1="650" y1="430" x2="730" y2="235" stroke="currentColor" stroke-width="2.5"/><text x="645" y="455" font-weight="700" text-anchor="middle">Process / deployment</text>
+              <text x="680" y="390">rushed go-live, no beta</text><text x="700" y="345">no post-deploy review</text>
+            </g>
+          </svg>
+          <ul>
+            <li><b>Hardware</b>: server capacity too small for peak usage; no load balancing or backup server.</li>
+            <li><b>Software</b>: memory leaks and unhandled exceptions cause crashes; tightly coupled, one failure stops all.</li>
+            <li><b>Data</b>: large tables without indexes slow queries; errors from data entry/conversion at deployment.</li>
+            <li><b>People</b>: users not trained on the new system; inexperienced builders / testers.</li>
+            <li><b>Requirements</b>: no measurable <b>performance</b> NFR (e.g. response time at peak load) and no <b>reliability / availability</b> NFR (e.g. mean time to failure).</li>
+            <li><b>Design</b>: architecture not designed for the peak workload; weak database design.</li>
+            <li><b>Testing</b>: no system or load testing under peak conditions; no regression testing after changes; acceptance testing rushed.</li>
+            <li><b>Process / deployment</b>: rushed go-live without beta testing; no post-deployment review.</li>
+          </ul>
+          <p class="small muted">Sınavda 4–8 ana kemik yeter; her birinde en az 2 alt neden. Kendi alt nedenlerini yazabilirsin, yeter ki <b>somut</b> ve konuya bağlı olsun.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= other paper -->
+    <section class="exam" id="other">
+      <h2>Diğer vize kâğıdı</h2>
+
+      <div class="q" id="b1a"><h3>1a. Waterfall ve Agile: artı ve eksi</h3><div class="pts">Discussion · Ch2 s43–60</div>
+        <div class="stem">Compare the advantages and disadvantages of the Waterfall and Agile process models.</div>
+        <p class="how">Önce her modeli bir cümleyle tanımla, sonra iki sütun: artılar / eksiler. Her maddenin yanına slayttaki "çünkü" kısmını ekle.</p>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><div class="scroll"><table class="t">
+          <tr><th></th><th>Waterfall (sequential, each phase once)</th><th>Agile (highly iterative, respond to change)</th></tr>
+          <tr><td><b>+</b></td><td>simple and easy to use; practiced for many years; easy to manage (each phase has deliverables); easy resource allocation; works well for small projects with well-understood requirements</td><td>always demonstrable results (working software each iteration); developers more motivated; customers give better requirements because they see the evolving product</td></tr>
+          <tr><td><b>−</b></td><td>requirements must be known up front; hard to estimate reliably; major problems found late (in testing); no parallelism; inefficient use of resources (people idle)</td><td>problematic for very small and very large projects; documentation output is questionable (takes second place)</td></tr>
+        </table></div></div>
+      </div>
+
+      <div class="q" id="b1b"><h3>1b. Functional ve Non-functional</h3><div class="pts">Discussion · Ch5 s9–25</div>
+        <div class="stem">How do functional and non-functional requirements differ? Provide examples.</div>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>Functional</b>: activities and services the application must provide; how the product must behave. e.g. "The student shall display his/her weekly schedule." "The mailing service shall send a welcome email when a visitor creates an account."</li>
+          <li><b>Non-functional</b>: general characteristics that define a satisfactory system: quality attributes, constraints, interfaces, error handling. e.g. performance: "6 s or less response for 5,000 users per hour"; security: "password at least 8 characters with one upper-case letter and one digit"; availability: "98% of business hours"; constraint: "implemented in Java".</li>
+          <li>Short test: <b>what</b> the system does → functional; <b>how well / under which limits</b> → non-functional.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="b2"><h3>2. Fill-in-the-blank ve True/False</h3><div class="pts">20 puan</div>
+        <div class="stem">a. In Agile, a short development cycle aimed at delivering small, incremental improvements is known as a ______.<br>b. The concept of ______ refers to the degree to which software components depend on each other. Lower dependency typically results in better maintainability.<br>T/F a. A class diagram in UML is used to represent the dynamic behavior of a system.<br>T/F b. Lines of Code (LOC) estimation is independent of the programming language used.</div>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><ol type="a">
+          <li><b>sprint</b> (Scrum, Ch3 s33–34)</li>
+          <li><b>coupling</b>. <span class="small muted">Not in the chapter 1–7 slides; it belongs to design concepts. Remember the pair: low coupling = parts depend little on each other = easier to maintain.</span></li>
+          <li><b>False.</b> The class diagram is a <b>structural</b> diagram (classes, attributes, operations, relationships). Behavior is shown by behavioral diagrams such as sequence, activity or state machine (Ch6 s58, Ch7 s51).</li>
+          <li><b>False.</b> LOC <b>depends on the language</b>: the same algorithm needs a different number of lines in different languages. Function points are the language-independent measure (Ch3 s50, Ch4 s4).</li>
+        </ol></div>
+      </div>
+
+      <div class="q" id="b3"><h3>3. Function Point Analysis</h3><div class="pts">30 puan · fotoğrafta sorunun devamı kesik</div>
+        <div class="stem">EI: 10, EO: 5, EQ: 8, ILF: 3, EIF: 2; weights table: EI 3/4/6, EO 4/5/7, EQ 3/4/6, ILF 7/10/15, EIF 5/7/10.</div>
+        <p class="how">Sorunun alt kısmı görünmüyor: büyük ihtimalle hangi karmaşıklığın kullanılacağını ve GSC'leri veriyor. Hangi sütun söylenirse onu kullan; söylenmezse varsayımını <b>yaz</b> ("assume average").</p>
+        <button class="chip" data-show>Model cevabı göster</button>
+        <div class="model" hidden><div class="scroll"><table class="t">
+          <tr><th>If all are…</th><th>Calculation</th><th>UFP</th></tr>
+          <tr><td>Low</td><td>10×3 + 5×4 + 8×3 + 3×7 + 2×5 = 30 + 20 + 24 + 21 + 10</td><td><b>105</b></td></tr>
+          <tr><td>Average</td><td>10×4 + 5×5 + 8×4 + 3×10 + 2×7 = 40 + 25 + 32 + 30 + 14</td><td><b>141</b></td></tr>
+          <tr><td>High</td><td>10×6 + 5×7 + 8×6 + 3×15 + 2×10 = 60 + 35 + 48 + 45 + 20</td><td><b>208</b></td></tr>
+        </table></div>
+        <p>Then <b>AFP = UFP × (0.65 + 0.01 × VAF)</b> with VAF = sum of the given GSC weights. Example: VAF = 30 → AFP = 141 × 0.95 = 133.95.</p></div>
+      </div>
+    </section>
+
+    <p class="src" style="margin-top:40px">Kaynak: öğrencinin paylaştığı iki eski vize kâğıdının fotoğrafları (yerelde materials/SWE307/exams/). Cevaplar Chapter 1–7 slaytlarından.</p>
+  </main>
+  <script src="data.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    document.querySelectorAll('[data-show]').forEach((b) => {
+      const m = b.nextElementSibling;
+      b.addEventListener('click', () => { m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace('gizle', 'göster') : b.textContent.replace('göster', 'gizle'); });
+    });
+  </script>
+</body>
+</html>

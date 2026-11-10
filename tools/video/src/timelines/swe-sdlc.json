@@ -1,0 +1,72 @@
+{
+ "fps": 30,
+ "total": 2816,
+ "beats": {
+  "intro": {
+   "start": 18,
+   "dur": 237,
+   "file": "vo/swe-sdlc/intro.wav",
+   "text": "Every software project travels through the same seven phases. Think of a relay race, where each phase hands something to the next."
+  },
+  "plan": {
+   "start": 269,
+   "dur": 267,
+   "file": "vo/swe-sdlc/plan.wav",
+   "text": "Planning comes first. The goal is a plan for the whole project. Its output is the Software Project Management Plan: the S P M P."
+  },
+  "analysis": {
+   "start": 549,
+   "dur": 236,
+   "file": "vo/swe-sdlc/analysis.wav",
+   "text": "Requirements analysis defines what to build. Its output is the Software Requirements Specification: the S R S."
+  },
+  "design": {
+   "start": 799,
+   "dur": 185,
+   "file": "vo/swe-sdlc/design.wav",
+   "text": "Design describes how to build it. Its output is the Software Design Document: the S D D."
+  },
+  "dev": {
+   "start": 997,
+   "dur": 132,
+   "file": "vo/swe-sdlc/dev.wav",
+   "text": "Development turns the design into program code, and integrates the parts."
+  },
+  "unit": {
+   "start": 1143,
+   "dur": 249,
+   "file": "vo/swe-sdlc/unit.wav",
+   "text": "Testing checks that code, level by level. Unit tests check single modules. Integration tests check that modules work together."
+  },
+  "regress": {
+   "start": 1405,
+   "dur": 238,
+   "file": "vo/swe-sdlc/regress.wav",
+   "text": "Regression tests check that a new change broke nothing old. System tests check the whole system against the user requirements."
+  },
+  "users": {
+   "start": 1657,
+   "dur": 325,
+   "file": "vo/swe-sdlc/users.wav",
+   "text": "Then the users. Beta testing is real-world use by the users. Acceptance testing is done by the project owner, to decide if the product is ready for release."
+  },
+  "deploy": {
+   "start": 1995,
+   "dur": 235,
+   "file": "vo/swe-sdlc/deploy.wav",
+   "text": "Deployment puts the product into production. Its outputs: the delivered system, a release description, and trained users."
+  },
+  "maint": {
+   "start": 2244,
+   "dur": 254,
+   "file": "vo/swe-sdlc/maint.wav",
+   "text": "Maintenance keeps going after the release. It fixes defects, adds enhancements, and improves things like performance and reliability."
+  },
+  "recap": {
+   "start": 2511,
+   "dur": 225,
+   "file": "vo/swe-sdlc/recap.wav",
+   "text": "Remember the three documents. S P M P from planning. S R S from analysis. S D D from design."
+  }
+ }
+}

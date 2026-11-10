@@ -1,0 +1,58 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "what",
+   "text": "A requirement is something the system must do, or a property it must have."
+  },
+  {
+   "id": "levels",
+   "text": "Business requirements state high-level goals. Stakeholder requirements say what end users expect. Solution requirements describe the product, and they come in two kinds."
+  },
+  {
+   "id": "fr",
+   "text": "Functional requirements describe behavior: what the system does. The student shall display his weekly schedule. The mailing service shall send a welcome email."
+  },
+  {
+   "id": "nfr",
+   "text": "Nonfunctional requirements describe qualities and constraints: how well, and within which limits.",
+   "pause": 0.3
+  },
+  {
+   "id": "s1",
+   "text": "No more than two level-one faults per month. That's reliability."
+  },
+  {
+   "id": "s2",
+   "text": "Available ninety-eight percent of business hours. Availability."
+  },
+  {
+   "id": "s3",
+   "text": "Six seconds or less, for five thousand users an hour. Performance."
+  },
+  {
+   "id": "s4",
+   "text": "A password of at least eight characters, with one upper-case letter and one digit. Security."
+  },
+  {
+   "id": "s5",
+   "text": "Runs on both Windows and Linux. Portability."
+  },
+  {
+   "id": "s6",
+   "text": "Implemented in Java: a constraint. Talks to a bar code reader: an external interface. Locks the login page after three failed attempts: error handling."
+  },
+  {
+   "id": "test",
+   "text": "So ask one question. Does it say what the system does? Functional. Does it say how well, or under which limits? Nonfunctional."
+  },
+  {
+   "id": "srs",
+   "text": "All of them go into the Software Requirements Specification.",
+   "pause": 1.0
+  }
+ ]
+}

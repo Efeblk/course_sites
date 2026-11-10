@@ -16,7 +16,7 @@
     const at = { c: C.id, code: C.code, n: ch.n, unit: U, chT: ch.title };
     for (const [t, d] of ch.cards || []) push({ ...at, id: srs.cardId(C.id, ch.n, t), kind: 'card', front: t, back: d });
     (G[ch.n] ? G[ch.n].steps : []).forEach((s, k) => s.check && push({ ...at, id: srs.qId(C.id, ch.n, s.check.q), kind: 'q', q: s.check.q, opts: s.check.o, right: 0, why: s.check.why, step: k, stepT: s.t }));
-    for (const q of ch.quiz || []) push({ ...at, id: srs.qId(C.id, ch.n, q.q), kind: 'q', q: q.q, opts: q.options, right: q.answer, why: q.explain });
+    for (const q of [...(ch.quiz || []), ...(ch.labQuestions || [])]) push({ ...at, id: srs.qId(C.id, ch.n, q.q), kind: 'q', q: q.q, opts: q.options, right: q.answer, why: q.explain });
   }
   const chKey = (it) => `${it.c}:${it.n}`;
   const where = (it) => `${it.code} · ${it.unit === 'Chapter' ? 'Ch' : it.unit} ${it.n}`;

@@ -1,0 +1,60 @@
+{
+ "fps": 30,
+ "total": 2544,
+ "beats": {
+  "intro": {
+   "start": 18,
+   "dur": 138,
+   "file": "vo/swe-critical/intro.wav",
+   "text": "Eight tasks. Some must wait for others. How long will the whole project take?"
+  },
+  "net": {
+   "start": 170,
+   "dur": 157,
+   "file": "vo/swe-critical/net.wav",
+   "text": "Draw the network, the PERT chart. Each circle is a task, with its duration in weeks."
+  },
+  "fwd": {
+   "start": 340,
+   "dur": 299,
+   "file": "vo/swe-critical/fwd.wav",
+   "text": "Forward pass. Each task's earliest completion time, T E, is the T E before it, plus its own duration. Where two paths meet, take the larger."
+  },
+  "fwdEx": {
+   "start": 652,
+   "dur": 288,
+   "file": "vo/swe-critical/fwdEx.wav",
+   "text": "Task one: five. Task three: eleven. Task four waits for both two and three, so thirteen. Keep going, and task eight finishes at twenty-two."
+  },
+  "bwd": {
+   "start": 966,
+   "dur": 411,
+   "file": "vo/swe-critical/bwd.wav",
+   "text": "Backward pass. Start at the end with twenty-two, and walk back. Each task's latest completion time, T L, is the next task's T L minus the next task's duration. Where paths split, take the smaller."
+  },
+  "slack": {
+   "start": 1390,
+   "dur": 173,
+   "file": "vo/swe-critical/slack.wav",
+   "text": "Slack time is T L minus T E: how long a task can slip without delaying the project."
+  },
+  "slackEx": {
+   "start": 1577,
+   "dur": 179,
+   "file": "vo/swe-critical/slackEx.wav",
+   "text": "Task two has two weeks of slack. Task five has two and a half. Every other task has zero."
+  },
+  "path": {
+   "start": 1781,
+   "dur": 323,
+   "file": "vo/swe-critical/path.wav",
+   "text": "Zero-slack tasks are critical. The critical path is one, three, four, six, seven, eight. It is the longest path, and it sets the duration: twenty-two weeks."
+  },
+  "tools": {
+   "start": 2136,
+   "dur": 329,
+   "file": "vo/swe-critical/tools.wav",
+   "text": "Around it sit other tools. The work breakdown structure splits the project into tasks of at most forty hours. The Gantt chart shows the tasks as bars on a calendar."
+  }
+ }
+}

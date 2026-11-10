@@ -11,6 +11,7 @@ import matrix from './timelines/matrix.json';
 import prevalence from './timelines/prevalence.json';
 import action from './timelines/action.json';
 import trust from './timelines/trust.json';
+import { SweComps } from './swe';
 
 const comp = (id: string, component: React.FC, t: unknown) => {
   const { TL } = makeTL(t);
@@ -23,4 +24,5 @@ export const Root: React.FC = () => <>
   {comp('Prevalence', Prevalence, prevalence)}
   {comp('Action', Action, action)}
   {comp('Trust', Trust, trust)}
+  <SweComps />
 </>;

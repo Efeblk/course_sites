@@ -1,0 +1,63 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "what",
+   "text": "A user story describes a feature from the end user's point of view. It's the agile way to capture requirements: a sentence or two, plus a conversation."
+  },
+  {
+   "id": "template",
+   "text": "The common template: as a role, I want a capability, so that I get a benefit."
+  },
+  {
+   "id": "ex",
+   "text": "As a passenger, I want to link my credit card to my profile, so that I can pay for a ride faster."
+  },
+  {
+   "id": "backlog",
+   "text": "Stories live in the backlog, an ordered list, often on index cards or sticky notes."
+  },
+  {
+   "id": "tree",
+   "text": "Big goals break down. An initiative holds epics. An epic is a large body of work, delivered over several sprints. It breaks into stories, small enough for a one or two week sprint.",
+   "pause": 0.3
+  },
+  {
+   "id": "invest",
+   "text": "Good stories are INVEST."
+  },
+  {
+   "id": "i",
+   "text": "Independent: build them in any order."
+  },
+  {
+   "id": "n",
+   "text": "Negotiable: the team decides how."
+  },
+  {
+   "id": "v",
+   "text": "Valuable: each one delivers value to users."
+  },
+  {
+   "id": "e",
+   "text": "Estimable: easy to estimate."
+  },
+  {
+   "id": "s",
+   "text": "Small: done within one sprint."
+  },
+  {
+   "id": "t",
+   "text": "Testable: clear acceptance criteria.",
+   "pause": 0.3
+  },
+  {
+   "id": "accept",
+   "text": "Acceptance criteria tell the team when a story is done. Ensure the bidder can log in, reach the auction page, and select a product.",
+   "pause": 1.0
+  }
+ ]
+}

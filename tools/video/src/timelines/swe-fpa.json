@@ -1,0 +1,72 @@
+{
+ "fps": 30,
+ "total": 3050,
+ "beats": {
+  "why": {
+   "start": 18,
+   "dur": 316,
+   "file": "vo/swe-fpa/why.wav",
+   "text": "How big is a piece of software, before any code exists? Function Point Analysis measures its functionality from the requirements, independent of the programming language."
+  },
+  "app": {
+   "start": 348,
+   "dur": 259,
+   "file": "vo/swe-fpa/app.wav",
+   "text": "Take the weather app from the slides. One input screen for temperature and rainfall by city and state. One database. One report."
+  },
+  "ei": {
+   "start": 620,
+   "dur": 225,
+   "file": "vo/swe-fpa/ei.wav",
+   "text": "External inputs: data crossing the boundary from outside to inside. The add, change and delete buttons. Three."
+  },
+  "eo": {
+   "start": 858,
+   "dur": 183,
+   "file": "vo/swe-fpa/eo.wav",
+   "text": "External outputs: derived data going out. The report, with its monthly averages. One."
+  },
+  "eq": {
+   "start": 1055,
+   "dur": 172,
+   "file": "vo/swe-fpa/eq.wav",
+   "text": "External inquiries: data retrieved. The scroll bar that shows previous entries. One."
+  },
+  "ilf": {
+   "start": 1240,
+   "dur": 173,
+   "file": "vo/swe-fpa/ilf.wav",
+   "text": "Internal logical files: data living inside the application. The database. One."
+  },
+  "eif": {
+   "start": 1426,
+   "dur": 202,
+   "file": "vo/swe-fpa/eif.wav",
+   "text": "External interface files: another application's data, used for reference only. None here. Zero."
+  },
+  "rank": {
+   "start": 1641,
+   "dur": 228,
+   "file": "vo/swe-fpa/rank.wav",
+   "text": "Each one is ranked low, average, or high, by counting its fields and the files it touches. Here, everything is low."
+  },
+  "ufp": {
+   "start": 1883,
+   "dur": 386,
+   "file": "vo/swe-fpa/ufp.wav",
+   "text": "Multiply each count by its weight. Three inputs times three. One output times four. One inquiry times three. One file times seven. Unadjusted function points: twenty-three."
+  },
+  "vaf": {
+   "start": 2294,
+   "dur": 265,
+   "file": "vo/swe-fpa/vaf.wav",
+   "text": "Next, the general system characteristics. Each gets a weight from zero to five. Here they add up to forty: the value adjustment factor."
+  },
+  "afp": {
+   "start": 2573,
+   "dur": 397,
+   "file": "vo/swe-fpa/afp.wav",
+   "text": "Adjusted function points: U F P, times zero point six five, plus zero point zero one times V A F. Twenty-three times one point zero five. About twenty-four function points."
+  }
+ }
+}

@@ -1,0 +1,66 @@
+{
+ "fps": 30,
+ "total": 2473,
+ "beats": {
+  "late": {
+   "start": 18,
+   "dur": 142,
+   "file": "vo/swe-teams/late.wav",
+   "text": "Your project is late. The deliverables are not ready. Should you add more people?"
+  },
+  "channels": {
+   "start": 189,
+   "dur": 249,
+   "file": "vo/swe-teams/channels.wav",
+   "text": "Every pair of people on a team needs a communication channel. With N people, there are N times N minus one, over two channels."
+  },
+  "grow": {
+   "start": 451,
+   "dur": 191,
+   "file": "vo/swe-teams/grow.wav",
+   "text": "Three people: three channels. Four people: six. Five people: ten. Eight people: twenty-eight."
+  },
+  "brooks": {
+   "start": 655,
+   "dur": 173,
+   "file": "vo/swe-teams/brooks.wav",
+   "text": "Fred Brooks, in The Mythical Man-Month: adding people to a failing project makes matters worse."
+  },
+  "why": {
+   "start": 842,
+   "dur": 137,
+   "file": "vo/swe-teams/why.wav",
+   "text": "The cost of more communication can outweigh the gain from dividing the work."
+  },
+  "size": {
+   "start": 993,
+   "dur": 304,
+   "file": "vo/swe-teams/size.wav",
+   "text": "So teams stay small. The slides give optimal sizes between three and nine people. A scrum team: three to nine, usually with two to five developers."
+  },
+  "org": {
+   "start": 1322,
+   "dur": 129,
+   "file": "vo/swe-teams/org.wav",
+   "text": "Teams also sit inside an organization, in one of three structures."
+  },
+  "proj": {
+   "start": 1465,
+   "dur": 306,
+   "file": "vo/swe-teams/proj.wav",
+   "text": "Project-oriented: each person is dedicated to one project. Performance and schedules improve, but engineers are isolated, and reuse goes down."
+  },
+  "func": {
+   "start": 1784,
+   "dur": 314,
+   "file": "vo/swe-teams/func.wav",
+   "text": "Function-oriented: groups by function, and functional managers act as project managers. Clear decisions, but moving people between projects causes delay."
+  },
+  "matrix": {
+   "start": 2111,
+   "dur": 282,
+   "file": "vo/swe-teams/matrix.wav",
+   "text": "Matrix: people belong to a functional group, but are loaned to projects for their expertise. The main advantage: efficient use of resources."
+  }
+ }
+}

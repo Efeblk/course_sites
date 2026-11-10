@@ -1,0 +1,50 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "fish",
+   "text": "Before collecting requirements, find the real problem. The fishbone, or Ishikawa, diagram puts the problem at the head, on the right."
+  },
+  {
+   "id": "bones",
+   "text": "Four to eight main causes become the bones. Sub-causes attach to them, often from a brainstorming session. The goal: the root cause.",
+   "pause": 0.4
+  },
+  {
+   "id": "discover",
+   "text": "Then, requirements discovery: fact-finding."
+  },
+  {
+   "id": "research",
+   "text": "Research: journals, books, and websites of similar projects."
+  },
+  {
+   "id": "observe",
+   "text": "Observation: watch people at work. The data is very reliable, but people may act differently when watched."
+  },
+  {
+   "id": "proto",
+   "text": "Prototyping: a small working model for users to try. But users may develop unrealistic expectations."
+  },
+  {
+   "id": "question",
+   "text": "Questionnaires: cheap, anonymous, and fast for many people. Open-ended questions let people answer freely. Closed-ended ones offer fixed choices. The downside: a low return rate."
+  },
+  {
+   "id": "interview",
+   "text": "Interviews: face to face. Unstructured, with only a general goal, or structured, with a fixed set of questions. Rich, but time-consuming."
+  },
+  {
+   "id": "sample",
+   "text": "Sampling collects representative documents and forms. Random sampling picks by pure chance. Systematic sampling picks every x over n-th: one hundred from a thousand means every tenth. Stratified sampling splits into subgroups first."
+  },
+  {
+   "id": "jrp",
+   "text": "And Joint Requirements Planning: a workshop of users, managers and I T staff, led by a facilitator, with a sponsor from top management.",
+   "pause": 1.0
+  }
+ ]
+}

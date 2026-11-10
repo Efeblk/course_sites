@@ -1,0 +1,66 @@
+{
+ "fps": 30,
+ "total": 2833,
+ "beats": {
+  "fish": {
+   "start": 18,
+   "dur": 258,
+   "file": "vo/swe-factfinding/fish.wav",
+   "text": "Before collecting requirements, find the real problem. The fishbone, or Ishikawa, diagram puts the problem at the head, on the right."
+  },
+  "bones": {
+   "start": 289,
+   "dur": 271,
+   "file": "vo/swe-factfinding/bones.wav",
+   "text": "Four to eight main causes become the bones. Sub-causes attach to them, often from a brainstorming session. The goal: the root cause."
+  },
+  "discover": {
+   "start": 586,
+   "dur": 86,
+   "file": "vo/swe-factfinding/discover.wav",
+   "text": "Then, requirements discovery: fact-finding."
+  },
+  "research": {
+   "start": 685,
+   "dur": 113,
+   "file": "vo/swe-factfinding/research.wav",
+   "text": "Research: journals, books, and websites of similar projects."
+  },
+  "observe": {
+   "start": 811,
+   "dur": 212,
+   "file": "vo/swe-factfinding/observe.wav",
+   "text": "Observation: watch people at work. The data is very reliable, but people may act differently when watched."
+  },
+  "proto": {
+   "start": 1037,
+   "dur": 217,
+   "file": "vo/swe-factfinding/proto.wav",
+   "text": "Prototyping: a small working model for users to try. But users may develop unrealistic expectations."
+  },
+  "question": {
+   "start": 1267,
+   "dur": 388,
+   "file": "vo/swe-factfinding/question.wav",
+   "text": "Questionnaires: cheap, anonymous, and fast for many people. Open-ended questions let people answer freely. Closed-ended ones offer fixed choices. The downside: a low return rate."
+  },
+  "interview": {
+   "start": 1669,
+   "dur": 278,
+   "file": "vo/swe-factfinding/interview.wav",
+   "text": "Interviews: face to face. Unstructured, with only a general goal, or structured, with a fixed set of questions. Rich, but time-consuming."
+  },
+  "sample": {
+   "start": 1961,
+   "dur": 501,
+   "file": "vo/swe-factfinding/sample.wav",
+   "text": "Sampling collects representative documents and forms. Random sampling picks by pure chance. Systematic sampling picks every x over n-th: one hundred from a thousand means every tenth. Stratified sampling splits into subgroups first."
+  },
+  "jrp": {
+   "start": 2475,
+   "dur": 278,
+   "file": "vo/swe-factfinding/jrp.wav",
+   "text": "And Joint Requirements Planning: a workshop of users, managers and I T staff, led by a facilitator, with a sponsor from top management."
+  }
+ }
+}

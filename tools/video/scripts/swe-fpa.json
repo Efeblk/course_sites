@@ -1,0 +1,54 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "why",
+   "text": "How big is a piece of software, before any code exists? Function Point Analysis measures its functionality from the requirements, independent of the programming language."
+  },
+  {
+   "id": "app",
+   "text": "Take the weather app from the slides. One input screen for temperature and rainfall by city and state. One database. One report."
+  },
+  {
+   "id": "ei",
+   "text": "External inputs: data crossing the boundary from outside to inside. The add, change and delete buttons. Three."
+  },
+  {
+   "id": "eo",
+   "text": "External outputs: derived data going out. The report, with its monthly averages. One."
+  },
+  {
+   "id": "eq",
+   "text": "External inquiries: data retrieved. The scroll bar that shows previous entries. One."
+  },
+  {
+   "id": "ilf",
+   "text": "Internal logical files: data living inside the application. The database. One."
+  },
+  {
+   "id": "eif",
+   "text": "External interface files: another application's data, used for reference only. None here. Zero."
+  },
+  {
+   "id": "rank",
+   "text": "Each one is ranked low, average, or high, by counting its fields and the files it touches. Here, everything is low."
+  },
+  {
+   "id": "ufp",
+   "text": "Multiply each count by its weight. Three inputs times three. One output times four. One inquiry times three. One file times seven. Unadjusted function points: twenty-three.",
+   "pause": 0.4
+  },
+  {
+   "id": "vaf",
+   "text": "Next, the general system characteristics. Each gets a weight from zero to five. Here they add up to forty: the value adjustment factor."
+  },
+  {
+   "id": "afp",
+   "text": "Adjusted function points: U F P, times zero point six five, plus zero point zero one times V A F. Twenty-three times one point zero five. About twenty-four function points.",
+   "pause": 1.0
+  }
+ ]
+}

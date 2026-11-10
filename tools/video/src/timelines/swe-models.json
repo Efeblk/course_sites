@@ -1,0 +1,72 @@
+{
+ "fps": 30,
+ "total": 2490,
+ "beats": {
+  "wf": {
+   "start": 18,
+   "dur": 248,
+   "file": "vo/swe-models/wf.wav",
+   "text": "The waterfall model runs the phases in order. Each phase is done once, and the next starts only when the previous one is complete."
+  },
+  "wfgood": {
+   "start": 279,
+   "dur": 203,
+   "file": "vo/swe-models/wfgood.wav",
+   "text": "It is simple, easy to manage, and it works well for small projects whose requirements are well understood."
+  },
+  "wfbad": {
+   "start": 496,
+   "dur": 165,
+   "file": "vo/swe-models/wfbad.wav",
+   "text": "But every requirement must be known up front. And major problems are found late, in testing."
+  },
+  "idle": {
+   "start": 686,
+   "dur": 119,
+   "file": "vo/swe-models/idle.wav",
+   "text": "There is no parallelism, so people sit idle, waiting for others."
+  },
+  "iter": {
+   "start": 819,
+   "dur": 332,
+   "file": "vo/swe-models/iter.wav",
+   "text": "The fix is iterative development. Build a part, test it, get feedback, then build more. Each iteration does some analysis, some design, some coding, and some testing."
+  },
+  "par": {
+   "start": 1164,
+   "dur": 110,
+   "file": "vo/swe-models/par.wav",
+   "text": "Iterations can even run in parallel, with separate teams."
+  },
+  "agile": {
+   "start": 1288,
+   "dur": 198,
+   "file": "vo/swe-models/agile.wav",
+   "text": "Agile is a highly iterative process. Its purpose: speed up development, and respond to change."
+  },
+  "v1": {
+   "start": 1500,
+   "dur": 249,
+   "file": "vo/swe-models/v1.wav",
+   "text": "Agile values individuals and interactions over processes and tools. And working software over comprehensive documentation."
+  },
+  "v2": {
+   "start": 1762,
+   "dur": 202,
+   "file": "vo/swe-models/v2.wav",
+   "text": "Customer collaboration over contract negotiation. And responding to change over following a plan."
+  },
+  "agpro": {
+   "start": 1978,
+   "dur": 194,
+   "file": "vo/swe-models/agpro.wav",
+   "text": "Every iteration produces working software. So the customer can see the project, and give better requirements."
+  },
+  "agcon": {
+   "start": 2185,
+   "dur": 225,
+   "file": "vo/swe-models/agcon.wav",
+   "text": "The risks: agile is problematic for very small and very large projects, and documentation takes second place."
+  }
+ }
+}

@@ -1,0 +1,37 @@
+﻿/* SWE307 process diagrams. Each scene exposes one state of the process. */
+(() => {
+ function relay(name,labels,captions,loop=false){CS.anim.def('swe-'+name,{w:720,h:290},A=>{
+  labels.forEach((t,i)=>{const x=70+(i%4)*190,y=i<4?80:200;A.box('b'+i,{tx:x,ty:y,w:130,h:56,text:t,c:'c0'});if(i){const prev=i-1,px=70+(prev%4)*190,py=prev<4?80:200;A.line('l'+i,{x1:px,y1:py+30,x2:x,y2:y-30,head:true,c:'mute'});}});
+  A.dot('token',{tx:70,ty:35,r:7,c:'c0'});
+  labels.forEach((t,i)=>A.step(captions[i]||t,{['b'+i]:{fill:'solid'},...(i?{['b'+(i-1)]:{fill:'soft'}}:{}),token:{tx:70+(i%4)*190,ty:(i<4?80:200)-45}},{fx:['b'+i]}));
+  if(loop)A.step('Use feedback to start another cycle. Each cycle refines the result.',{token:{tx:70,ty:35},['b'+(labels.length-1)]:{fill:'soft'},b0:{fill:'solid'}});
+ });}
+ relay('sdlc',['Planning','Analysis','Design','Implementation','Maintenance'],['Plan scope, schedule, resources and cost.','Ask what users need.','Specify how the system will work.','Program, test and install the solution.','Resolve defects and adapt to new needs.']);
+ relay('waterfall',['Plan','Requirements','Design','Develop','Test','Deploy','Maintain'],['Planning produces the SPMP.','Analysis produces the SRS.','Design produces the SDD.','Build and integrate code.','Check correctness before release.','Deliver the system and train users.','Support the released system. The chapter lists maintenance after deployment.']);
+ relay('iterative',['Analyze part','Design part','Build part','Test part','Get feedback','Refine'],['Choose part of the requirements.','Design this increment.','Develop the increment.','Test the increment.','Show the working result and gather feedback.','Revise requirements and begin another cycle. Separate teams may run iterations in parallel.'],true);
+ relay('tdd',['Write test','Run: fails','Write code','Run: passes','Repeat'],['Write an automated test first.','Run it and observe its failure.','Develop code to make the test pass.','Run the test again.','Continue with another test; refactoring preserves external behavior.'],true);
+ relay('fp',['Count','Rank','UFP = 23','GSC sum = 40','Factor = 1.05','AFP = 24.15'],['Weather counts: EI 3, EO 1, EQ 1, ILF 1, EIF 0.','DET/FTR/RET tables rank every weather unit Low.','3×3 + 1×4 + 1×3 + 1×7 = 23.','Assign each GSC a weight 0–5 and sum. The slides call the sum VAF.','0.65 + 0.01×40 = 1.05.','23×1.05 = 24.15 adjusted function points.']);
+ relay('estimate',['FP size','Rules estimate','LOC gearing','COCOMO I','Weight efforts'],['Start with rounded 500 FP in the worked example.','500^.4 = 12.01 months; staff 500/150; effort about 40 pm.','Mixed language factors yield 22325 LOC, rounded to 22.3 KLOC.','Semi-detached gives about 97 pm and 12.4 months.','(7×40 + 3×97)/10 = 57.1 pm. Duration and effort use different units.']);
+ relay('critical',['Dependencies','Forward TE','Backward TL','Slack','Critical path'],['Read durations and predecessor links.','Use max predecessor TE plus own duration. The slide end TE is 22.','Start with end TL=22. Use min successor TL minus successor duration.','Compute TL−TE: task 2 has 2; task 5 has 2.5.','Zero slack: 1–3–4–6–7–8, duration 22 weeks.']);
+ relay('channels',['3 people','4 people','5 people','8 people'],['3×2/2 = 3 channels.','4×3/2 = 6 channels.','5×4/2 = 10 channels.','8×7/2 = 28 channels. Adding people increases coordination work.']);
+ relay('organization',['Project','Function','Matrix'],['Project staff are dedicated; isolation reduces reuse.','Functional groups share expertise; moving people can delay projects.','Functional staff are loaned to projects for efficient resource use.']);
+ relay('requirements',['Read statement','Service?','Quality?','Constraint?'],['State one requirement clearly.','Display a weekly schedule specifies functionality.','A six-second response specifies performance.','Java/Eclipse or a required server limits the solution; the slides call these nonfunctional.']);
+ relay('facts',['Evidence need','Choose method','Collect','Confirm'],['Ask what information is missing.','Research, observe, prototype, sample, survey, interview or use JRP.','Collect records and user views with awareness of each method’s limitations.','Write requirements and confirm them with stakeholders.']);
+ relay('sampling',['Population x','Sample n','Interval x/n','Select records'],['Use x=1000.','Require n=100 records.','1000/100=10.','Select every tenth member. Regular source patterns can bias selection.']);
+ relay('usecase',['Base goal','Include call','Return','Conditional extend','Base completes'],['The base has a meaningful goal.','Mandatory included behavior runs. The dotted arrow points to it.','Continue the base flow.','If the extension condition holds, extra behavior runs. Its dotted arrow points to the base.','The base can complete independently of its optional extension.']);
+ relay('invest',['Role','Capability','Benefit','INVEST','Acceptance'],['Name the end-user role.','State what the user wants to do.','State why it matters.','Check Independent, Negotiable, Valuable, Estimable, Small and Testable.','Write observable criteria that establish when the story is done.']);
+ relay('sequence',['Participants','Messages','Guard','Fragment'],['Name each participant on a lifeline.','Read exchanges down the page.','Evaluate the interaction condition.','Use alt, opt, loop, break, par or ref according to the behavior.']);
+ relay('atm',['Off','Self Test','Idle','Authenticate','Select','Transaction','Idle: ejectCard'],['Power on runs startup.','Failure leads to Out of Service; success leads to Idle.','Inserting a card enters Serving Customer and runs readCard.','Authenticate the customer. Cancel can leave Serving Customer.','Choose a transaction.','Perform the transaction.','Leaving Serving Customer always runs ejectCard, including cancel.']);
+ relay('component',['Product','Provided ball','Required socket','Order'],['Product supplies item code.','A complete circle denotes a provided interface.','Order needs item code, shown with a half-circle socket.','An assembly connects the provided service to its user.']);
+ CS.anim.def('swe-activity',{w:700,h:330},A=>{
+  A.dot('initial',{tx:45,ty:165,r:9,c:'text'});A.box('order',{tx:150,ty:165,w:120,text:'Fill order',c:'c0'});
+  A.area('fork',{tx:235,ty:65,w:8,h:200,c:'text'});A.box('invoice',{tx:350,ty:85,w:155,text:'Send invoice',c:'c0'});A.box('ship',{tx:350,ty:245,w:155,text:'Ship order',c:'c0'});A.box('payment',{tx:510,ty:85,w:140,text:'Accept payment',c:'c0'});A.area('join',{tx:602,ty:65,w:8,h:200,c:'text'});A.dot('final',{tx:665,ty:165,r:12,ring:true,c:'text'});
+  [[55,165,85,165],[210,165,235,165],[243,85,272,85],[243,245,272,245],[428,85,440,85],[580,85,602,85],[428,245,602,245],[610,165,650,165]].forEach(([x1,y1,x2,y2],i)=>A.line('e'+i,{x1,y1,x2,y2,head:true,c:'mute'}));
+  A.dot('a',{tx:45,ty:165,r:6,c:'c0'});A.dot('b',{tx:243,ty:245,r:6,c:'c0',o:0});
+  A.step('Start with one control token at the initial node.');A.step('Fill the accepted order.',{a:{tx:150},order:{fill:'solid'}});
+  A.step('Fork creates concurrent invoice and shipping flows.',{a:{tx:350,ty:85},b:{tx:350,ty:245,o:1},invoice:{fill:'solid'},ship:{fill:'solid'}});
+  A.step('Shipping reaches the join. The other flow must still accept payment.',{a:{tx:510},b:{tx:602},payment:{fill:'solid'}});
+  A.step('Both flows have reached the join. Synchronize them into one outgoing flow.',{a:{tx:606,ty:165},b:{o:0}});
+  A.step('Reach activity final: all activity flows stop.',{a:{tx:665}});
+ });
+})();

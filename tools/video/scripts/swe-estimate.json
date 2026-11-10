@@ -1,0 +1,51 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "size",
+   "text": "Once we know the size, we can estimate effort and duration. Size comes in two units: lines of code, a physical measure, and function points, a functional one."
+  },
+  {
+   "id": "loc",
+   "text": "Lines of code depend on the language. To convert, use a gearing factor: the average lines of code per function point. In Java, one function point is about fifty-three lines."
+  },
+  {
+   "id": "cls",
+   "text": "Then classify the project. Under five hundred function points: simple. Under a thousand: average. A thousand or more: complex."
+  },
+  {
+   "id": "rules",
+   "text": "From function points, use the engineering rules. Duration equals F P to the power A. Staff equals F P over one hundred fifty. Effort equals staff times duration."
+  },
+  {
+   "id": "rulesEx",
+   "text": "For five hundred function points, an average project, A is zero point four. Duration: about twelve months. Staff: three point three. Effort: about forty person-months.",
+   "pause": 0.4
+  },
+  {
+   "id": "cocomo",
+   "text": "From lines of code, use COCOMO one. Effort equals a, times K LOC to the power b. Duration equals c, times effort to the power d. The idea: effort grows faster than size."
+  },
+  {
+   "id": "classes",
+   "text": "Organic projects are small, with an experienced team. Semi-detached are medium, like a web app. Embedded are tied to hardware, like an antilock braking system."
+  },
+  {
+   "id": "cocomoEx",
+   "text": "The same project is about twenty-two thousand lines. As semi-detached: effort, about ninety-seven person-months. Duration, about twelve months.",
+   "pause": 0.4
+  },
+  {
+   "id": "weighted",
+   "text": "Two methods, two answers. The slide weights them seven to three: seven times forty, plus three times ninety-seven, over ten. About fifty-seven person-months."
+  },
+  {
+   "id": "units",
+   "text": "Remember the units. Duration in months. Effort in person-months.",
+   "pause": 1.0
+  }
+ ]
+}

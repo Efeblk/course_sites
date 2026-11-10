@@ -1,0 +1,60 @@
+{
+ "fps": 30,
+ "total": 2707,
+ "beats": {
+  "what": {
+   "start": 18,
+   "dur": 152,
+   "file": "vo/swe-usecase/what.wav",
+   "text": "A use case model shows the system from the user's point of view: what the system does."
+  },
+  "actor": {
+   "start": 184,
+   "dur": 337,
+   "file": "vo/swe-usecase/actor.wav",
+   "text": "An actor is anyone or anything outside the system that interacts with it. A person, an organization, another system, a device, even time. Name it with a noun."
+  },
+  "uc": {
+   "start": 535,
+   "dur": 207,
+   "file": "vo/swe-usecase/uc.wav",
+   "text": "A use case is one unit of meaningful work. Name it with a verb phrase: log in to system, create order."
+  },
+  "primary": {
+   "start": 755,
+   "dur": 300,
+   "file": "vo/swe-usecase/primary.wav",
+   "text": "The primary actor starts the use case to reach a goal, like the cashier recording a sale. A supporting actor helps, like the credit bureau authorizing the card."
+  },
+  "diagram": {
+   "start": 1068,
+   "dur": 338,
+   "file": "vo/swe-usecase/diagram.wav",
+   "text": "In the diagram, the actor is a stick figure, the use case is an oval, and the system boundary is a box. A plain line, the association, joins an actor to a use case."
+  },
+  "include": {
+   "start": 1419,
+   "dur": 255,
+   "file": "vo/swe-usecase/include.wav",
+   "text": "Include: the base use case always calls the child. A dotted arrow, labeled include, points from the base to the included use case."
+  },
+  "extend": {
+   "start": 1687,
+   "dur": 380,
+   "file": "vo/swe-usecase/extend.wav",
+   "text": "Extend: optional extra behavior, triggered by a condition. Calculate bonus extends deposit funds, only for deposits over ten thousand. The base must make sense on its own."
+  },
+  "general": {
+   "start": 2081,
+   "dur": 181,
+   "file": "vo/swe-usecase/general.wav",
+   "text": "Generalization: a parent and a child, drawn with a hollow triangle pointing to the parent."
+  },
+  "scenario": {
+   "start": 2276,
+   "dur": 352,
+   "file": "vo/swe-usecase/scenario.wav",
+   "text": "Each use case also gets a written scenario, the fully dressed use case: name, actors, trigger, preconditions, postconditions, normal flow, alternate flows, and business rules."
+  }
+ }
+}

@@ -1,0 +1,60 @@
+{
+ "fps": 30,
+ "total": 2228,
+ "beats": {
+  "what": {
+   "start": 18,
+   "dur": 216,
+   "file": "vo/swe-activity/what.wav",
+   "text": "An activity diagram shows a flow: the steps of a business process or a use case, in order, with their conditions."
+  },
+  "token": {
+   "start": 248,
+   "dur": 163,
+   "file": "vo/swe-activity/token.wav",
+   "text": "Picture a token moving through it. It starts at the initial node: a solid black dot."
+  },
+  "action": {
+   "start": 424,
+   "dur": 203,
+   "file": "vo/swe-activity/action.wav",
+   "text": "Each action is a rounded rectangle, named with a verb. The token moves along the arrows, called edges."
+  },
+  "decision": {
+   "start": 640,
+   "dur": 340,
+   "file": "vo/swe-activity/decision.wav",
+   "text": "At a decision node, a diamond, the token takes exactly one path, chosen by a condition. A merge node, also a diamond, brings the alternate paths back together."
+  },
+  "fork": {
+   "start": 994,
+   "dur": 310,
+   "file": "vo/swe-activity/fork.wav",
+   "text": "A fork, a thick bar, splits one flow into parallel flows. A join, another bar, waits until every parallel flow arrives, then continues as one."
+  },
+  "finals": {
+   "start": 1317,
+   "dur": 308,
+   "file": "vo/swe-activity/finals.wav",
+   "text": "Two endings. A flow final node, a circle with an X, stops only that one flow. An activity final node, a bullseye, stops every flow in the activity."
+  },
+  "accept": {
+   "start": 1639,
+   "dur": 141,
+   "file": "vo/swe-activity/accept.wav",
+   "text": "An accept event action, a concave pentagon, waits for an event to happen."
+  },
+  "lanes": {
+   "start": 1793,
+   "dur": 189,
+   "file": "vo/swe-activity/lanes.wav",
+   "text": "Partitions, or swimlanes, show who does each action. For example: author, reviewer, and approver."
+  },
+  "trap": {
+   "start": 1995,
+   "dur": 153,
+   "file": "vo/swe-activity/trap.wav",
+   "text": "So: decision and merge are about choice. Fork and join are about parallel work."
+  }
+ }
+}

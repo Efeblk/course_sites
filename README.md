@@ -20,6 +20,8 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
 
 ## Courses
 
+- **SWE307 — Software Engineering Analysis and Design** (`swe307/`): Chapters 1–7; guided lessons, calculation and UML labs, quizzes, cards and games.
+
 - **COE303 — Operating Systems** (`coe303/`): Chapters 1–4
   - 11 simulations (`coe303/chN/*.html`)
   - 24 order/sort/match games, a quiz and flashcards per chapter, all driven by `coe303/data.js`

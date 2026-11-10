@@ -1,0 +1,50 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap": 0.45,
+ "tail": 1.2,
+ "beats": [
+  {
+   "id": "what",
+   "text": "A state machine diagram shows the states of one thing, and the events that move it between them."
+  },
+  {
+   "id": "water",
+   "text": "Water can be liquid, vapor, or ice. Freezing moves it from liquid to ice. Condensation, from vapor to liquid."
+  },
+  {
+   "id": "off",
+   "text": "Now an A T M. It starts Off. The black dot is the initial pseudostate."
+  },
+  {
+   "id": "on",
+   "text": "Power on. It runs its startup and enters Self Test."
+  },
+  {
+   "id": "fail",
+   "text": "If the test fails: Out of Service. Otherwise, with no trigger at all, it moves to Idle."
+  },
+  {
+   "id": "card",
+   "text": "A customer inserts a card. The A T M moves to Serving Customer, and on entry, it reads the card."
+  },
+  {
+   "id": "composite",
+   "text": "Serving Customer is a composite state. Inside are three substates in sequence: authentication, selecting a transaction, and the transaction."
+  },
+  {
+   "id": "cancel",
+   "text": "The customer can cancel at any time. That goes straight back to Idle."
+  },
+  {
+   "id": "exit",
+   "text": "And whatever the reason for leaving, the exit action ejects the card.",
+   "pause": 0.4
+  },
+  {
+   "id": "kinds",
+   "text": "A simple state has no substates. A composite state has substates. And a shallow history state returns to the last substate that was active.",
+   "pause": 1.0
+  }
+ ]
+}

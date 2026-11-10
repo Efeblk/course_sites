@@ -1,0 +1,66 @@
+{
+ "fps": 30,
+ "total": 2218,
+ "beats": {
+  "intro": {
+   "start": 18,
+   "dur": 152,
+   "file": "vo/swe-xpscrum/intro.wav",
+   "text": "Two well-known agile methods: Extreme Programming, called X P, and Scrum."
+  },
+  "weekly": {
+   "start": 184,
+   "dur": 355,
+   "file": "vo/swe-xpscrum/weekly.wav",
+   "text": "X P works in weekly cycles. On the first day, the customer picks the stories for that week. By the end of the week, there are running, tested features. A quarterly cycle is a release."
+  },
+  "tdd": {
+   "start": 553,
+   "dur": 340,
+   "file": "vo/swe-xpscrum/tdd.wav",
+   "text": "X P writes the test first. Write a failing test. Run it and watch it fail. Write code until it passes. Run it again. Repeat. That is test-driven development."
+  },
+  "pair": {
+   "start": 906,
+   "dur": 178,
+   "file": "vo/swe-xpscrum/pair.wav",
+   "text": "All production code is pair programmed. The driver types. The navigator reviews every line."
+  },
+  "more": {
+   "start": 1097,
+   "dur": 227,
+   "file": "vo/swe-xpscrum/more.wav",
+   "text": "Code is integrated many times a day, anyone may change any code, and the pace is sustainable: a forty-hour week."
+  },
+  "scrum": {
+   "start": 1338,
+   "dur": 162,
+   "file": "vo/swe-xpscrum/scrum.wav",
+   "text": "Scrum starts with a backlog: the customer's wants and needs, each one a user story."
+  },
+  "sprint": {
+   "start": 1522,
+   "dur": 132,
+   "file": "vo/swe-xpscrum/sprint.wav",
+   "text": "A sprint is a thirty-day cycle. It takes a set of stories from the backlog."
+  },
+  "daily": {
+   "start": 1668,
+   "dur": 143,
+   "file": "vo/swe-xpscrum/daily.wav",
+   "text": "Every day, the scrum master runs the daily scrum. No more than fifteen minutes."
+  },
+  "team": {
+   "start": 1825,
+   "dur": 92,
+   "file": "vo/swe-xpscrum/team.wav",
+   "text": "A scrum team has no more than six to nine members."
+  },
+  "demo": {
+   "start": 1931,
+   "dur": 207,
+   "file": "vo/swe-xpscrum/demo.wav",
+   "text": "At the end of the sprint, the team shows the customer a demonstration of working, integrated, tested software."
+  }
+ }
+}
