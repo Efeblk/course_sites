@@ -43,8 +43,8 @@
   <main>
     <div class="mono small muted">COE025 — vize hazırlık</div>
     <h1 style="font-size:2.4rem;margin-top:4px">Senaryo soruları, çözümlü</h1>
-    <p class="lead">Açık uçlu sorular büyük ihtimalle böyle olacak: <b>gerçek bir durum → küçük bir hesap → hesaba dayanan bir karar</b>. Aşağıdaki 3 soruyu ben yazdım (slayttaki örneklerin sayıları değiştirildi). Önce kâğıtta kendin çöz, sonra <b>Çözüm</b>'ü aç.</p>
-    <p class="small muted">Çözümler bir öğrencinin kâğıda yazacağı gibi: solda kâğıttaki satır, sağda Türkçe "neden bu adım". Her sorunun sonunda yazılacak kısa İngilizce karar paragrafı var.</p>
+    <p class="lead">Three practice scenarios adapted from the course examples: compute a result, give a verdict, explain its mechanism. These are practice questions, not past exam questions.</p>
+    <p class="small muted">Open each solution after attempting the calculation. Model answers use short English keyword lines.</p>
     <nav class="row toc">
       <a href="#q1"><b>1</b>Yorum filtresi (NB + P/R/F1)</a>
       <a href="#q2"><b>2</b>Haber NER (span F1 + CRF)</a>
@@ -92,11 +92,7 @@
       <div class="res">accuracy 0.85 vs 0.75 küçük bir fark gibi duruyor, ama model kötü yorumların %80'ini buluyor, baseline hiçbirini. Bu yüzden sınıf dengesizken <b>F1</b>'e bakılır.</div>
 
       <h4>(c) Karar: LLM mi?</h4>
-      <div class="paper"><span class="tag">Kâğıda böyle yazarım</span>
-        <p><b>Verdict:</b> I would keep the Naive Bayes model (or try logistic regression with bigrams) and not switch to an LLM API.</p>
-        <p><b>Why:</b> 0.88 vs 0.85 is a small gain, and a demo is not a held-out test set, so the two numbers are not even comparable. Accuracy is also the wrong metric here: we care about F1 for the negative class. An LLM call for every review costs much more, is slower and sends customer data to an outside service, while NB is cheap, fast and its word likelihoods are easy to inspect.</p>
-        <p><b>Limit:</b> NB uses bag of words, so "not great" still counts "great" as positive evidence. I would add bigrams such as "not great", then compare both models on the same test set using negative-class F1.</p>
-      </div>
+      <div class="paper"><b>Model answer</b><ul><li>Verdict: compare on the same held-out data before switching.</li><li>Demo accuracy and test accuracy are not comparable.</li><li>Negative-class F1; runtime, cost, privacy; inspect errors.</li><li>Try bigram features for negation; validate the change.</li></ul></div>
       <p class="tip">Karar paragrafında <b>kendi hesabından bir sayı</b> kullan (0.85, 0.75, F1 0.73). "Hesapla, sonra yorumla" istediği şey bu.</p>
     </details>
 
@@ -124,11 +120,7 @@
       <div class="res">aynı tahmin token bazında 0.78, isim bazında 0.5. Fark O token'lardan geliyor: O'yu bilmek kolay, ama kullanıcı isim istiyor.</div>
 
       <h4>(b) ve (c)</h4>
-      <div class="paper"><span class="tag">Kâğıda böyle yazarım</span>
-        <p><b>(b)</b> The agency should report <b>exact-match span F1</b> (0.5), not token accuracy (0.78). Users need whole names: "Tim" instead of "Tim Cook" is useless, but token accuracy still gives it credit for "Tim". Most tokens are O and easy to get right, so token accuracy looks good even for a weak tagger; in real news text, where about 90% of tokens are O, tagging everything O would score about 90%.</p>
-        <p><b>(c)</b> A softmax head takes the argmax <b>at each position independently</b>. It sees the whole sentence through BERT, but it never scores a label pair, so nothing stops O → I-PER. I would add a <b>linear-chain CRF</b> on top: BERT's outputs become the unary scores, the CRF adds <b>transition scores</b> between neighbouring labels, and Viterbi picks the best whole sequence. Training makes O → I-PER unlikely, but finite scores do not forbid it, so I would set that transition to <b>−∞</b>.</p>
-        <p>Not an HMM: its emission P(word | tag) only looks at the current word, so it cannot use BERT's features or overlapping clues such as capital letters. I would check the fix with span F1 on a held-out test set.</p>
-      </div>
+      <div class="paper"><b>Model answer</b><ul><li>Report exact-span F1: boundaries and type must match.</li><li>Partial name: FP + FN. Token accuracy can hide missed entities.</li><li>Contextual encoder: input evidence. CRF: label compatibility.</li><li>Illegal BIO transitions: hard score −∞; finite preferences do not guarantee validity.</li></ul></div>
       <p class="tip">"Neden" sorusunda <b>mekanizmayı</b> söyle: "softmax her konumda ayrı karar veriyor". "Model kötü" demek puan getirmez.</p>
     </details>
 
@@ -173,10 +165,7 @@
       <div class="res">model "can fish" için VN okumasına %76 inanıyor: "can" fiil (konserve yapmak), "fish" isim → "balığı konserve yap".</div>
 
       <h4>(c)</h4>
-      <div class="paper"><span class="tag">Kâğıda böyle yazarım</span>
-        <p>0.144 is the <b>joint</b> probability P(can fish, VN): the chance of generating these words <i>and</i> these tags together. It is small because every specific sentence is unlikely. The model's belief in VN for this sentence is the <b>posterior</b> 0.144 / 0.19 ≈ 0.76.</p>
-        <p>If "fish" was never seen as V, the unsmoothed estimate is b(fish | V) = 0, so every path ending in V (NV and VV) gets probability 0, even when the sentence really is "… they fish". A zero count is not proof that something is impossible, so we use <b>add-one smoothing</b> (and an <b>UNK</b> symbol for unseen words).</p>
-      </div>
+      <div class="paper"><b>Model answer</b><ul><li>0.144: joint P(words,VN). Posterior: 0.144/0.19.</li><li>Unseen emission without smoothing: zero-weight paths.</li><li>Add-one smoothing and an explicit UNK outcome; renormalize.</li></ul></div>
       <p class="tip">Joint ile posterior'ı karıştırma; bu hem şıkta hem yazılıda gelir.</p>
     </details>
 

@@ -1,86 +1,306 @@
-/* UNI480 mock midterm: written the way a model would write an exam from the four slide decks
-   and the recorded lectures. o[0] is the correct option; the page shuffles them.
-   t = topic, why = explanation (Turkish, English terms). */
+/* Existing UNI480 practice questions condensed; option 0 is correct before display shuffle. */
 window.MOCK = [
-  /* ---------------- Week 1: Introduction ---------------- */
-  { t: 'W1', q: 'According to the lecture, what is the key question about AI in healthcare?', o: ['Can AI help healthcare organizations deliver better care with the resources they have?', 'Can AI replace physicians in routine diagnosis so that hospitals can reduce their staffing costs?', 'How quickly can hospitals automate clinical decisions to remove human error from patient care?', 'Which AI vendor offers the most accurate system for a hospital to purchase?', 'Can AI eliminate the need for healthcare managers in resource planning?'], why: 'Slayt 2: "Key question: Can AI help healthcare organizations deliver better care with the resources they have?" Ders AI\'ı bir yerine koyma aracı olarak değil, kaynakları daha iyi kullanmanın yolu olarak çerçeveliyor.' },
-  { t: 'W1', q: 'Which of the following is listed among the things AI does NOT guarantee in healthcare?', o: ['Automatic reductions in healthcare costs', 'Organizing and summarizing large amounts of clinical information', 'Supporting earlier detection by identifying patterns in medical images', 'Reducing administrative burden through documentation support', 'Supporting demand forecasting and appointment planning'], why: 'Slayt 14: AI "automatic reductions in healthcare costs" garanti etmez. Diğer dört şık slayt 13\'te AI\'ın katkıları olarak geçiyor.' },
-  { t: 'W1', q: 'Where was the term "Artificial Intelligence" coined?', o: ['At the 1956 Dartmouth Conference, by McCarthy, Minsky, Rochester and Shannon', 'In Alan Turing\'s 1950 paper, where he introduced the Turing Test and named the field', 'During the first AI winter in the 1970s, when researchers renamed the field', 'With the rise of deep learning in the 2010s, by large technology companies', 'At the first hospital that used an expert system for diagnosis'], why: 'Slayt 6: 1956 Dartmouth Conference. Turing "Can machines think?" sorusunu sordu ve Turing Test\'i önerdi ama terimi o bulmadı.' },
-  { t: 'W1', q: 'What were the "AI winters"?', o: ['Periods of funding cuts and slow progress in the 1970s and 1980s', 'Periods of very rapid progress in neural networks', 'The years when AI was first used in hospitals', 'Seasonal peaks in hospital demand predicted by AI', 'The period when the Turing Test was invented'], why: 'Slayt 7: AI winters = fonların kesildiği ve ilerlemenin yavaşladığı dönemler.' },
-  { t: 'W1', q: 'A bed-management AI reads occupancy data from the hospital information system and sends notifications to the admissions team. In AI-agent terms, the notifications are the agent\'s:', o: ['Actuators', 'Sensors', 'Environment', 'Performance measure', 'Training data'], why: 'Slayt 10: actuators ajanın dünyayı nasıl etkilediğidir ("software commands"). Veriyi okumak sensor tarafıdır. Hoca 10 Ekim\'de: yazılım ajanında alert göndermek bir actuator.' },
-  { t: 'W1', q: 'Which component of an AI agent maps perceptions to actions?', o: ['Agent function', 'Sensors', 'Actuators', 'Environment', 'Performance measure'], why: 'Slayt 10: "Agent Function – Maps perceptions → actions." Performance measure ise hedefe ne kadar ulaştığını değerlendirir.' },
-  { t: 'W1', q: 'Population health analysis, financial forecasting and long-term planning belong to which area of AI in healthcare?', o: ['Strategic and system-level AI', 'Clinical AI', 'Administrative and operational AI', 'Robotic process automation', 'Generative AI'], why: 'Slayt 11: üç alan. Strategic & system-level = population health, financial forecasting, quality improvement, public health surveillance, long-term planning. Scheduling ve patient flow ise operational.' },
-  { t: 'W1', q: '"Symptoms and test results do not always provide a clear or complete picture of a patient\'s condition." Which characteristic of healthcare does this describe?', o: ['Uncertainty', 'Time sensitivity', 'Complex information', 'Resource constraints', 'Human-centered care'], why: 'Slayt 12: bu cümle Uncertainty\'nin tanımı. Complex information = birçok bilgi türünü yorumlamak; time sensitivity = hızlı müdahale gerekmesi.' },
-  { t: 'W1', q: 'According to the lecture, the capabilities of an AI system depend on:', o: ['Its design, training data and intended use', 'Its human-like understanding of patients', 'The moral responsibility it accepts for decisions', 'The number of physicians who use it', 'Whether it is called "AI" by the vendor'], why: 'Slayt 5, "Important distinction": AI otomatik olarak human understanding, professional judgment, empathy veya moral responsibility taşımaz. Yetenekleri design, training data ve intended use\'a bağlıdır.' },
-  { t: 'W1', q: 'A hospital manager asks: "Should AI be allowed to make clinical decisions without human approval?" Which answer best fits the course?', o: ['No; AI should support decisions, with human oversight and professional accountability', 'Yes, if its accuracy in testing is above 90%, because high accuracy makes oversight unnecessary', 'Yes, because AI eliminates human error and professional responsibility', 'Only in emergency departments, where time pressure justifies removing human review', 'Yes, as long as the vendor accepts legal responsibility for every decision'], why: 'Slayt 14: responsible implementation "human oversight" ister ve AI "the elimination of human error or professional responsibility" garanti etmez. Dersin tamamındaki cevap: AI supports, people decide.' },
-
-  /* ---------------- Week 2: AI technologies ---------------- */
-  { t: 'W2', q: 'Which statement best describes "AI" according to the technologies lecture?', o: ['An umbrella term for systems that may classify, predict, generate, recommend or act, each with different risks', 'A single technology based on neural networks that understands patients the way clinicians do', 'Another word for healthcare robotics that performs physical tasks in hospitals', 'A system with human-like understanding and autonomy, ready for clinical use once accurate', 'A tool that becomes clinically ready as soon as its accuracy is high enough'], why: 'Slayt 4: "AI is an umbrella term—not one single technology." AI otomatik olarak human-like understanding, autonomy, accuracy ya da clinical readiness demek değildir.' },
-  { t: 'W2', q: 'The output of a trained machine learning model is best described as:', o: ['A prediction, probability, ranking or classification, not a guaranteed truth', 'A confirmed diagnosis that clinicians can act on without further evaluation', 'A causal explanation of why the disease occurred in the patient', 'A set of rules that clinicians wrote by hand before training began', 'A final treatment decision that the care team implements'], why: 'Slayt 6: "Output: a prediction, probability, ranking or classification—not a guaranteed truth." Ve "Prediction ≠ diagnosis".' },
-  { t: 'W2', q: 'During training, a machine learning algorithm:', o: ['Adjusts its parameters to reduce a chosen error or loss measure', 'Has every clinical rule written by hand by developers', 'Stops needing monitoring once training is complete', 'Learns only from images and audio', 'Asks a clinician to approve each parameter'], why: 'Slayt 6: "Training: the algorithm adjusts its parameters to reduce a chosen error or loss measure." Deployment\'tan sonra da monitoring gerekir.' },
-  { t: 'W2', q: 'Grouping patients with similar patterns of disease or service use, without a target label, is an example of:', o: ['Unsupervised learning', 'Supervised learning', 'Reinforcement learning', 'Generative AI', 'Image segmentation'], why: 'Slayt 7: unsupervised = "structure without a target label". Supervised = sonucu bilinen örnekler (readmission). Reinforcement = actions + feedback.' },
-  { t: 'W2', q: 'Which statement about machine learning and deep learning is correct?', o: ['Deep learning is a subset of machine learning and is often more data- and compute-intensive', 'Deep learning is a separate field unrelated to machine learning and uses different data', 'Deep learning is always better than traditional machine learning for every task', 'Machine learning can only be used on medical images, not structured data', 'Deep learning models are usually easier to interpret than other models'], why: 'Slayt 11: "Deep learning is a subset of machine learning, not a separate universe." "Neither approach is automatically better." DL\'yi yorumlamak genellikle daha zordur.' },
-  { t: 'W2', q: 'Note: "A 68-year-old patient was admitted last month for pneumonia. Today the patient has no fever and denies cough. The clinician is considering discharge." Which extraction is correct?', o: ['Historical pneumonia admission; no current fever; cough denied; discharge under consideration, not confirmed', 'Current pneumonia; fever present; cough present; patient discharged today', 'Current pneumonia confirmed; patient was discharged today after treatment', 'No history of pneumonia; no fever; discharge has been confirmed by the clinician', 'Fever and cough are present now; pneumonia has been ruled out completely'], why: 'Slayt 14 aktivitesi: NLP time (geçmiş/şimdi), negation (denies) ve uncertainty\'yi (considering = henüz karar verilmedi) doğru ayırmalı.' },
-  { t: 'W2', q: 'A model outlines exactly which pixels in a CT scan belong to a tumour. This computer vision task is:', o: ['Segmentation', 'Classification', 'Detection', 'Calibration', 'Natural language processing'], why: 'Slayt 15: classification = what is present? detection = where is it? segmentation = which pixels?' },
-  { t: 'W2', q: 'Which of the following is NOT listed as a potential failure source in the computer vision workflow?', o: ['A clinician reviewing the model\'s output', 'Image quality from the scanner, camera or slide', 'Device differences between hospitals or scanners', 'Label disagreement between expert annotators', 'Population shift between the training and target hospitals'], why: 'Slayt 16: failure sources = image quality, device differences, rare conditions, label disagreement, population shift. Klinisyenin çıktıyı incelemesi pipeline\'ın son, güvenli adımıdır ("Use: clinician reviews output").' },
-  { t: 'W2', q: 'According to the lecture, what makes healthcare robotics difficult?', o: ['Physical safety, workflow fit and human factors such as trust and training', 'Robots cannot use sensors in hospitals, so they cannot observe their environment', 'Hospitals are static and predictable environments, so robots have nothing to learn', 'Robots never require human oversight once they are programmed correctly', 'Robotics does not involve any physical action, only software decisions'], why: 'Slayt 19: physical safety, workflow fit ("a robot that disrupts staff routines may create more work than it removes"), human factors. Hastane "dynamic, safety-critical" bir ortam.' },
-  { t: 'W2', q: 'A generative AI tool writes a discharge summary that confidently cites a clinical guideline that does not exist. This is an example of:', o: ['Hallucination', 'Automation bias', 'Missing context', 'Alert fatigue', 'Data leakage'], why: 'Slayt 22: hallucination = "a fabricated fact, reference, clinical detail or policy presented confidently". Automation bias ise insanın bu çıktıyı düzgün göründüğü için kabul etmesi olurdu.' },
-  { t: 'W2', q: 'Which is the "safer pattern" for using generative AI recommended in the lecture?', o: ['Constrain the task → use trusted sources → request uncertainty → verify key claims → document human review', 'Use open prompts → accept the fluent output → publish it directly to patients', 'Ask the model to verify its own answer → skip human review if it agrees', 'Use the longest possible prompt → trust the most confident-sounding answer', 'Generate several answers → choose the most polished one → send without review'], why: 'Slayt 22: "Safer pattern: constrain the task → use trusted sources → request uncertainty → verify key claims → document human review." Fluent output is not proof of accuracy.' },
-  { t: 'W2', q: 'A hospital wants to extract medication history from clinical notes. Which approach and key requirement match the lecture?', o: ['NLP; clinical notes with negation and time handling', 'Robotics; mapped environment and safe navigation', 'Computer vision; expert image labels', 'Generative AI; patient-friendly language', 'Machine learning; an alert threshold'], why: 'Slayt 23 tablosu: extract medication history → NLP → negation and time handling. Find a lesion → CV; move supplies → robotics; draft discharge instructions → generative AI + retrieval.' },
-  { t: 'W2', q: 'Which is the correct order of the healthcare AI lifecycle?', o: ['Define need → assess data → develop → validate → implement → monitor', 'Develop → define need → implement → validate → monitor → assess data', 'Assess data → develop → implement → define need → validate → monitor', 'Define need → develop → implement → monitor → validate → assess data', 'Implement → validate → develop → define need → assess data → monitor'], why: 'Slayt 24. Güvenli uygulama "a continuous process—not a one-time software purchase". Son adım monitor: drift, incidents, outcomes.' },
-  { t: 'W2', q: '"Can people challenge, override or safely ignore the output?" belongs to which responsible-AI question?', o: ['Human oversight', 'Transparency', 'Accountability', 'Fairness', 'Privacy and security'], why: 'Slayt 25. Transparency = kullanıcılar intended use, limitler ve ne zaman escalate edeceğini anlıyor mu? Accountability = kararları, olayları, güncellemeleri kim üstleniyor?' },
-  { t: 'W2', q: 'According to the case debrief, the real implementation question is:', o: ['Not only "Does the model work?" but "Does the whole system help safely?"', 'Which algorithm has the highest accuracy on the test data?', 'How quickly can the model be deployed across all wards of the hospital?', 'Can the model replace part of the nursing team on night shifts?', 'How much will the model reduce the hospital\'s operating costs this year?'], why: 'Slayt 26: "A defensible decision is conditional—not just AI is good or AI is bad." Healthcare AI socio-technical: insanlar, süreçler, kanıt ve teknoloji birlikte.' },
-
-  /* ---------------- Week 3: Healthcare data ---------------- */
-  { t: 'W3', q: 'According to the lecture, the central challenge with healthcare data is:', o: ['Collecting trustworthy, usable and responsibly governed data, not simply more data', 'Collecting as much data as possible, because more data always means better decisions', 'Replacing all paper records with scanned images as quickly as possible', 'Storing all hospital data in the cloud so that AI can access it', 'Using only structured data, because unstructured data has no value'], why: 'Slayt 3: "More data does not automatically mean better decisions. Relevance, quality, context and governance matter."' },
-  { t: 'W3', q: 'Why is a simple scanned paper chart NOT equivalent to an EHR?', o: ['An EHR\'s value depends on structured data, workflow integration and exchange', 'Scanned charts are not allowed to be stored digitally in hospitals', 'EHRs never contain clinical notes, only billing codes and dates', 'Scanned charts contain more structured information than EHRs do', 'EHRs are used only for billing, while scanned charts support care'], why: 'Slayt 5. EHR = karşılaşmalar ve bakım ortamları boyunca kullanılan dijital kayıt (longitudinal). EMR genellikle tek kurumun kaydı.' },
-  { t: 'W3', q: 'A lab result is linked to the wrong patient when it is stored. What does the lecture warn about this?', o: ['The error can travel downstream and affect later decisions', 'The EHR automatically detects and corrects the error before anyone uses it', 'It only affects billing, so clinical decisions are not at risk', 'It is a timeliness problem only, because the result arrived late', 'It has no effect on AI models, because models ignore patient identity'], why: 'Slayt 6, "Failure point": "A wrong-patient match or an unrecorded medication change can travel downstream and affect later decisions." Slayt 13: bu bir accuracy ve identity-matching hatası.' },
-  { t: 'W3', q: 'Weight is stored in pounds in one system and in kilograms in another. Which data-quality dimension is affected?', o: ['Consistency', 'Accuracy', 'Completeness', 'Timeliness', 'Uniqueness'], why: 'Slayt 13: "a consistency and unit-harmonisation problem". Consistency = do values agree across records and systems?' },
-  { t: 'W3', q: 'A recorded body temperature of 410 °C is an example of a problem with:', o: ['Validity', 'Completeness', 'Timeliness', 'Uniqueness', 'Velocity'], why: 'Slayt 12, "Quick check": 410 °C muhtemelen invalid (beklenen aralığın dışında). Eksik bir sıcaklık incomplete, dünkü sonuç acil durumda untimely olurdu.' },
-  { t: 'W3', q: 'Data arriving rapidly from ICU monitors and wearable sensors illustrates which "V" of big data?', o: ['Velocity', 'Volume', 'Variety', 'Veracity', 'Value'], why: 'Slayt 9. Volume = milyonlarca kayıt; variety = tablolar, metin, görüntü; veracity = noise, missing values, tutarsız anlamlar; value = daha iyi karara dönüşen fayda.' },
-  { t: 'W3', q: '"A technically accurate prediction of past practice may still be an ethically poor guide to future care." What does this mean?', o: ['Historical data reflects past gaps in care, so a model that copies it may reproduce inequity', 'Accurate models are always ethical, so past practice is a good guide to future care', 'Past data is useless for AI, so only newly collected data should be used', 'Only future data should be used for training, because the past is always biased', 'Ethics is unrelated to data quality, so only accuracy should be measured'], why: 'Slayt 14: geçmiş veri insanların aldığı bakımı yansıtır; erişim, teşhis ve kayıttaki boşluklar dahil. Proxy değişkenler, hassas değişkenler çıkarılsa bile eşitsizliği taşıyabilir.' },
-  { t: 'W3', q: 'Which principle means "collect and expose only what is needed for the task"?', o: ['Data minimisation', 'De-identification', 'Data provenance', 'Interoperability', 'Role-based access'], why: 'Slayt 15: "Apply data minimisation: collect and expose only what is needed for the task."' },
-  { t: 'W3', q: 'Why is de-identification not a complete privacy solution?', o: ['Linkage with other datasets may enable re-identification', 'De-identified data cannot be used for research', 'It deletes all clinical information', 'It is illegal in most countries', 'It makes data less accurate'], why: 'Slayt 15: "De-identification can reduce risk, but linkage with other datasets may enable re-identification."' },
-  { t: 'W3', q: 'A result labelled "1.8" is transferred successfully, but the receiving system does not know the test, unit or reference range. Which level of interoperability is missing?', o: ['Semantic', 'Technical', 'Syntactic', 'Organisational', 'Physical'], why: 'Slayt 16: semantic = sistemler verinin anlamını tutarlı yorumlar. "A successful transfer is not enough if the receiving system misunderstands the meaning."' },
-  { t: 'W3', q: 'Which standard provides identifiers for laboratory tests and clinical observations?', o: ['LOINC', 'ICD', 'DICOM', 'SNOMED CT', 'HL7 v2'], why: 'Slayt 17. ICD = hastalık sınıflandırması; DICOM = tıbbi görüntüleme; SNOMED CT = klinik terminoloji; HL7 v2 = mesajlaşma standardı.' },
-  { t: 'W3', q: 'Which statement about HL7 FHIR is correct?', o: ['It represents health information as resources exchanged through APIs, but does not automatically fix poor data quality', 'It is a classification of diseases used for reporting and health statistics', 'It is the standard for storing and exchanging medical images and scans', 'It automatically solves data-quality problems once systems use the same resources', 'It replaces the need for governance, security and identity matching'], why: 'Slayt 18: FHIR = resources (Patient, Observation, Condition, MedicationRequest) + APIs. "Shared grammar" benzetmesi; yine de ortak kelime ve anlam üzerinde anlaşmak gerekir.' },
-  { t: 'W3', q: '"Which wards are likely to exceed capacity next weekend?" is which type of analytics?', o: ['Predictive', 'Descriptive', 'Diagnostic', 'Prescriptive', 'Cognitive'], why: 'Slayt 19: predictive = what is likely to happen? Descriptive = ne oldu; diagnostic = neden oldu; prescriptive = hangi eylem yardımcı olabilir.' },
-  { t: 'W3', q: 'Examining emergency-department wait times by shift and patient acuity to understand why delays happened is:', o: ['Diagnostic analytics', 'Descriptive analytics', 'Predictive analytics', 'Prescriptive analytics', 'Generative analytics'], why: 'Slayt 19: diagnostic = "Why might it have happened? Example: examining wait times by shift and patient acuity."' },
-  { t: 'W3', q: '"Does using the model improve decisions or outcomes compared with current practice?" This evaluation criterion is called:', o: ['Clinical utility', 'Clinical validity', 'Discrimination', 'Calibration', 'External validation'], why: 'Slayt 22. Clinical validity = iddia ettiği şeyi ölçüyor mu; discrimination = yüksek ve düşük riski ayırabiliyor mu (AUC); calibration = olasılıklar gerçek oranlara uyuyor mu.' },
-
-  /* ---------------- Week 4: Clinical decision-making ---------------- */
-  { t: 'CDM', q: 'According to the lecture\'s guiding question, if an AI system recommends a treatment, who is responsible for the final decision?', o: ['People and the healthcare organization, within its professional and legal framework, not the algorithm', 'The algorithm, because it produced the recommendation that was followed', 'The vendor that developed the system, as stated in the purchase contract', 'Nobody in particular, as long as the system was validated before use', 'The patient alone, because they accepted the treatment'], why: 'Slayt 2 ve 5 Kasım dersi: "The answer cannot simply be the algorithm." Sorumluluk kurum ve mesleki/yasal çerçeve içinde tanımlanmalı.' },
-  { t: 'CDM', q: 'In the lecture, a Clinical Decision Support System (CDSS) is described as a system that:', o: ['Provides patient- or context-specific information to support decisions, without replacing professional judgement or accountability', 'Makes the final clinical decision automatically so clinicians can focus on other tasks', 'Always uses deep learning to analyse images and notes before giving advice', 'Was introduced only after generative AI became widely available in hospitals', 'Only provides information to patients, not to healthcare professionals'], why: 'Slayt 6. Hoca: "In your midterm I will mention this concept as CDSS." Amaç daha informed kararlar. CDSS modern ML\'den önce de vardı (kurallar, eşikler, ilaç veritabanları).' },
-  { t: 'CDM', q: 'An alert compares a new prescription with the documented allergy list and warns the prescriber before the order is completed. Which description fits best?', o: ['A rule-based (knowledge-based) CDSS feature that does not need a sophisticated AI model', 'A non-knowledge-based machine learning model trained on historical prescriptions', 'A patient-facing decision aid that helps patients understand their options', 'A generative AI application that drafts a new prescription for the doctor', 'An unsupervised learning system that groups patients by their allergies'], why: 'Slayt 6\'daki basit örnek. Hoca 24 Ekim: allergy alert sofistike bir AI modeli gerektirmez; reçeteyi kayıtla karşılaştırır.' },
-  { t: 'CDM', q: 'A physician opens a clinical guideline database during a consultation to look something up. This type of decision support is:', o: ['Passive support', 'Active support', 'Patient-facing support', 'Non-knowledge-based support', 'Automated decision-making'], why: 'Slayt 7. Passive = klinisyen aradığında var, araya girmez. Active = iş akışında kendiliğinden çıkar (pop-up). Hoca bu türleri listelettirmeyeceğini, ama farkı bilmemiz gerektiğini söyledi.' },
-  { t: 'CDM', q: 'Before introducing an AI tool into the clinical workflow, which design question does the lecture ask?', o: ['Who sees the output, at what moment, and what are they expected to do differently?', 'Which programming language was the model written in, and who wrote it?', 'How many patients were included in the training data of the model?', 'Can the tool replace a member of staff and reduce costs on each ward?', 'Is the tool cheaper than its competitors on the market?'], why: 'Slayt 5. 5 Kasım: alert hastadan sorumlu olmayan birine giderse tahmin doğru ama sistem "failed operationally". Bu iş akışı tasarımı hastane yöneticilerinin sorumluluğu.' },
-  { t: 'CDM', q: 'Which alert is most likely to be ACTIONABLE rather than distracting?', o: ['One that is relevant to the current situation, understandable, and connected to a realistic next step', 'One that appears for every patient, every hour, so nothing is ever missed', 'One that arrives after the clinical decision has already been made', 'One that shows only "Warning" in red without any other information', 'One that repeats the same message several times to get attention'], why: 'Slayt 8 "Ask the class" sorusu. Hocanın tanımı: relevant, understandable, connected to a realistic next step. Distracting: irrelevant, repetitive, poorly timed, too vague.' },
-  { t: 'CDM', q: 'Nurses receive dozens of low-value alerts every shift and start dismissing them, including one important warning. This is:', o: ['Alert fatigue', 'Automation bias', 'Data leakage', 'Calibrated trust', 'A commission error'], why: 'Slayt 8 ve 16: alert fatigue = sık gelen düşük değerli uyarılar önemli uyarılara dikkati azaltır. Hocanın benzetmesi: telefon bildirimleri.' },
-  { t: 'CDM', q: 'Which statement about predictive analytics is correct?', o: ['It estimates the likelihood of a future event but does not prove it will happen or explain its cause', 'It tells clinicians exactly what will happen to each patient in the future', 'It identifies the cause of a disease from patterns in historical data', 'It automatically selects the right intervention for each high-risk patient', 'It does not need validation if the model is complex enough'], why: 'Slayt 9. Hoca: anahtar kelime "estimate"; "a predictive model does not know the future". Prediction ≠ causation.' },
-  { t: 'CDM', q: 'A deterioration model performed well in testing, but after deployment nobody defined what should happen when an alert appears. According to the lecture, the most likely result is:', o: ['More workload without meaningful improvement in patient outcomes', 'Better outcomes, because the model is accurate', 'Fewer alerts and less workload', 'Automatic transfer of high-risk patients to the ICU', 'Improved calibration'], why: 'Slayt 10 ve 5 Kasım dersindeki hikaye. "Knowing that a problem may happen is useful only if you can do something about it." Tahmin bir response pathway\'e bağlanmalı.' },
-  { t: 'CDM', q: 'Which prediction target is defined most precisely, as the lecture recommends?', o: ['Transfer to the ICU within 24 hours among adult inpatients', '"Patients who get worse during their hospital stay"', '"High-risk patients identified by the clinical team"', '"Any bad outcome at any time after admission"', '"Patients the doctor is worried about on the ward round"'], why: 'Slayt 10: "Define the target: what event, in which population, over what time horizon?" Hoca: 6 saat mi, 24 saat mi, 7 gün mü?' },
-  { t: 'CDM', q: 'A hospital lowers its alert threshold from 10% to 5% risk. What is the most likely effect?', o: ['More patients are flagged and fewer cases are missed, but false positives and unnecessary investigations increase', 'Fewer patients are flagged, and more true cases are missed by the system', 'False positives disappear, because more patients are reviewed earlier', 'Sensitivity decreases, while the number of alerts stays the same', 'Nothing changes, because the model itself has not been retrained'], why: 'Slayt 11 ve 5 Kasım\'daki %10 → %5 örneği. Daha düşük eşik = daha fazla true case + daha fazla false positive. Personel zamanı sınırlı.' },
-  { t: 'CDM', q: 'For a rapidly treatable, life-threatening condition, why might a hospital choose a lower alert threshold?', o: ['Because missing a case (a false negative) is very harmful, which can justify accepting more false positives', 'Because false positives cost nothing and never create extra workload', 'Because lower thresholds always improve the overall accuracy of the model', 'Because the condition is common, so most alerts will be true positives', 'Because a lower threshold reduces the number of alerts the team must review'], why: 'Slayt 11 "Discussion prompt". Hoca: "There is no universal threshold"; eşik klinik sonuçlara, kaynaklara, modelin güvenilirliğine ve hasta tercihlerine bağlı.' },
-  { t: 'CDM', q: 'A sepsis model is tested on 200 patients; 40 truly have sepsis. It flags 50 patients, and 30 of them truly have sepsis. What is the SENSITIVITY?', o: ['75%', '60%', '87.5%', '25%', '93%'], why: 'Sensitivity = TP / (TP + FN) = 30 / 40 = %75. (40 gerçek hastadan 30\'u yakalandı, 10\'u kaçırıldı.)' },
-  { t: 'CDM', q: 'Using the same sepsis example (200 patients, 40 with sepsis, 50 flagged, 30 of the flagged truly have sepsis), what is the POSITIVE PREDICTIVE VALUE (PPV)?', o: ['60%', '75%', '87.5%', '40%', '20%'], why: 'PPV = TP / (TP + FP) = 30 / 50 = %60. Alarm verilen 50 hastanın 30\'u gerçekten hasta, 20\'si false positive.' },
-  { t: 'CDM', q: 'Using the same sepsis example, what is the SPECIFICITY? (160 patients do not have sepsis; 20 of them were flagged.)', o: ['87.5%', '75%', '60%', '12.5%', '93%'], why: 'Specificity = TN / (TN + FP) = 140 / 160 = %87.5. NPV ise 140 / 150 = yaklaşık %93 olurdu (150 negatiften 140\'ı gerçekten sağlıklı).' },
-  { t: 'CDM', q: 'In a population of 2,000 patients, 20 have a rare condition. A model predicts "no condition" for everyone. What are its accuracy and sensitivity?', o: ['99% accuracy, 0% sensitivity', '1% accuracy, 100% sensitivity', '99% accuracy, 99% sensitivity', '50% accuracy, 0% sensitivity', '0% accuracy, 99% sensitivity'], why: 'Slayt 13: 1.980 / 2.000 doğru = %99 accuracy, ama 20 hastanın hiçbiri bulunmadı = %0 sensitivity. Hocanın örneği aynı mantık: 1.000\'de 10.' },
-  { t: 'CDM', q: 'A model with the same sensitivity and specificity is moved to a population where the condition is much rarer. Which measure is most likely to change, and how?', o: ['PPV usually falls, so a larger share of alerts are false positives', 'Sensitivity always rises, because rare conditions are easier to detect', 'Specificity falls to zero, because there are fewer healthy patients', 'Nothing changes, because the model and its threshold are the same', 'Accuracy always falls to 50%, because the data are now imbalanced'], why: 'Slayt 12: "PPV and NPV depend strongly on prevalence." Aynı model: prevalence %10 → PPV yaklaşık %50, %1 → PPV yaklaşık %8 (sens ve spec %90 ise).' },
-  { t: 'CDM', q: 'A model ranks patients well (high AUC), but among patients it gives a 30% risk, only 10% actually have the event. The model has:', o: ['Good discrimination but poor calibration', 'Poor discrimination but good calibration', 'Good discrimination and good calibration', 'Data leakage but good calibration', 'Perfect sensitivity'], why: 'Slayt 14. Discrimination = riskli ve risksizleri ayırabilmek (AUC). Calibration = tahmin edilen olasılıklar gerçek oranlarla uyuşuyor mu. %30 deyip %10 çıkması kötü calibration.' },
-  { t: 'CDM', q: 'A deterioration model uses a medication that is usually ordered only after clinicians have already recognised deterioration. Its performance looks unrealistically strong. This is:', o: ['Data leakage', 'External validation', 'Calibration', 'Alert fatigue', 'Augmented intelligence'], why: 'Slayt 14: data leakage = tahmin anında mevcut olmayan bilgiyi kullanmak; sonuçlar gerçek dışı derecede iyi görünür. Slayt 10: "what information was available at that moment?"' },
-  { t: 'CDM', q: 'A model developed in a large urban teaching hospital is tested on data from a small rural hospital before use. This is:', o: ['External validation', 'Internal validation', 'Data leakage', 'Calibration drift', 'Supervised learning'], why: 'Slayt 14. External validation = başka hastane, şehir, zaman dönemi ya da popülasyon. Hoca: hastaneler hasta, uygulama, ekipman, personel ve kayıt sistemleri bakımından farklıdır.' },
-  { t: 'CDM', q: 'Which statement best describes augmented intelligence?', o: ['Using AI to extend and strengthen human capabilities, with the goal of better decisions rather than maximum automation', 'Replacing clinicians with fully automated systems to reduce human error', 'Increasing the number of alerts so that clinicians never miss a case', 'Letting AI make the decisions when clinicians are too busy to review them', 'A type of deep learning used mainly for medical imaging'], why: 'Slayt 15. Hocanın en sevdiği kavram. Automation = işi makineye aktarmak; augmentation = insanın işini daha iyi yapmasına yardım etmek. Navigasyon benzetmesi: yol kapalıysa kendi yargını kullanırsın.' },
-  { t: 'CDM', q: 'According to the lecture, meaningful human oversight requires:', o: ['Time, relevant information, understanding of the system\'s limits and the authority to disagree with it', 'Signing every AI output as quickly as possible to keep the workflow moving', 'Turning the AI system off whenever it disagrees with the clinician', 'Knowing the full source code and training data of the model', 'Following the AI unless a manager objects to its recommendation'], why: 'Slayt 15 ve 5 Kasım: oversight = access to relevant information, understanding limitations, ability to reject. Klinisyen bir "rubber stamp" olmamalı.' },
-  { t: 'CDM', q: 'A physician follows an AI-recommended drug dose that turns out to be wrong, even though the patient\'s kidney results suggested otherwise. This is:', o: ['A commission error caused by automation bias', 'An omission error, because the physician did not check the AI', 'Alert fatigue, because the physician ignored the warning signs', 'Under-trust, because the physician relied on the system too little', 'Calibrated trust, because the physician followed a validated system'], why: 'Slayt 16. Commission = yanlış öneriyi uygulamak. Omission = sistem uyarmadığı için harekete geçmemek. Elde çelişen kanıt varken AI\'a uymak = automation bias.' },
-  { t: 'CDM', q: 'A usually reliable monitoring system fails to flag a deteriorating patient, and staff do not check the patient because there was no alert. This is:', o: ['An omission error', 'A commission error', 'Data leakage', 'A false positive', 'External validation'], why: 'Slayt 16 ve 5 Kasım: omission error = "fails to take action because the system did not identify a problem".' },
-  { t: 'CDM', q: 'Would displaying a confidence score (for example "95% confidence") always help clinicians?', o: ['No; users may misread it, for example as a 95% chance the recommendation is correct, so its meaning must be clear and users trained', 'Yes; more numbers always improve clinical decisions and reduce uncertainty', 'Yes; a 95% confidence score guarantees that the recommendation is correct', 'No; confidence scores are not allowed to be shown in clinical systems', 'Yes; a confidence score replaces the need for any explanation'], why: 'Slayt 17\'deki soru. 5 Kasım: "Numbers can create a false sense of certainty." Hedef calibrated trust: güven + uygun skepticism.' },
-  { t: 'CDM', q: 'Which AI output is the most useful explanation according to the lecture?', o: ['"Higher estimated risk of deterioration based on recent changes in vital signs and lab results; consider urgent clinical review."', '"High risk." shown in large red letters at the top of the screen', 'A complete list of the 150 model weights and coefficients used in the prediction', '"The model is 97% accurate on the test data, so this result is reliable."', 'A red warning icon that appears next to the patient\'s name'], why: 'Slayt 17 ve 5 Kasım: sadece "High risk" yetmez (neyin riski, ne süre içinde, neye dayanarak, ne yapmalı?). "The best explanation is not necessarily the most complicated." Açıklama nedensellik kanıtlamaz.' },
-  { t: 'CDM', q: 'Could a model be statistically accurate overall but still unsafe for a particular patient group?', o: ['Yes; performance must be checked across relevant subgroups, not only overall', 'No; overall accuracy guarantees safety for every patient group', 'Only if the model uses deep learning rather than simpler methods', 'Only in very small hospitals with few patients', 'No; bias only affects the training phase, not real use'], why: 'Slayt 18 "Important question". Hoca: "Absolutely." Hasta güvenliği tek bir performans metriğinden fazlasını ister.' },
-  { t: 'CDM', q: 'A hospital buys an AI system from an external vendor. Which statement is correct according to the lecture?', o: ['The hospital still needs named owners for clinical decisions, maintenance, incidents and suspension; responsibility cannot be delegated by contract', 'All responsibility transfers to the vendor once the contract is signed', 'The algorithm becomes legally responsible for its own recommendations', 'No governance is needed if the vendor is reputable and certified', 'Clinicians are no longer responsible for decisions supported by the system'], why: 'Slayt 19 ve 5 Kasım: "These responsibilities cannot simply disappear into a contract with a technology company."' },
-  { t: 'CDM', q: 'Using health data only for the stated purpose for which it was collected, under appropriate legal authority and with safeguards, refers to:', o: ['Purpose limitation', 'Data minimisation', 'Interoperability', 'Calibration', 'Data provenance'], why: 'Slayt 19. Dikkat: data minimisation = sadece gereken kadar veriyi toplamak ve açmak (Hafta 3). Purpose limitation = veriyi sadece belirtilen amaç için kullanmak.' },
-  { t: 'CDM', q: 'A model performed well when introduced, but a year later it is less reliable because clinical practice and the patient population have changed. The lecture calls for:', o: ['Ongoing monitoring with clear procedures to update, review or withdraw the system', 'Nothing, because a validated model stays valid for as long as it is used', 'Replacing the clinicians who disagree with the model', 'Raising the alert threshold without any review or evaluation', 'Deleting the training data so the model can start again'], why: 'Slayt 19-20 ve 5 Kasım: veri, uygulama ve popülasyon değişir (drift). Gerekirse update, pause veya withdraw için kriterler önceden belirlenmeli.' },
-  { t: 'CDM', q: 'A vendor tells a hospital manager: "We have a highly accurate, innovative AI system." According to the lecture, what should the manager do FIRST?', o: ['Ask what clinical problem the hospital is trying to solve', 'Buy it immediately to stay competitive', 'Deploy it across the whole hospital', 'Ask only about the price', 'Ask which neural network architecture it uses'], why: 'Slayt 20 ve 5 Kasım: "Would you immediately purchase it? I hope not." Sıra: problem → stakeholders → workflow → readiness → pilot → training → monitoring.' },
-  { t: 'CDM', q: 'In a pilot, a deterioration alert produces more alerts than nurses can review, and some deteriorating patients are still missed. What is the most defensible recommendation?', o: ['Pause expansion, investigate the causes and redesign before scaling up', 'Expand to all wards immediately', 'Continue unchanged, because the model is accurate in testing', 'Stop using AI in the hospital permanently', 'Lower the threshold further and expand'], why: 'Slayt 21-22 case study. Karar sadece accuracy\'ye bakılarak verilmez; alert kapasitesi, response protocol ve kimin kaçırıldığı incelenmeli.' },
-  { t: 'CDM', q: 'Which of the following is NOT part of "responsible success" for a clinical AI tool?', o: ['It saves money for the hospital even though patients gain no benefit', 'It performs acceptably across relevant patient subgroups', 'Clinicians understand its purpose and limits', 'Errors are identified and acted upon', 'It remains useful as conditions change'], why: 'Slayt 23: fayda hasta için anlamlı olmalı, sadece kurum için uygun değil. Tüm human–AI–workflow sistemi değerlendirilir.' },
-  { t: 'CDM', q: 'An AI system recommends a treatment, but the patient reports severe side effects from that treatment in the past and prefers another option. What should happen?', o: ['The recommendation should not be followed automatically; the patient\'s history and preferences are part of the clinical decision', 'Follow the AI recommendation, because it analysed thousands of similar cases', 'Ask the AI to decide again until it recommends the treatment the patient wants', 'Ignore the patient\'s preference so that care stays consistent with the model', 'Discharge the patient without treatment until the disagreement is resolved'], why: '5 Kasım: "The patient is not simply a collection of laboratory values." Klinik karar hastanın beklentilerini de dikkate almalı.' },
+  {
+    "t": "W1",
+    "q": "According to the lecture, what is the key question about AI in healthcare?",
+    "o": [
+      "Better care with available resources",
+      "Can AI replace physicians in routine diagnosis so that hospitals can reduce their staffing costs?",
+      "How quickly can hospitals automate clinical decisions to remove human error from patient care?",
+      "Which AI vendor offers the most accurate system for a hospital to purchase?",
+      "Can AI eliminate the need for healthcare managers in resource planning?"
+    ],
+    "why": "The course evaluates better care within available resources."
+  },
+  {
+    "t": "W1",
+    "q": "A bed-management AI reads occupancy data from the hospital information system and sends notifications to the admissions team. In AI-agent terms, the notifications are the agent's:",
+    "o": [
+      "Actuators",
+      "Sensors",
+      "Environment",
+      "Performance measure",
+      "Training data"
+    ],
+    "why": "Sending a notification acts on the environment; reading occupancy is sensing."
+  },
+  {
+    "t": "W1",
+    "q": "Population health analysis, financial forecasting and long-term planning belong to which area of AI in healthcare?",
+    "o": [
+      "Strategic and system-level AI",
+      "Clinical AI",
+      "Administrative and operational AI",
+      "Robotic process automation",
+      "Generative AI"
+    ],
+    "why": "Population-level and long-term planning belong to the strategic area."
+  },
+  {
+    "t": "W1",
+    "q": "\"Symptoms and test results do not always provide a clear or complete picture of a patient's condition.\" Which characteristic of healthcare does this describe?",
+    "o": [
+      "Uncertainty",
+      "Time sensitivity",
+      "Complex information",
+      "Resource constraints",
+      "Human-centered care"
+    ],
+    "why": "Incomplete evidence leaves uncertainty about the patient’s condition."
+  },
+  {
+    "t": "W1",
+    "q": "According to the lecture, the capabilities of an AI system depend on:",
+    "o": [
+      "Its design, training data and intended use",
+      "Its human-like understanding of patients",
+      "The moral responsibility it accepts for decisions",
+      "The number of physicians who use it",
+      "Whether it is called \"AI\" by the vendor"
+    ],
+    "why": "Capabilities depend on design, training data and intended use."
+  },
+  {
+    "t": "W1",
+    "q": "A hospital manager asks: \"Should AI be allowed to make clinical decisions without human approval?\" Which answer best fits the course?",
+    "o": [
+      "Support with human oversight and accountability",
+      "Yes, if its accuracy in testing is above 90%, because high accuracy makes oversight unnecessary",
+      "Yes, because AI eliminates human error and professional responsibility",
+      "Only in emergency departments, where time pressure justifies removing human review",
+      "Yes, as long as the vendor accepts legal responsibility for every decision"
+    ],
+    "why": "Decision support retains human oversight and professional accountability."
+  },
+  {
+    "t": "W2",
+    "q": "Which statement best describes \"AI\" according to the technologies lecture?",
+    "o": [
+      "An umbrella for several technologies",
+      "A single technology based on neural networks that understands patients the way clinicians do",
+      "Another word for healthcare robotics that performs physical tasks in hospitals",
+      "A system with human-like understanding and autonomy, ready for clinical use once accurate",
+      "A tool that becomes clinically ready as soon as its accuracy is high enough"
+    ],
+    "why": "AI covers several technology families with different tasks and risks."
+  },
+  {
+    "t": "W2",
+    "q": "Grouping patients with similar patterns of disease or service use, without a target label, is an example of:",
+    "o": [
+      "Unsupervised learning",
+      "Supervised learning",
+      "Reinforcement learning",
+      "Generative AI",
+      "Image segmentation"
+    ],
+    "why": "Unsupervised learning finds structure without known target labels."
+  },
+  {
+    "t": "W2",
+    "q": "Which statement about machine learning and deep learning is correct?",
+    "o": [
+      "Deep learning is a subset of machine learning",
+      "Deep learning is a separate field unrelated to machine learning and uses different data",
+      "Deep learning is always better than traditional machine learning for every task",
+      "Machine learning can only be used on medical images, not structured data",
+      "Deep learning models are usually easier to interpret than other models"
+    ],
+    "why": "Deep learning belongs within machine learning; neither is automatically best."
+  },
+  {
+    "t": "W2",
+    "q": "Note: \"A 68-year-old patient was admitted last month for pneumonia. Today the patient has no fever and denies cough. The clinician is considering discharge.\" Which extraction is correct?",
+    "o": [
+      "Past pneumonia; no fever or cough; discharge undecided",
+      "Current pneumonia; fever present; cough present; patient discharged today",
+      "Current pneumonia confirmed; patient was discharged today after treatment",
+      "No history of pneumonia; no fever; discharge has been confirmed by the clinician",
+      "Fever and cough are present now; pneumonia has been ruled out completely"
+    ],
+    "why": "Last month is historical, denies negates cough, and considering is not confirmation."
+  },
+  {
+    "t": "W2",
+    "q": "A model outlines exactly which pixels in a CT scan belong to a tumour. This computer vision task is:",
+    "o": [
+      "Segmentation",
+      "Classification",
+      "Detection",
+      "Calibration",
+      "Natural language processing"
+    ],
+    "why": "Segmentation identifies individual pixels; detection locates an area."
+  },
+  {
+    "t": "W2",
+    "q": "Which of the following is NOT listed as a potential failure source in the computer vision workflow?",
+    "o": [
+      "A clinician reviewing the model's output",
+      "Image quality from the scanner, camera or slide",
+      "Device differences between hospitals or scanners",
+      "Label disagreement between expert annotators",
+      "Population shift between the training and target hospitals"
+    ],
+    "why": "Review is the intended use step; image quality and site differences can cause failure."
+  },
+  {
+    "t": "W3",
+    "q": "According to the lecture, the central challenge with healthcare data is:",
+    "o": [
+      "Trustworthy, usable and responsibly governed data",
+      "Collecting as much data as possible, because more data always means better decisions",
+      "Replacing all paper records with scanned images as quickly as possible",
+      "Storing all hospital data in the cloud so that AI can access it",
+      "Using only structured data, because unstructured data has no value"
+    ],
+    "why": "Relevant, trustworthy data matters more than volume alone."
+  },
+  {
+    "t": "W3",
+    "q": "Why is a simple scanned paper chart NOT equivalent to an EHR?",
+    "o": [
+      "Useful data, workflow integration and exchange",
+      "Scanned charts are not allowed to be stored digitally in hospitals",
+      "EHRs never contain clinical notes, only billing codes and dates",
+      "Scanned charts contain more structured information than EHRs do",
+      "EHRs are used only for billing, while scanned charts support care"
+    ],
+    "why": "An EHR needs useful data, integration and exchange beyond a scanned image."
+  },
+  {
+    "t": "W3",
+    "q": "A lab result is linked to the wrong patient when it is stored. What does the lecture warn about this?",
+    "o": [
+      "The identity error can affect later decisions",
+      "The EHR automatically detects and corrects the error before anyone uses it",
+      "It only affects billing, so clinical decisions are not at risk",
+      "It is a timeliness problem only, because the result arrived late",
+      "It has no effect on AI models, because models ignore patient identity"
+    ],
+    "why": "An identity error can propagate into later outputs and decisions."
+  },
+  {
+    "t": "W3",
+    "q": "Weight is stored in pounds in one system and in kilograms in another. Which data-quality dimension is affected?",
+    "o": [
+      "Consistency",
+      "Accuracy",
+      "Completeness",
+      "Timeliness",
+      "Uniqueness"
+    ],
+    "why": "Different units create inconsistent representations of the same measurement."
+  },
+  {
+    "t": "W3",
+    "q": "A recorded body temperature of 410 °C is an example of a problem with:",
+    "o": [
+      "Validity",
+      "Completeness",
+      "Timeliness",
+      "Uniqueness",
+      "Velocity"
+    ],
+    "why": "410 °C is outside a valid body-temperature range."
+  },
+  {
+    "t": "W3",
+    "q": "Data arriving rapidly from ICU monitors and wearable sensors illustrates which \"V\" of big data?",
+    "o": [
+      "Velocity",
+      "Volume",
+      "Variety",
+      "Veracity",
+      "Value"
+    ],
+    "why": "Velocity concerns the speed at which data arrives."
+  },
+  {
+    "t": "W4",
+    "q": "In the lecture, a Clinical Decision Support System (CDSS) is described as a system that:",
+    "o": [
+      "Patient-specific information supporting decisions",
+      "Makes the final clinical decision automatically so clinicians can focus on other tasks",
+      "Always uses deep learning to analyse images and notes before giving advice",
+      "Was introduced only after generative AI became widely available in hospitals",
+      "Only provides information to patients, not to healthcare professionals"
+    ],
+    "why": "CDSS supplies patient- or context-specific information to support decisions."
+  },
+  {
+    "t": "W4",
+    "q": "A hospital lowers its alert threshold from 10% to 5% risk. What is the most likely effect?",
+    "o": [
+      "More cases caught, more false positives",
+      "Fewer patients are flagged, and more true cases are missed by the system",
+      "False positives disappear, because more patients are reviewed earlier",
+      "Sensitivity decreases, while the number of alerts stays the same",
+      "Nothing changes, because the model itself has not been retrained"
+    ],
+    "why": "Lowering the threshold catches more cases but increases false positives and workload."
+  },
+  {
+    "t": "W4",
+    "q": "A sepsis model is tested on 200 patients; 40 truly have sepsis. It flags 50 patients, and 30 of them truly have sepsis. What is the SENSITIVITY?",
+    "o": [
+      "75%",
+      "60%",
+      "87.5%",
+      "25%",
+      "93%"
+    ],
+    "why": "Sensitivity starts from true cases: 30 of 40 were caught, giving 75%."
+  },
+  {
+    "t": "W4",
+    "q": "A model ranks patients well (high AUC), but among patients it gives a 30% risk, only 10% actually have the event. The model has:",
+    "o": [
+      "Good discrimination but poor calibration",
+      "Poor discrimination but good calibration",
+      "Good discrimination and good calibration",
+      "Data leakage but good calibration",
+      "Perfect sensitivity"
+    ],
+    "why": "Ranking is discrimination; 30% predicted versus 10% observed is poor calibration."
+  },
+  {
+    "t": "W4",
+    "q": "According to the lecture, meaningful human oversight requires:",
+    "o": [
+      "Time, information and authority to disagree",
+      "Signing every AI output as quickly as possible to keep the workflow moving",
+      "Turning the AI system off whenever it disagrees with the clinician",
+      "Knowing the full source code and training data of the model",
+      "Following the AI unless a manager objects to its recommendation"
+    ],
+    "why": "Oversight needs time, relevant information, understanding and authority to disagree."
+  },
+  {
+    "t": "W4",
+    "q": "A hospital buys an AI system from an external vendor. Which statement is correct according to the lecture?",
+    "o": [
+      "Named hospital owners remain responsible",
+      "All responsibility transfers to the vendor once the contract is signed",
+      "The algorithm becomes legally responsible for its own recommendations",
+      "No governance is needed if the vendor is reputable and certified",
+      "Clinicians are no longer responsible for decisions supported by the system"
+    ],
+    "why": "A contract does not remove institutional ownership of decisions, maintenance and incidents."
+  }
 ];
+(() => {
+ const host=document.getElementById('exam');
+ MOCK.forEach((q,i)=>{
+  const box=CS.el('section',{class:'panel mq'}),fb=CS.el('p',{'aria-live':'polite',class:'feedback'});
+  box.append(CS.el('h2',{class:'quiz-q'},(i+1)+'. '+q.q),CS.el('p',{class:'small muted'},'Week '+q.t.slice(1)));
+  const options=CS.shuffle(q.o.map((text,k)=>({text,right:k===0})));
+  const buttons=options.map(o=>CS.el('button',{class:'opt',onclick:()=>{
+   buttons.forEach((b,k)=>{b.disabled=true;if(options[k].right)b.classList.add('right');});
+   if(!o.right)buttons[options.indexOf(o)].classList.add('wrong');
+   fb.textContent=(o.right?'Correct. ':'Incorrect. ')+q.why;
+   CS.srs.grade(CS.srs.qId(COURSE.id,Number(q.t.slice(1)),q.q),o.right);
+  }},o.text));
+  box.append(...buttons,fb);host.append(box);
+ });
+})();

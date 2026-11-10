@@ -1,881 +1,1469 @@
-/* UNI480 — AI in Health Management (Istinye University, Fall 2026-2027)
- * Content comes from the lecturer's slides (Dr. Burcu Arsan) and the syllabus.
- * Raw files: materials/UNI480/.
- *
- * Mapping of the slide files to weeks:
- *   "Week 1.pptx"   → week 1, Introduction to AI in Healthcare
- *   "Week 2-3.pptx" → week 2, AI Technologies in Healthcare
- *   "Week 3.pptx"   → week 3, Healthcare Data and AI
- *   "Week 4.pptx"   → week 4, AI in Clinical Decision-Making
- *   "Week 5.pptx"   → a shortened copy of the week 4 deck; it adds no new topic. The syllabus
- *                     topic for week 5 (Diagnosis and Medical Imaging) is not in any slide yet.
- *
- * To add a week: append to `chapters`, add its games to `games`, and create any custom
- * simulation pages under uni480/wN/.
- */
+/* UNI480: condensed from the existing slide- and lecture-based course content. */
 window.COURSE = window.UNI480 = {
-  id: 'uni480',
-  code: 'UNI480',
-  name: 'AI in Health Management',
-  term: 'Fall 2026-2027',
-  lecturer: 'Dr. Burcu Arsan, MBA, PhD, RAIIM',
-  examFormat: 'Midterm 30% (7 Nov) · Final 50% · Term project 20%. Both exams are multiple choice.',
-  textbooks: [
-    'Lecturer\'s notes (required). Selected articles and case studies from the instructor.',
+  "id": "uni480",
+  "code": "UNI480",
+  "name": "AI in Health Management",
+  "term": "Fall 2026-2027",
+  "lecturer": "Dr. Burcu Arsan, MBA, PhD, RAIIM",
+  "examFormat": "Midterm 30% (7 Nov) · Final 50% · Term project 20%. Both exams are multiple choice.",
+  "textbooks": [
+    "Lecturer's notes (required). Selected articles and case studies from the instructor."
   ],
-  projects: [
-    'Term project (20%), individual written report. Choose a healthcare organization, health-tech company, hospital, health app or AI-based healthcare solution, and critically analyse how it uses AI.',
-    'Suggested headings: 1 Organization / solution overview · 2 Healthcare problem or need · 3 AI technology and application · 4 Impact on healthcare management and decision-making · 5 Benefits and potential value · 6 Ethical, legal and privacy considerations · 7 Organizational and human factors · 8 Challenges and limitations · 9 Recommendations · 10 Conclusion.',
-    'Format: Times New Roman 12, 1.5 spacing, cover page, table of contents, body of at least five full pages, references, appendices as needed, numbered pages.',
-    'Checked by Turnitin for plagiarism and AI-generated content: a similarity / AI score above 25% gets zero. Write it yourself; disclose any AI tool use properly.',
+  "projects": [
+    "Term project (20%), individual written report. Choose a healthcare organization, health-tech company, hospital, health app or AI-based healthcare solution, and critically analyse how it uses AI.",
+    "Suggested headings: 1 Organization / solution overview · 2 Healthcare problem or need · 3 AI technology and application · 4 Impact on healthcare management and decision-making · 5 Benefits and potential value · 6 Ethical, legal and privacy considerations · 7 Organizational and human factors · 8 Challenges and limitations · 9 Recommendations · 10 Conclusion.",
+    "Format: Times New Roman 12, 1.5 spacing, cover page, table of contents, body of at least five full pages, references, appendices as needed, numbered pages.",
+    "Checked by Turnitin for plagiarism and AI-generated content: a similarity / AI score above 25% gets zero. Write it yourself; disclose any AI tool use properly."
   ],
-
-  chapters: [
-    /* ================================================================ */
+  "chapters": [
     {
-      n: 1,
-      title: 'Introduction to AI in Healthcare',
-      summary: 'Why healthcare needs AI, what AI is (and is not), where it came from, intelligent agents, the three areas of AI in healthcare, why healthcare is a special industry, and what AI can and cannot guarantee.',
-      takeaways: [
-        'Healthcare faces pressure on quality, access, efficiency and patient safety. It produces huge amounts of clinical, administrative and operational data, and staff must make complex decisions under uncertainty. Key question: can AI help deliver better care with the resources we have?',
-        'AI is a field of computer science that builds systems performing tasks associated with human intelligence: learning from data, recognizing patterns, understanding and generating language, interpreting images, making predictions and recommendations, and supporting decisions.',
-        'AI does not automatically have human understanding, professional judgment, empathy or moral responsibility. Its abilities depend on its design, training data and intended use.',
-        'History: Turing asked "Can machines think?" and proposed the Turing Test (1940s–50s). At the 1956 Dartmouth Conference, McCarthy, Minsky, Rochester and Shannon coined "Artificial Intelligence". Early logic programs (1950s–70s) were followed by the "AI winters" of the 1970s–80s. Modern AI moved from rule-based systems to machine learning and deep learning, thanks to data, computing power and algorithms.',
-        'McCarthy, the "father of AI", defined it as "the science and engineering of making intelligent machines, especially intelligent computer programs".',
-        'An intelligent agent perceives its environment through sensors and acts on it through actuators to reach goals. Its components are sensors, actuators, environment, an agent function (perceptions → actions) and a performance measure.',
-        'AI in healthcare has three areas: clinical (diagnosis, imaging, risk prediction, treatment planning, monitoring), administrative/operational (scheduling, patient flow, demand forecasting, staff planning, documentation) and strategic/system-level (population health, financial forecasting, quality, public-health surveillance, planning).',
-        'Healthcare is different because of complex information, time sensitivity, uncertainty, high consequences, resource constraints and human-centered care.',
-        'AI cannot guarantee a correct diagnosis every time, better outcomes everywhere, unbiased results for every population, full understanding of a patient, automatic cost savings or the end of human error and responsibility.',
-        'Responsible use needs data quality and validation, evaluation in the intended clinical setting, privacy protection, human oversight where necessary and continuous monitoring.',
+      "n": 1,
+      "title": "Introduction to AI in Healthcare",
+      "summary": "Explain AI’s role and limits in healthcare management.",
+      "takeaways": [
+        "AI = computer systems that do tasks we normally link to human intelligence: learning from data, understanding language, reading images, predicting, and supporting decisions.",
+        "Turing asked the question (\"Can machines think?\"). Dartmouth 1956 gave the field its name. AI is booming today because of data + computing power + better algorithms.",
+        "An agent senses its environment, decides with its agent function, and acts through actuators. It can be pure software; it does not have to be a robot.",
+        "AI in healthcare is not only diagnosis. There are three areas: caring for the patient, running the hospital, and planning for the whole system and the future.",
+        "A hospital is not Netflix. Decisions are complex, urgent, uncertain and high-stakes, resources are limited, and care must centre on the patient.",
+        "AI cannot guarantee a correct diagnosis, better outcomes everywhere, fair results for everyone, or savings. The human keeps the professional responsibility."
       ],
-      traps: [
-        ['AI understands patients the way a doctor does', 'AI has no built-in understanding, judgment, empathy or moral responsibility. What it can do depends on its design, training data and intended use.'],
-        ['AI in healthcare means diagnosing diseases', 'Diagnosis is only the clinical area. AI also runs scheduling, patient flow and staffing (operational) and population health and financial planning (strategic).'],
-        ['If an AI tool works, it lowers costs automatically', '"Automatic reductions in healthcare costs" is on the list of things AI cannot guarantee.'],
-        ['Using AI removes professional responsibility', 'AI cannot eliminate human error or professional responsibility. People stay accountable.'],
-        ['The term "AI" came from Alan Turing', 'Turing asked "Can machines think?". The term was coined at the 1956 Dartmouth Conference (McCarthy, Minsky, Rochester, Shannon).'],
-        ['An AI winter was a period of fast progress', 'AI winters (1970s–80s) were periods of funding cuts and slow progress.'],
-        ['Sensors and actuators are the same thing', 'Sensors observe the world (cameras, microphones, data inputs). Actuators act on it (robot arms, speakers, software commands).'],
+      "traps": [
+        [
+          "AI understands patients the way a doctor does",
+          "AI has no built-in understanding, judgment, empathy or moral responsibility. What it can do depends on its design, training data and intended use."
+        ],
+        [
+          "AI in healthcare means diagnosing diseases",
+          "Diagnosis is only the clinical area. AI also runs scheduling, patient flow and staffing (operational) and population health and financial planning (strategic)."
+        ],
+        [
+          "If an AI tool works, it lowers costs automatically",
+          "\"Automatic reductions in healthcare costs\" is on the list of things AI cannot guarantee."
+        ],
+        [
+          "Using AI removes professional responsibility",
+          "AI cannot eliminate human error or professional responsibility. People stay accountable."
+        ],
+        [
+          "The term \"AI\" came from Alan Turing",
+          "Turing asked \"Can machines think?\". The term was coined at the 1956 Dartmouth Conference (McCarthy, Minsky, Rochester, Shannon)."
+        ]
       ],
-      activities: [
-        { id: 'w1-agent', title: 'Ward Monitoring Agent', desc: 'Build an intelligent agent for a hospital ward: its sensors read vital signs, its agent function decides, its actuator alerts a nurse. Change its rule and watch the performance measure.', href: 'w1/agent.html' },
-        { id: 'w1-manager', title: 'You Are the Hospital Manager', desc: 'Slide 4\'s scenario: long waits, staff shortages, rising costs. Pick three AI projects, then see which area each belongs to, what it can and cannot guarantee, and what it needs before it is safe.', href: 'w1/manager.html' },
+      "activities": [
+        {
+          "id": "w1-agent",
+          "title": "Ward Monitoring Agent",
+          "desc": "Build an intelligent agent for a hospital ward: its sensors read vital signs, its agent function decides, its actuator alerts a nurse. Change its rule and watch the performance measure.",
+          "href": "w1/agent.html"
+        },
+        {
+          "id": "w1-manager",
+          "title": "You Are the Hospital Manager",
+          "desc": "Slide 4's scenario: long waits, staff shortages, rising costs. Pick three AI projects, then see which area each belongs to, what it can and cannot guarantee, and what it needs before it is safe.",
+          "href": "w1/manager.html"
+        }
       ],
-      quiz: [
-        { q: 'According to the lecture, what is Artificial Intelligence?', options: ['A field of computer science that develops systems able to perform tasks commonly associated with human intelligence', 'A robot that replaces doctors', 'Any software used in a hospital', 'A database of medical records'], answer: 0, explain: 'Slide 5: systems performing tasks associated with human intelligence, such as learning, recognizing patterns, language, images, predictions and decision support.' },
-        { q: 'Which statement about AI is the lecture\'s "important distinction"?', options: ['AI does not automatically possess human understanding, professional judgment, empathy or moral responsibility', 'AI always understands the patient better than humans', 'AI has its own moral responsibility', 'AI capabilities do not depend on training data'], answer: 0, explain: 'Slide 5: its capabilities depend on design, training data and intended use.' },
-        { q: 'Who asked "Can machines think?" and introduced a famous test?', options: ['Alan Turing', 'John McCarthy', 'Claude Shannon', 'Marvin Minsky'], answer: 0, explain: 'Slide 6: Alan Turing, 1940s–1950s, the Turing Test.' },
-        { q: 'Where and when was the term "Artificial Intelligence" coined?', options: ['At the Dartmouth Conference in 1956', 'At MIT in 1943', 'In Turing\'s 1950 paper', 'At Stanford in 1970'], answer: 0, explain: 'Slide 6: 1956 Dartmouth Conference — McCarthy, Minsky, Rochester and Shannon. It marked the official start of AI as a field.' },
-        { q: 'What were the "AI winters"?', options: ['Periods of funding cuts and slow progress in the 1970s and 1980s', 'The years when AI first beat humans at chess', 'Periods of rapid investment in deep learning', 'Cold-weather tests of hospital robots'], answer: 0, explain: 'Slide 7: ambitious goals met real-world limits.' },
-        { q: 'Why is AI much more powerful today, according to the lecture?', options: ['More data, more computing power and better algorithms', 'Because rule-based systems were perfected', 'Because computers became conscious', 'Because AI winters ended all research'], answer: 0, explain: 'Slide 7: the transition from rule-based systems to machine learning and deep learning, driven by data, computing power and algorithms.' },
-        { q: 'John McCarthy, the "father of AI", defined AI as…', options: ['"The science and engineering of making intelligent machines, especially intelligent computer programs"', '"Machines that feel emotions"', '"Statistics applied to medicine"', '"Any automated hospital process"'], answer: 0, explain: 'Slide 8.' },
-        { q: 'An AI agent is an entity that…', options: ['Perceives its environment through sensors and acts upon it using actuators to achieve goals', 'Only stores data', 'Acts randomly without goals', 'Must be a physical robot'], answer: 0, explain: 'Slide 9: an agent senses, thinks and acts. It can be software, not only a robot.' },
-        { q: 'In an AI agent, which component maps perceptions to actions?', options: ['The agent function', 'The sensors', 'The actuators', 'The performance measure'], answer: 0, explain: 'Slide 10: agent function = perceptions → actions.' },
-        { q: 'A hospital scheduling bot sends software commands that book appointments. In agent terms, these commands are its…', options: ['Actuators', 'Sensors', 'Environment', 'Performance measure'], answer: 0, explain: 'Actuators are how the agent affects the world; software commands are an example on slide 10.' },
-        { q: 'What does the performance measure of an agent do?', options: ['Evaluates how well the agent achieves its goals', 'Collects data from the environment', 'Moves the robot arm', 'Stores the patient record'], answer: 0, explain: 'Slide 10.' },
-        { q: 'Demand forecasting, staff planning and appointment scheduling belong to which area of AI in healthcare?', options: ['Administrative and operational AI', 'Clinical AI', 'Strategic and system-level AI', 'Robotic surgery'], answer: 0, explain: 'Slide 11: area 2.' },
-        { q: 'Population health analysis and public-health surveillance belong to which area?', options: ['Strategic and system-level AI', 'Clinical AI', 'Administrative and operational AI', 'None — AI cannot do this'], answer: 0, explain: 'Slide 11: area 3, together with financial forecasting, quality improvement and long-term planning.' },
-        { q: 'Medical imaging interpretation and clinical risk prediction belong to…', options: ['Clinical AI', 'Administrative AI', 'Strategic AI', 'Operational robotics'], answer: 0, explain: 'Slide 11: area 1.' },
-        { q: 'Which is the "key principle" of slide 11?', options: ['AI in healthcare is not limited to treating diseases; it can also help manage the systems that deliver care', 'AI should only be used for diagnosis', 'AI replaces hospital managers', 'AI is only useful in research'], answer: 0, explain: 'Slide 11.' },
-        { q: 'Which is NOT one of the reasons the lecture gives for healthcare being different from other industries?', options: ['Healthcare data is always simple and complete', 'Time sensitivity', 'High consequences', 'Human-centered care'], answer: 0, explain: 'Slide 12 lists complex information, time sensitivity, uncertainty, high consequences, resource constraints and human-centered care. Data is complex, not simple.' },
-        { q: '"Symptoms and test results do not always provide a clear or complete picture." Which feature of healthcare is this?', options: ['Uncertainty', 'Time sensitivity', 'Resource constraints', 'Human-centered care'], answer: 0, explain: 'Slide 12.' },
-        { q: 'Which is one of the five reasons AI will be important in healthcare (slide 13)?', options: ['Reducing administrative burden, giving professionals more time for patients', 'Removing the need for doctors', 'Guaranteeing correct diagnoses', 'Eliminating all costs'], answer: 0, explain: 'Slide 13: increasing volume of information, earlier detection, reducing administrative burden, efficiency, more personalized care.' },
-        { q: 'Which of these CAN AI guarantee in healthcare?', options: ['None of these — the lecture says AI cannot guarantee any of them', 'A correct diagnosis in every case', 'Unbiased results for every population', 'Automatic reductions in costs'], answer: 0, explain: 'Slide 14 lists all of these as things AI does NOT guarantee.' },
-        { q: 'Which is part of responsible AI implementation (slide 14)?', options: ['Evaluation in the intended clinical setting and continuous monitoring', 'Deploying without validation to save time', 'Removing human oversight', 'Sharing all patient data publicly'], answer: 0, explain: 'Slide 14: data quality and validation, evaluation in the intended setting, privacy, human oversight, continuous monitoring.' },
-        /* from the recorded lectures */
-        { q: 'According to the lecturer, what can AI NOT do for a hospital with scarce resources?', options: ['Create additional beds or qualified professionals', 'Help use existing resources more intelligently', 'Help forecast emergency department demand', 'Support staffing decisions'], answer: 0, explain: 'Lecture, 10 Oct: AI helps use existing resources more intelligently, but it cannot automatically create beds, qualified professionals or remove fundamental costs.' },
-        { q: 'An AI forecasts emergency department demand. What did the lecturer say about the staffing problem?', options: ['The system does not solve it by itself; results depend on prediction quality, staff, budget and the manager\'s action', 'The system solves it automatically', 'Forecasts make operational flexibility unnecessary', 'Forecasts are always right if the data is historical'], answer: 0, explain: 'Lecture, 10 Oct. Predictions should inform planning without replacing operational flexibility (accidents and outbreaks are not in historical patterns).' },
-        { q: 'Which is one of the three questions the lecturer said the course will ask repeatedly?', options: ['What problem are we trying to solve?', 'Which vendor is the cheapest?', 'Which algorithm is the newest?', 'How can we replace the staff?'], answer: 0, explain: 'Lecture, 10 Oct: What problem are we trying to solve? How can AI contribute? How will we determine whether it actually improves healthcare?' },
-        { q: 'A hospital chatbot gives predefined answers about opening hours when the user picks an option. Is it necessarily AI?', options: ['No: predefined answers are not necessarily AI; interpreting natural-language questions would be', 'Yes, every chatbot is AI', 'Yes, because it talks to patients', 'Only if it runs on a website'], answer: 0, explain: 'Lecture, 10 Oct: not every chatbot uses artificial intelligence.' },
-        { q: 'What is the historical importance of the Turing Test, according to the lecture?', options: ['It framed machine intelligence in terms of observable behaviour; it does not prove consciousness or understanding', 'It proved machines can think', 'It created the term "artificial intelligence"', 'It ended the AI winter'], answer: 0, explain: 'Lecture, 10 Oct. Turing never used the term AI; McCarthy and colleagues coined it at Dartmouth in 1956.' },
-        { q: 'Whose definition is "the science and engineering of making intelligent machines, especially intelligent computer programs"?', options: ['John McCarthy', 'Alan Turing', 'Claude Shannon', 'Marvin Minsky'], answer: 0, explain: 'Lecture, 10 Oct: the "father of AI". The lecturer noted it does not compare the machine with humans.' },
-        { q: 'What lesson of the AI winters did the lecturer apply to hospital managers?', options: ['A vendor demo on selected cases is not enough: check your own patients, workflow, usability and outcomes vs cost', 'AI research always fails', 'Buy the system with the best demonstration', 'Rule-based systems are always better'], answer: 0, explain: 'Lecture, 10 Oct: technological enthusiasm can become disconnected from practical performance.' },
-        { q: 'In a software AI agent, which is an example of a SENSOR?', options: ['Information retrieved from electronic health records', 'Sending an alert to the team', 'Updating a schedule', 'A robot arm'], answer: 0, explain: 'Lecture, 10 Oct: software sensors are databases, electronic records and monitoring platforms. Alerts and schedule updates are actuators.' },
-        { q: 'An ED forecast is accurate, but managers receive it too late to change staffing. What did the lecturer conclude?', options: ['The operational benefit is limited: successful AI depends on more than the algorithm', 'The system is a full success because it is accurate', 'The forecast must be wrong', 'The environment does not matter'], answer: 0, explain: 'Lecture, 10 Oct: reliable input, an appropriate environment, a well-defined decision process, useful actions and meaningful evaluation are all needed.' },
+      "quiz": [
+        {
+          "q": "According to the lecture, what is Artificial Intelligence?",
+          "options": [
+            "Computer systems performing intelligence-related tasks",
+            "A robot that replaces doctors",
+            "Any software used in a hospital",
+            "A database of medical records"
+          ],
+          "answer": 0,
+          "explain": "Slide 5: systems performing tasks associated with human intelligence, such as learning, recognizing patterns, language, images, predictions and decision support."
+        },
+        {
+          "q": "Which statement about AI is the lecture's \"important distinction\"?",
+          "options": [
+            "AI always understands the patient better than humans",
+            "No automatic human judgment or empathy",
+            "AI has its own moral responsibility",
+            "AI capabilities do not depend on training data"
+          ],
+          "answer": 1,
+          "explain": "Slide 5: its capabilities depend on design, training data and intended use."
+        },
+        {
+          "q": "Who asked \"Can machines think?\" and introduced a famous test?",
+          "options": [
+            "John McCarthy",
+            "Claude Shannon",
+            "Alan Turing",
+            "Marvin Minsky"
+          ],
+          "answer": 2,
+          "explain": "Slide 6: Alan Turing, 1940s–1950s, the Turing Test."
+        },
+        {
+          "q": "Where and when was the term \"Artificial Intelligence\" coined?",
+          "options": [
+            "At MIT in 1943",
+            "In Turing's 1950 paper",
+            "At Stanford in 1970",
+            "Dartmouth, 1956"
+          ],
+          "answer": 3,
+          "explain": "Slide 6: 1956 Dartmouth Conference — McCarthy, Minsky, Rochester and Shannon. It marked the official start of AI as a field."
+        },
+        {
+          "q": "What were the \"AI winters\"?",
+          "options": [
+            "Funding cuts and slow progress",
+            "The years when AI first beat humans at chess",
+            "Periods of rapid investment in deep learning",
+            "Cold-weather tests of hospital robots"
+          ],
+          "answer": 0,
+          "explain": "Slide 7: ambitious goals met real-world limits."
+        },
+        {
+          "q": "Why is AI much more powerful today, according to the lecture?",
+          "options": [
+            "Because rule-based systems were perfected",
+            "Data, computing power and algorithms",
+            "Because computers became conscious",
+            "Because AI winters ended all research"
+          ],
+          "answer": 1,
+          "explain": "Slide 7: the transition from rule-based systems to machine learning and deep learning, driven by data, computing power and algorithms."
+        },
+        {
+          "q": "An AI agent is an entity that…",
+          "options": [
+            "Only stores data",
+            "Acts randomly without goals",
+            "Senses and acts toward goals",
+            "Must be a physical robot"
+          ],
+          "answer": 2,
+          "explain": "Slide 9: an agent senses, thinks and acts. It can be software, not only a robot."
+        },
+        {
+          "q": "In an AI agent, which component maps perceptions to actions?",
+          "options": [
+            "The sensors",
+            "The actuators",
+            "The performance measure",
+            "Agent function"
+          ],
+          "answer": 3,
+          "explain": "Slide 10: agent function = perceptions → actions."
+        },
+        {
+          "q": "Demand forecasting, staff planning and appointment scheduling belong to which area of AI in healthcare?",
+          "options": [
+            "Administrative and operational AI",
+            "Clinical AI",
+            "Strategic and system-level AI",
+            "Robotic surgery"
+          ],
+          "answer": 0,
+          "explain": "Slide 11: area 2."
+        },
+        {
+          "q": "Population health analysis and public-health surveillance belong to which area?",
+          "options": [
+            "Clinical AI",
+            "Strategic and system-level AI",
+            "Administrative and operational AI",
+            "None — AI cannot do this"
+          ],
+          "answer": 1,
+          "explain": "Slide 11: area 3, together with financial forecasting, quality improvement and long-term planning."
+        },
+        {
+          "q": "Medical imaging interpretation and clinical risk prediction belong to…",
+          "options": [
+            "Administrative AI",
+            "Strategic AI",
+            "Clinical AI",
+            "Operational robotics"
+          ],
+          "answer": 2,
+          "explain": "Slide 11: area 1."
+        },
+        {
+          "q": "Which is part of responsible AI implementation (slide 14)?",
+          "options": [
+            "Deploying without validation to save time",
+            "Removing human oversight",
+            "Sharing all patient data publicly",
+            "Local evaluation and continuous monitoring"
+          ],
+          "answer": 3,
+          "explain": "Slide 14: data quality and validation, evaluation in the intended setting, privacy, human oversight, continuous monitoring."
+        },
+        {
+          "q": "According to the lecturer, what can AI NOT do for a hospital with scarce resources?",
+          "options": [
+            "Create beds or qualified professionals",
+            "Help use existing resources more intelligently",
+            "Help forecast emergency department demand",
+            "Support staffing decisions"
+          ],
+          "answer": 0,
+          "explain": "Lecture, 10 Oct: AI helps use existing resources more intelligently, but it cannot automatically create beds, qualified professionals or remove fundamental costs."
+        },
+        {
+          "q": "An ED forecast is accurate, but managers receive it too late to change staffing. What did the lecturer conclude?",
+          "options": [
+            "The system is a full success because it is accurate",
+            "Too late to change staffing",
+            "The forecast must be wrong",
+            "The environment does not matter"
+          ],
+          "answer": 1,
+          "explain": "Lecture, 10 Oct: reliable input, an appropriate environment, a well-defined decision process, useful actions and meaningful evaluation are all needed."
+        }
       ],
-      cards: [
-        ['Artificial intelligence', 'A field of computer science that develops systems able to perform tasks associated with human intelligence: learning, pattern recognition, language, images, predictions, decision support.'],
-        ['The important distinction', 'AI has no automatic human understanding, professional judgment, empathy or moral responsibility. It depends on design, training data and intended use.'],
-        ['Alan Turing', '1940s–50s. Asked "Can machines think?" and introduced the Turing Test.'],
-        ['Dartmouth Conference, 1956', 'McCarthy, Minsky, Rochester and Shannon coined the term "Artificial Intelligence". The official start of AI as a field.'],
-        ['AI winters', 'Funding cuts and slow progress in the 1970s and 1980s.'],
-        ['Modern AI', 'Moved from rule-based systems to machine learning and deep learning, powered by data, computing power and algorithms.'],
-        ['McCarthy\'s definition', '"The science and engineering of making intelligent machines, especially intelligent computer programs."'],
-        ['Intelligent agent', 'Perceives its environment through sensors and acts on it through actuators to achieve goals. Senses, thinks, acts.'],
-        ['Agent components', 'Sensors (observe), actuators (act), environment (what it interacts with), agent function (perceptions → actions), performance measure (how well it reaches goals).'],
-        ['Clinical AI', 'Diagnosis, medical imaging, clinical risk prediction, treatment planning, patient monitoring.'],
-        ['Administrative & operational AI', 'Scheduling, patient flow, demand forecasting, staff planning, documentation, resource management.'],
-        ['Strategic & system-level AI', 'Population health, financial forecasting, quality improvement, public-health surveillance, long-term planning.'],
-        ['Why healthcare is different', 'Complex information · time sensitivity · uncertainty · high consequences · resource constraints · human-centered care.'],
-        ['Why AI matters (5)', 'More medical information · earlier detection · less administrative burden · efficiency · more personalized care.'],
-        ['AI cannot guarantee', 'Correct diagnosis every time · better outcomes everywhere · unbiased results for all · full understanding of a patient · automatic cost savings · end of human error/responsibility.'],
-        ['Responsible implementation', 'Data quality and validation · evaluation in the intended setting · privacy protection · human oversight · continuous monitoring.'],
-        ['Three course questions (lecture)', 'What problem are we trying to solve? How can AI contribute? How will we know it actually improved healthcare?'],
-        ['Is every chatbot AI? (lecture)', 'No. Predefined answers ≠ AI. Interpreting natural-language questions and generating answers = AI.'],
-        ['Software sensors vs actuators (lecture)', 'Sensors: databases, EHR, monitoring platforms. Actuators: sending an alert, updating a schedule, presenting a recommendation.'],
-        ['Performance measure trap (lecture)', 'One indicator distorts: utilisation only → no slack for complex cases; waiting time only → ignores appropriate care. Use a balanced set.'],
-      ],
+      "cards": [
+        [
+          "Artificial intelligence",
+          "A field of computer science that develops systems able to perform tasks associated with human intelligence: learning, pattern recognition, language, images, predictions, decision support."
+        ],
+        [
+          "The important distinction",
+          "AI has no automatic human understanding, professional judgment, empathy or moral responsibility. It depends on design, training data and intended use."
+        ],
+        [
+          "Alan Turing",
+          "1940s–50s. Asked \"Can machines think?\" and introduced the Turing Test."
+        ],
+        [
+          "Dartmouth Conference, 1956",
+          "McCarthy, Minsky, Rochester and Shannon coined the term \"Artificial Intelligence\". The official start of AI as a field."
+        ],
+        [
+          "AI winters",
+          "Funding cuts and slow progress in the 1970s and 1980s."
+        ],
+        [
+          "Modern AI",
+          "Moved from rule-based systems to machine learning and deep learning, powered by data, computing power and algorithms."
+        ],
+        [
+          "Intelligent agent",
+          "Perceives its environment through sensors and acts on it through actuators to achieve goals. Senses, thinks, acts."
+        ],
+        [
+          "Agent components",
+          "Sensors (observe), actuators (act), environment (what it interacts with), agent function (perceptions → actions), performance measure (how well it reaches goals)."
+        ],
+        [
+          "Clinical AI",
+          "Diagnosis, medical imaging, clinical risk prediction, treatment planning, patient monitoring."
+        ],
+        [
+          "Administrative & operational AI",
+          "Scheduling, patient flow, demand forecasting, staff planning, documentation, resource management."
+        ],
+        [
+          "Strategic & system-level AI",
+          "Population health, financial forecasting, quality improvement, public-health surveillance, long-term planning."
+        ],
+        [
+          "Why healthcare is different",
+          "Complex information · time sensitivity · uncertainty · high consequences · resource constraints · human-centered care."
+        ],
+        [
+          "AI cannot guarantee",
+          "Correct diagnosis every time · better outcomes everywhere · unbiased results for all · full understanding of a patient · automatic cost savings · end of human error/responsibility."
+        ],
+        [
+          "Three course questions (lecture)",
+          "What problem are we trying to solve? How can AI contribute? How will we know it actually improved healthcare?"
+        ]
+      ]
     },
-
-    /* ================================================================ */
     {
-      n: 2,
-      title: 'AI Technologies in Healthcare',
-      summary: 'Six technology families — machine learning, deep learning, NLP, computer vision, robotics and generative AI — what job each does, how to evaluate them, their risks, the healthcare AI lifecycle and the questions of responsible AI.',
-      takeaways: [
-        'AI is an umbrella term, not one technology. A system may classify, predict, generate, recommend or act, and each capability carries different risks. Start with the problem, not the tool.',
-        'Machine learning learns patterns from examples instead of hand-written rules. Inputs → training (adjust parameters to reduce an error/loss) → output (a prediction, probability, ranking or class — not a guaranteed truth) → deployment with monitoring. Prediction ≠ diagnosis.',
-        'Learning setups: supervised (examples with known outcomes, e.g. readmission prediction), unsupervised (structure without labels, e.g. grouping similar patients) and reinforcement (actions and feedback, e.g. a simulated care pathway; real use needs caution).',
-        'Accuracy is not the whole story: sensitivity (of the truly ill, how many are flagged), specificity (of the healthy, how many are cleared), PPV (of the alerts, how many are true) and calibration (do probabilities match observed frequencies). Choosing a threshold trades false alarms against missed cases.',
-        'Deep learning is a subset of ML: multi-layer neural networks learn layered representations from raw data (pixels, audio, text, signals). It excels with large, complex data but is often harder to explain and needs more data and compute.',
-        'NLP turns messy clinical free text into structured information (symptoms, diagnoses, medications). It must handle entities, negation, time and context: "No evidence of pneumonia" must not become "pneumonia".',
-        'Computer vision tasks: classification (what is present?), detection (where is it?), segmentation (which pixels?). Its performance depends on the whole pipeline: acquire → label → train → validate → clinician reviews. A model trained at one hospital may fail at another (device differences, population shift).',
-        'Robotics combines sensing, planning, control and mechanical action: surgical assistance, hospital logistics, rehabilitation, social/assistive robots. The hard parts are physical safety, workflow fit and human factors.',
-        'Generative AI creates new content: prompt → model → output → human review. Fluent output is not proof of accuracy. Risks: hallucination, missing context and automation bias. Safer pattern: constrain the task → trusted sources → ask for uncertainty → verify key claims → document human review.',
-        'Healthcare AI lifecycle: define need → assess data → develop → validate → implement → monitor. Responsible AI asks about safety and effectiveness, fairness, privacy and security, transparency, accountability and human oversight.',
+      "n": 2,
+      "title": "AI Technologies in Healthcare",
+      "summary": "Choose technologies for healthcare tasks and recognize their limits.",
+      "takeaways": [
+        "Normal software follows rules a person wrote. Machine learning learns the rules from past examples by reducing its error, and then predicts for new patients.",
+        "Deep learning uses neural networks with many layers. Each layer sees something more abstract, from raw pixels up to \"a lesion\".",
+        "NLP turns free-text notes into structured data. The trap is context: a word can appear in a note even though the patient does not have it.",
+        "Three vision tasks, three questions about the same X-ray: what is there (classification), where (detection), which exact pixels (segmentation).",
+        "A robot is an AI agent with a body: it senses, plans, controls and physically acts.",
+        "Generative AI writes beautifully, but fluent is not the same as true. A human must always review the output before it is used."
       ],
-      traps: [
-        ['A model\'s output is the truth', 'It is a prediction, probability, ranking or classification. Prediction ≠ diagnosis.'],
-        ['Deep learning is a different field from machine learning', 'Deep learning is a subset of machine learning.'],
-        ['Deep learning is always better', 'Neither is automatically better. Data, task, risk and workflow decide the fit. ML can work well on smaller structured datasets and may be easier to interpret.'],
-        ['A high accuracy means the tool is safe', 'The costs of errors are unequal. Look at sensitivity, specificity, PPV and calibration, and whether it is accurate for every patient group.'],
-        ['NLP just looks for keywords', '"Patient denies chest pain" contains "chest pain". NLP must handle negation, time (historical vs current) and uncertainty.'],
-        ['Detection and segmentation are the same', 'Detection says where something is (a box). Segmentation says exactly which pixels belong to it.'],
-        ['A robot is just AI', 'Robotics also needs safety engineering, sensors, actuators and human oversight.'],
-        ['A fluent, confident answer from generative AI is correct', 'Language models generate likely sequences without checking every claim. They can hallucinate facts and references.'],
-        ['Implementing AI is a one-time software purchase', 'It is a continuous lifecycle that ends with ongoing monitoring for drift, incidents and outcomes.'],
+      "traps": [
+        [
+          "A model's output is the truth",
+          "It is a prediction, probability, ranking or classification. Prediction ≠ diagnosis."
+        ],
+        [
+          "Deep learning is a different field from machine learning",
+          "Deep learning is a subset of machine learning."
+        ],
+        [
+          "Deep learning is always better",
+          "Neither is automatically better. Data, task, risk and workflow decide the fit. ML can work well on smaller structured datasets and may be easier to interpret."
+        ],
+        [
+          "A high accuracy means the tool is safe",
+          "The costs of errors are unequal. Look at sensitivity, specificity, PPV and calibration, and whether it is accurate for every patient group."
+        ],
+        [
+          "NLP just looks for keywords",
+          "\"Patient denies chest pain\" contains \"chest pain\". NLP must handle negation, time (historical vs current) and uncertainty."
+        ]
       ],
-      activities: [
-        { id: 'w2-nlp', title: 'Clinical Note NLP Lab', desc: 'Compare a naive keyword extractor with one that understands negation, time and uncertainty on real-style clinical sentences, including slide 14\'s pneumonia note. Write your own sentences to trick them.', href: 'w2/nlp.html' },
-        { id: 'w2-vision', title: 'Vision Tasks & the Second Hospital', desc: 'See classification, detection and segmentation on the same scan. Then move a model trained at Hospital A to Hospital B\'s brighter scanner and watch it fail.', href: 'w2/vision.html' },
-        { id: 'w2-verify', title: 'Verify the AI Draft', desc: 'A generative AI drafted a discharge summary. Check every sentence against the patient record and catch hallucinations, missing context and contradictions.', href: 'w2/verify.html' },
+      "activities": [
+        {
+          "id": "w2-nlp",
+          "title": "Clinical Note NLP Lab",
+          "desc": "Compare a naive keyword extractor with one that understands negation, time and uncertainty on real-style clinical sentences, including slide 14's pneumonia note. Write your own sentences to trick them.",
+          "href": "w2/nlp.html"
+        },
+        {
+          "id": "w2-vision",
+          "title": "Vision Tasks & the Second Hospital",
+          "desc": "See classification, detection and segmentation on the same scan. Then move a model trained at Hospital A to Hospital B's brighter scanner and watch it fail.",
+          "href": "w2/vision.html"
+        },
+        {
+          "id": "w2-verify",
+          "title": "Verify the AI Draft",
+          "desc": "A generative AI drafted a discharge summary. Check every sentence against the patient record and catch hallucinations, missing context and contradictions.",
+          "href": "w2/verify.html"
+        }
       ],
-      quiz: [
-        { q: 'Why does the lecture call AI an "umbrella term"?', options: ['It is not one single technology or one single kind of system', 'It only means machine learning', 'It refers to cloud computing', 'It means human-like understanding'], answer: 0, explain: 'Slide 4: AI covers many technologies that classify, predict, generate, recommend or act — each with different risks.' },
-        { q: 'What is the right starting point when choosing an AI technology?', options: ['The problem', 'The newest technology', 'The cheapest vendor', 'Whatever competitors use'], answer: 0, explain: 'Slides 5 and 27: start with the problem, not the tool.' },
-        { q: 'How does machine learning differ from traditional programming?', options: ['Instead of writing every rule by hand, a model is trained from data with a learning objective', 'It never uses data', 'It always uses hand-written rules', 'It needs no evaluation'], answer: 0, explain: 'Slide 6.' },
-        { q: 'During training, an ML algorithm…', options: ['Adjusts its parameters to reduce a chosen error or loss measure', 'Memorizes the hospital\'s rulebook', 'Asks doctors for every answer', 'Stops changing once deployed, so no monitoring is needed'], answer: 0, explain: 'Slide 6. After deployment it must still be monitored as patients, practice and data change.' },
-        { q: 'Predicting readmission from past admissions with known outcomes is an example of…', options: ['Supervised learning', 'Unsupervised learning', 'Reinforcement learning', 'Robotics'], answer: 0, explain: 'Slide 7: examples paired with known outcomes.' },
-        { q: 'Grouping patients with similar patterns of service use, without a target label, is…', options: ['Unsupervised learning', 'Supervised learning', 'Reinforcement learning', 'Computer vision'], answer: 0, explain: 'Slide 7.' },
-        { q: 'Which learning setup learns through actions and feedback in an environment?', options: ['Reinforcement learning', 'Supervised learning', 'Unsupervised learning', 'Natural language processing'], answer: 0, explain: 'Slide 7: e.g. optimizing a simulated care pathway; real-world deployment needs caution.' },
-        { q: '"Of people who truly have the condition, how many are flagged?" This is…', options: ['Sensitivity', 'Specificity', 'Positive predictive value', 'Calibration'], answer: 0, explain: 'Slide 9.' },
-        { q: '"Among positive alerts, how many are true positives?" This is…', options: ['Positive predictive value', 'Sensitivity', 'Specificity', 'Accuracy'], answer: 0, explain: 'Slide 9.' },
-        { q: '"Do predicted probabilities match observed frequencies?" This is…', options: ['Calibration', 'Specificity', 'Segmentation', 'Interoperability'], answer: 0, explain: 'Slide 9.' },
-        { q: 'Which statement about deep learning vs machine learning is correct?', options: ['Deep learning is a subset of machine learning', 'Deep learning has nothing to do with machine learning', 'Machine learning is a subset of deep learning', 'Deep learning always needs less data'], answer: 0, explain: 'Slide 11. DL is often data- and compute-intensive and harder to interpret.' },
-        { q: 'Which is the lecture\'s typical example of deep learning in healthcare?', options: ['Medical image classification', 'A readmission risk model on tabular data', 'Appointment reminders by SMS', 'A billing spreadsheet'], answer: 0, explain: 'Slide 11: ML → readmission risk model; DL → medical image classification.' },
-        { q: 'An NLP system reads "No evidence of pneumonia" and records "pneumonia". What did it fail to handle?', options: ['Negation', 'Segmentation', 'Calibration', 'Robotics'], answer: 0, explain: 'Slide 12: context and negation matter.' },
-        { q: '"A 68-year-old patient was admitted last month for pneumonia." Which is the correct extraction?', options: ['A historical pneumonia admission — not current pneumonia', 'Current pneumonia', 'No pneumonia ever', 'Discharge confirmed'], answer: 0, explain: 'Slide 14: what is historical vs current matters.' },
-        { q: 'Which NLP error does the lecture call "subtle"?', options: ['Omissions, wrong negation, wrong temporality or unsupported inferences', 'Spelling the patient\'s name in capitals', 'Using too much memory', 'Running slowly'], answer: 0, explain: 'Slide 13.' },
-        { q: 'A vision model outputs which pixels belong to a tumour. This task is…', options: ['Segmentation', 'Classification', 'Detection', 'Calibration'], answer: 0, explain: 'Slide 15: classification = what is present, detection = where, segmentation = which pixels.' },
-        { q: 'A model drawing a box around a suspicious area is doing…', options: ['Detection', 'Segmentation', 'Classification', 'Generation'], answer: 0, explain: 'Slide 15.' },
-        { q: 'Which is a potential failure source in the computer-vision pipeline?', options: ['Device differences and population shift between hospitals', 'Using a validated, diverse dataset', 'Expert annotation', 'Clinician review of the output'], answer: 0, explain: 'Slide 16: image quality, device differences, rare conditions, label disagreement and population shift.' },
-        { q: 'Which is the lecture\'s main difficulty of healthcare robotics?', options: ['A hospital is a dynamic, safety-critical environment full of people and exceptions', 'Robots cannot carry any weight', 'Robots never need sensors', 'Robots are always cheaper than staff'], answer: 0, explain: 'Slide 19: physical safety, workflow fit and human factors.' },
-        { q: 'What is a hallucination in generative AI?', options: ['A fabricated fact, reference, clinical detail or policy presented confidently', 'A blurry medical image', 'A slow response', 'A correct answer that is too short'], answer: 0, explain: 'Slide 22.' },
-        { q: 'People accept an AI suggestion because it looks polished and authoritative. This is…', options: ['Automation bias', 'Hallucination', 'Calibration', 'Segmentation'], answer: 0, explain: 'Slide 22.' },
-        { q: 'Which is the safer pattern for generative AI in healthcare?', options: ['Constrain the task → use trusted sources → request uncertainty → verify key claims → document human review', 'Let the model answer freely and publish directly', 'Use it only without sources', 'Trust any fluent output'], answer: 0, explain: 'Slide 22.' },
-        { q: 'For "draft discharge instructions", the lecture matches which approach and requirement?', options: ['Generative AI + retrieval, with approved sources and clinician review', 'Robotics with safe navigation', 'Computer vision with expert labels', 'Unsupervised clustering'], answer: 0, explain: 'Slide 23.' },
-        { q: 'For "move supplies", which approach and key requirement match?', options: ['Robotics — mapped environment, sensors, safe navigation', 'NLP — negation handling', 'Generative AI — clinician review', 'Machine learning — alert threshold'], answer: 0, explain: 'Slide 23.' },
-        { q: 'What is the correct order of the healthcare AI lifecycle?', options: ['Define need → assess data → develop → validate → implement → monitor', 'Develop → implement → define need → monitor', 'Buy software → install → done', 'Validate → develop → define need → assess data'], answer: 0, explain: 'Slide 24: safe implementation is continuous, not a one-time purchase.' },
-        { q: '"Does performance differ across age, sex, ethnicity, disability or care settings?" Which responsible-AI question is this?', options: ['Fairness', 'Transparency', 'Privacy & security', 'Accountability'], answer: 0, explain: 'Slide 25.' },
-        { q: '"Can people challenge, override or safely ignore the output?" This question is about…', options: ['Human oversight', 'Fairness', 'Calibration', 'Interoperability'], answer: 0, explain: 'Slide 25.' },
-        /* from the recorded lectures */
-        { q: 'According to the lecture, what can go wrong if the organisation has not defined responsibility for an AI system?', options: ['Staff may assume someone else is monitoring the system', 'The model becomes more accurate', 'Alerts disappear', 'Data becomes structured'], answer: 0, explain: 'Lecture, 17 Oct, the four stages patient → data → AI → care team.' },
-        { q: 'A clinician reads an AI risk probability as if it were a diagnosis. Which stage went wrong?', options: ['The output was misunderstood by the care team', 'The patient stage', 'The training of the model', 'Nothing went wrong'], answer: 0, explain: 'Lecture, 17 Oct: if the output is misunderstood, a probability might be mistaken for a diagnosis.' },
-        { q: 'A system predicts a high risk of deterioration. According to the lecture, it has…', options: ['not necessarily diagnosed the cause of the deterioration', 'diagnosed the cause', 'verified the treatment', 'proved the patient will deteriorate'], answer: 0, explain: 'Lecture, 17 Oct: classification, prediction and recommendation should not be confused.' },
-        { q: 'A manager says "We need AI because other hospitals are using it." What should you ask first?', options: ['What exactly do you want to improve?', 'Which AI is the most expensive?', 'How many other hospitals use it?', 'Can we buy deep learning?'], answer: 0, explain: 'Lecture, 17 Oct: the right starting point is a problem, not the technology.' },
-        { q: 'In the discharge-instructions example, which technology drafts the clear text for the patient?', options: ['Generative AI', 'Robotics', 'Computer vision', 'Reinforcement learning'], answer: 0, explain: 'Lecture, 17 Oct: NLP collects information, generative AI drafts, a search system finds approved guidelines, and a professional checks.' },
-        { q: 'Why must a hospital keep checking a model after it is put into practice?', options: ['Patient groups, procedures and the way data are recorded change, so last year\'s model may not work today', 'Because models learn the future', 'Because checking improves accuracy automatically', 'It does not need to'], answer: 0, explain: 'Lecture, 17 Oct: the fourth stage of ML is using the model in practice and monitoring it.' },
-        { q: 'An unsupervised model groups patients. What did the lecturer warn?', options: ['Not every group has a clear medical meaning; people must examine whether it is useful', 'Every group is a new disease', 'Groups are labels the model was given', 'Unsupervised learning needs no data'], answer: 0, explain: 'Lecture, 17 Oct.' },
-        { q: 'Why can reinforcement learning not simply be used on real patients?', options: ['It learns by trial and error; it needs simulation and careful testing with safety measures first', 'It needs labelled images', 'It cannot learn from feedback', 'It only works for chess'], answer: 0, explain: 'Lecture, 17 Oct: e.g. testing appointment strategies in a simulated hospital.' },
-        { q: '100 people do not have a condition and the system correctly clears 80 of them. What is the specificity?', options: ['80%', '20%', '90%', '100%'], answer: 0, explain: 'Lecture, 17 Oct: specificity = correctly cleared / all without the condition = 80 / 100.' },
-        { q: 'A hospital receives 100 positive alerts; only 20 of those patients have the condition. What is the PPV?', options: ['20%', '80%', '100%', 'It is the sensitivity'], answer: 0, explain: 'Lecture, 17 Oct: many alerts are false positives, so the team spends a lot of time checking them.' },
-        { q: 'What is a "feature" in machine learning, as defined in the lecture?', options: ['A piece of information that may help the model make a prediction', 'A layer of a neural network', 'A label given by an expert', 'A type of hospital software'], answer: 0, explain: 'Lecture, 17 Oct. Traditional ML often uses features designed by experts; deep learning learns features from images, audio or text.' },
-        { q: 'Which is a limitation of deep learning named in the lecture?', options: ['Good performance in training does not guarantee good performance in a different hospital', 'It cannot use images', 'It needs very little data', 'It is always easy to explain'], answer: 0, explain: 'Lecture, 17 Oct: it also needs a lot of suitable data and can be hard to explain (a "black box").' },
-        { q: 'The note says "the doctor is considering pneumonia". What should NLP conclude?', options: ['The diagnosis is uncertain and still being examined', 'The patient has pneumonia', 'Pneumonia was ruled out', 'Pneumonia happened in the past'], answer: 0, explain: 'Lecture, 17 Oct: NLP must distinguish confirmed information from uncertainty.' },
-        { q: 'An NLP tool finds records mentioning a possible problem with a medication. What does this show?', options: ['Possible signals that experts must investigate, not proof that the medication caused the problem', 'Proof that the medication is harmful', 'That the medication must be withdrawn immediately', 'Nothing useful'], answer: 0, explain: 'Lecture, 17 Oct: safety monitoring.' },
-        { q: 'According to the lecturer, what must happen before an AI-drafted clinical note becomes part of the medical record?', options: ['A professional must review it', 'Nothing, it is automatically correct', 'The patient must sign it', 'It must be translated'], answer: 0, explain: 'Lecture, 17 Oct: she highlighted this point.' },
+      "quiz": [
+        {
+          "q": "Why does the lecture call AI an \"umbrella term\"?",
+          "options": [
+            "An umbrella for different technologies",
+            "It only means machine learning",
+            "It refers to cloud computing",
+            "It means human-like understanding"
+          ],
+          "answer": 0,
+          "explain": "Slide 4: AI covers many technologies that classify, predict, generate, recommend or act — each with different risks."
+        },
+        {
+          "q": "How does machine learning differ from traditional programming?",
+          "options": [
+            "It never uses data",
+            "Learns patterns from data",
+            "It always uses hand-written rules",
+            "It needs no evaluation"
+          ],
+          "answer": 1,
+          "explain": "Slide 6."
+        },
+        {
+          "q": "Predicting readmission from past admissions with known outcomes is an example of…",
+          "options": [
+            "Unsupervised learning",
+            "Reinforcement learning",
+            "Supervised learning",
+            "Robotics"
+          ],
+          "answer": 2,
+          "explain": "Slide 7: examples paired with known outcomes."
+        },
+        {
+          "q": "Grouping patients with similar patterns of service use, without a target label, is…",
+          "options": [
+            "Supervised learning",
+            "Reinforcement learning",
+            "Computer vision",
+            "Unsupervised learning"
+          ],
+          "answer": 3,
+          "explain": "Slide 7."
+        },
+        {
+          "q": "Which learning setup learns through actions and feedback in an environment?",
+          "options": [
+            "Reinforcement learning",
+            "Supervised learning",
+            "Unsupervised learning",
+            "Natural language processing"
+          ],
+          "answer": 0,
+          "explain": "Slide 7: e.g. optimizing a simulated care pathway; real-world deployment needs caution."
+        },
+        {
+          "q": "Which statement about deep learning vs machine learning is correct?",
+          "options": [
+            "Deep learning has nothing to do with machine learning",
+            "Deep learning is within ML",
+            "Machine learning is a subset of deep learning",
+            "Deep learning always needs less data"
+          ],
+          "answer": 1,
+          "explain": "Slide 11. DL is often data- and compute-intensive and harder to interpret."
+        },
+        {
+          "q": "An NLP system reads \"No evidence of pneumonia\" and records \"pneumonia\". What did it fail to handle?",
+          "options": [
+            "Segmentation",
+            "Calibration",
+            "Negation",
+            "Robotics"
+          ],
+          "answer": 2,
+          "explain": "Slide 12: context and negation matter."
+        },
+        {
+          "q": "\"A 68-year-old patient was admitted last month for pneumonia.\" Which is the correct extraction?",
+          "options": [
+            "Current pneumonia",
+            "No pneumonia ever",
+            "Discharge confirmed",
+            "Historical pneumonia, not current pneumonia"
+          ],
+          "answer": 3,
+          "explain": "Slide 14: what is historical vs current matters."
+        },
+        {
+          "q": "A vision model outputs which pixels belong to a tumour. This task is…",
+          "options": [
+            "Segmentation",
+            "Classification",
+            "Detection",
+            "Calibration"
+          ],
+          "answer": 0,
+          "explain": "Slide 15: classification = what is present, detection = where, segmentation = which pixels."
+        },
+        {
+          "q": "A model drawing a box around a suspicious area is doing…",
+          "options": [
+            "Segmentation",
+            "Detection",
+            "Classification",
+            "Generation"
+          ],
+          "answer": 1,
+          "explain": "Slide 15."
+        },
+        {
+          "q": "Which is the lecture's main difficulty of healthcare robotics?",
+          "options": [
+            "Robots cannot carry any weight",
+            "Robots never need sensors",
+            "A dynamic, safety-critical environment",
+            "Robots are always cheaper than staff"
+          ],
+          "answer": 2,
+          "explain": "Slide 19: physical safety, workflow fit and human factors."
+        },
+        {
+          "q": "What is a hallucination in generative AI?",
+          "options": [
+            "A blurry medical image",
+            "A slow response",
+            "A correct answer that is too short",
+            "A confidently fabricated detail"
+          ],
+          "answer": 3,
+          "explain": "Slide 22."
+        },
+        {
+          "q": "Which is the safer pattern for generative AI in healthcare?",
+          "options": [
+            "Trusted sources, verification and review",
+            "Let the model answer freely and publish directly",
+            "Use it only without sources",
+            "Trust any fluent output"
+          ],
+          "answer": 0,
+          "explain": "Slide 22."
+        },
+        {
+          "q": "Why must a hospital keep checking a model after it is put into practice?",
+          "options": [
+            "Because models learn the future",
+            "Patients, procedures and records change",
+            "Because checking improves accuracy automatically",
+            "It does not need to"
+          ],
+          "answer": 1,
+          "explain": "Lecture, 17 Oct: the fourth stage of ML is using the model in practice and monitoring it."
+        }
       ],
-      cards: [
-        ['Six technology families', 'Machine learning (predict from structured data), deep learning (complex patterns), NLP (clinical language), computer vision (images/video), robotics (physical tasks), generative AI (create text, images, code).'],
-        ['Machine learning', 'Trains a model from data and a learning objective instead of hand-written rules. Output = prediction, probability, ranking or class, not a guaranteed truth.'],
-        ['Supervised / unsupervised / reinforcement', 'Known outcomes (readmission) / structure without labels (patient groups) / actions + feedback (simulated care pathway).'],
-        ['Sensitivity', 'Of people who truly have the condition, how many are flagged.'],
-        ['Specificity', 'Of people who do not have the condition, how many are correctly cleared.'],
-        ['PPV', 'Among positive alerts, how many are true positives.'],
-        ['Calibration', 'Do predicted probabilities match observed frequencies?'],
-        ['Deep learning', 'Subset of ML. Multi-layer neural networks learn layered representations from raw pixels, audio, text or signals. Data-hungry and harder to explain.'],
-        ['NLP', 'Turns free-text clinical language into structured information. Must handle entities, negation, time, relationships and context.'],
-        ['Classification / detection / segmentation', 'What is present? / Where is it? / Which pixels?'],
-        ['Vision pipeline', 'Acquire → label → train → validate (independent, diverse data) → use (clinician reviews output).'],
-        ['Robotics', 'Sensing + planning + control + mechanical action. Surgery, logistics, rehabilitation, social robots. Hard parts: physical safety, workflow fit, human factors.'],
-        ['Generative AI', 'Prompt → model → output → review. Creates drafts; fluent output is not proof of accuracy.'],
-        ['Hallucination', 'A fabricated fact, reference, clinical detail or policy presented confidently.'],
-        ['Automation bias', 'Accepting an AI suggestion because it looks polished or authoritative.'],
-        ['Healthcare AI lifecycle', 'Define need → assess data → develop → validate → implement → monitor.'],
-        ['Responsible AI questions', 'Safety & effectiveness · fairness · privacy & security · transparency · accountability · human oversight.'],
-        ['Four stages (lecture)', 'Patient → data → AI system → care team. Failures: incomplete data, bias, probability read as diagnosis, too many alerts, no defined responsibility.'],
-        ['Classification vs prediction vs recommendation', 'Assigns a category / estimates an outcome / suggests an option. Predicting risk ≠ diagnosing the cause; drafting ≠ verifying.'],
-        ['Feature', 'A piece of information that helps a model predict. Experts often design them in traditional ML; deep learning learns them.'],
-        ['NLP checking rule (lecture)', 'The level of checking depends on the importance of the information and the risk of a mistake.'],
-      ],
+      "cards": [
+        [
+          "Six technology families",
+          "Machine learning (predict from structured data), deep learning (complex patterns), NLP (clinical language), computer vision (images/video), robotics (physical tasks), generative AI (create text, images, code)."
+        ],
+        [
+          "Machine learning",
+          "Trains a model from data and a learning objective instead of hand-written rules. Output = prediction, probability, ranking or class, not a guaranteed truth."
+        ],
+        [
+          "Supervised / unsupervised / reinforcement",
+          "Known outcomes (readmission) / structure without labels (patient groups) / actions + feedback (simulated care pathway)."
+        ],
+        [
+          "Deep learning",
+          "Subset of ML. Multi-layer neural networks learn layered representations from raw pixels, audio, text or signals. Data-hungry and harder to explain."
+        ],
+        [
+          "NLP",
+          "Turns free-text clinical language into structured information. Must handle entities, negation, time, relationships and context."
+        ],
+        [
+          "Classification / detection / segmentation",
+          "What is present? / Where is it? / Which pixels?"
+        ],
+        [
+          "Vision pipeline",
+          "Acquire → label → train → validate (independent, diverse data) → use (clinician reviews output)."
+        ],
+        [
+          "Robotics",
+          "Sensing + planning + control + mechanical action. Surgery, logistics, rehabilitation, social robots. Hard parts: physical safety, workflow fit, human factors."
+        ],
+        [
+          "Generative AI",
+          "Prompt → model → output → review. Creates drafts; fluent output is not proof of accuracy."
+        ],
+        [
+          "Hallucination",
+          "A fabricated fact, reference, clinical detail or policy presented confidently."
+        ],
+        [
+          "Automation bias",
+          "Accepting an AI suggestion because it looks polished or authoritative."
+        ],
+        [
+          "Healthcare AI lifecycle",
+          "Define need → assess data → develop → validate → implement → monitor."
+        ],
+        [
+          "Feature",
+          "A piece of information that helps a model predict. Experts often design them in traditional ML; deep learning learns them."
+        ],
+        [
+          "NLP checking rule (lecture)",
+          "The level of checking depends on the importance of the information and the risk of a mistake."
+        ]
+      ]
     },
-
-    /* ================================================================ */
     {
-      n: 3,
-      title: 'Healthcare Data and AI',
-      summary: 'Electronic health records, structured vs unstructured data, healthcare big data and its Vs, turning raw data into an AI-ready dataset, the six dimensions of data quality, bias, privacy, interoperability and its standards (HL7, FHIR, SNOMED CT, LOINC, ICD, DICOM), the four levels of analytics and how to evaluate an AI system.',
-      takeaways: [
-        'AI learns from data, so incomplete or misleading inputs give unreliable outputs. The challenge is not more data but trustworthy, usable and responsibly governed data.',
-        'Data types: clinical, administrative, imaging and signals, patient-generated (wearables), omics and research, contextual (social determinants, where lawfully collected).',
-        'An EHR is a digital record of a patient\'s health information across encounters and care settings. An EMR usually means a record within one organization; an EHR implies a broader longitudinal view. A scanned paper chart is not an EHR.',
-        'Data moves through an EHR: capture → standardize → store and link → exchange → use → update. A wrong-patient match or an unrecorded medication change travels downstream.',
-        'Structured data fits predefined fields (blood pressure, coded diagnosis). Unstructured data is free text, summaries and scans. Semi-structured data includes tagged messages. NLP can extract from text, but errors must be checked.',
-        'Big data Vs: volume, velocity, variety, veracity (the classic 4 Vs) plus value.',
-        'AI-ready dataset: define the question first, identify lawful relevant sources, document provenance, clean and harmonize, handle missingness carefully (missing is not random), version and monitor.',
-        'Six data-quality dimensions: accuracy, completeness, consistency, timeliness, validity, uniqueness.',
-        'Bias: historical data reflects past gaps in access and documentation; under-represented groups get worse performance; proxies can encode inequity; missingness can be systematic. Privacy: lawful basis, data minimization, access control, encryption, audit logs; de-identified data can be re-identified by linkage.',
-        'Interoperability levels: technical (connect), syntactic (shared structure), semantic (shared meaning), organizational (policies and trust). Standards: HL7 v2 (messaging), HL7 FHIR (resources + APIs), SNOMED CT (clinical terminology), LOINC (lab tests and observations), ICD (disease classification), DICOM (imaging).',
-        'Analytics: descriptive (what happened?), diagnostic (why?), predictive (what will happen?), prescriptive (what action may help?). Evaluate AI on clinical validity, discrimination (AUC), calibration, clinical utility, external validation and monitoring. For a rare condition, predicting "no" for everyone is highly accurate and useless.',
+      "n": 3,
+      "title": "Healthcare Data and AI",
+      "summary": "Identify usable data and distinguish quality from interoperability.",
+      "takeaways": [
+        "An EMR lives inside one hospital. An EHR follows the patient across organisations over time. A scanned paper chart is neither: it is just a picture.",
+        "Structured data fits fixed fields (BP 120/80). Unstructured data is free form (notes, images). Semi-structured has some tags (XML/JSON messages).",
+        "Raw hospital data is not ready for AI. Define the question first, then source, document, clean and check the data, and keep monitoring it.",
+        "Learn the six dimensions of data quality, each with one example. They are very likely exam questions.",
+        "Models learn old inequalities from historical data. A proxy like past spending can make groups who had less access look healthier than they are.",
+        "Interoperability means systems can exchange data and use it. It has four levels; data arriving (technical) is only the first."
       ],
-      traps: [
-        ['More data automatically means better decisions', 'Relevance, quality, context and governance matter more than volume.'],
-        ['A scanned paper chart is an EHR', 'An EHR\'s value depends on structured data, workflow integration and exchange. A scanned picture of paper has none of these.'],
-        ['EHR and EMR always mean exactly the same thing', 'They are often used interchangeably, but an EMR usually means one organization\'s record and an EHR a broader longitudinal view.'],
-        ['Missing values can be assumed random', 'Missingness can be systematic: some patients are measured less often because of access barriers or clinical choices.'],
-        ['A temperature of 410 °C is an incomplete value', 'It is present but outside the possible range: a validity problem. A missing temperature would be incomplete.'],
-        ['Removing sensitive attributes makes a model fair', 'A proxy variable can still encode inequity.'],
-        ['De-identified data can never be traced back', 'Linkage with other datasets may enable re-identification.'],
-        ['If the message arrived, the systems are interoperable', 'Transfer is not enough: the receiver must interpret the meaning correctly (semantic interoperability).'],
-        ['FHIR solves data quality', 'FHIR is a shared grammar for exchange. It does not fix poor data quality or inconsistent local workflows.'],
-        ['LOINC and ICD are the same kind of standard', 'LOINC identifies lab tests and observations; ICD classifies diseases. Transport standards, formats, terminologies and classifications solve different problems.'],
+      "traps": [
+        [
+          "More data automatically means better decisions",
+          "Relevance, quality, context and governance matter more than volume."
+        ],
+        [
+          "A scanned paper chart is an EHR",
+          "An EHR's value depends on structured data, workflow integration and exchange. A scanned picture of paper has none of these."
+        ],
+        [
+          "EHR and EMR always mean exactly the same thing",
+          "They are often used interchangeably, but an EMR usually means one organization's record and an EHR a broader longitudinal view."
+        ],
+        [
+          "Missing values can be assumed random",
+          "Missingness can be systematic: some patients are measured less often because of access barriers or clinical choices."
+        ],
+        [
+          "A temperature of 410 °C is an incomplete value",
+          "It is present but outside the possible range: a validity problem. A missing temperature would be incomplete."
+        ]
       ],
-      activities: [
-        { id: 'w3-quality', title: 'Data Quality Inspector', desc: 'An EHR extract full of planted problems — 410 °C, pounds vs kilograms, a duplicate patient, a missing anticoagulant. Find each one and name its data-quality dimension.', href: 'w3/quality.html' },
-        { id: 'w3-interop', title: 'What Does "1.8" Mean?', desc: 'Send a lab result between two hospital systems. Add the test code, unit, reference range and time one by one and watch the receiver go from dangerous guessing to safe interpretation — then see it as a FHIR resource.', href: 'w3/interop.html' },
+      "activities": [
+        {
+          "id": "w3-quality",
+          "title": "Data Quality Inspector",
+          "desc": "An EHR extract full of planted problems — 410 °C, pounds vs kilograms, a duplicate patient, a missing anticoagulant. Find each one and name its data-quality dimension.",
+          "href": "w3/quality.html"
+        },
+        {
+          "id": "w3-interop",
+          "title": "What Does \"1.8\" Mean?",
+          "desc": "Send a lab result between two hospital systems. Add the test code, unit, reference range and time one by one and watch the receiver go from dangerous guessing to safe interpretation — then see it as a FHIR resource.",
+          "href": "w3/interop.html"
+        }
       ],
-      quiz: [
-        { q: 'What is the "central challenge" of healthcare data according to the lecture?', options: ['Collecting trustworthy, usable and responsibly governed data', 'Collecting as much data as possible', 'Storing data on paper', 'Avoiding all data collection'], answer: 0, explain: 'Slide 3: more data does not automatically mean better decisions.' },
-        { q: 'Wearable readings, home blood pressure and patient-reported outcomes are which type of data?', options: ['Patient-generated', 'Administrative', 'Omics', 'Imaging'], answer: 0, explain: 'Slide 4.' },
-        { q: 'Appointments, billing, referrals and bed management are which type of data?', options: ['Administrative', 'Clinical', 'Patient-generated', 'Contextual'], answer: 0, explain: 'Slide 4.' },
-        { q: 'In common usage, what is the difference between an EMR and an EHR?', options: ['An EMR is often one organization\'s record; an EHR implies a broader longitudinal view', 'An EHR is always on paper', 'They are different names for imaging data', 'An EMR is only for billing'], answer: 0, explain: 'Slide 5. The terms are sometimes used interchangeably.' },
-        { q: 'What is the correct order of data moving through an EHR?', options: ['Capture → standardize → store and link → exchange → use → update', 'Exchange → capture → update → store', 'Use → capture → delete', 'Store → standardize → capture'], answer: 0, explain: 'Slide 6.' },
-        { q: 'Which is a common EHR friction point?', options: ['Alert fatigue and duplicate entry', 'Perfect legibility', 'Faster access', 'Audit trails'], answer: 0, explain: 'Slide 7: duplicate entry, alert fatigue, poor usability, fragmented systems, incomplete documentation. The others are benefits.' },
-        { q: 'A free-text discharge summary is…', options: ['Unstructured data', 'Structured data', 'A coded diagnosis', 'An ICD code'], answer: 0, explain: 'Slide 8.' },
-        { q: 'Which of the big-data Vs describes uncertainty, noise and missing values?', options: ['Veracity', 'Velocity', 'Volume', 'Variety'], answer: 0, explain: 'Slide 9.' },
-        { q: 'ICU monitors and wearables sending data rapidly illustrate…', options: ['Velocity', 'Veracity', 'Value', 'Validity'], answer: 0, explain: 'Slide 9.' },
-        { q: 'Which V is often added to the classic four?', options: ['Value', 'Validity', 'Visibility', 'Velocity'], answer: 0, explain: 'Slide 9: volume, velocity, variety, veracity + value.' },
-        { q: 'What is the FIRST step in turning raw data into an AI-ready dataset?', options: ['Define the question: what decision or outcome should the analysis support?', 'Train the model', 'Delete missing values', 'Buy more storage'], answer: 0, explain: 'Slide 11.' },
-        { q: 'Recording where each field came from and how it changed is called…', options: ['Data provenance', 'Data minimization', 'Segmentation', 'Calibration'], answer: 0, explain: 'Slide 11.' },
-        { q: 'A temperature recorded as 410 °C is mainly a problem of…', options: ['Validity', 'Completeness', 'Uniqueness', 'Timeliness'], answer: 0, explain: 'Slide 12: the value falls outside the expected range.' },
-        { q: 'Weight stored in pounds in one system and kilograms in another is a problem of…', options: ['Consistency', 'Uniqueness', 'Timeliness', 'Completeness'], answer: 0, explain: 'Slide 13: consistency and unit harmonization.' },
-        { q: 'A patient appears twice under slightly different names. Which dimension?', options: ['Uniqueness', 'Validity', 'Accuracy', 'Timeliness'], answer: 0, explain: 'Slide 13: uniqueness and record linkage.' },
-        { q: 'A lab result reaches the dashboard after the treatment decision was made. Which dimension?', options: ['Timeliness', 'Consistency', 'Uniqueness', 'Validity'], answer: 0, explain: 'Slide 13.' },
-        { q: 'A medication list is missing an anticoagulant. Which dimension?', options: ['Completeness', 'Validity', 'Uniqueness', 'Consistency'], answer: 0, explain: 'Slide 13: completeness, with possible safety consequences.' },
-        { q: 'A lab result is attached to the wrong patient. Which dimension fails?', options: ['Accuracy (identity matching)', 'Timeliness', 'Validity', 'Volume'], answer: 0, explain: 'Slide 13.' },
-        { q: 'Why can a model be unfair even if sensitive attributes such as ethnicity are excluded?', options: ['A proxy variable can encode inequity', 'Because models always use ethnicity', 'Because exclusion is illegal', 'It cannot — excluding them guarantees fairness'], answer: 0, explain: 'Slide 14.' },
-        { q: 'What is data minimization?', options: ['Collecting and exposing only what is needed for the task', 'Deleting all data after one day', 'Compressing images', 'Using small models'], answer: 0, explain: 'Slide 15.' },
-        { q: 'Systems interpret the meaning of exchanged data consistently. This is…', options: ['Semantic interoperability', 'Technical interoperability', 'Syntactic interoperability', 'Organizational interoperability'], answer: 0, explain: 'Slide 16.' },
-        { q: 'Data follows a shared structure or format. This is…', options: ['Syntactic interoperability', 'Semantic interoperability', 'Technical interoperability', 'Organizational interoperability'], answer: 0, explain: 'Slide 16.' },
-        { q: 'Why is a result labelled "1.8" unsafe on its own?', options: ['Without the test, unit, reference range and context it cannot be interpreted', 'Because 1.8 is always abnormal', 'Because numbers cannot be sent electronically', 'Because it is not in DICOM format'], answer: 0, explain: 'Slide 16.' },
-        { q: 'Which standard is used for medical imaging data?', options: ['DICOM', 'LOINC', 'ICD', 'SNOMED CT'], answer: 0, explain: 'Slide 17.' },
-        { q: 'Which standard provides identifiers for laboratory tests and observations?', options: ['LOINC', 'DICOM', 'HL7 v2', 'ICD'], answer: 0, explain: 'Slide 17.' },
-        { q: 'Which standard represents health information as resources exchanged through APIs?', options: ['HL7 FHIR', 'ICD', 'DICOM', 'LOINC'], answer: 0, explain: 'Slides 17–18: resources such as Patient, Observation, Condition, MedicationRequest.' },
-        { q: 'The lecture\'s analogy says FHIR is like…', options: ['A shared grammar — organizations still need to agree on vocabulary and meaning', 'A dictionary of diseases', 'A camera for X-rays', 'A billing system'], answer: 0, explain: 'Slide 18.' },
-        { q: '"Which wards are likely to exceed capacity next weekend?" is which type of analytics?', options: ['Predictive', 'Descriptive', 'Diagnostic', 'Prescriptive'], answer: 0, explain: 'Slide 19: what is likely to happen?' },
-        { q: 'Comparing feasible staffing strategies to decide what to do is…', options: ['Prescriptive analytics', 'Descriptive analytics', 'Diagnostic analytics', 'Predictive analytics'], answer: 0, explain: 'Slide 19: what action may help?' },
-        { q: 'Monthly emergency-department visit counts are…', options: ['Descriptive analytics', 'Predictive analytics', 'Prescriptive analytics', 'Diagnostic analytics'], answer: 0, explain: 'Slide 19: what happened?' },
-        { q: 'Does the model work in a different site, time period or population? This is…', options: ['External validation', 'Calibration', 'Data minimization', 'Provenance'], answer: 0, explain: 'Slide 22.' },
-        { q: 'Why is accuracy not enough for a rare condition?', options: ['A model predicting "no condition" for nearly everyone can be highly accurate and still find nobody', 'Accuracy cannot be calculated for rare conditions', 'Rare conditions have no data', 'Accuracy is always low for rare conditions'], answer: 0, explain: 'Slide 22.' },
+      "quiz": [
+        {
+          "q": "What is the \"central challenge\" of healthcare data according to the lecture?",
+          "options": [
+            "Trustworthy, usable, governed data",
+            "Collecting as much data as possible",
+            "Storing data on paper",
+            "Avoiding all data collection"
+          ],
+          "answer": 0,
+          "explain": "Slide 3: more data does not automatically mean better decisions."
+        },
+        {
+          "q": "In common usage, what is the difference between an EMR and an EHR?",
+          "options": [
+            "An EHR is always on paper",
+            "EMR: one organization; EHR: broader history",
+            "They are different names for imaging data",
+            "An EMR is only for billing"
+          ],
+          "answer": 1,
+          "explain": "Slide 5. The terms are sometimes used interchangeably."
+        },
+        {
+          "q": "A free-text discharge summary is…",
+          "options": [
+            "Structured data",
+            "A coded diagnosis",
+            "Unstructured data",
+            "An ICD code"
+          ],
+          "answer": 2,
+          "explain": "Slide 8."
+        },
+        {
+          "q": "Which of the big-data Vs describes uncertainty, noise and missing values?",
+          "options": [
+            "Velocity",
+            "Volume",
+            "Variety",
+            "Veracity"
+          ],
+          "answer": 3,
+          "explain": "Slide 9."
+        },
+        {
+          "q": "What is the FIRST step in turning raw data into an AI-ready dataset?",
+          "options": [
+            "Define the question",
+            "Train the model",
+            "Delete missing values",
+            "Buy more storage"
+          ],
+          "answer": 0,
+          "explain": "Slide 11."
+        },
+        {
+          "q": "A temperature recorded as 410 °C is mainly a problem of…",
+          "options": [
+            "Completeness",
+            "Validity",
+            "Uniqueness",
+            "Timeliness"
+          ],
+          "answer": 1,
+          "explain": "Slide 12: the value falls outside the expected range."
+        },
+        {
+          "q": "Weight stored in pounds in one system and kilograms in another is a problem of…",
+          "options": [
+            "Uniqueness",
+            "Timeliness",
+            "Consistency",
+            "Completeness"
+          ],
+          "answer": 2,
+          "explain": "Slide 13: consistency and unit harmonization."
+        },
+        {
+          "q": "A patient appears twice under slightly different names. Which dimension?",
+          "options": [
+            "Validity",
+            "Accuracy",
+            "Timeliness",
+            "Uniqueness"
+          ],
+          "answer": 3,
+          "explain": "Slide 13: uniqueness and record linkage."
+        },
+        {
+          "q": "A lab result reaches the dashboard after the treatment decision was made. Which dimension?",
+          "options": [
+            "Timeliness",
+            "Consistency",
+            "Uniqueness",
+            "Validity"
+          ],
+          "answer": 0,
+          "explain": "Slide 13."
+        },
+        {
+          "q": "A medication list is missing an anticoagulant. Which dimension?",
+          "options": [
+            "Validity",
+            "Completeness",
+            "Uniqueness",
+            "Consistency"
+          ],
+          "answer": 1,
+          "explain": "Slide 13: completeness, with possible safety consequences."
+        },
+        {
+          "q": "A lab result is attached to the wrong patient. Which dimension fails?",
+          "options": [
+            "Timeliness",
+            "Validity",
+            "Accuracy",
+            "Volume"
+          ],
+          "answer": 2,
+          "explain": "Slide 13."
+        },
+        {
+          "q": "Why can a model be unfair even if sensitive attributes such as ethnicity are excluded?",
+          "options": [
+            "Because models always use ethnicity",
+            "Because exclusion is illegal",
+            "It cannot — excluding them guarantees fairness",
+            "Proxy variables can encode inequity"
+          ],
+          "answer": 3,
+          "explain": "Slide 14."
+        },
+        {
+          "q": "Systems interpret the meaning of exchanged data consistently. This is…",
+          "options": [
+            "Semantic interoperability",
+            "Technical interoperability",
+            "Syntactic interoperability",
+            "Organizational interoperability"
+          ],
+          "answer": 0,
+          "explain": "Slide 16."
+        },
+        {
+          "q": "Which standard represents health information as resources exchanged through APIs?",
+          "options": [
+            "ICD",
+            "HL7 FHIR",
+            "DICOM",
+            "LOINC"
+          ],
+          "answer": 1,
+          "explain": "Slides 17–18: resources such as Patient, Observation, Condition, MedicationRequest."
+        }
       ],
-      cards: [
-        ['The central data challenge', 'Not more data, but trustworthy, usable and responsibly governed data.'],
-        ['Healthcare data types', 'Clinical · administrative · imaging & signals · patient-generated · omics & research · contextual.'],
-        ['EHR vs EMR', 'EHR: digital record across encounters and settings (longitudinal). EMR: often one organization\'s record.'],
-        ['EHR data flow', 'Capture → standardize → store & link → exchange → use → update.'],
-        ['Structured / unstructured / semi-structured', 'Predefined fields (BP, coded diagnosis) / free text, summaries, scans / tagged messages, some device outputs.'],
-        ['Big data Vs', 'Volume · velocity · variety · veracity (the 4 Vs) + value.'],
-        ['AI-ready dataset', 'Define the question → lawful sources → provenance → clean & harmonize → handle missingness → version, validate, monitor.'],
-        ['Accuracy', 'Does the value reflect reality? (e.g. lab result on the wrong patient)'],
-        ['Completeness', 'Are the required fields present? (e.g. missing anticoagulant)'],
-        ['Consistency', 'Do values agree across records and systems? (e.g. lbs vs kg)'],
-        ['Timeliness', 'Is it current enough for the decision? (e.g. result arrives after treatment)'],
-        ['Validity', 'Does the value follow the expected format, range or code set? (e.g. 410 °C)'],
-        ['Uniqueness', 'Are duplicates distorting things? (e.g. same patient under two names)'],
-        ['Data minimization', 'Collect and expose only what the task needs.'],
-        ['Interoperability levels', 'Technical (connect) · syntactic (shared format) · semantic (shared meaning) · organizational (policies, workflows, trust).'],
-        ['HL7 v2 / HL7 FHIR', 'Widely used messaging standard / modern resources exchanged through APIs.'],
-        ['SNOMED CT / LOINC / ICD / DICOM', 'Clinical terminology / lab tests & observations / disease classification / medical imaging.'],
-        ['Four levels of analytics', 'Descriptive (what happened?) · diagnostic (why?) · predictive (what will happen?) · prescriptive (what action may help?).'],
-        ['Evaluating an AI system', 'Clinical validity · discrimination (AUC) · calibration · clinical utility · external validation · monitoring.'],
-      ],
+      "cards": [
+        [
+          "The central data challenge",
+          "Not more data, but trustworthy, usable and responsibly governed data."
+        ],
+        [
+          "Healthcare data types",
+          "Clinical · administrative · imaging & signals · patient-generated · omics & research · contextual."
+        ],
+        [
+          "EHR vs EMR",
+          "EHR: digital record across encounters and settings (longitudinal). EMR: often one organization's record."
+        ],
+        [
+          "Structured / unstructured / semi-structured",
+          "Predefined fields (BP, coded diagnosis) / free text, summaries, scans / tagged messages, some device outputs."
+        ],
+        [
+          "Big data Vs",
+          "Volume · velocity · variety · veracity (the 4 Vs) + value."
+        ],
+        [
+          "AI-ready dataset",
+          "Define the question → lawful sources → provenance → clean & harmonize → handle missingness → version, validate, monitor."
+        ],
+        [
+          "Accuracy",
+          "Does the value reflect reality? (e.g. lab result on the wrong patient)"
+        ],
+        [
+          "Completeness",
+          "Are the required fields present? (e.g. missing anticoagulant)"
+        ],
+        [
+          "Consistency",
+          "Do values agree across records and systems? (e.g. lbs vs kg)"
+        ],
+        [
+          "Timeliness",
+          "Is it current enough for the decision? (e.g. result arrives after treatment)"
+        ],
+        [
+          "Validity",
+          "Does the value follow the expected format, range or code set? (e.g. 410 °C)"
+        ],
+        [
+          "Uniqueness",
+          "Are duplicates distorting things? (e.g. same patient under two names)"
+        ],
+        [
+          "Interoperability levels",
+          "Technical (connect) · syntactic (shared format) · semantic (shared meaning) · organizational (policies, workflows, trust)."
+        ],
+        [
+          "Four levels of analytics",
+          "Descriptive (what happened?) · diagnostic (why?) · predictive (what will happen?) · prescriptive (what action may help?)."
+        ]
+      ]
     },
-
-    /* ================================================================ */
     {
-      n: 4,
-      title: 'AI in Clinical Decision-Making',
-      summary: 'Clinical decision support systems (CDSS), predictive analytics and risk scores, thresholds, sensitivity, specificity, PPV and NPV, why accuracy misleads, calibration and validation, augmented intelligence, automation bias and alert fatigue, explainability, bias and governance, implementation, and the early-warning case study. (The "Week 5" slides are a shortened copy of this deck.)',
-      takeaways: [
-        'Clinical decisions combine symptoms, history, examination, tests, patient preferences and context, under unavoidable uncertainty. The value of AI is whether it improves a decision, not whether it produces a prediction.',
-        'AI can enter the workflow before consultation, during assessment, after tests, during treatment planning and after discharge. Always define the user, the decision, the time available and the action the output triggers.',
-        'A CDSS gives patient-specific information to support decisions. Knowledge-based CDSS uses rules from guidelines; non-knowledge-based CDSS uses patterns learned from data. Passive support waits until asked; active support pops up in the workflow; patient-facing support helps patients.',
-        'CDSS strengths: consistency, timely reminders, less reliance on memory. Limitations: outdated rules, poor integration, incomplete records, alerts that do not fit the patient, and alert fatigue.',
-        'Predictive analytics estimates the likelihood of a future event (deterioration, readmission, falls, no-shows). A prediction estimates risk; it does not prove the event will happen or explain its cause. A high-risk score without a response pathway only creates workload.',
-        'From prediction to action: define the target, choose the prediction time, estimate risk with a validated model, choose a threshold, connect it to a response, and measure whether the whole pathway improves outcomes.',
-        'Lower thresholds catch more true cases but give more false positives; higher thresholds give fewer alerts but more missed cases. The best threshold depends on clinical consequences, resources and patient preferences.',
-        'Sensitivity, specificity, PPV and NPV. PPV and NPV depend strongly on prevalence, so the same model behaves differently in different settings. With 1% prevalence, "no condition for everyone" is 99% accurate and finds nobody.',
-        'Discrimination separates people with different outcomes; calibration matches predicted probabilities to observed rates. Internal validation stays inside the development data; external validation tests another site or time. Data leakage makes results look unrealistically strong.',
-        'Augmented intelligence extends human capability instead of replacing it. Meaningful oversight needs time, information and the authority to disagree — the human is not a rubber stamp.',
-        'Automation bias: over-trusting the computer. Commission error = following a wrong recommendation; omission error = failing to act because the system did not flag the problem. Design for calibrated trust.',
-        'Responsibility cannot be delegated to an algorithm. Evaluate the whole human–AI–workflow system, pilot carefully, monitor and set criteria to update, pause or withdraw.',
+      "n": 4,
+      "title": "AI in Clinical Decision-Making",
+      "summary": "Connect AI outputs to safe, accountable clinical decisions.",
+      "takeaways": [
+        "A CDSS gives patient-specific help at the moment of a decision: reminders, alerts, risk estimates. It can be rules (knowledge-based) or learned (non-knowledge-based).",
+        "A prediction estimates risk. It does not prove the event will happen or explain why. It only helps if it is connected to an action.",
+        "A lower threshold catches more sick patients but gives more false alarms. And when a condition is rare, \"99% accurate\" can mean the model finds nobody.",
+        "Discrimination (AUC): does it rank sicker patients higher? Calibration: when it says 20%, do about 20 in 100 really have the event?",
+        "Augmented intelligence: AI extends people, it does not replace them. The human must be more than a rubber stamp, with the time, information and authority to disagree.",
+        "An explanation must help the user act and doubt, not just look technical. A model can be accurate overall and still unsafe for one group."
       ],
-      traps: [
-        ['A risk score tells you what to do', 'It estimates risk. The care team still decides the appropriate action, and the patient\'s values matter.'],
-        ['A higher risk score proves the event will happen', 'A prediction estimates probability; it does not prove the event or explain its cause.'],
-        ['Knowledge-based CDSS means AI-based CDSS', 'Knowledge-based uses rules from guidelines and experts. Non-knowledge-based uses patterns learned from data.'],
-        ['More alerts always mean more safety', 'Alert fatigue: frequent low-value alerts make clinicians ignore important ones.'],
-        ['99% accuracy means a great model', 'With 1% prevalence, predicting "no" for everyone gives 99% accuracy and finds no patient.'],
-        ['PPV is a fixed property of the model', 'PPV and NPV depend strongly on prevalence. The same model has a lower PPV where the condition is rarer.'],
-        ['Discrimination and calibration are the same', 'Discrimination = ranking/separating patients. Calibration = do predicted probabilities match observed rates.'],
-        ['Omission error = following a wrong recommendation', 'That is a commission error. Omission = not acting because the system did not flag the problem.'],
-        ['Augmented intelligence means maximum automation', 'It extends human capability; the goal is better decisions, not maximum automation.'],
-        ['Strong development results mean it is ready for the clinic', 'It needs external validation, a pilot, monitoring and governance.'],
-        ['Explaining a model output proves it is correct', 'Explanations should not present associations as causes or as proof of correctness.'],
-        ['A risk score of 7 means 70% risk', 'A score may be a probability, a ranking or a transformed output. Check what it represents (slide 11).'],
-        ['"Discrimination" here means unfair treatment', 'In model evaluation, discrimination = how well the model separates people with different outcomes (AUC). Unfairness is "bias".'],
-        ['Sensitivity changes with prevalence like PPV does', 'Sensitivity and specificity start from the truth. PPV and NPV are the ones that depend strongly on prevalence.'],
-        ['A correct alert is always useful', 'If it comes too late or is hard to act on, it still fails (slide 8).'],
-        ['A confidence score always helps', 'Only if users understand what it means (slide 16 reflection).'],
-        ['Good overall accuracy = safe for every group', 'Performance can vary by age, sex, ethnicity, language, etc. Measure subgroups (slide 18).'],
-        ['If the tool saves money, it is a success', 'Slide 23: benefits must be meaningful for patients, not only convenient for the organisation.'],
-        ['In the case study, the best answer is to expand quickly', 'The defensible answer is to pause expansion, investigate failure modes and redesign the workflow (slide 22).'],
+      "traps": [
+        [
+          "A risk score tells you what to do",
+          "It estimates risk. The care team still decides the appropriate action, and the patient's values matter."
+        ],
+        [
+          "A higher risk score proves the event will happen",
+          "A prediction estimates probability; it does not prove the event or explain its cause."
+        ],
+        [
+          "Knowledge-based CDSS means AI-based CDSS",
+          "Knowledge-based uses rules from guidelines and experts. Non-knowledge-based uses patterns learned from data."
+        ],
+        [
+          "More alerts always mean more safety",
+          "Alert fatigue: frequent low-value alerts make clinicians ignore important ones."
+        ],
+        [
+          "99% accuracy means a great model",
+          "With 1% prevalence, predicting \"no\" for everyone gives 99% accuracy and finds no patient."
+        ]
       ],
-      activities: [
-        { id: 'w4-threshold', title: 'Threshold & Alert Lab', desc: 'An early-warning model scores 1,000 ward patients. Move the threshold and the prevalence, watch the confusion matrix, sensitivity, specificity, PPV and NPV change, see when the alert load exceeds what the nurses can handle — and try the 99%-accurate model that finds nobody.', href: 'w4/threshold.html' },
-        { id: 'w4-calibration', title: 'Calibration & the New Hospital', desc: 'Move a validated model to a hospital where the condition is rarer or the population differs. See PPV fall, calibration drift, and why external validation matters.', href: 'w4/calibration.html' },
-        { id: 'w4-oversight', title: 'Human Oversight Trainer', desc: 'Ten cases with an AI recommendation. Accept or override. Some recommendations are wrong because of stale data, a wrong-patient record or missing context. Your commission and omission errors are counted.', href: 'w4/oversight.html' },
+      "activities": [
+        {
+          "id": "w4-threshold",
+          "title": "Threshold & Alert Lab",
+          "desc": "An early-warning model scores 1,000 ward patients. Move the threshold and the prevalence, watch the confusion matrix, sensitivity, specificity, PPV and NPV change, see when the alert load exceeds what the nurses can handle — and try the 99%-accurate model that finds nobody.",
+          "href": "w4/threshold.html"
+        },
+        {
+          "id": "w4-calibration",
+          "title": "Calibration & the New Hospital",
+          "desc": "Move a validated model to a hospital where the condition is rarer or the population differs. See PPV fall, calibration drift, and why external validation matters.",
+          "href": "w4/calibration.html"
+        },
+        {
+          "id": "w4-oversight",
+          "title": "Human Oversight Trainer",
+          "desc": "Ten cases with an AI recommendation. Accept or override. Some recommendations are wrong because of stale data, a wrong-patient record or missing context. Your commission and omission errors are counted.",
+          "href": "w4/oversight.html"
+        }
       ],
-      quiz: [
-        { q: 'According to the lecture, what determines the value of AI in clinical decision-making?', options: ['Whether it improves a decision', 'Whether it produces a prediction', 'How complex the model is', 'How many alerts it sends'], answer: 0, explain: 'Slide 4.' },
-        { q: 'What is a clinical decision support system (CDSS)?', options: ['A system that provides patient- or context-specific information to support healthcare decisions', 'A system that makes the final treatment decision', 'An electronic billing tool', 'A hospital robot'], answer: 0, explain: 'Slide 6: it supports decisions and does not replace professional judgment or accountability.' },
-        { q: 'An alert warns the prescriber about a documented allergy before the order is completed. This is an example of…', options: ['A CDSS alert', 'Generative AI', 'Unsupervised learning', 'Robotics'], answer: 0, explain: 'Slide 6: the simple example.' },
-        { q: 'A CDSS built from rules written from guidelines and expert knowledge is…', options: ['Knowledge-based', 'Non-knowledge-based', 'Patient-facing', 'Passive by definition'], answer: 0, explain: 'Slide 7.' },
-        { q: 'A model that learned deterioration patterns from data is which type of CDSS?', options: ['Non-knowledge-based', 'Knowledge-based', 'Passive', 'Patient-facing'], answer: 0, explain: 'Slide 7.' },
-        { q: 'Information is available when the clinician looks for it. This is…', options: ['Passive support', 'Active support', 'Automation bias', 'Alert fatigue'], answer: 0, explain: 'Slide 7. Active support appears at a particular workflow point, such as a pop-up.' },
-        { q: 'What is alert fatigue?', options: ['Frequent low-value alerts reduce attention to important warnings', 'Clinicians working long shifts', 'A computer slowing down from too many alerts', 'Patients ignoring reminders'], answer: 0, explain: 'Slides 8 and 16.' },
-        { q: 'What does predictive analytics estimate?', options: ['The likelihood of a future event or outcome', 'The cause of a disease', 'The cost of a drug', 'The past number of admissions'], answer: 0, explain: 'Slide 9: a prediction estimates risk; it does not prove the event will occur or explain its cause.' },
-        { q: 'Which is the "common failure" of predictive models in practice?', options: ['A high-risk score without a clear response pathway creates workload without improving care', 'Models are always too accurate', 'Alerts are never sent', 'Models only use images'], answer: 0, explain: 'Slide 10.' },
-        { q: 'What usually happens when you LOWER the alert threshold?', options: ['More true cases are found but more false positives appear', 'Fewer alerts and fewer missed cases', 'Nothing changes', 'Specificity increases'], answer: 0, explain: 'Slide 11.' },
-        { q: 'For a rapidly treatable, life-threatening condition, which threshold choice is usually defended?', options: ['A lower threshold, accepting more false alarms to miss fewer cases', 'The highest possible threshold', 'No threshold at all', 'A random threshold'], answer: 0, explain: 'Slide 11 discussion: missing a case is very costly, so sensitivity is prioritized — while watching the alert load.' },
-        { q: '"Among people not flagged, the proportion who truly do not have the condition" is…', options: ['Negative predictive value (NPV)', 'Specificity', 'Sensitivity', 'PPV'], answer: 0, explain: 'Slide 12.' },
-        { q: 'Which measures depend strongly on prevalence?', options: ['PPV and NPV', 'Only sensitivity', 'Only specificity', 'None of them'], answer: 0, explain: 'Slide 12: the same model can behave differently in different settings.' },
-        { q: '1% of 1,000 patients have a condition. A model predicts "no condition" for everyone. Its accuracy is…', options: ['99%, yet it finds no affected patient', '1%', '50%', '100%'], answer: 0, explain: 'Slide 13: 990 of 1,000 are correct, but sensitivity is 0.' },
-        { q: 'Calibration asks…', options: ['Whether predicted probabilities align with observed event rates', 'Whether the model separates high- from low-risk patients', 'Whether data was encrypted', 'How fast the model runs'], answer: 0, explain: 'Slide 14. Separating patients is discrimination.' },
-        { q: 'Using information that was not available at prediction time is called…', options: ['Data leakage', 'Calibration', 'Augmented intelligence', 'External validation'], answer: 0, explain: 'Slide 14: it makes results look unrealistically strong.' },
-        { q: 'Testing a model at another hospital or in a later period is…', options: ['External validation', 'Internal validation', 'Data minimization', 'Alert fatigue'], answer: 0, explain: 'Slide 14.' },
-        { q: 'Augmented intelligence means…', options: ['AI extends human capabilities rather than simply automating human roles', 'AI replaces clinicians', 'AI with augmented reality glasses', 'Maximum automation'], answer: 0, explain: 'Slide 15.' },
-        { q: 'What does meaningful human oversight require, according to slide 15?', options: ['Time, information and authority to disagree', 'Just a signature on every AI output', 'No training', 'Hiding the model\'s uncertainty'], answer: 0, explain: 'The human is not merely a rubber stamp.' },
-        { q: 'A clinician follows an incorrect AI recommendation. This is…', options: ['A commission error', 'An omission error', 'Alert fatigue', 'Data leakage'], answer: 0, explain: 'Slide 16.' },
-        { q: 'A clinician fails to act because the system did not flag a problem. This is…', options: ['An omission error', 'A commission error', 'Calibration', 'Segmentation'], answer: 0, explain: 'Slide 16.' },
-        { q: 'Which design principle does the lecture recommend against automation bias?', options: ['Design for calibrated trust: communicate uncertainty, show evidence, make escalation clear', 'Hide uncertainty so users trust the system', 'Show more pop-ups', 'Remove the override option'], answer: 0, explain: 'Slide 16.' },
-        { q: 'Which explanation does the lecture call more informative?', options: ['"Higher estimated risk based on recent observations"', 'A mysterious red warning with no next step', 'A long list of model weights', 'No explanation at all'], answer: 0, explain: 'Slide 17.' },
-        { q: 'Could a model be accurate overall but unsafe for a particular patient group?', options: ['Yes — performance can vary by age, sex, ethnicity, disability, language or setting', 'No — overall accuracy guarantees safety for all', 'Only if it uses images', 'Only for children'], answer: 0, explain: 'Slide 18.' },
-        { q: 'The lecture\'s governance principle says…', options: ['Responsibility cannot be delegated to an algorithm; institutions need named owners and clear procedures', 'The vendor is always responsible', 'The algorithm is responsible for its mistakes', 'Nobody is responsible if the AI is accurate'], answer: 0, explain: 'Slide 19.' },
-        { q: 'In the early-warning case, the pilot produced many alerts, some missed deteriorations and some false alerts. Which recommendation does the lecture call defensible?', options: ['Pause expansion while investigating failure modes and redesigning the workflow', 'Expand to every ward immediately', 'Decide using accuracy alone', 'Remove human review of alerts'], answer: 0, explain: 'Slide 22.' },
-        { q: 'The key message of "responsible success" is to evaluate…', options: ['The complete human–AI–workflow system, not the algorithm in isolation', 'Only the algorithm\'s accuracy', 'Only the cost', 'Only the vendor\'s claims'], answer: 0, explain: 'Slide 23.' },
-        /* harder, exam-style: plausible distractors, scenarios and calculations */
-        { q: 'A tool summarises a patient\'s record and points out missing information before the doctor sees them. At which workflow stage does it work?', options: ['Before consultation', 'During assessment', 'After tests', 'After discharge'], answer: 0, explain: 'Slide 5: before consultation, AI can summarise records, identify missing information or support triage.' },
-        { q: 'Which question does slide 5 call the "design question"?', options: ['Who sees the output, at what moment, and what are they expected to do differently?', 'How accurate is the model on the development data?', 'Which algorithm is the most advanced?', 'How many alerts can the system send per hour?'], answer: 0, explain: 'Slide 5: define the user, the decision, the time available and the action triggered.' },
-        { q: 'Which of these is listed as something a TRADITIONAL (non-AI) CDSS may use?', options: ['Drug databases and clinical pathways', 'Natural language processing', 'Image analysis', 'Deep neural networks'], answer: 0, explain: 'Slide 6: traditional systems use rules, thresholds, drug databases, clinical pathways or guideline logic. NLP, image analysis and ML belong to AI-enabled CDSS.' },
-        { q: 'Which statement about CDSS matches slide 6?', options: ['It supports decisions but does not automatically replace professional judgement or accountability', 'It transfers accountability to the software vendor', 'It always uses machine learning', 'It only produces alerts, never explanations'], answer: 0, explain: 'Slide 6. Outputs can include reminders, alerts, risk estimates, ranked options or explanations.' },
-        { q: 'A pop-up appears while a doctor is writing a prescription and warns about a drug interaction. What type of support is this?', options: ['Active support', 'Passive support', 'Patient-facing support', 'Non-knowledge-based support by definition'], answer: 0, explain: 'Slide 7: active support appears at a particular workflow point. (Whether it is knowledge-based depends on how the rule was made.)' },
-        { q: 'An app helps patients understand their treatment options and prepare questions for their doctor. This is…', options: ['Patient-facing support', 'Active clinician support', 'Knowledge-based support only', 'Automation bias'], answer: 0, explain: 'Slide 7: patient-facing tools help patients understand options, prepare questions or manage care.' },
-        { q: 'According to slide 7, why should knowledge-based, non-knowledge-based, passive, active and patient-facing support be treated differently?', options: ['Different types need different testing, governance and escalation pathways', 'Only active support needs any testing', 'Patient-facing tools never need governance', 'They are legally identical, so no difference is needed'], answer: 0, explain: 'Slide 7, last line.' },
-        { q: 'An alert is clinically correct, but it appears after the drug has already been given. What does slide 8 say about this?', options: ['Usability matters: a correct alert can still fail if it appears too late or is difficult to act on', 'A correct alert is always successful', 'This is an omission error by the clinician', 'This is a calibration problem'], answer: 0, explain: 'Slide 8: usability and timing matter.' },
-        { q: 'Which is listed as a STRENGTH of CDSS on slide 8?', options: ['Reduced reliance on memory', 'Outdated rules', 'Poor integration', 'Recommendations that do not fit the patient'], answer: 0, explain: 'Slide 8: strengths are consistency, timely reminders, reduced reliance on memory and access to evidence. The other three are limitations.' },
-        { q: 'Which is NOT one of the model types listed for predictive analytics on slide 9?', options: ['Generative adversarial networks', 'Logistic regression', 'Survival analysis', 'Gradient boosting'], answer: 0, explain: 'Slide 9 lists logistic regression, decision trees, gradient boosting, survival analysis and neural networks.' },
-        { q: 'In the "prediction to action" steps, what does "choose a prediction time" mean?', options: ['Decide what information was available at that moment', 'Decide how fast the computer must run', 'Decide when the patient will be discharged', 'Decide which year the training data comes from'], answer: 0, explain: 'Slide 10. Using information that was not yet available causes data leakage (slide 14).' },
-        { q: 'What is the LAST step of "from prediction to action" on slide 10?', options: ['Measure whether the whole pathway improves outcomes, not just whether the model predicts well', 'Choose a threshold', 'Define the target', 'Send the alert'], answer: 0, explain: 'Slide 10: define target → prediction time → estimate risk → threshold → response → measure the pathway.' },
-        { q: 'A ward receives a "risk score of 7". According to slide 11, what should you check first?', options: ['What the score represents: a probability, a ranking or a transformed model output', 'Nothing: 7 means 70% risk', 'Whether the score is higher than yesterday\'s accuracy', 'Whether the patient agrees with the score'], answer: 0, explain: 'Slide 11: a risk score may be a probability, a ranking or a transformed model output.' },
-        { q: 'What does a threshold do, according to slide 11?', options: ['Turns a continuous score into an action category, such as "review urgently"', 'Measures how well the model is calibrated', 'Removes false positives completely', 'Decides the patient\'s treatment'], answer: 0, explain: 'Slide 11.' },
-        { q: 'A hospital RAISES its alert threshold because nurses are overloaded. What is the main risk?', options: ['More people who need intervention are missed', 'More false positives', 'Sensitivity increases', 'PPV always falls'], answer: 0, explain: 'Slide 11: higher thresholds may reduce alerts but miss more people who need intervention.' },
-        { q: 'According to slide 11, the best threshold depends on…', options: ['Clinical consequences, available resources and patient preferences', 'Only the model\'s accuracy', 'Only the vendor\'s default setting', 'The number of patients in the training data'], answer: 0, explain: 'Slide 11.' },
-        { q: '100 patients are flagged by a model; 25 of them truly have the condition. What is the PPV?', options: ['25%', '75%', '100%', 'It cannot be PPV, it is sensitivity'], answer: 0, explain: 'PPV = TP / all flagged = 25 / 100 = 25%. It starts from the flags.' },
-        { q: '900 patients do not have a condition; the model correctly leaves 810 of them unflagged. What is the specificity?', options: ['90%', '10%', '81%', 'It depends on prevalence'], answer: 0, explain: 'Specificity = TN / all truly negative = 810 / 900 = 90%.' },
-        { q: '400 patients are NOT flagged; 396 of them truly do not have the condition. What is the NPV?', options: ['99%', '1%', '96%', '4%'], answer: 0, explain: 'NPV = TN / all not flagged = 396 / 400 = 99%.' },
-        { q: 'A model with the SAME sensitivity and specificity is moved from a hospital where a condition is common to one where it is rare. What usually happens?', options: ['PPV falls: a larger share of alerts are false positives', 'PPV rises', 'Sensitivity falls to zero', 'Nothing changes because the model is the same'], answer: 0, explain: 'Slide 12: PPV and NPV depend strongly on prevalence. Always examine the base rate.' },
-        { q: 'Which of these does slide 13 list as part of useful evaluation, beyond accuracy?', options: ['Sensitivity, specificity, PPV, NPV, calibration and clinical utility', 'Only accuracy and speed', 'Only the number of features', 'Only the AUC on training data'], answer: 0, explain: 'Slide 13. Also check the confusion matrix, which error is more harmful, and compare with current practice.' },
-        { q: 'Slide 13 asks you to compare the model with…', options: ['Current practice, in the intended population and workflow', 'Another model with more parameters', 'A model from a different specialty', 'Nothing: development results are enough'], answer: 0, explain: 'Slide 13.' },
-        { q: 'A model achieves excellent results because one input was "ICU admission code", which is only recorded after the event. This is…', options: ['Data leakage', 'Good calibration', 'External validation', 'Augmented intelligence'], answer: 0, explain: 'Slide 14: using information unavailable at prediction time makes results look unrealistically strong.' },
-        { q: '"Discrimination" in model evaluation means…', options: ['How well the model separates people with different outcomes', 'Unfair treatment of patient groups', 'Whether predicted probabilities match observed rates', 'Testing the model at another hospital'], answer: 0, explain: 'Slide 14. Careful: in model evaluation, discrimination is a performance measure (e.g. AUC), not the social meaning. Matching probabilities is calibration.' },
-        { q: 'What does AUC stand for in the lecture glossary?', options: ['Area under the ROC curve', 'Average utility of care', 'Automated user check', 'Accuracy under calibration'], answer: 0, explain: 'Slide 25: AUC — area under the ROC curve. It describes discrimination.' },
-        { q: 'When should model performance be reassessed, according to slide 14?', options: ['After deployment and when the data or workflow changes', 'Never, once internally validated', 'Only if the vendor asks', 'Only when the hospital changes its name'], answer: 0, explain: 'Slide 14: a model with strong development results is not automatically ready for clinical use.' },
-        { q: 'Which is NOT listed on slide 15 as something clinicians contribute?', options: ['Processing large datasets quickly', 'Physical examination', 'Communication and values', 'Ethical judgement'], answer: 0, explain: 'Slide 15: processing large data quickly is what AI contributes. Clinicians bring context, examination, communication, values, experience and ethical judgement.' },
-        { q: 'What is the goal of augmented intelligence according to slide 15?', options: ['Better decisions and patient outcomes, not maximum automation', 'Maximum automation of clinical roles', 'Removing the need for clinicians to examine patients', 'Making every output a final decision'], answer: 0, explain: 'Slide 15.' },
-        { q: 'A clinician sees a correct sepsis alert but ignores it because "the computer is often wrong". This is…', options: ['Under-trust', 'Automation bias', 'A commission error', 'Data leakage'], answer: 0, explain: 'Slide 16: under-trust can lead users to ignore useful support.' },
-        { q: 'A nurse gives a dose the AI calculator got wrong, without checking it. Which pair describes this best?', options: ['Automation bias leading to a commission error', 'Under-trust leading to an omission error', 'Alert fatigue leading to calibration error', 'Data leakage leading to an omission error'], answer: 0, explain: 'Slide 16: over-trusting the computer (automation bias) and following an incorrect recommendation (commission).' },
-        { q: 'Would displaying a confidence score always help users, according to slide 16\'s reflection?', options: ['Not necessarily: it only helps if users understand what it means', 'Yes, always', 'Yes, it removes automation bias', 'No, uncertainty should never be shown'], answer: 0, explain: 'Slide 16 reflection. The lecture still recommends communicating uncertainty, but in a way users understand.' },
-        { q: 'Which is NOT one of the explanation approaches listed on slide 17?', options: ['Showing the full source code of the model', 'Key contributing factors', 'Comparable cases', 'Uncertainty ranges'], answer: 0, explain: 'Slide 17 lists key contributing factors, comparable cases, uncertainty ranges or a concise rationale. Technical complexity does not guarantee a useful explanation.' },
-        { q: 'A model explains that "patients with more hospital visits had higher risk". What warning from slide 17 applies?', options: ['Do not present associations as causes, or an explanation as proof the recommendation is correct', 'The explanation proves the model is right', 'Explanations are never needed', 'Only image models need explanations'], answer: 0, explain: 'Slide 17.' },
-        { q: 'Why can a model reproduce historical inequalities?', options: ['It learns from past diagnosis, treatment, access and documentation that already contained inequalities', 'Because computers are intentionally unfair', 'Because subgroup performance is always measured', 'It cannot; models are neutral by design'], answer: 0, explain: 'Slide 18.' },
-        { q: 'Which safeguard does slide 18 list for bias and patient safety?', options: ['Reporting channels, incident review, human escalation and a process to suspend unsafe use', 'Hiding subgroup results', 'Removing human escalation to avoid delays', 'Relying on overall accuracy only'], answer: 0, explain: 'Slide 18.' },
-        { q: '"Use health data only for the stated purpose" refers to which principle on slide 19?', options: ['Purpose limitation', 'Data provenance', 'Auditability', 'External validation'], answer: 0, explain: 'Slide 19: use health data under appropriate legal authority, with purpose limitation and safeguards.' },
-        { q: 'Which three things must an institution define, according to slide 19?', options: ['Who owns the clinical decision, who maintains the model and who responds to an incident', 'The model\'s colour scheme, logo and price', 'Only who bought the software', 'Which patients may not complain'], answer: 0, explain: 'Slide 19.' },
-        { q: 'Which belongs to the security points of slide 19?', options: ['Cybersecurity, vendor dependencies, access controls and auditability', 'Sensitivity and specificity', 'Passive and active support', 'Discrimination and calibration'], answer: 0, explain: 'Slide 19.' },
-        { q: 'According to slide 19, regulatory requirements for an AI tool depend on…', options: ['Its intended use and the jurisdiction', 'Only the size of the hospital', 'Only the model\'s accuracy', 'Nothing: all AI tools have the same rules everywhere'], answer: 0, explain: 'Slide 19.' },
-        { q: 'What is the FIRST step of implementing AI in clinical practice (slide 20)?', options: ['Start with a clearly defined clinical problem and involve the relevant people', 'Buy the most accurate model available', 'Deploy to all wards and monitor later', 'Train users on the software interface'], answer: 0, explain: 'Slide 20: problem → map workflow → assess readiness → pilot → monitor → criteria to update/pause/withdraw.' },
-        { q: 'Which is part of what to MONITOR after implementing a tool (slide 20)?', options: ['Uptake, outcomes, subgroup performance, false alarms, overrides and unintended consequences', 'Only the server uptime', 'Only the number of users who logged in', 'Nothing, once the pilot is finished'], answer: 0, explain: 'Slide 20.' },
-        { q: 'What is slide 20\'s "success measure"?', options: ['A technically impressive model that clinicians cannot use safely is not a successful clinical intervention', 'The model with the highest AUC is always the success', 'Success means the most alerts sent', 'Success means no human is involved'], answer: 0, explain: 'Slide 20.' },
-        { q: 'In the early-warning case (slide 22), which question belongs to the "data & model" group?', options: ['Were inputs available at the time of prediction?', 'How many alerts can the team safely review?', 'Who is missed by the model?', 'Is there a clear response protocol?'], answer: 0, explain: 'Slide 22: data & model = inputs available at prediction time, missing/delayed observations, external validation.' },
-        { q: 'In the early-warning case (slide 22), "How many alerts can the team safely review?" belongs to which group?', options: ['Threshold & workflow', 'Data & model', 'Safety & equity', 'Privacy & security'], answer: 0, explain: 'Slide 22.' },
-        { q: 'Which is one of the slide 23 criteria for "responsible success"?', options: ['Benefits are meaningful for patients, not only convenient for the organisation', 'The tool replaces as many staff as possible', 'The tool is the newest on the market', 'The tool never needs to be updated'], answer: 0, explain: 'Slide 23. Others: improves an outcome vs usual care, works across subgroups, clinicians understand it, errors are acted on, it stays useful.' },
-        { q: 'The slide 24 "exit ticket" asks you to name…', options: ['One benefit, one risk and one safeguard of AI decision support', 'Three algorithms and their accuracy', 'The price of a CDSS', 'One vendor and one hospital'], answer: 0, explain: 'Slide 24.' },
-        { q: 'Which organisation published "Ethics and governance of artificial intelligence for health" (2021), cited on slide 25?', options: ['World Health Organization (WHO)', 'NIST', 'U.S. FDA', 'HL7'], answer: 0, explain: 'Slide 25. NIST published the AI Risk Management Framework (2023); the FDA published Clinical Decision Support Software guidance.' },
-        /* from the recorded lectures */
-        { q: 'In the lecture, what is the difference between a prediction and a decision?', options: ['A prediction estimates what may happen; a decision determines what should be done', 'They are the same thing', 'A decision is made by the model, a prediction by the doctor', 'A prediction is always correct'], answer: 0, explain: 'Lecture, 24 Oct: supporting a decision and making a decision are not the same.' },
-        { q: 'An older patient has a high predicted readmission risk but wants to be cared for at home. According to the lecture…', options: ['The patient\'s preferences matter when deciding what intervention is appropriate', 'The patient must stay in hospital', 'The score decides the treatment', 'Preferences are irrelevant to risk models'], answer: 0, explain: 'Lecture, 24 Oct: a risk score cannot determine what matters most to a particular patient.' },
-        { q: 'Two patients arrive with the same symptoms but different histories. What does this show about clinical decision-making?', options: ['It requires interpreting information in context, more than recognising a pattern', 'Both must receive the same treatment', 'AI can decide alone', 'Symptoms are all that matter'], answer: 0, explain: 'Lecture, 24 Oct.' },
-        { q: 'According to the lecturer, AI implementation in a hospital is mainly…', options: ['A workflow design and management challenge, not just a technological one', 'Only a technological challenge', 'Only a legal challenge', 'Only a question of buying the right software'], answer: 0, explain: 'Lecture, 24 Oct.' },
-        { q: 'Which is the lecturer\'s definition of an ACTIONABLE alert?', options: ['Relevant to the current situation, understandable to the user, and connected to a realistic next step', 'Loud, frequent and red', 'Shown for every patient', 'Technically accurate, nothing else is needed'], answer: 0, explain: 'Lecture, 24 Oct. A distracting alert is irrelevant, repetitive, poorly timed or too vague.' },
-        { q: 'A CDSS reminder tells a clinician that a preventive screening is due. Which CDSS output form is this?', options: ['A reminder', 'A risk estimate', 'A ranked option', 'An explanation'], answer: 0, explain: 'Lecture, 24 Oct: reminder → screening due; alert → dangerous drug interaction; risk estimate → closer observation.' },
-        { q: 'Which is a CDSS limitation the lecturer added?', options: ['The medication list may not reflect what the patient actually takes', 'The computer gets tired', 'The system forgets routine checks', 'Rules are applied consistently'], answer: 0, explain: 'Lecture, 24 Oct. Consistency and not getting tired are strengths.' },
-        { q: 'A system "learns statistical relationships from historical observations, diagnoses, labs and outcomes; no human wrote its rules in advance". This is…', options: ['Non-knowledge-based CDSS', 'Knowledge-based CDSS', 'Passive support', 'A standard operating procedure'], answer: 0, explain: 'Lecture, 24 Oct.' },
-        { q: 'What does logistic regression estimate, according to the lecture?', options: ['The probability of a binary outcome, such as whether an event happens in a defined period', 'The exact date of an event', 'A sequence of rules dividing patients into groups', 'An image segmentation'], answer: 0, explain: 'Lecture, 24 Oct. Decision trees use a sequence of decision rules to divide observations into groups.' },
-        { q: 'Two systems both show a score of 80. According to the lecture…', options: ['They do not necessarily represent the same risk; one may use percentages, the other an internal scale', 'They always mean 80% risk', 'The higher-priced system is right', 'Scores are always comparable'], answer: 0, explain: 'Lecture, 24 Oct.' },
-        { q: 'What did the lecturer say about thresholds?', options: ['There is no universal threshold that is correct for every healthcare setting', 'Every hospital should use 50%', 'The vendor\'s default is always correct', 'Thresholds are not needed for risk scores'], answer: 0, explain: 'Lecture, 24 Oct: it depends on clinical consequences, resources, the reliability of the model and patient preferences.' },
-        { q: '900 patients are classified as negative and 891 of them truly do not have the condition. What is the NPV?', options: ['99%', '91%', '9%', '1%'], answer: 0, explain: 'Lecture, 24 Oct: NPV = 891 / 900 = 99%.' },
-        { q: '100 patients do not have a condition and the system correctly classifies 95 as negative. What is the specificity, and how many false positives are there?', options: ['95%, with 5 false positives', '95%, with 5 false negatives', '5%, with 95 false positives', '100%, with no errors'], answer: 0, explain: 'Lecture, 24 Oct.' },
-        { q: 'When is HIGH SPECIFICITY particularly valuable, according to the lecture?', options: ['When false alarms lead to unnecessary investigation, anxiety and extra workload', 'When missing a case could cause a dangerous delay', 'When the condition is never serious', 'Only for image models'], answer: 0, explain: 'Lecture, 24 Oct. High sensitivity matters most when missing a case is dangerous.' },
-        { q: 'How did the lecturer define prevalence?', options: ['The proportion of a population that has a condition at a given time or within a defined period', 'The proportion of alerts that are correct', 'The number of false negatives', 'How fast a disease spreads'], answer: 0, explain: 'Lecture, 24 Oct.' },
-        { q: 'What is "generalisation" of a model?', options: ['Its ability to perform appropriately beyond the data and circumstances it was developed in', 'Making the model simpler', 'Using it only in the development hospital', 'Removing patient groups from the data'], answer: 0, explain: 'Lecture, 24 Oct. External validation (another hospital, city, period or population) tests it.' },
-        { q: 'Why might a model from a large specialist hospital perform differently in a smaller hospital?', options: ['Hospitals differ in patients, practices, procedures, equipment, staffing and documentation', 'Smaller hospitals have no data', 'Models only work in big buildings', 'It cannot; performance is fixed'], answer: 0, explain: 'Lecture, 24 Oct: that is why external validation matters.' },
-        { q: 'According to the lecturer, which statement is true about sophisticated models?', options: ['A sophisticated model is not automatically a trustworthy model', 'The most complex model is always the safest', 'Simple models are never used in healthcare', 'Sophistication replaces validation'], answer: 0, explain: 'Lecture, 24 Oct: ask how it was developed, validated and calibrated, and whether it suits the population.' },
-        { q: 'An AI system recommends a treatment, but the patient says they had severe side effects from it before. What should happen?', options: ['The recommendation should not be followed automatically; the patient\'s history and preferences are part of the decision', 'Follow the recommendation, the AI has seen more cases', 'Ask the AI to decide again', 'Discharge the patient'], answer: 0, explain: 'Lecture, 5 Nov: the patient is not simply a collection of laboratory values.' },
-        { q: 'Why can AI help physicians who work under uncertainty, according to the lecturer?', options: ['Humans have limited cognitive capacity, and AI is good at recognising patterns across thousands of cases', 'AI removes all uncertainty', 'AI understands every aspect of the patient', 'AI does not need data'], answer: 0, explain: 'Lecture, 5 Nov: uncertainty can be reduced but never removed completely.' },
-        { q: 'A deterioration model correctly identifies a high-risk patient, but the alert goes to a clinician who is not responsible for that patient. How did the lecturer describe this?', options: ['The prediction is correct, but the system has failed operationally', 'A false positive', 'A successful AI system', 'An omission error by the model'], answer: 0, explain: 'Lecture, 5 Nov: at every stage define who receives the information, when, and what they should do. That workflow design is the hospital managers\' responsibility.' },
-        { q: 'What is "differential diagnosis"?', options: ['Considering several possible explanations for a patient\'s symptoms', 'A diagnosis made only by AI', 'Comparing two hospitals\' results', 'The difference between sensitivity and specificity'], answer: 0, explain: 'Lecture, 5 Nov: e.g. fatigue can have several underlying causes; AI may suggest possibilities, the physician evaluates them.' },
-        { q: 'Which statement about clinical decision support systems is TRUE?', options: ['They existed before modern machine learning, using rules, thresholds and medication databases', 'They were invented with deep learning', 'They always use neural networks', 'They make the final clinical decision'], answer: 0, explain: 'Lecture, 5 Nov: "it is not a new method".' },
-        { q: 'What is the main advantage of a knowledge-based CDSS, and its main weakness?', options: ['Its logic is relatively clear; it struggles with complicated patients the guideline does not cover', 'It learns by itself; it needs no data', 'It never makes mistakes; it is expensive', 'It is patient-facing; it is passive'], answer: 0, explain: 'Lecture, 5 Nov.' },
-        { q: 'A drug-interaction warning pops up while the physician is prescribing, without being searched for. This is…', options: ['Active support', 'Passive support', 'Patient-facing support', 'Unsupervised learning'], answer: 0, explain: 'Lecture, 5 Nov: passive = the doctor opens a guideline database; active = it acts by itself at a point in the workflow.' },
-        { q: 'What risk did the lecturer mention for patient-facing decision support?', options: ['Patients may misunderstand a risk estimate as a definite diagnosis', 'Patients cannot use apps', 'It replaces the physician', 'It only works in the ICU'], answer: 0, explain: 'Lecture, 5 Nov: hospitals must communicate these tools very carefully.' },
-        { q: 'According to the lecturer, the most important word in predictive analytics is…', options: ['Estimate', 'Guarantee', 'Cause', 'Diagnose'], answer: 0, explain: 'Lecture, 5 Nov: a predictive model does not know the future; it uses patterns in existing data to estimate what may happen.' },
-        { q: 'A model finds that a variable is strongly associated with readmission. What can we conclude?', options: ['Not that the variable causes readmission; prediction is not causation', 'The variable causes readmission', 'Removing the variable will prevent readmission', 'The model is invalid'], answer: 0, explain: 'Lecture, 5 Nov: a prediction may still be useful without explaining causes.' },
-        { q: 'A hospital alerts above 10% risk and lowers the threshold to 5%. What happens?', options: ['More alerts and fewer missed cases, but more false positives and unnecessary tests', 'Fewer alerts and more missed cases', 'Nothing changes', 'False positives disappear'], answer: 0, explain: 'Lecture, 5 Nov. Her manager\'s point: staff time is limited, so false alarms take people away from urgent work.' },
-        { q: 'In the lecture, what does a threshold do?', options: ['Translates a model\'s risk output into an action category', 'Makes the model more accurate', 'Removes false negatives', 'Explains the cause of a disease'], answer: 0, explain: 'Lecture, 5 Nov: a 20% risk alone does not say what to do; the threshold links it to routine monitoring or extra review.' },
-        { q: 'What is the difference between automation and augmentation, according to the lecture?', options: ['Automation transfers tasks from humans to machines; augmentation helps humans do their tasks better', 'They are the same', 'Augmentation removes clinicians', 'Automation always improves outcomes'], answer: 0, explain: 'Lecture, 5 Nov: augmented intelligence extends and strengthens human capabilities.' },
-        { q: 'Why did the lecturer use the example of a navigation app recommending a road that is closed?', options: ['Like a driver, a clinician must be able to question and override AI when the situation requires it', 'To show that AI is always right', 'To explain GPS sensors', 'To show navigation apps use deep learning'], answer: 0, explain: 'Lecture, 5 Nov: meaningful human oversight needs relevant information, understanding of limitations and the ability to reject a recommendation.' },
-        { q: 'Which does meaningful human oversight require, according to the lecture?', options: ['Access to relevant information, understanding of the system\'s limits, and the ability to reject its recommendation', 'Signing every AI output without reading it', 'Turning the AI off', 'Knowing the source code'], answer: 0, explain: 'Lecture, 5 Nov.' },
-        { q: 'A physician has contradictory evidence but accepts the AI diagnosis because the system looks confident. This is…', options: ['Automation bias', 'Alert fatigue', 'Calibrated trust', 'External validation'], answer: 0, explain: 'Lecture, 5 Nov: excessive trust in automated recommendations.' },
-        { q: 'A usually reliable monitoring system fails to flag a deteriorating patient, and nobody checks because there was no alert. This is…', options: ['An omission error', 'A commission error', 'Alert fatigue', 'Data leakage'], answer: 0, explain: 'Lecture, 5 Nov. A commission error is following an incorrect recommendation.' },
-        { q: 'What is "calibrated trust"?', options: ['Trusting the system when its capabilities and limitations justify it, while keeping appropriate skepticism', 'Always trusting AI', 'Never trusting AI', 'Trusting only the most expensive system'], answer: 0, explain: 'Lecture, 5 Nov: "never trust AI" is an outdated idea; both excessive trust and excessive dismissal are dangerous.' },
-        { q: 'A system shows "95% confidence". What did the lecturer warn?', options: ['Clinicians may wrongly read it as a 95% chance the recommendation is correct; numbers can create false certainty', 'It means the diagnosis is certain', 'It is the same as 95% sensitivity', 'Confidence numbers are always calibrated'], answer: 0, explain: 'Lecture, 5 Nov: this is why user training is an essential part of implementation.' },
-        { q: 'An AI only displays "High risk". Why is this unhelpful?', options: ['It does not say high risk of what, over what period, based on which information, or what to do next', 'It is too long', 'It uses too many variables', 'It is always wrong'], answer: 0, explain: 'Lecture, 5 Nov. Better: "Higher estimated risk of deterioration based on recent changes in vital signs and lab results. Consider urgent clinical review."' },
-        { q: 'According to the lecturer, the best explanation of an AI output is…', options: ['Not necessarily the most complicated one; simple is best', 'The one with the most variables', 'The full statistical model', 'No explanation at all'], answer: 0, explain: 'Lecture, 5 Nov. Also: an explanation shows contributing variables, it does not prove they caused the outcome.' },
-        { q: 'Can a model be statistically accurate overall but unsafe for a particular patient group?', options: ['Yes, so safety needs more than a single performance metric', 'No, overall accuracy guarantees safety for everyone', 'Only if the model is deep learning', 'Only in small hospitals'], answer: 0, explain: 'Lecture, 5 Nov: "Absolutely."' },
-        { q: 'When should the questions "who benefits, who bears the errors, who is excluded" be asked?', options: ['During development and implementation, not only after a problem occurs', 'Only after an incident', 'Only by the vendor', 'Never; they are not technical questions'], answer: 0, explain: 'Lecture, 5 Nov.' },
-        { q: 'A hospital uses an AI system from an external vendor. What did the lecturer say about responsibility?', options: ['It cannot simply disappear into a contract; the hospital needs clear ownership and accountability', 'The vendor is responsible for everything', 'The algorithm is responsible', 'Nobody is responsible if the contract is signed'], answer: 0, explain: 'Lecture, 5 Nov: define who owns the decision, who maintains the model and who can suspend it.' },
-        { q: 'Why might a model that performed well at introduction become less reliable later?', options: ['Data, clinical practice and patient populations change over time', 'Models wear out like machines', 'The hospital forgot the password', 'It cannot; performance never changes'], answer: 0, explain: 'Lecture, 5 Nov: hence ongoing monitoring and procedures to update, review and withdraw.' },
-        { q: 'A vendor says its AI system is "highly accurate and innovative". What should a hospital manager do first?', options: ['Ask what clinical problem the hospital is trying to solve', 'Buy it immediately', 'Install it across the whole hospital', 'Ask only about the price'], answer: 0, explain: 'Lecture, 5 Nov: "Would you immediately purchase it? I hope not."' },
-        { q: 'Why did the lecturer recommend starting with a pilot?', options: ['To evaluate the system under real conditions and find problems before a broader rollout', 'Because pilots are required by law', 'To avoid training users', 'Because pilots never fail'], answer: 0, explain: 'Lecture, 5 Nov: "I like pilot studies."' },
-        { q: 'Which is something the lecturer said to monitor AFTER deployment?', options: ['How often alerts are ignored', 'The colour of the interface', 'The vendor\'s share price', 'Nothing, once it is deployed'], answer: 0, explain: 'Lecture, 5 Nov: also whether clinicians use it, whether outcomes improve, whether some groups have problems, and unexpected consequences.' },
+      "quiz": [
+        {
+          "q": "What is a clinical decision support system (CDSS)?",
+          "options": [
+            "Patient-specific information supporting decisions",
+            "A system that makes the final treatment decision",
+            "An electronic billing tool",
+            "A hospital robot"
+          ],
+          "answer": 0,
+          "explain": "Slide 6: it supports decisions and does not replace professional judgment or accountability."
+        },
+        {
+          "q": "What does predictive analytics estimate?",
+          "options": [
+            "The cause of a disease",
+            "Likelihood of a future event",
+            "The cost of a drug",
+            "The past number of admissions"
+          ],
+          "answer": 1,
+          "explain": "Slide 9: a prediction estimates risk; it does not prove the event will occur or explain its cause."
+        },
+        {
+          "q": "What usually happens when you LOWER the alert threshold?",
+          "options": [
+            "Fewer alerts and fewer missed cases",
+            "Nothing changes",
+            "More cases caught and more false positives",
+            "Specificity increases"
+          ],
+          "answer": 2,
+          "explain": "Slide 11."
+        },
+        {
+          "q": "Which measures depend strongly on prevalence?",
+          "options": [
+            "Only sensitivity",
+            "Only specificity",
+            "None of them",
+            "PPV and NPV"
+          ],
+          "answer": 3,
+          "explain": "Slide 12: the same model can behave differently in different settings."
+        },
+        {
+          "q": "1% of 1,000 patients have a condition. A model predicts \"no condition\" for everyone. Its accuracy is…",
+          "options": [
+            "99%, but no affected patients found",
+            "1%",
+            "50%",
+            "100%"
+          ],
+          "answer": 0,
+          "explain": "Slide 13: 990 of 1,000 are correct, but sensitivity is 0."
+        },
+        {
+          "q": "Calibration asks…",
+          "options": [
+            "Whether the model separates high- from low-risk patients",
+            "Probabilities match observed event rates",
+            "Whether data was encrypted",
+            "How fast the model runs"
+          ],
+          "answer": 1,
+          "explain": "Slide 14. Separating patients is discrimination."
+        },
+        {
+          "q": "Testing a model at another hospital or in a later period is…",
+          "options": [
+            "Internal validation",
+            "Data minimization",
+            "External validation",
+            "Alert fatigue"
+          ],
+          "answer": 2,
+          "explain": "Slide 14."
+        },
+        {
+          "q": "What does meaningful human oversight require, according to slide 15?",
+          "options": [
+            "Just a signature on every AI output",
+            "No training",
+            "Hiding the model's uncertainty",
+            "Time, information and authority to disagree"
+          ],
+          "answer": 3,
+          "explain": "The human is not merely a rubber stamp."
+        },
+        {
+          "q": "Could a model be accurate overall but unsafe for a particular patient group?",
+          "options": [
+            "Yes; subgroup performance can differ",
+            "No — overall accuracy guarantees safety for all",
+            "Only if it uses images",
+            "Only for children"
+          ],
+          "answer": 0,
+          "explain": "Slide 18."
+        },
+        {
+          "q": "The lecture's governance principle says…",
+          "options": [
+            "The vendor is always responsible",
+            "Named owners and clear procedures",
+            "The algorithm is responsible for its mistakes",
+            "Nobody is responsible if the AI is accurate"
+          ],
+          "answer": 1,
+          "explain": "Slide 19."
+        },
+        {
+          "q": "Which is the lecturer's definition of an ACTIONABLE alert?",
+          "options": [
+            "Loud, frequent and red",
+            "Shown for every patient",
+            "Relevant, understandable, actionable",
+            "Technically accurate, nothing else is needed"
+          ],
+          "answer": 2,
+          "explain": "Lecture, 24 Oct. A distracting alert is irrelevant, repetitive, poorly timed or too vague."
+        },
+        {
+          "q": "An AI system recommends a treatment, but the patient says they had severe side effects from it before. What should happen?",
+          "options": [
+            "Follow the recommendation, the AI has seen more cases",
+            "Ask the AI to decide again",
+            "Discharge the patient",
+            "Consider patient history and preferences"
+          ],
+          "answer": 3,
+          "explain": "Lecture, 5 Nov: the patient is not simply a collection of laboratory values."
+        },
+        {
+          "q": "A model finds that a variable is strongly associated with readmission. What can we conclude?",
+          "options": [
+            "Association does not establish causation",
+            "The variable causes readmission",
+            "Removing the variable will prevent readmission",
+            "The model is invalid"
+          ],
+          "answer": 0,
+          "explain": "Lecture, 5 Nov: a prediction may still be useful without explaining causes."
+        },
+        {
+          "q": "A vendor says its AI system is \"highly accurate and innovative\". What should a hospital manager do first?",
+          "options": [
+            "Buy it immediately",
+            "Define the clinical problem",
+            "Install it across the whole hospital",
+            "Ask only about the price"
+          ],
+          "answer": 1,
+          "explain": "Lecture, 5 Nov: \"Would you immediately purchase it? I hope not.\""
+        }
       ],
-      cards: [
-        ['Clinical decision-making', 'Integrates symptoms, history, examination, tests, patient preferences and context under uncertainty: diagnosis, triage, treatment, monitoring, discharge, referral.'],
-        ['Design question', 'Who sees the output, at what moment, and what are they expected to do differently?'],
-        ['CDSS', 'Provides patient- or context-specific information to support decisions. Supports, does not replace, judgment and accountability.'],
-        ['Knowledge-based vs non-knowledge-based', 'Rules from guidelines/experts vs patterns learned from data.'],
-        ['Passive / active / patient-facing support', 'Available when sought / appears at a workflow point / helps patients understand and manage care.'],
-        ['Alert fatigue', 'Frequent low-value alerts reduce attention to important warnings.'],
-        ['Predictive analytics', 'Estimates the likelihood of a future event (deterioration, readmission, falls, no-shows). Not proof, not a cause.'],
-        ['Prediction → action', 'Define target → prediction time → validated risk estimate → threshold → response → measure the whole pathway.'],
-        ['Threshold trade-off', 'Lower = more true cases + more false positives. Higher = fewer alerts + more missed cases.'],
-        ['NPV', 'Among people not flagged, the proportion who truly do not have the condition.'],
-        ['Prevalence effect', 'PPV and NPV depend strongly on prevalence; rare condition → many false positives even with a good model.'],
-        ['Accuracy paradox', '1% prevalence: "nobody has it" is 99% accurate and finds no one.'],
-        ['Discrimination vs calibration', 'Separating outcomes (AUC) vs predicted probabilities matching observed rates.'],
-        ['Data leakage', 'Using information unavailable at prediction time — results look unrealistically strong.'],
-        ['Internal vs external validation', 'Within the development data process vs another site, time period or population.'],
-        ['Augmented intelligence', 'AI extends human capability. Oversight needs time, information and authority to disagree.'],
-        ['Automation bias', 'Over-trusting a computer recommendation or overlooking contradictory evidence.'],
-        ['Commission vs omission error', 'Following a wrong recommendation vs not acting because the system did not flag it.'],
-        ['Governance principle', 'Responsibility cannot be delegated to an algorithm: named owners, documented intended use, versions, limitations.'],
-        ['Five workflow stages (slide 5)', 'Before consultation (summarise, triage) → during assessment (guidelines, diagnoses, interactions) → after tests (prioritise, risk) → treatment planning (options, contraindications) → after discharge (follow-up, remote monitoring).'],
-        ['Traditional vs AI-enabled CDSS', 'Rules, thresholds, drug databases, clinical pathways, guideline logic vs machine learning, NLP, image analysis.'],
-        ['CDSS outputs', 'Reminders, alerts, risk estimates, ranked options or explanations.'],
-        ['Predictive model types (slide 9)', 'Logistic regression, decision trees, gradient boosting, survival analysis, neural networks.'],
-        ['What a risk score can be (slide 11)', 'A probability, a ranking or a transformed model output: check what it represents.'],
-        ['Useful evaluation (slide 13)', 'Sensitivity, specificity, PPV, NPV, calibration and clinical utility; ask which error is more harmful; compare with current practice.'],
-        ['AUC', 'Area under the ROC curve: a measure of discrimination. 0.5 = chance, 1.0 = perfect separation.'],
-        ['Under-trust', 'Ignoring useful, correct support. The opposite failure to automation bias.'],
-        ['Explanation approaches (slide 17)', 'Key contributing factors, comparable cases, uncertainty ranges, a concise rationale. Test with intended users.'],
-        ['Bias safeguards (slide 18)', 'Measure subgroup performance, involve affected communities, reporting channels, incident review, human escalation, suspend unsafe use.'],
-        ['Purpose limitation', 'Use health data only for the stated purpose, under appropriate legal authority and with safeguards (slide 19).'],
-        ['Slide 19 security checks', 'Cybersecurity, vendor dependencies, access controls and auditability.'],
-        ['Implementation steps (slide 20)', 'Define the problem with stakeholders → map the workflow → assess readiness → pilot and train → monitor → criteria to update, pause or withdraw.'],
-        ['Case study question groups (slide 22)', 'Data & model (inputs at prediction time, external validation) / threshold & workflow (alert capacity, response protocol) / safety & equity (who is missed).'],
-        ['Responsible success (slide 23)', 'Better than usual care, benefits patients, works across subgroups, clinicians understand it, errors are acted on, stays useful as things change.'],
-        ['Slide 25 references', 'WHO (2021) ethics and governance of AI for health; U.S. FDA CDS software guidance; NIST AI RMF 1.0 (2023).'],
-        ['Prediction vs decision (lecture)', 'A prediction estimates what may happen; a decision determines what should be done (with context and patient preferences).'],
-        ['Actionable alert (lecture)', 'Relevant to the situation, understandable to the user, connected to a realistic next step. Distracting = irrelevant, repetitive, poorly timed, vague.'],
-        ['Her numbers (24 Oct)', 'Sens 90/100 = 90%; spec 95/100 = 95%; PPV 30/100 = 30%; NPV 891/900 = 99%; 1% of 1,000 → 99% accuracy, 0 found.'],
-        ['Generalisation', 'A model\'s ability to perform appropriately beyond the data and circumstances it was developed in.'],
-        ['Prevalence', 'The proportion of a population with a condition at a given time or within a defined period.'],
-        ['Failed operationally (lecture, 5 Nov)', 'A correct prediction sent to the wrong person, or with no response defined. Define who receives it, when, and what they do.'],
-        ['Differential diagnosis', 'Considering several possible explanations for a symptom (e.g. fatigue). AI suggests; the physician evaluates.'],
-        ['10% → 5% threshold (lecture)', 'More alerts, fewer missed cases, more false positives and unnecessary tests; staff time is limited.'],
-        ['Automation vs augmentation', 'Automation moves tasks to machines; augmentation helps humans do tasks better. Goal: better decisions, not maximum automation.'],
-        ['Navigation-app analogy', 'The app cannot see a road closed by an emergency; you use your judgement. Clinicians must be able to question and override AI.'],
-        ['Calibrated trust', 'Trust justified by capabilities and limits, with appropriate skepticism. "95% confidence" is not "95% chance it is right".'],
-        ['Vendor scenario (lecture)', 'Do not buy immediately. Problem first → stakeholders → workflow → readiness → pilot → train → monitor (incl. ignored alerts).'],
-        ['Vendor responsibility', 'Responsibilities cannot disappear into a contract: named owners for decision, maintenance, incidents, data, suspension.'],
-      ],
-    },
+      "cards": [
+        [
+          "CDSS",
+          "Provides patient- or context-specific information to support decisions. Supports, does not replace, judgment and accountability."
+        ],
+        [
+          "Predictive analytics",
+          "Estimates the likelihood of a future event (deterioration, readmission, falls, no-shows). Not proof, not a cause."
+        ],
+        [
+          "Prediction → action",
+          "Define target → prediction time → validated risk estimate → threshold → response → measure the whole pathway."
+        ],
+        [
+          "Threshold trade-off",
+          "Lower = more true cases + more false positives. Higher = fewer alerts + more missed cases."
+        ],
+        [
+          "NPV",
+          "Among people not flagged, the proportion who truly do not have the condition."
+        ],
+        [
+          "Prevalence effect",
+          "PPV and NPV depend strongly on prevalence; rare condition → many false positives even with a good model."
+        ],
+        [
+          "Accuracy paradox",
+          "1% prevalence: \"nobody has it\" is 99% accurate and finds no one."
+        ],
+        [
+          "Discrimination vs calibration",
+          "Separating outcomes (AUC) vs predicted probabilities matching observed rates."
+        ],
+        [
+          "Internal vs external validation",
+          "Within the development data process vs another site, time period or population."
+        ],
+        [
+          "Augmented intelligence",
+          "AI extends human capability. Oversight needs time, information and authority to disagree."
+        ],
+        [
+          "Automation bias",
+          "Over-trusting a computer recommendation or overlooking contradictory evidence."
+        ],
+        [
+          "Governance principle",
+          "Responsibility cannot be delegated to an algorithm: named owners, documented intended use, versions, limitations."
+        ],
+        [
+          "Actionable alert (lecture)",
+          "Relevant to the situation, understandable to the user, connected to a realistic next step. Distracting = irrelevant, repetitive, poorly timed, vague."
+        ],
+        [
+          "Calibrated trust",
+          "Trust justified by capabilities and limits, with appropriate skepticism. \"95% confidence\" is not \"95% chance it is right\"."
+        ]
+      ]
+    }
   ],
-
-  games: {
-    /* ---------------- week 1 ---------------- */
-    'ai-history': {
-      ch: 1, type: 'order', title: 'The Origin Story of AI',
-      intro: 'Put the milestones in chronological order (slides 6–7).',
-      items: [
-        'Alan Turing asks "Can machines think?" and introduces the Turing Test',
-        'Dartmouth Conference (1956): the term "Artificial Intelligence" is coined',
-        'Early logic programs play chess, solve puzzles and prove theorems',
-        'AI winters: funding cuts and slow progress',
-        'Shift from rule-based systems to machine learning and deep learning',
+  "games": {
+    "ai-history": {
+      "ch": 1,
+      "type": "order",
+      "title": "The Origin Story of AI",
+      "intro": "Put the milestones in chronological order (slides 6–7).",
+      "items": [
+        "Alan Turing asks \"Can machines think?\" and introduces the Turing Test",
+        "Dartmouth Conference (1956): the term \"Artificial Intelligence\" is coined",
+        "Early logic programs play chess, solve puzzles and prove theorems",
+        "AI winters: funding cuts and slow progress",
+        "Shift from rule-based systems to machine learning and deep learning"
+      ]
+    },
+    "ai-areas": {
+      "ch": 1,
+      "type": "bucket",
+      "title": "Which Area of AI in Healthcare?",
+      "intro": "Sort each application into the three areas of slide 11.",
+      "buckets": [
+        "Clinical AI",
+        "Administrative & operational AI",
+        "Strategic & system-level AI"
       ],
+      "items": [
+        [
+          "Detecting a possible fracture on an X-ray",
+          0
+        ],
+        [
+          "Predicting a patient's risk of complications",
+          0
+        ],
+        [
+          "Treatment planning support",
+          0
+        ],
+        [
+          "Remote patient monitoring",
+          0
+        ],
+        [
+          "Booking and rescheduling appointments",
+          1
+        ],
+        [
+          "Forecasting emergency-department demand",
+          1
+        ],
+        [
+          "Planning nurse shifts",
+          1
+        ],
+        [
+          "Drafting clinical documentation",
+          1,
+          "Documentation is listed under administrative and operational AI on slide 11."
+        ],
+        [
+          "Analysing the health of a whole population",
+          2
+        ],
+        [
+          "Five-year financial forecasting for the hospital group",
+          2
+        ],
+        [
+          "Public-health surveillance of outbreaks",
+          2
+        ],
+        [
+          "Long-term quality-improvement planning",
+          2
+        ]
+      ]
     },
-    'ai-areas': {
-      ch: 1, type: 'bucket', title: 'Which Area of AI in Healthcare?',
-      intro: 'Sort each application into the three areas of slide 11.',
-      buckets: ['Clinical AI', 'Administrative & operational AI', 'Strategic & system-level AI'],
-      items: [
-        ['Detecting a possible fracture on an X-ray', 0],
-        ['Predicting a patient\'s risk of complications', 0],
-        ['Treatment planning support', 0],
-        ['Remote patient monitoring', 0],
-        ['Booking and rescheduling appointments', 1],
-        ['Forecasting emergency-department demand', 1],
-        ['Planning nurse shifts', 1],
-        ['Drafting clinical documentation', 1, 'Documentation is listed under administrative and operational AI on slide 11.'],
-        ['Analysing the health of a whole population', 2],
-        ['Five-year financial forecasting for the hospital group', 2],
-        ['Public-health surveillance of outbreaks', 2],
-        ['Long-term quality-improvement planning', 2],
+    "tech-match": {
+      "ch": 2,
+      "type": "bucket",
+      "title": "Pick the Technology",
+      "intro": "Start with the problem: which technology family fits each task best (slides 5 and 23)?",
+      "buckets": [
+        "Machine learning",
+        "Deep learning / computer vision",
+        "NLP",
+        "Robotics",
+        "Generative AI"
       ],
+      "items": [
+        [
+          "Predict deterioration from vital-sign trends",
+          0
+        ],
+        [
+          "Forecast appointment no-shows",
+          0
+        ],
+        [
+          "Estimate readmission risk from tabular records",
+          0
+        ],
+        [
+          "Find a lesion on a CT scan",
+          1
+        ],
+        [
+          "Classify skin photos in dermatology",
+          1
+        ],
+        [
+          "Extract medication history from clinical notes",
+          2
+        ],
+        [
+          "Route patient messages to the right team",
+          2
+        ],
+        [
+          "Detect adverse-event signals in narratives",
+          2
+        ],
+        [
+          "Move linen and meals between wards",
+          3
+        ],
+        [
+          "Support repetitive rehabilitation exercises",
+          3
+        ],
+        [
+          "Draft patient-friendly discharge instructions (with review)",
+          4
+        ],
+        [
+          "Generate case vignettes for staff training",
+          4
+        ]
+      ]
     },
-    'agent-parts': {
-      ch: 1, type: 'bucket', title: 'Parts of an AI Agent',
-      intro: 'A hospital medication-delivery robot. Which agent component is each item?',
-      buckets: ['Sensor', 'Actuator', 'Environment', 'Agent function', 'Performance measure'],
-      items: [
-        ['Camera and lidar that see corridors', 0],
-        ['Barcode scanner reading the ward label', 0],
-        ['Wheels and motors', 1],
-        ['Speaker announcing "delivery for ward 4"', 1],
-        ['Hospital corridors, lifts, staff and patients', 2],
-        ['"If the corridor is blocked, wait or re-route"', 3],
-        ['Maps what it perceives to what it does next', 3],
-        ['Deliveries on time, zero collisions', 4],
+    "learning-setup": {
+      "ch": 2,
+      "type": "bucket",
+      "title": "Supervised, Unsupervised or Reinforcement?",
+      "intro": "Which learning setup is each example (slide 7)?",
+      "buckets": [
+        "Supervised",
+        "Unsupervised",
+        "Reinforcement"
       ],
+      "items": [
+        [
+          "Predict readmission from past admissions and their outcomes",
+          0
+        ],
+        [
+          "Classify X-rays labelled by radiologists as normal/abnormal",
+          0
+        ],
+        [
+          "Predict no-shows from past appointments marked attended/missed",
+          0
+        ],
+        [
+          "Group patients with similar patterns of service use",
+          1
+        ],
+        [
+          "Find clusters of diseases that tend to occur together, without labels",
+          1
+        ],
+        [
+          "Optimize a simulated care pathway by trial and feedback",
+          2
+        ],
+        [
+          "An agent learns dosing strategy in a simulator from rewards",
+          2
+        ]
+      ]
     },
-    'guarantee': {
-      ch: 1, type: 'bucket', title: 'Can AI Promise That?',
-      intro: 'A vendor pitches an AI system. Which claims are realistic support, and which are things AI cannot guarantee (slides 13–14)?',
-      buckets: ['Realistic: AI can help with this', 'AI cannot guarantee this'],
-      items: [
-        ['Helps organize and summarize large amounts of clinical information', 0],
-        ['Identifies image patterns that may need further clinical evaluation', 0],
-        ['Assists with clinical documentation so staff have more time for patients', 0],
-        ['Supports demand forecasting and appointment planning', 0],
-        ['Supports more tailored monitoring and care planning', 0],
-        ['A correct diagnosis in every case', 1],
-        ['Equally accurate results for every population', 1],
-        ['Automatic cost reductions', 1],
-        ['No more human error', 1],
-        ['Complete understanding of each patient\'s circumstances', 1],
+    "dq-dims": {
+      "ch": 3,
+      "type": "bucket",
+      "title": "Name the Data-Quality Problem",
+      "intro": "Which of the six dimensions (slides 12–13) does each problem violate?",
+      "buckets": [
+        "Accuracy",
+        "Completeness",
+        "Consistency",
+        "Timeliness",
+        "Validity",
+        "Uniqueness"
       ],
+      "items": [
+        [
+          "A lab result is attached to the wrong patient",
+          0
+        ],
+        [
+          "The recorded allergy is wrong — the patient tolerates the drug",
+          0
+        ],
+        [
+          "The medication list is missing an anticoagulant",
+          1
+        ],
+        [
+          "Date of birth field left empty",
+          1
+        ],
+        [
+          "Weight in pounds in one system and kilograms in another",
+          2
+        ],
+        [
+          "Two systems disagree on the patient's blood group",
+          2
+        ],
+        [
+          "A result reaches the dashboard after the treatment decision",
+          3
+        ],
+        [
+          "Yesterday's potassium used for an emergency decision today",
+          3
+        ],
+        [
+          "Body temperature recorded as 410 °C",
+          4
+        ],
+        [
+          "A diagnosis code that does not exist in the code set",
+          4
+        ],
+        [
+          "The same patient registered twice under slightly different names",
+          5
+        ],
+        [
+          "One admission counted twice in the monthly report",
+          5
+        ]
+      ]
     },
-    'hc-different': {
-      ch: 1, type: 'match', title: 'Why Healthcare Is Different',
-      intro: 'Match each feature of healthcare (slide 12) to its meaning.',
-      pairs: [
-        ['Complex information', 'Symptoms, histories, lab results and images must be combined'],
-        ['Time sensitivity', 'Some conditions need rapid identification and intervention'],
-        ['Uncertainty', 'Tests and symptoms do not always give a complete picture'],
-        ['High consequences', 'Wrong decisions may cause delays, complications or harm'],
-        ['Resource constraints', 'Limited staff, equipment, time and money'],
-        ['Human-centered care', 'Decisions must respect preferences, dignity and needs'],
+    "analytics": {
+      "ch": 3,
+      "type": "bucket",
+      "title": "Four Levels of Analytics",
+      "intro": "Classify each question (slide 19).",
+      "buckets": [
+        "Descriptive — what happened?",
+        "Diagnostic — why?",
+        "Predictive — what will happen?",
+        "Prescriptive — what should we do?"
       ],
+      "items": [
+        [
+          "How many emergency visits did we have each month?",
+          0
+        ],
+        [
+          "What was last year's average length of stay?",
+          0
+        ],
+        [
+          "Why were waiting times longer on night shifts?",
+          1
+        ],
+        [
+          "Do wait times differ by patient acuity?",
+          1
+        ],
+        [
+          "Which wards are likely to exceed capacity next weekend?",
+          2
+        ],
+        [
+          "What is this patient's risk of readmission?",
+          2
+        ],
+        [
+          "Which staffing plan best covers next week's forecast demand?",
+          3
+        ],
+        [
+          "Which follow-up strategy may reduce readmissions most?",
+          3
+        ]
+      ]
     },
-
-    /* ---------------- week 2 ---------------- */
-    'tech-match': {
-      ch: 2, type: 'bucket', title: 'Pick the Technology',
-      intro: 'Start with the problem: which technology family fits each task best (slides 5 and 23)?',
-      buckets: ['Machine learning', 'Deep learning / computer vision', 'NLP', 'Robotics', 'Generative AI'],
-      items: [
-        ['Predict deterioration from vital-sign trends', 0],
-        ['Forecast appointment no-shows', 0],
-        ['Estimate readmission risk from tabular records', 0],
-        ['Find a lesion on a CT scan', 1],
-        ['Classify skin photos in dermatology', 1],
-        ['Extract medication history from clinical notes', 2],
-        ['Route patient messages to the right team', 2],
-        ['Detect adverse-event signals in narratives', 2],
-        ['Move linen and meals between wards', 3],
-        ['Support repetitive rehabilitation exercises', 3],
-        ['Draft patient-friendly discharge instructions (with review)', 4],
-        ['Generate case vignettes for staff training', 4],
-      ],
+    "pred-action": {
+      "ch": 4,
+      "type": "order",
+      "title": "From Prediction to Action",
+      "intro": "Order the steps of slide 10.",
+      "items": [
+        "Define the target: event, population, time horizon",
+        "Choose the prediction time: what was known then?",
+        "Estimate risk with a validated model",
+        "Choose a threshold from benefits, harms and capacity",
+        "Connect the output to a response",
+        "Measure whether the whole pathway improves outcomes"
+      ]
     },
-    'learning-setup': {
-      ch: 2, type: 'bucket', title: 'Supervised, Unsupervised or Reinforcement?',
-      intro: 'Which learning setup is each example (slide 7)?',
-      buckets: ['Supervised', 'Unsupervised', 'Reinforcement'],
-      items: [
-        ['Predict readmission from past admissions and their outcomes', 0],
-        ['Classify X-rays labelled by radiologists as normal/abnormal', 0],
-        ['Predict no-shows from past appointments marked attended/missed', 0],
-        ['Group patients with similar patterns of service use', 1],
-        ['Find clusters of diseases that tend to occur together, without labels', 1],
-        ['Optimize a simulated care pathway by trial and feedback', 2],
-        ['An agent learns dosing strategy in a simulator from rewards', 2],
-      ],
-    },
-    'metrics-match': {
-      ch: 2, type: 'match', title: 'Beyond Accuracy',
-      intro: 'Match each measure to its question (slide 9).',
-      pairs: [
-        ['Sensitivity', 'Of people who truly have it, how many are flagged?'],
-        ['Specificity', 'Of people who do not have it, how many are cleared?'],
-        ['Positive predictive value', 'Among positive alerts, how many are true?'],
-        ['Calibration', 'Do predicted probabilities match observed frequencies?'],
-      ],
-    },
-    'vision-tasks': {
-      ch: 2, type: 'match', title: 'Computer Vision Tasks',
-      intro: 'Match the task to the question it answers (slide 15).',
-      pairs: [
-        ['Classification', 'What is present?'],
-        ['Detection', 'Where is it?'],
-        ['Segmentation', 'Which pixels?'],
-      ],
-    },
-    'lifecycle': {
-      ch: 2, type: 'order', title: 'Healthcare AI Lifecycle',
-      intro: 'Put the six lifecycle stages in order (slide 24).',
-      items: ['Define need — the patient / workflow problem', 'Assess data — quality, representativeness', 'Develop — model + clinical input', 'Validate — safety, utility, fairness', 'Implement — training, workflow, ownership', 'Monitor — drift, incidents, outcomes'],
-    },
-    'genai-safe': {
-      ch: 2, type: 'order', title: 'The Safer Generative-AI Pattern',
-      intro: 'Order the steps of the safer pattern from slide 22.',
-      items: ['Constrain the task', 'Use trusted sources', 'Request uncertainty', 'Verify key claims', 'Document human review'],
-    },
-    'responsible-q': {
-      ch: 2, type: 'match', title: 'Responsible AI Questions',
-      intro: 'Match each principle to its question (slide 25).',
-      pairs: [
-        ['Safety & effectiveness', 'Does it improve a meaningful outcome without unacceptable harm?'],
-        ['Fairness', 'Does performance differ across age, sex, ethnicity, disability or settings?'],
-        ['Privacy & security', 'Are data use, access, retention and cybersecurity controlled?'],
-        ['Transparency', 'Can users understand intended use, limits and when to escalate?'],
-        ['Accountability', 'Who owns decisions, incidents, updates and withdrawal?'],
-        ['Human oversight', 'Can people challenge, override or safely ignore the output?'],
-      ],
-    },
-
-    /* ---------------- week 3 ---------------- */
-    'dq-dims': {
-      ch: 3, type: 'bucket', title: 'Name the Data-Quality Problem',
-      intro: 'Which of the six dimensions (slides 12–13) does each problem violate?',
-      buckets: ['Accuracy', 'Completeness', 'Consistency', 'Timeliness', 'Validity', 'Uniqueness'],
-      items: [
-        ['A lab result is attached to the wrong patient', 0],
-        ['The recorded allergy is wrong — the patient tolerates the drug', 0],
-        ['The medication list is missing an anticoagulant', 1],
-        ['Date of birth field left empty', 1],
-        ['Weight in pounds in one system and kilograms in another', 2],
-        ['Two systems disagree on the patient\'s blood group', 2],
-        ['A result reaches the dashboard after the treatment decision', 3],
-        ['Yesterday\'s potassium used for an emergency decision today', 3],
-        ['Body temperature recorded as 410 °C', 4],
-        ['A diagnosis code that does not exist in the code set', 4],
-        ['The same patient registered twice under slightly different names', 5],
-        ['One admission counted twice in the monthly report', 5],
-      ],
-    },
-    'data-types': {
-      ch: 3, type: 'bucket', title: 'Structured or Unstructured?',
-      intro: 'Sort each item (slide 8).',
-      buckets: ['Structured', 'Unstructured', 'Semi-structured'],
-      items: [
-        ['Blood pressure 128/82 in a vital-signs field', 0],
-        ['Date of birth', 0],
-        ['Coded diagnosis', 0],
-        ['Medication dose field', 0],
-        ['Free-text clinical note', 1],
-        ['Discharge summary written in prose', 1],
-        ['Scanned referral letter', 1],
-        ['A tagged HL7/FHIR message', 2],
-        ['Some device and document outputs with tags', 2],
-      ],
-    },
-    'big-v': {
-      ch: 3, type: 'match', title: 'The Vs of Big Data',
-      intro: 'Match each V with its meaning (slide 9).',
-      pairs: [
-        ['Volume', 'Millions of records, images or measurements'],
-        ['Velocity', 'Data arriving rapidly from ICU monitors and wearables'],
-        ['Variety', 'Tables, text, images, waveforms, genomics, claims'],
-        ['Veracity', 'Uncertainty, noise, missing values, inconsistent meanings'],
-        ['Value', 'The practical benefit of turning data into better decisions'],
-      ],
-    },
-    'standards': {
-      ch: 3, type: 'match', title: 'Health Data Standards',
-      intro: 'Match each standard with what it does (slide 17).',
-      pairs: [
-        ['HL7 v2', 'Widely used messaging standard for clinical/admin workflows'],
-        ['HL7 FHIR', 'Health information as resources exchanged through APIs'],
-        ['SNOMED CT', 'Clinical terminology for consistent clinical concepts'],
-        ['LOINC', 'Identifiers for laboratory tests and observations'],
-        ['ICD', 'Classification of diseases for reporting and statistics'],
-        ['DICOM', 'Standard for medical imaging data'],
-      ],
-    },
-    'interop-levels': {
-      ch: 3, type: 'match', title: 'Levels of Interoperability',
-      intro: 'Match each level with what it guarantees (slide 16).',
-      pairs: [
-        ['Technical', 'Systems can connect and transmit messages'],
-        ['Syntactic', 'Data follows a shared structure or format'],
-        ['Semantic', 'Systems interpret the meaning consistently'],
-        ['Organizational', 'Policies, workflows, responsibilities and trust support exchange'],
-      ],
-    },
-    'analytics': {
-      ch: 3, type: 'bucket', title: 'Four Levels of Analytics',
-      intro: 'Classify each question (slide 19).',
-      buckets: ['Descriptive — what happened?', 'Diagnostic — why?', 'Predictive — what will happen?', 'Prescriptive — what should we do?'],
-      items: [
-        ['How many emergency visits did we have each month?', 0],
-        ['What was last year\'s average length of stay?', 0],
-        ['Why were waiting times longer on night shifts?', 1],
-        ['Do wait times differ by patient acuity?', 1],
-        ['Which wards are likely to exceed capacity next weekend?', 2],
-        ['What is this patient\'s risk of readmission?', 2],
-        ['Which staffing plan best covers next week\'s forecast demand?', 3],
-        ['Which follow-up strategy may reduce readmissions most?', 3],
-      ],
-    },
-    'ehr-flow': {
-      ch: 3, type: 'order', title: 'How Data Moves Through an EHR',
-      intro: 'Put the six steps in order (slide 6).',
-      items: ['Capture — a clinician documents or orders', 'Standardise — codes, units, timestamps, identifiers', 'Store and link — to the right patient and encounter', 'Exchange — with labs, pharmacies, other providers', 'Use — clinicians review; analytics aggregate', 'Update — corrections and new results join the record'],
-    },
-
-    /* ---------------- week 4 ---------------- */
-    'cdss-types': {
-      ch: 4, type: 'bucket', title: 'Types of Decision Support',
-      intro: 'Classify each tool (slide 7). Think about where it gets its logic or when it appears.',
-      buckets: ['Knowledge-based (rules)', 'Non-knowledge-based (learned)', 'Passive support', 'Active support', 'Patient-facing'],
-      items: [
-        ['Drug-interaction rules from a drug database', 0],
-        ['Guideline rule: overdue screening reminder after 3 years', 0],
-        ['Deterioration risk model trained on past admissions', 1],
-        ['Image model that learned to flag suspicious findings', 1],
-        ['A guideline library the clinician can open when needed', 2],
-        ['A pop-up alert while the prescriber signs an order', 3],
-        ['An app that helps patients prepare questions for their appointment', 4],
-      ],
-    },
-    'metric-calc': {
-      ch: 4, type: 'match', title: 'Read the Confusion Matrix',
-      intro: '1,000 patients, 50 have the condition. The model flags 60: 40 truly ill (TP), 20 healthy (FP). It misses 10 (FN) and clears 930 healthy (TN). Match each measure to its value.',
-      pairs: [
-        ['Sensitivity = TP / (TP + FN)', '40 / 50 = 80%'],
-        ['Specificity = TN / (TN + FP)', '930 / 950 ≈ 97.9%'],
-        ['PPV = TP / (TP + FP)', '40 / 60 ≈ 66.7%'],
-        ['NPV = TN / (TN + FN)', '930 / 940 ≈ 98.9%'],
-        ['Accuracy = (TP + TN) / all', '970 / 1000 = 97%'],
-      ],
-    },
-    'errors': {
-      ch: 4, type: 'bucket', title: 'Human–AI Error Types',
-      intro: 'Classify each situation (slides 8, 14, 16).',
-      buckets: ['Commission error', 'Omission error', 'Alert fatigue', 'Data leakage'],
-      items: [
-        ['The AI suggested the wrong dose and the nurse gave it without checking', 0],
-        ['A doctor accepts an AI diagnosis that contradicts the examination', 0],
-        ['The system did not flag sepsis, so no one re-checked the deteriorating patient', 1],
-        ['"No alert means the patient is fine" — a missed problem goes unnoticed', 1],
-        ['Clinicians dismiss 200 low-value pop-ups a day and miss the critical one', 2],
-        ['A model used the discharge diagnosis to "predict" deterioration on admission', 3, 'That information was not available at prediction time.'],
-        ['Test results ordered after the event were used as model inputs', 3],
-      ],
-    },
-    'pred-action': {
-      ch: 4, type: 'order', title: 'From Prediction to Action',
-      intro: 'Order the steps of slide 10.',
-      items: ['Define the target: event, population, time horizon', 'Choose the prediction time: what was known then?', 'Estimate risk with a validated model', 'Choose a threshold from benefits, harms and capacity', 'Connect the output to a response', 'Measure whether the whole pathway improves outcomes'],
-    },
-    'implement': {
-      ch: 4, type: 'order', title: 'Implementing AI in Clinical Practice',
-      intro: 'Order the implementation steps (slide 20).',
-      items: ['Define the clinical problem with clinicians, patients, IT, data teams and managers', 'Map the current workflow and where a decision could change', 'Assess data readiness, evidence, usability, fairness, privacy, security', 'Pilot in a controlled setting; train users; define escalation and override', 'Monitor uptake, outcomes, subgroups, false alarms, overrides', 'Set criteria for updating, pausing or withdrawing'],
-    },
-    'eval-terms': {
-      ch: 4, type: 'match', title: 'Validation Vocabulary',
-      intro: 'Match each term (slide 14).',
-      pairs: [
-        ['Discrimination', 'How well the model separates people with different outcomes'],
-        ['Calibration', 'Do predicted probabilities match observed event rates?'],
-        ['Internal validation', 'Testing within the development data process'],
-        ['External validation', 'Testing at another site, time or population'],
-        ['Data leakage', 'Using information unavailable at prediction time'],
-      ],
-    },
-  },
+    "eval-terms": {
+      "ch": 4,
+      "type": "match",
+      "title": "Validation Vocabulary",
+      "intro": "Match each term (slide 14).",
+      "pairs": [
+        [
+          "Discrimination",
+          "How well the model separates people with different outcomes"
+        ],
+        [
+          "Calibration",
+          "Do predicted probabilities match observed event rates?"
+        ],
+        [
+          "Internal validation",
+          "Testing within the development data process"
+        ],
+        [
+          "External validation",
+          "Testing at another site, time or population"
+        ],
+        [
+          "Data leakage",
+          "Using information unavailable at prediction time"
+        ]
+      ]
+    }
+  }
 };
 
-/* hub: exam and extra resources (assets/js/hub.js) */
 Object.assign(window.COURSE, {
- "exam": {
-  "title": "Midterm",
-  "when": "7 Nov 2026",
-  "scope": "Weeks 1–4",
-  "done": true,
-  "parts": [
-   [
-    "Multiple choice",
-    null,
-    "the final is multiple choice too"
-   ]
+  "exam": {
+    "title": "Midterm",
+    "when": "7 Nov 2026",
+    "scope": "Weeks 1–4",
+    "done": true,
+    "parts": [
+      [
+        "Multiple choice",
+        null,
+        "the final is multiple choice too"
+      ]
+    ],
+    "plan": [
+      [
+        "ozet.html",
+        "Review the midterm distinctions",
+        25
+      ],
+      [
+        "mock.html",
+        "Practise 24 multiple-choice items",
+        25
+      ]
+    ],
+    "length": "Multiple choice"
+  },
+  "resources": [
+    {
+      "kind": "summary",
+      "href": "ozet.html",
+      "title": "Midterm özeti",
+      "meta": "Weeks 1–4 · Türkçe · self-test",
+      "desc": "Multiple-choice distinctions, short examples and answer-hiding practice."
+    },
+    {
+      "kind": "mock",
+      "href": "mock.html",
+      "title": "Mock midterm",
+      "meta": "24 MC items · instant feedback",
+      "desc": "One practice paper covering Weeks 1–4, with reasons after every choice."
+    },
+    {
+      "kind": "videos",
+      "href": "videos.html",
+      "title": "Explainer videos",
+      "meta": "5 videos · Week 4 · 7.5 min",
+      "desc": "Thresholds, confusion matrix, prevalence, prediction to action, trust."
+    }
   ]
- },
- "resources": [
-  {
-   "kind": "summary",
-   "href": "ozet.html",
-   "title": "Vize özeti",
-   "meta": "Türkçe anlatım, English terms",
-   "desc": "All four weeks plus what Dr. Arsan stressed, on one page."
-  },
-  {
-   "kind": "mock",
-   "href": "mock.html",
-   "title": "Mock midterm",
-   "meta": "74 questions, two forms",
-   "desc": "Written from the slides and the recorded lectures."
-  },
-  {
-   "kind": "videos",
-   "href": "videos.html",
-   "title": "Explainer videos",
-   "meta": "5 videos · Week 4 · 7.5 min",
-   "desc": "Thresholds, confusion matrix, prevalence, prediction to action, trust."
-  }
- ]
 });

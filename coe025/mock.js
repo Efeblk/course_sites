@@ -1,113 +1,269 @@
-/* COE025 mock midterm (9 Nov). Format from the lecturer's "Midterm preparation tips": multiple choice plus TWO
- * open-ended questions (about half a page each), half "understand and compare", half "apply": small hand
- * calculations with easy numbers (no calculator) and short design decisions. All weeks are on the exam.
- * Multiple choice: { t, q, o: [correct first, ...distractors], why }  (options are shuffled on screen)
- * Written:         { t, q, w: true, model, keys: [points a full answer must contain] }
- * `why` is Turkish on purpose; questions stay in English like the exam. Numbers come from the study slides.
- */
 window.MOCK = [
-  /* ---------------- Week 1: NLP fundamentals ---------------- */
-  { t: 'W1', q: 'Why do NLP systems turn text into numbers at all?', o: ['Models compute only with numbers, so text must be encoded', 'Numbers take far less disk space than the original characters do', 'Numbers remove every kind of ambiguity from the input text', 'It is required only for languages other than English, like Turkish'], why: 'Haftanın ana fikri: bilgisayar sadece sayılarla çalışır. Her yöntem metni sayıya çevirmenin bir yolu.' },
-  { t: 'W1', q: 'Which problem does subword tokenization (BPE, WordPiece) solve?', o: ['Out-of-vocabulary words: a new word is split into known pieces', 'Word order: it keeps the exact position of every word in a text', 'Ambiguity: it gives "bank" two different vectors by context', 'Speed: it removes the need for any vocabulary or lookup table'], why: 'OOV problemi. "unhappiness" bilinmese bile "un", "happi", "ness" gibi parçalara bölünür. WordPiece devamı ## ile işaretler.' },
-  { t: 'W1', q: 'Which tokenizer marks continuation pieces with "##" and is used by BERT?', o: ['WordPiece', 'BPE', 'SentencePiece', 'Whitespace splitting'], why: 'BPE: en sık komşu çifti birleştirir (GPT). WordPiece: ## (BERT). SentencePiece: dilden bağımsız, ham metin.' },
-  { t: 'W1', q: 'What does bag of words lose?', o: ['Word order: dog bites man = man bites dog', 'Word counts: every word becomes 0 or 1', 'The vocabulary: unknown words get a column', 'Nothing: it is a lossless representation'], why: 'BoW sadece sayar, sırayı unutur. N-gram yerel sırayı kısmen geri getirir.' },
-  { t: 'W1', q: 'In TF-IDF, why does a word like "movie" that appears in every document get weight 0?', o: ['idf = ln(4/4) = 0: it does not tell documents apart', 'Its term frequency is always 0 in every one of the documents', 'Common words are deleted as stop words before any counting', 'Its sentiment is neutral, so TF-IDF gives it a zero score'], why: 'IDF her yerde geçen kelimeyi cezalandırır. TF-IDF bir ağırlık, duygu skoru veya olasılık değil.' },
-  { t: 'W1', q: 'What do dense embeddings give that one-hot vectors cannot?', o: ['Similar meanings get similar vectors', 'A vector exactly the size of the vocabulary', 'A guaranteed correct sentiment label', 'Perfect preservation of word order'], why: 'One-hot vektörlerin hepsi birbirine eşit uzaklıkta. Dense (50–300 boyut) vektörlerde benzer kelimeler yakın: king − man + woman ≈ queen.' },
-  { t: 'W1', q: 'A static embedding (Word2Vec, GloVe) gives "bank" in "river bank" and "bank loan"…', o: ['The same vector: one row per word type', 'Two different vectors, one per sense', 'No vector, because "bank" is ambiguous', 'A vector that changes with the sentence length'], why: 'Statik: kelime tipine bir satır. Bağlamsal (ELMo, BERT) her kullanım için farklı vektör üretir.' },
-  { t: 'W1', q: 'Which model family is encoder-only and used for understanding tasks like classification and NER?', o: ['BERT', 'GPT', 'T5', 'ELIZA'], why: 'BERT encoder-only; GPT decoder-only (üretim); T5/BART encoder-decoder (çeviri, özet).' },
-  { t: 'W1', q: 'For spam filtering at scale, the lecture recommends…', o: ['A cheap classical model such as Naive Bayes', 'Always an LLM, because it is the most accurate', 'A hand-written rule system like ELIZA', 'A translation model'], why: '"Don\'t use a bulldozer to crack a chestnut": LLM ≈ $30.000/ay ve 100–1000 ms; NB < $10/ay ve < 10 ms, doğruluk farkı çok küçük. Gizlilik, açıklanabilirlik, halüsinasyon da kontrol edilir.' },
-  { t: 'W1', q: 'Which statement about a token is correct?', o: ['A unit the tokenizer produces: word, subword or punctuation', 'It is always exactly one whole word, separated by spaces', 'It is always exactly one character of the input string', 'It is the predicted label of a whole document or sentence'], why: '"don\'t" → "do" + "n\'t", "##ness" gibi parçalar da token.' },
-
-  /* ---------------- Week 2: text classification ---------------- */
-  { t: 'W2', q: 'Text classification is best summarised as…', o: ['f(text) → one predefined label', 'f(text) → one label per token', 'f(text) → a generated new text', 'f(label) → a text'], why: 'Doküman başına bir etiket: sentiment, spam, topic. Token başına etiket 6. hafta.' },
-  { t: 'W2', q: 'Why is Naive Bayes called "naive"?', o: ['It assumes words are independent given the class', 'It needs no labeled training data at all to make predictions', 'It ignores the class prior and uses only word likelihoods', 'It only works with two classes, such as spam versus ham'], why: 'Koşullu bağımsızlık varsayımı. "not good" → "not" + "good" ayrı ayrı sayılır.' },
-  { t: 'W2', q: 'Which pair is correct?', o: ['NB is generative; logistic regression is discriminative', 'NB is discriminative; logistic regression is generative', 'Both are generative', 'Both are discriminative'], why: 'NB her sınıfın kelimeleri nasıl ürettiğini modeller. LR sınırı doğrudan öğrenir.' },
-  { t: 'W2', q: 'Without smoothing, what happens to NB when a test review contains a word never seen with a class?', o: ['P(word | class) = 0, so the whole product for that class is 0', 'The word is simply given weight 1 and the product is unchanged', 'The class prior becomes 0, so the class can never be chosen', 'Nothing changes, because unseen words are always skipped'], why: 'Tek bir sıfır çarpımı sıfırlar. Add-one (Laplace) smoothing düzeltir.' },
-  { t: 'W2', q: 'Which boundary does an SVM choose?', o: ['The one with the maximum margin', 'Any line that separates the classes', 'The line through the class means', 'The line with the most support vectors on it'], why: 'Maksimum margin. Kernel trick (RBF, polinom) doğrusal olmayan sınırlar için.' },
-  { t: 'W2', q: 'For a very small training set where speed matters, which classifier does the lecture suggest first?', o: ['Naive Bayes', 'An LLM', 'An SVM with an RBF kernel', 'A BiLSTM'], why: 'Proje önerisi: NB ile baseline → LR → zaman kalırsa SVM.' },
-  { t: 'W2', q: 'Counting "!" marks and the ratio of capital letters is which kind of feature?', o: ['Statistical', 'Lexical', 'Linguistic', 'Contextual embedding'], why: 'İstatistiksel: uzunluk, noktalama, büyük harf. Sözcüksel: BoW, TF-IDF, n-gram. Dilbilimsel: POS, sözlükler, varlıklar.' },
-  { t: 'W2', q: 'Which is the correct order of the ML pipeline?', o: ['Data → Features → Model → Prediction → Evaluation', 'Features → Data → Model → Evaluation → Prediction', 'Model → Data → Features → Prediction → Evaluation', 'Data → Model → Features → Evaluation → Prediction'], why: 'Etiketli veri → metni sayıya çevir → öğren → yeni metne etiket → ne kadar iyi? → veriye geri dön.' },
-
-  /* ---------------- Week 3: from counts to BERT ---------------- */
-  { t: 'W3', q: 'd1 = "good good movie", d2 = "good movie", d3 = "bad bad movie", d4 = "bad movie". With weight = count × ln(N/df), the weight of "good" in d1 is…', o: ['2 ln 2 ≈ 1.386', 'ln 2 ≈ 0.693', '2 ln 4 ≈ 2.773', '0'], why: 'N = 4, df(good) = 2 (d1, d2) → idf = ln 2. d1\'de good 2 kez: 2 × ln 2.' },
-  { t: 'W3', q: 'Same corpus. "good" now appears 10 times in d1. What happens to df(good)?', o: ['It stays 2: df counts documents, not occurrences', 'It becomes 11: one more for each of the new occurrences', 'It becomes 10, because df counts every occurrence of good', 'It becomes 0, because good is now too frequent to matter'], why: 'Slayt 31: ağırlık 10 × ln 2 ≈ 6.93 olur ama df hâlâ 2.' },
-  { t: 'W3', q: 'Why must the TF-IDF vectorizer be fitted on the training set only?', o: ['Fitting on test data leaks it into vocabulary and IDF', 'The test set usually has too few distinct words to fit on', 'transform() is much slower than fit_transform() on large data', 'IDF cannot mathematically be computed for validation data'], why: 'fit_transform(train), sonra transform(valid), transform(test). Test üzerinde fit = leakage.' },
-  { t: 'W3', q: 'NB with add-one smoothing: positive class has 5 tokens, |V| = 3, count(good, +) = 3. P(good | +) = ?', o: ['(3+1)/(5+3) = 0.5', '3/5 = 0.6', '(3+1)/(5+1) ≈ 0.67', '1/3 ≈ 0.33'], why: 'P(t|c) = (count + α) / (tokens(c) + α|V|) = 4/8.' },
-  { t: 'W3', q: 'NB priors .5/.5; "good movie": P(good|+) = .5, P(good|−) = .125, P(movie|±) = .375. P(+ | d) = ?', o: ['0.8', '0.5', '0.2', '0.375'], why: 's(+) = .5×.5×.375 = .09375, s(−) = .5×.125×.375 = .0234375. .09375 / .1171875 = .8. Bu bir model olasılığı, doğruluk değil.' },
-  { t: 'W3', q: 'Why does NB compute ln P(c) + Σ n ln P(t|c) instead of the product?', o: ['Log keeps the winner and sums avoid tiny products', 'Logs make the class probabilities sum exactly to 1 again', 'Logs remove the word independence assumption of Naive Bayes', 'A product of probabilities is not defined for text features'], why: 'ln(ab) = ln a + ln b. Kazanan değişmez. P(d) her sınıf için aynı, karşılaştırmayı etkilemez.' },
-  { t: 'W3', q: 'Logistic regression: x = [good, bad] = [2, 0], w = [0.8, −1], b = −0.4. z = ?', o: ['1.2', '1.6', '−0.4', '2.0'], why: 'z = 0.8×2 + (−1)×0 − 0.4 = 1.2 → p = σ(1.2) ≈ .769 → pozitif.' },
-  { t: 'W3', q: 'For logistic regression with binary cross-entropy, the weight gradient is…', o: ['(p − y) x', '(y − p) / x', 'p (1 − p)', 'max(0, 1 − y f(x))'], why: 'Zincir kuralında p(1−p) sadeleşir. Bias gradyanı p − y. max(0, 1−m) SVM hinge loss.' },
-  { t: 'W3', q: 'All features are 0, w = [.8, −1], b = −0.4, y = 1. Does the model still learn something?', o: ['Yes, the bias gradient p − y ≠ 0', 'No, every gradient is 0', 'No, the loss is 0', 'Yes, the weights change by (p − y)'], why: 'Slayt 33: ağırlık gradyanı (p−y)×0 = 0 ama bias hâlâ öğrenir.' },
-  { t: 'W3', q: 'SVM f(x) = good − bad, label y = −1, x = [1, 2]. Margin m and hinge loss?', o: ['m = 1, loss = 0', 'm = −1, loss = 2', 'm = 1, loss = 1', 'm = 0.5, loss = 0.5'], why: 'f = −1, m = y f = 1, loss = max(0, 1 − 1) = 0. Doğru tarafta ve tam margin üzerinde.' },
-  { t: 'W3', q: 'A positive example has SVM score f = 0.5. Which is true?', o: ['Correct sign, but hinge loss is 0.5', 'Wrong sign, loss 1.5', 'Correct sign, loss 0', 'It means 50% probability of positive'], why: 'm = 0.5 → loss = 1 − 0.5. SVM skoru olasılık değil.' },
-  { t: 'W3', q: 'A logistic model with weights not = 0, good = 0.8 predicts "not good" as positive. What fixes it?', o: ['Add the bigram "not good" as a weighted feature', 'Switch to an SVM with the same unigram features', 'Increase the threshold to 0.9 for every review', 'Remove the bias term'], why: 'Slayt 28–29: bigram −1.2 ağırlıkla z = −0.8 → negatif. Sınıflandırıcı adı değiştirmek eksik özelliği düzeltmez.' },
-  { t: 'W3', q: 'Skip-gram with radius 1 on "I love this movie", center "this", produces…', o: ['(this, love) and (this, movie)', '[love, movie] → this', '(I, this) and (this, movie)', 'one pair (this, this)'], why: 'Skip-gram merkezden komşuları tahmin eder; CBOW komşulardan merkezi.' },
-  { t: 'W3', q: 'CBOW scores [2, 1, 0] for [this, awful, bank]. Which is right about softmax?', o: ['p(this) = e² / (e² + e + 1) and the target loss is −ln p(this)', 'p(this) = 2 / 3, because 2 is the largest of the three scores', 'p(this) = 2 / (2 + 1 + 0): divide the raw score by the sum', 'The softmax probabilities of the three words do not sum to 1'], why: 'Softmax: exp, sonra toplam ile böl. ≈ 0.665, loss ≈ 0.408.' },
-  { t: 'W3', q: 'FastText trigrams of "<evler>" are…', o: ['<ev, evl, vle, ler, er>', 'ev, ler', '<e, ev, vl, le, er, r>', 'evler only'], why: '7 karakter − 3 + 1 = 5 trigram. Nadir çekimli kelimeler parça paylaşır.' },
-  { t: 'W3', q: 'CNN filter W = [[1, −1], [1, 1]], window rows not = [1, 0], very = [0, 1]. ReLU output?', o: ['2', '1', '0', '−1'], why: '1×1 + 0×(−1) + 0×1 + 1×1 = 2, ReLU(2) = 2.' },
-  { t: 'W3', q: 'Seven tokens, filter width 3, stride 1, no padding. How many windows?', o: ['5', '7', '3', '4'], why: 'L − k + 1 = 7 − 3 + 1.' },
-  { t: 'W3', q: 'What does max pooling lose?', o: ['The position of the strongest response and the other responses', 'The strongest response itself, keeping only the weakest one', 'The learned filter weights, which are reset after pooling', 'Nothing at all; it keeps every value and every position'], why: 'Max sadece en güçlüyü tutar; mean dağınık kanıtı tutar ama güçlü bir ifadeyi seyreltebilir.' },
-  { t: 'W3', q: 'Why can an RNN separate "[1, −1]" from "[−1, 1]" while mean pooling cannot?', o: ['The recurrence depends on order; both means are 0', 'The RNN uses many more parameters for every single token', 'Mean pooling cannot handle negative numbers in its input', 'The RNN always reverses the input list before reading it'], why: 'h[2] = −0.551 vs +0.551. Ortalama ikisi için de 0.' },
-  { t: 'W3', q: '20 repeated derivative factors of 0.5 give about 0.000001. This is the…', o: ['vanishing gradient problem', 'exploding gradient problem', 'padding problem', 'leakage problem'], why: '1.5²⁰ ≈ 3325 = exploding. Clipping patlamayı kontrol eder, kaybolmuş sinyali geri getirmez.' },
-  { t: 'W3', q: 'LSTM: c_old = 0.5, f = 0.8, i = 0.25, g = −0.4. New cell c = ?', o: ['0.30', '0.40', '−0.10', '0.18'], why: 'c = f×c_old + i×g = 0.40 − 0.10. h = o × tanh(c); 0.6 × 0.30 doğrudan çarpılmaz.' },
-  { t: 'W3', q: 'A BiLSTM with 256 hidden units per direction. Concatenated final summary width?', o: ['512 features, same number of tokens', '256 features, twice the tokens', '512 tokens', '128 features'], why: 'Özellik genişliği iki katına çıkar, uzunluk değil.' },
-  { t: 'W3', q: 'Two texts padded to length 5, true lengths [5, 3]. Why is taking column −1 unsafe?', o: ['For text 2 it is a PAD position', 'It always selects [CLS]', 'It is the first token, not the last', 'Column −1 does not exist in PyTorch'], why: 'Mask [1,1,1,0,0]. PAD otomatik yok sayılmaz; uzunluk veya mask gerekir.' },
-  { t: 'W3', q: 'Attention scores s = [0, ln 2, 0]. Softmax weights?', o: ['[0.25, 0.50, 0.25]', '[0, 0.5, 0]', '[0.33, 0.33, 0.33]', '[0, 1, 0]'], why: 'exp → [1, 2, 1], toplam 4. Her satır 1\'e toplanır.' },
-  { t: 'W3', q: 'Weights [0.25, 0.5, 0.25], values V₁ = [2, 0], V₂ = [0, 4], V₃ = [2, 2]. Output z = ?', o: ['[1, 2.5]', '[2, 2]', '[0.5, 2]', '[4, 6]'], why: '0.25×[2,0] + 0.5×[0,4] + 0.25×[2,2] = [0.5,0] + [0,2] + [0.5,0.5].' },
-  { t: 'W3', q: 'Same scores [0, ln 2, 0] but position 3 is padding (mask −∞). New weights?', o: ['[1/3, 2/3, 0]', '[0.25, 0.5, 0.25]', '[0.5, 0.5, 0]', '[0, 1, 0]'], why: 'exp(−∞) = 0, payda 1 + 2 = 3.' },
-  { t: 'W3', q: 'Why divide q·k by √dₖ?', o: ['Score variance stays near 1, so softmax is not too sharp', 'To make every attention score positive before the softmax', 'To make every attention row sum to exactly 1 on its own', 'To remove the padded positions from the attention matrix'], why: 'Var(q·k) = dₖ. BERT-base: 768/12 = 64, √64 = 8.' },
-  { t: 'W3', q: 'BERT input at each position is…', o: ['token + segment + position embeddings, added', 'token and position embeddings concatenated into width 2d', 'only the token embedding, with no position information', 'the [CLS] vector copied to every position of the input'], why: 'Toplama genişliği d olarak korur; birleştirme 3d yapardı.' },
-  { t: 'W3', q: 'Masked LM: target "excellent" gets probability 0.25. Loss = ?', o: ['ln 4 ≈ 1.386', '0.25', '0.75', 'ln 0.25 ≈ −1.386'], why: '−ln 0.25 = ln 4. Metin kendi hedefini verir: self-supervised.' },
-  { t: 'W3', q: 'model.eval() vs torch.no_grad():', o: ['eval() changes layers; no_grad() stops gradient recording', 'Both do the same thing: they stop all gradient recording', 'eval() updates the weights; no_grad() only freezes them', 'no_grad() turns dropout off; eval() stops the gradients'], why: 'Farklı amaçlar; çıkarımda ikisi birlikte kullanılır.' },
-  { t: 'W3', q: 'TP = 30, FP = 5, FN = 10, TN = 55. Precision and recall?', o: ['6/7 ≈ 0.857 and 3/4 = 0.75', '3/4 and 6/7', '0.85 and 0.85', '30/100 and 55/100'], why: 'P = 30/35, R = 30/40. F1 = 60/75 = 0.8 (harmonik ortalama).' },
-  { t: 'W3', q: 'Same matrix. Positive-class F1 = 0.80, negative-class F1 = 0.88. Macro-F1?', o: ['0.84', '0.848', '0.85', '0.80'], why: 'Macro = (0.80 + 0.88)/2. 0.848 support-ağırlıklı, 0.85 accuracy.' },
-  { t: 'W3', q: '60% of reviews are negative. An always-negative classifier gets…', o: ['60% accuracy, 0 positive recall', '0% accuracy', '60% recall for positives', '100% precision for positives'], why: 'Majority baseline sınıf dengesizliğini gösterir; per-class metrik raporla.' },
-  { t: 'W3', q: 'A long review is truncated and its decisive ending is dropped. Can attention recover it?', o: ['No, the clause is removed before inference', 'Yes, attention looks at all tokens including dropped ones', 'Yes, if the model has 12 heads', 'No, because attention ignores the end of a text'], why: 'Önce tokenizer çıktısına bak. Çözümler: daha uzun bağlam, parçalama (chunk), hata analizi.' },
-
-  /* ---------------- Week 4: POS & NER (Jurafsky & Martin) ---------------- */
-  { t: 'W4', q: 'Which is a closed-class category?', o: ['Prepositions (ADP): on, under, by', 'Nouns (robot, selfie, stream)', 'Verbs (fax, google, stream)', 'Adjectives (useful, digital)'], why: 'Kapalı sınıf: DET, PRON, ADP, CCONJ, AUX, PART. Yeni isim/fiil her gün türer.' },
-  { t: 'W4', q: 'About 15% of English word TYPES are ambiguous. What share of TOKENS in running text is ambiguous?', o: ['About 60%', 'About 15%', 'About 3%', 'About 97%'], why: 'Belirsiz kelimeler (back, that, will) çok sık geçiyor.' },
-  { t: 'W4', q: 'NER is harder than POS tagging mainly because…', o: ['It must find span boundaries and the type can be ambiguous', 'NER sentences are usually much longer than POS sentences', 'There is no labeled training data available for NER at all', 'POS tagging uses far more tags, so it is actually harder'], why: 'POS: her kelimeye bir etiket, segmentasyon yok. NER: "Washington" kişi, takım, yer olabilir.' },
-  { t: 'W4', q: 'Which tag scheme needs 4n + 1 tags for n entity types?', o: ['BIOES', 'BIO', 'IO', 'BIO with an extra START tag'], why: 'IO: n + 1, BIO: 2n + 1, BIOES (End, Single ekler): 4n + 1.' },
-  { t: 'W4', q: 'What can IO tagging NOT represent?', o: ['Two adjacent entities of the same type', 'Multi-word entities', 'Tokens outside any entity', 'Entities at the start of a sentence'], why: '"I-PER I-PER" tek kişi mi iki kişi mi, belli değil. BIO: B-PER I-PER vs B-PER B-PER.' },
-
-  /* ---------------- Week 6: token classification, HMM, CRF ---------------- */
-  { t: 'W6', q: 'Why is token classification harder than labeling a whole text?', o: ['Every token needs a label, and neighbours must fit', 'It always uses much longer documents than text classification', 'It needs no labeled training data, so evaluation is unclear', 'It has fewer labels, so each decision carries less information'], why: 'Çıktı bir dizi; BIO kuralları ve sınırlar var, NER span olarak değerlendirilir.' },
-  { t: 'W6', q: 'Which BIO sequence is INVALID under strict IOB2?', o: ['B-ORG I-PER', 'B-PER B-PER', 'B-PER I-PER O', 'O B-LOC I-LOC'], why: 'I devam ettiği span ile aynı tip olmalı. B-PER B-PER = iki komşu kişi, geçerli.' },
-  { t: 'W6', q: '[CLS] Ada Wash ##ington [SEP], first-subword policy, two people. Training labels?', o: ['−100, B-PER, B-PER, −100, −100', 'O, B-PER, B-PER, I-PER, O', '−100, B-PER, I-PER, I-PER, −100', 'O, B-PER, I-PER, O, O'], why: '−100 loss\'tan çıkarır; O gerçek bir etiket.' },
-  { t: 'W6', q: 'Gold: Ada (PER), New York (LOC). Predicted: Ada (PER), York (LOC). F1 = ?', o: ['0.5', '1.0', '0.67', '0.8'], why: 'TP 1, FP 1, FN 1 → 2/(2+1+1). York sınır hatası.' },
-  { t: 'W6', q: '100 tokens: 90 O, 10 entity tokens. Predict O everywhere. Accuracy and entity recall?', o: ['90% and 0%', '90% and 90%', '10% and 0%', '100% and 10%'], why: 'Paydalar farklı. Bu yüzden NER span üzerinden değerlendirilir.' },
-  { t: 'W6', q: 'HMM "can fish": π(N) = 0.6, P(can|N) = 0.4, a(N,V) = 0.7, P(fish|V) = 0.3. Joint weight of path NV?', o: ['0.0504', '0.1344', '0.0432', '0.168'], why: '0.6 × 0.4 × 0.7 × 0.3. VN = 0.1344 en büyük.' },
-  { t: 'W6', q: 'In an HMM, the emission b(V, can) is…', o: ['P(can | V)', 'P(V | can)', 'P(V | previous tag)', 'P(can, fish)'], why: 'Emisyon = P(kelime | etiket). Tersi değil.' },
-  { t: 'W6', q: 'Viterbi with T words and K tags costs…', o: ['O(T K²)', 'O(Kᵀ)', 'O(T²)', 'O(K)'], why: 'Her pozisyonda her bitiş etiketi için en iyi kısmi yol; tüm yolları listelemek Kᵀ.' },
-  { t: 'W6', q: 'CRF path weights 2, 4, 8, 2. P of the best path and Z?', o: ['0.5 and 16', '8 and 16', '0.5 and 8', '0.25 and 16'], why: 'Z = toplam = 16; P = 8/16. Gold ise loss = ln 2 ≈ 0.693.' },
-  { t: 'W6', q: 'What does a CRF add that a per-token softmax head does not have?', o: ['Adjacent label-pair scores, decoded jointly', 'A view of the whole input sentence instead of one word', 'Subword tokenization that splits rare words into pieces', 'A much larger output vocabulary of entity type labels'], why: 'Encoder tüm cümleyi zaten görür. CRF çıktı etiketlerini birlikte çözer; softmax her token için ayrı argmax.' },
-  { t: 'W6', q: 'How do you GUARANTEE that O → I-PER never appears in CRF output?', o: ['Set that transition score to −∞ (hard constraint)', 'Train the CRF for many more epochs on the same data', 'Use a bigger transformer encoder with more attention heads', 'Lower the softmax temperature so the output is sharper'], why: 'Öğrenilmiş sonlu skor sadece caydırır. exp(−∞) = 0.' },
-
-  /* ---------------- Week 6 study deck (week6-pro-standalone) ---------------- */
-  { t: 'W6', q: 'Corpus "book book book cat dog"; only "book" has several possible tags. Ambiguous types and ambiguous tokens?', o: ['1/3 of types, 3/5 of tokens', '1/5 of types, 1/3 of tokens', '3/5 of types, 1/3 of tokens', '1/3 of types, 1/5 of tokens'], why: 'Study slayt 9: 3 tip (book, cat, dog), 1 belirsiz; 5 token, 3\'ü book. Sık geçen belirsiz bir tip token oranını büyütür.' },
-  { t: 'W6', q: 'Which entity structure can a single flat BIO layer NOT represent?', o: ['[University of [New York] LOC] ORG', '[New York] LOC', 'Two adjacent people B-PER B-PER', 'A one-word location B-LOC'], why: 'Study slayt 20: nested (iç içe) ve discontinuous varlıklar tek BIO katmanıyla gösterilemez. Daha büyük Transformer bunu çözmez; çıktı temsili değişmeli.' },
-  { t: 'W6', q: 'In BIOES, "Jane Villanueva" (PER) and "Chicago" (LOC) are tagged…', o: ['B-PER E-PER and S-LOC', 'B-PER I-PER and B-LOC', 'B-PER E-PER and B-LOC', 'S-PER S-PER and S-LOC'], why: 'E çok kelimeli span\'i bitirir, S tek tokenlı span. 3 tip için BIOES = 4×3 + 1 = 13 etiket.' },
-  { t: 'W6', q: 'All-subword BIO policy: "Ada Washington" is ONE person, split Ada | Wash | ##ington. Labels?', o: ['B-PER, I-PER, I-PER', 'B-PER, B-PER, −100', 'B-PER, I-PER, −100', 'B-PER, B-PER, I-PER'], why: 'Study slayt 35: tüm parçalar denetlenir; B-X kelimesinin sonraki parçaları I-X olur. First-piece politikasında ##ington −100 olurdu.' },
-  { t: 'W6', q: 'PER: TP 8, FP 2, FN 0. LOC: TP 1, FP 0, FN 3. Micro-F1 and macro-F1?', o: ['18/23 ≈ 0.783 and ≈ 0.644', '≈ 0.644 and 18/23 ≈ 0.783', '0.889 and 0.400', '0.75 and 0.75'], why: 'Micro sayıları birleştirir: 9/2/3 → 18/23. Macro tip F1\'lerinin ortalaması: (8/9 + 2/5)/2 ≈ 0.644.' },
-  { t: 'W6', q: 'For "can fish", the forward algorithm gives masses 0.1776 (final N) and 0.0672 (final V). What is P(final tag = N | words)?', o: ['0.1776 / 0.2448 ≈ 0.7255', '0.1344 / 0.2448 ≈ 0.549', '0.1776', '0.1344'], why: 'Study slayt 61: marginal = NN + VN = 0.1776, böl P(X). 0.549 tüm VN yolunun posterior\'u; farklı soru.' },
-  { t: 'W6', q: 'What is the difference between Viterbi and the forward algorithm?', o: ['Viterbi takes max over predecessors; forward takes the sum', 'Viterbi sums over predecessors; forward takes the max', 'Forward needs labeled data, but Viterbi does not', 'Nothing: they always compute the same number'], why: 'Viterbi = en iyi yol; forward = P(X), tüm geçmişlerin toplamı. Aynı tabloyu kullanırlar.' },
-  { t: 'W6', q: 'After a tag, N was seen 2 times and V 0 times. With add-one smoothing, P(V | tag) = ?', o: ['1/4 = 0.25', '0', '1/2 = 0.5', '1/3 ≈ 0.33'], why: '(0 + 1)/(2 + 2). N = 3/4. Sıfır sayım imkânsızlık kanıtı değil.' },
-  { t: 'W6', q: 'T = 10 positions, K = 3 labels. Paths to enumerate vs Viterbi predecessor checks?', o: ['3¹⁰ = 59,049 vs 9 × 3 × 3 = 81', '10³ = 1000 vs 30', '3¹⁰ = 59,049 vs 10 × 3 = 30', '30 vs 81'], why: 'Kᵀ yol; Viterbi (T−1)K². Zaman O(TK²), backpointer alanı O(TK).' },
-  { t: 'W6', q: 'Why do HMM implementations work in log space?', o: ['Products of many small probabilities underflow; logs turn them into sums', 'Logs make each transition row sum to exactly 1', 'Logs change which path is best, so it is more accurate', 'Logs remove the need for smoothing unseen words'], why: 'ln artan bir fonksiyon, kazanan değişmez. ln 0 = −∞. Toplarken log-sum-exp.' },
-  { t: 'W6', q: 'Unary-only local softmax for "can fish" gives P(NV) = 4/9. With the CRF V→N reward it gives P(VN) = 1/2. What does this show?', o: ['Local and sequence-level normalization are different models', 'Softmax is always wrong for POS tagging tasks', 'The CRF simply ignores the unary scores here', 'Both models always pick the same best path'], why: 'Study slayt 73: her pozisyonu ayrı normalize etmek ile tüm dizileri normalize etmek farklı olasılık modelleri.' },
-  { t: 'W6', q: 'LSE(ln 2, ln 8) = ?', o: ['ln 10 ≈ 2.303', 'ln 16 ≈ 2.773', 'ln 8 ≈ 2.079', '10'], why: 'log-sum-exp = ln(2 + 8). Yol boyunca skorlar toplanır; alternatifler LSE ile birleşir.' },
-  { t: 'W6', q: 'CRF, gold path VN with P(VN | X) = 0.5. Gradient of the loss for the V→N transition score?', o: ['0.5 − 1 = −0.5, so training increases it', '1 − 0.5 = 0.5, so training decreases it', '0, because the gold path already has the highest score', '−ln 0.5 ≈ 0.693, the same value as the loss itself'], why: 'Study slayt 78: beklenen sayım − gold sayım. Negatif gradyan, θ ← θ − η(−0.5) skoru artırır.' },
-  { t: 'W6', q: 'Five positions, two supervised with gold probabilities 0.8 and 0.5, three set to −100. Mean loss?', o: ['(−ln 0.8 − ln 0.5)/2 ≈ 0.458', '(−ln 0.8 − ln 0.5)/5 ≈ 0.183', '−ln 0.4 ≈ 0.916', '0.65'], why: 'Study slayt 85: sadece denetlenen pozisyonlara böl.' },
-  { t: 'W6', q: 'Practice: the V transition row changes to (0.5, 0.5). VN = 0.084, total 0.2196. What happens?', o: ['VN still wins but its posterior drops to ≈ 0.38', 'NV now wins, because the V row became uniform', 'All four paths become exactly equally likely', 'VN posterior rises to about 0.75 instead'], why: 'Study slayt 89: kazanan aynı kalabilir ama posterior ciddi değişir.' },
-  { t: 'W6', q: 'Practice: a(V,N) changes from ln 8 to ln 2. Weights become 2, 4, 2, 2. Winner and loss if VN is gold?', o: ['NV wins; loss = ln 5 ≈ 1.609', 'VN wins; loss = ln 2', 'NV wins; loss = ln 2', 'VN wins; loss = ln 5'], why: 'Z = 10, P(VN) = 0.2, −ln 0.2 = ln 5. Geçiş tercihi token kanıtını otomatik ezmez.' },
-  { t: 'W6', q: 'A Feature CRF and a Neural CRF differ in…', o: ['where the unary scores come from', 'how the partition function Z is defined', 'whether Viterbi decoding is used at all', 'whether the labels form a sequence'], why: 'Feature CRF: büyük harf, ek, gazetteer gibi özelliklerin ağırlıklı toplamı. Neural CRF: uᵢ = W hᵢ + b. Yapı aynı.' },
+  {
+    "t": "W1",
+    "q": "A model has never seen \"unhappiness\" during training. What does subword tokenization do?",
+    "o": [
+      "Replaces it with an [UNK] token and loses it",
+      "Split it into known subwords",
+      "Deletes the word from the input",
+      "Adds the word to the vocabulary at test time"
+    ],
+    "answer": 1,
+    "why": "That is the OOV problem. BPE, WordPiece and SentencePiece build rare words from frequent fragments, so almost nothing is unknown."
+  },
+  {
+    "t": "W1",
+    "q": "Doc 1 = \"The cat sat on the mat\", Doc 2 = \"The dog sat on the log\", vocabulary [the, cat, sat, on, mat, dog, log]. What is the BoW vector of Doc 1?",
+    "o": [
+      "[2,1,1,1,1,0,0]",
+      "[1, 1, 1, 1, 1, 0, 0]",
+      "[2, 0, 1, 1, 0, 1, 1]",
+      "[0, 1, 0, 0, 1, 0, 0]"
+    ],
+    "answer": 0,
+    "why": "\"the\" appears twice, cat/sat/on/mat once, dog and log zero times. Doc 2 is [2, 0, 1, 1, 0, 1, 1]."
+  },
+  {
+    "t": "W1",
+    "q": "Three documents all contain \"the\". Using IDF = log(N/df), IDF(\"the\") is…",
+    "o": [
+      "log(3) ≈ 1.099",
+      "0",
+      "3",
+      "1/3"
+    ],
+    "answer": 1,
+    "why": "A word that appears in every document carries no distinguishing information, so its IDF is log(1) = 0."
+  },
+  {
+    "t": "W1",
+    "q": "Why does \"bank\" need contextualized embeddings?",
+    "o": [
+      "Because \"bank\" is out of vocabulary",
+      "Its meaning changes with context",
+      "Because \"bank\" is a stop word",
+      "Because static embeddings cannot store nouns"
+    ],
+    "answer": 1,
+    "why": "Static Word2Vec/GloVe store one vector per word. ELMo (BiLSTM) and BERT/GPT (Transformers) compute a vector from the surrounding words."
+  },
+  {
+    "t": "W2",
+    "q": "Naive Bayes chooses the class that maximizes…",
+    "o": [
+      "P(text) × P(class | text)",
+      "The distance to the margin",
+      "σ(w·x + b)",
+      "P(c) × P(text | c)"
+    ],
+    "answer": 3,
+    "why": "P(class | text) ∝ P(class) × P(text | class). P(text) is the same for every class, so it can be ignored."
+  },
+  {
+    "t": "W2",
+    "q": "In the week-3 toy model (positive [good, bad, movie] totals [3, 0, 2], add-one smoothing, vocabulary 3), P(good | +) =",
+    "o": [
+      "3/5 = 0.6",
+      "(3 + 1) / 5 = 0.8",
+      "4/8 = 0.5",
+      "1/8 = 0.125"
+    ],
+    "answer": 2,
+    "why": "Add one to the count and the vocabulary size to the denominator: 5 tokens + 3 words = 8."
+  },
+  {
+    "t": "W2",
+    "q": "Weights [good: 0.8, bad: −1], bias −0.4, input [good, bad] = [2, 0]. What is z and the prediction at threshold 0.5?",
+    "o": [
+      "z = 1.2; positive",
+      "z = 1.6, p ≈ 0.83 → positive",
+      "z = −0.4, p ≈ 0.40 → negative",
+      "z = 0.8, p ≈ 0.69 → positive"
+    ],
+    "answer": 0,
+    "why": "0.8×2 − 1×0 − 0.4 = 1.2. 1/(1 + e^−1.2) ≈ 0.769 > 0.5."
+  },
+  {
+    "t": "W2",
+    "q": "What does an SVM optimize?",
+    "o": [
+      "The number of features",
+      "The probability of each word",
+      "Maximum margin",
+      "The training time"
+    ],
+    "answer": 2,
+    "why": "The boundary should be as far as possible from both classes. The closest points are the support vectors."
+  },
+  {
+    "t": "W3",
+    "q": "You must turn reviews into features for a test set. What is correct?",
+    "o": [
+      "Fit train; transform validation and test",
+      "fit_transform(train) and fit_transform(test) separately",
+      "fit_transform on train + test together, then split",
+      "fit_transform(test) first because it has no labels"
+    ],
+    "answer": 0,
+    "why": "Vocabulary and IDF are learned statistics. Learn them on training data only and reuse them, otherwise information leaks from the test set."
+  },
+  {
+    "t": "W3",
+    "q": "A CNN filter produced responses [0.20, 0.30, 0.95, 0.88, 0.82]. Max pooling and mean pooling give…",
+    "o": [
+      "0.63 and 0.95",
+      "Max = 0.95; mean = 0.63",
+      "0.95 and 3.15",
+      "0.20 and 0.63"
+    ],
+    "answer": 1,
+    "why": "Max = strongest signal. Mean = 3.15 / 5 = 0.63. Both discard the position."
+  },
+  {
+    "t": "W3",
+    "q": "Row scores [0, ln 2, 0] where position 3 is padding. After adding mask [0, 0, −∞] and softmax, the weights are…",
+    "o": [
+      "[1/3, 2/3, 0]",
+      "[1/4, 1/2, 1/4]",
+      "[0, 1, 0]",
+      "[1/3, 1/3, 1/3]"
+    ],
+    "answer": 0,
+    "why": "exp → [1, 2, 0]; normalize by 3. The padded key gets exactly zero weight, and the valid weights still sum to 1."
+  },
+  {
+    "t": "W3",
+    "q": "TP = 30, FN = 10, FP = 5, TN = 55. Precision, recall, F1?",
+    "o": [
+      "0.750, 0.857, 0.800",
+      "0.850, 0.850, 0.850",
+      "0.857, 0.750, 0.804",
+      "P = 6/7; R = 3/4; F1 = 4/5"
+    ],
+    "answer": 3,
+    "why": "P = 30/35. R = 30/40. F1 = 2·30 / (60 + 5 + 10) = 60/75 = 0.80. Accuracy = 85/100."
+  },
+  {
+    "t": "W4",
+    "q": "\"Book that flight\" vs \"Hand me that book\". What is \"book\" in each?",
+    "o": [
+      "NOUN, then VERB",
+      "VERB; NOUN",
+      "NOUN in both",
+      "VERB in both"
+    ],
+    "answer": 1,
+    "why": "Tagging is disambiguation: the same word type takes different tags in different contexts."
+  },
+  {
+    "t": "W4",
+    "q": "NER is harder than POS tagging mainly because of…",
+    "o": [
+      "Having more words per sentence",
+      "Not having any training data",
+      "Finding both boundaries and entity types",
+      "Needing to translate"
+    ],
+    "answer": 2,
+    "why": "Most words are not entities, spans can be multi-word, and \"Washington\" could be PER, ORG (team), LOC or GPE."
+  },
+  {
+    "t": "W4",
+    "q": "BIO tags for \"[PER Jane Villanueva] of [ORG United]\":",
+    "o": [
+      "B-PER I-PER O B-ORG",
+      "Jane/I-PER Villanueva/I-PER of/O United/I-ORG",
+      "Jane/B-PER Villanueva/B-PER of/O United/B-ORG",
+      "Jane/PER Villanueva/PER of/O United/ORG"
+    ],
+    "answer": 0,
+    "why": "B begins each span, I continues it, O is outside. B-PER B-PER would split Jane Villanueva into two people."
+  },
+  {
+    "t": "W4",
+    "q": "Which BIO sequence is INVALID?",
+    "o": [
+      "B-ORG I-ORG O",
+      "B-PER B-PER",
+      "O I-PER",
+      "O B-LOC O"
+    ],
+    "answer": 2,
+    "why": "An I- tag cannot follow O: spans must begin with B-. \"B-PER B-PER\" is valid (two adjacent one-word people)."
+  },
+  {
+    "t": "W6",
+    "q": "What does the label −100 do during training?",
+    "o": [
+      "Marks an outside-entity token",
+      "Skip this loss target",
+      "Adds a new entity category",
+      "Gives the token a negative score"
+    ],
+    "answer": 1,
+    "why": "O is a real modeled label. −100 is the ignore index of PyTorch cross-entropy."
+  },
+  {
+    "t": "W6",
+    "q": "3 gold spans, 4 predicted spans, 2 exact matches. F1 = ?",
+    "o": [
+      "2/4 = 0.50",
+      "2/3 ≈ 0.667",
+      "5/7 ≈ 0.714",
+      "4/7"
+    ],
+    "answer": 3,
+    "why": "TP 2, FP 4 − 2 = 2, FN 3 − 2 = 1. F1 = 2TP/(2TP + FP + FN) = 4/7. P = 0.50 and R = 0.667 are the two distractors."
+  },
+  {
+    "t": "W6",
+    "q": "\"can fish\": π(V) = 0.4, P(can|V) = 0.7, a(V,N) = 0.8, P(fish|N) = 0.6. The joint weight of path VN is…",
+    "o": [
+      "0.0504",
+      "0.0432",
+      "0.1344",
+      "0.2448"
+    ],
+    "answer": 2,
+    "why": "0.4 × 0.7 × 0.8 × 0.6 = 0.1344, the largest of the four paths. 0.2448 is P(words), the sum of all four."
+  },
+  {
+    "t": "W6",
+    "q": "Now add a(V,N) = ln 8. Path weights exp(S) are NN 2, NV 4, VN 8, VV 2. P(VN | words) = ?",
+    "o": [
+      "0.250",
+      "0.125",
+      "8/16 = 1/2",
+      "0.800"
+    ],
+    "answer": 2,
+    "why": "Z = 2 + 4 + 8 + 2 = 16, so 8/16. The transition changed the winner from NV to VN."
+  },
+  {
+    "w": true,
+    "t": "Understand and compare",
+    "q": "A manager says that replacing unigram Naive Bayes with a larger classifier will necessarily fix order-sensitive review errors. Give a verdict and explain the mechanism. Compare a feature change with a model change.",
+    "model": [
+      "Verdict: no guarantee; inspect held-out errors first.",
+      "Unigram counts discard order; identical counts give identical classifier inputs.",
+      "Word bigrams expose local phrases; “not good” differs from “good not”.",
+      "NB: class priors + word likelihoods; LR: conditional probability; SVM: margin.",
+      "Sequence models can compose context; still require training evidence and validation.",
+      "Compare quality, runtime and practical limits on the same task."
+    ]
+  },
+  {
+    "w": true,
+    "t": "Apply",
+    "q": "For “can fish”, a CRF has unary scores can:(N ln 2,V 0), fish:(N 0,V ln 2). Only transition V→N scores ln 8; all other and start/end scores are zero. Compute each path weight, Z, the winning path and its probability. If gold is VN, give the loss. Explain what changing V→N to ln 2 does.",
+    "model": [
+      "S = unary₁ + unary₂ + transition; weight = exp(S).",
+      "NN=2; NV=4; VN=8; VV=2. Z=16.",
+      "Verdict: VN wins; P(VN|X)=8/16=1/2.",
+      "Gold VN loss=−ln(1/2)=ln 2.",
+      "Changed V→N=ln 2: weights 2,4,2,2; Z=10.",
+      "NV now wins with 4/10; compatibility is a preference, not a hard rule."
+    ]
+  }
 ];
-
-/* the two open-ended questions per form; the form builder alternates them A, B, A, B */
-window.MOCK.push(
-  { t: 'W6', w: true, q: 'Compare an HMM and a linear-chain CRF for NER. For each: what does it model, what goes in and out, and where does it still fail? Which would you choose if you want rich features such as capitalisation and suffixes, and why?', model: 'Both output one label per token and both model neighbouring labels, decoded with Viterbi. The HMM is generative: it models the joint P(words, tags) as start × emission P(word | tag) × transition P(tag | previous tag); it is trained by counting and normalising tagged data, and needs smoothing for unseen words. Its weakness is that the emission sees only one word given one tag, so overlapping clues like capitalisation, suffixes and neighbouring words are hard to add. The CRF is conditional: P(Y | X) = exp(S(X, Y)) / Z(X), where S adds unary scores (which can use any features of the whole input) and transition scores; Z sums over all label sequences. Verdict: choose the CRF for rich features, because it does not have to generate the words, so features may overlap. Limits: it still needs labeled data, Z makes training more expensive, and a learned finite transition score does not guarantee valid BIO; illegal transitions need a −∞ constraint.', keys: ['HMM: joint / generative P(words, tags), start × emission × transition', 'emission = P(word | tag), trained by counting (+ smoothing)', 'CRF: conditional P(Y|X) = exp(S)/Z, Z sums over all sequences', 'both use transitions + Viterbi (O(TK²))', 'verdict: CRF, because features can overlap / it need not generate the words', 'a limit: labeled data, cost of Z, or BIO validity needs hard constraints'] },
-  { t: 'W3', w: true, q: 'You classify long product reviews; the decisive sentence is often at the end. A BERT model truncated to 128 tokens gets many of these wrong. Explain why, and propose and justify a fix and how you would evaluate it.', model: 'BERT has a fixed input budget (here 128 tokens including [CLS] and [SEP]); prefix truncation keeps the start and drops the end, so the decisive clause ("but the ending ruined it") is removed before inference. Attention can only mix tokens that are in the input, so it cannot recover dropped evidence; this is an evidence problem, not a classifier problem. First check: inspect the tokenizer output and log the retained span for the errors. Fixes: a longer context (costs memory, dense attention has T² pairs, so doubling T gives 4× pairs), or split the document into chunks and aggregate the chunk predictions, or keep the end of the text. Evaluation: keep the same train/validation/test split for every option, split documents before chunking to avoid leakage, tune on validation, report per-class precision, recall, F1 or macro-F1 on the test set once, and compare with the truncated baseline.', keys: ['truncation removes the ending before the model sees it', 'attention cannot use tokens that are not in the input', 'inspect tokenizer output / retained span', 'fix: longer context or chunking (+ aggregation) or keep the end', 'trade-off: memory / T² attention pairs', 'evaluate on a fixed held-out split, test once, per-class / macro-F1 vs baseline'] },
-  { t: 'W1', w: true, q: 'A startup wants to filter spam for millions of emails a day and plans to call a large LLM for every email. Give your verdict and justify it with what goes in, what comes out, and where each option fails.', model: 'Verdict: start with a classical classifier (Naive Bayes or logistic regression on bag-of-words / TF-IDF features), not an LLM for every email. Spam filtering is f(text) → one of two labels. The classical model takes word counts or TF-IDF weights and returns a label (and a score); it is fast (< 10 ms), cheap (lecture example: under $10 a month versus about $30,000 for the LLM), interpretable (word weights), keeps the data in-house (privacy) and trains on labeled examples. The accuracy gap in the lecture example was small (98.5% versus 99.2%). The LLM takes the raw text and generates an answer: it is slow (100–1000 ms), expensive, harder to explain, may send private data to an external API and can hallucinate. Where the classical model fails: bag of words loses order ("not good"), unseen words need smoothing or subwords, so add n-grams and evaluate with precision/recall. The LLM could be kept for rare hard cases.', keys: ['verdict: classical model (NB / LR) first, not an LLM per email', 'task = f(text) → label (binary)', 'cost and latency figures (< 10 ms vs 100–1000 ms; $ per month)', 'interpretability / privacy / hallucination', 'small accuracy difference', 'a limit of the classical model (order lost, OOV) and how to address it'] },
-  { t: 'W3', w: true, q: 'Explain why we moved from bag of words to embeddings, then to RNN/LSTM, then to Transformers. For each step say what problem it fixed and where it still fails.', model: 'Bag of words / TF-IDF turns a document into counts or weights over a fixed vocabulary; it is simple and strong for classification but loses word order ("dog bites man" = "man bites dog"), treats every word as unrelated (one-hot) and has no column for unseen words. Embeddings (Word2Vec, GloVe, FastText) give dense vectors where similar words are close, and FastText builds vectors for rare forms from character n-grams; but static embeddings give "bank" one vector, and averaging them still loses order. RNNs read tokens one by one, h[t] = tanh(x[t] + W h[t−1]), so order matters; but repeated derivatives make gradients vanish (0.5²⁰) or explode, so long dependencies are hard. LSTMs add gates and a cell c = f·c_old + i·g that can keep information longer, but still read sequentially and do not guarantee perfect memory. Transformers use self-attention softmax(QKᵀ/√dₖ)V: every token looks at every other token directly and in parallel, giving contextual vectors (BERT: "bank" differs by sentence). Limits: a fixed input length (truncation), T² attention cost, and padding must be masked.', keys: ['BoW: counts, loses order, words unrelated', 'embeddings: similar words close; static = one vector per word', 'RNN: order-aware but vanishing / exploding gradients', 'LSTM: gates + cell keep information longer', 'Transformer: attention connects all tokens directly, contextual vectors', 'a Transformer limit: input length / T² cost / masking'] },
-);
+(()=>{const host=document.getElementById('questions');MOCK.forEach((q,i)=>{const s=document.createElement('section');s.className='panel';const h=document.createElement('h2');h.textContent=(i+1)+'. '+q.t;s.append(h);const p=document.createElement('p');p.textContent=q.q;s.append(p);if(q.w){const ta=document.createElement('textarea');ta.setAttribute('aria-label','Your answer '+(i+1));ta.rows=6;s.append(ta);const d=document.createElement('details'),sum=document.createElement('summary');sum.textContent='Show model answer';d.append(sum);const ul=document.createElement('ul');q.model.forEach(line=>{const li=document.createElement('li');li.textContent=line;ul.append(li)});d.append(ul);s.append(d)}else{const fb=document.createElement('p');fb.className='feedback';fb.setAttribute('aria-live','polite');CS.shuffle(q.o.map((text,k)=>({text,k}))).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.text;b.onclick=()=>{s.querySelectorAll('button').forEach(x=>x.classList.remove('right','wrong'));b.classList.add(o.k===q.answer?'right':'wrong');fb.textContent=(o.k===q.answer?'Correct. ':'Incorrect. ')+q.why;CS.srs.grade(CS.srs.qId(COURSE.id,Number(q.t.slice(1)),q.q),o.k===q.answer)};s.append(b)});s.append(fb)}host.append(s)})})();

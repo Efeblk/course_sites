@@ -1,782 +1,1697 @@
-/* COE025 — Natural Language Processing (Istinye University, Fall 25-26)
- * Content is derived from the lecturer's slides (Asst. Prof. Yiğit Bekir Kaya) and the
- * Jurafsky & Martin "Sequence Labeling for POS and Named Entities" deck (Week 4; the lecturer's
- * Week 6 token-classification deck builds on it). Raw files:
- * materials/COE025/.
- *
- * To add a week: append to `chapters`, add its games to `games`, and create any custom
- * simulation pages under coe025/wN/.
- */
+/* Practice paraphrased from lecturer material. */
 window.COURSE = window.COE025 = {
-  id: 'coe025',
-  code: 'COE025',
-  name: 'Natural Language Processing',
-  term: 'Fall 25-26',
-  lecturer: 'Asst. Prof. Yiğit Bekir Kaya',
-  examFormat: 'Midterm on 9 November, all weeks: multiple choice + two open-ended questions, no calculator. Four team projects (5 students each).',
-  textbooks: [
-    'Jurafsky & Martin — Speech and Language Processing, 3rd ed. draft (web.stanford.edu/~jurafsky/slp3/)',
-    'Manning, Raghavan & Schütze — Introduction to Information Retrieval (nlp.stanford.edu/IR-book/)',
+  "id": "coe025",
+  "code": "COE025",
+  "name": "Natural Language Processing",
+  "term": "Fall 25-26",
+  "lecturer": "Asst. Prof. Yiğit Bekir Kaya",
+  "examFormat": "Midterm on 9 November, all weeks: multiple choice + two open-ended questions, no calculator. Four team projects (5 students each).",
+  "textbooks": [
+    "Jurafsky & Martin — Speech and Language Processing, 3rd ed. draft (web.stanford.edu/~jurafsky/slp3/)",
+    "Manning, Raghavan & Schütze — Introduction to Information Retrieval (nlp.stanford.edu/IR-book/)"
   ],
-  projects: [
-    'P1 — Text classification (sentiment / spam / topic). At least Naive Bayes + one other method; compare with benchmarks; 3 min talk + 2 min Q&A in Week 4; GitHub repo due before the talk. Rubric: technical depth 40%, originality 10%, presentation 50%.',
-    'P2 — NER & POS tagging (sequence models: HMM, CRF, BiLSTM-CRF, Viterbi).',
-    'P3 — ASR & TTS (speech-to-text / text-to-speech).',
-    'P4 — Machine translation (seq2seq, attention, BLEU).',
+  "projects": [
+    "P1 — Text classification (sentiment / spam / topic). At least Naive Bayes + one other method; compare with benchmarks; 3 min talk + 2 min Q&A in Week 4; GitHub repo due before the talk. Rubric: technical depth 40%, originality 10%, presentation 50%.",
+    "P2 — NER & POS tagging (sequence models: HMM, CRF, BiLSTM-CRF, Viterbi).",
+    "P3 — ASR & TTS (speech-to-text / text-to-speech).",
+    "P4 — Machine translation (seq2seq, attention, BLEU)."
   ],
-
-  chapters: [
-    /* ================================================================ */
+  "chapters": [
     {
-      n: 1,
-      title: 'NLP Fundamentals',
-      summary: 'What NLP is, how it evolved, and how text becomes numbers: tokens and subwords (BPE, WordPiece), one-hot, bag of words, TF-IDF, n-grams and dense embeddings. Also the model zoo, and why an LLM is not always the right tool.',
-      takeaways: [
-        'NLP = teaching computers to understand, interpret and generate human language. Three pillars: linguistics, statistics, computer science.',
-        'History: 1950s rules (ELIZA, 1966) → 1990s statistics (n-grams, HMMs) → 2010s deep learning (Word2Vec, LSTMs, attention) → 2017+ Transformers & LLMs (BERT, GPT) → now: choosing the right tool.',
-        'Corpus = collection of documents; document = one unit of text; token = atomic unit; tokenization = splitting text into tokens ("don\'t" → "do" + "n\'t").',
-        'Out-of-vocabulary words are solved by subword tokenization: BPE merges frequent pairs (GPT), WordPiece marks continuations with ## (BERT), SentencePiece is language-agnostic.',
-        'One-hot: a binary vector the size of the vocabulary. BoW: word counts, order lost. TF-IDF: TF × IDF, so frequent-everywhere words like "the" get weight ≈ 0. N-grams: "New York" ≠ "York New".',
-        'Dense embeddings: 50–300 dimensions, similar meaning → similar vector, king − man + woman ≈ queen. Static (Word2Vec, GloVe, FastText) vs contextual (ELMo, BERT, GPT): "bank" by a river vs a bank loan.',
-        'BERT = encoder-only (understanding: classification, NER, Q&A). GPT = decoder-only (generation). T5/BART = encoder-decoder (translation, summarization).',
-        '"Don\'t use a bulldozer to crack a chestnut": LLM spam filtering ≈ $30,000/month vs Naive Bayes < $10/month for 98.5% vs 99.2%. LLM latency 100–1000 ms vs < 10 ms. Also interpretability, privacy, customization, hallucinations.',
+      "n": 1,
+      "title": "NLP Fundamentals",
+      "summary": "What NLP is, how it evolved, and how text becomes numbers: tokens and subwords (BPE, WordPiece), one-hot, bag of words, TF-IDF, n-grams and dense embeddings. Also the model zoo, and why an LLM is not always the right tool.",
+      "takeaways": [
+        "NLP teaches computers to work with human language. The big problem behind everything is that computers only understand numbers, so every method is a way of turning text into numbers.",
+        "A model only knows the tokens it saw in training. A new word becomes [UNK] and its meaning is lost, unless we split it into known subword pieces.",
+        "One-hot: one 1 per word, so no meaning and very long vectors. Bag of words: count each word in a document, but word order is lost.",
+        "TF-IDF is high for words that are frequent in this document but rare in the others. Those are the words that tell you what it is about.",
+        "An embedding is a short list of numbers per word, learned so that similar words end up close together. Directions can even carry meaning.",
+        "Encoders read (they understand), decoders draft (they generate), and encoder-decoders transform one text into another."
       ],
-      traps: [
-        ['A token is always a word', 'A token is the atomic unit the tokenizer produces. It can be a word, a subword ("##ness"), punctuation or "n\'t".'],
-        ['BoW keeps word order', 'BoW only counts. "dog bites man" and "man bites dog" get the same vector. N-grams recover some local order.'],
-        ['A high TF-IDF means the word is positive', 'TF-IDF is a feature weight (how distinctive a word is for a document). It is not a sentiment or a probability.'],
-        ['IDF counts how often a word occurs', 'IDF uses document frequency: how many documents contain the word at least once. Repeating a word inside one document doesn\'t change df.'],
-        ['An embedding ID tells the model the meaning', 'The ID only selects a row of the embedding table. The learned vector in that row carries the features.'],
-        ['Word2Vec gives "bank" two vectors', 'Static embeddings give one vector per word type. Only contextual models (ELMo, BERT) give each occurrence its own vector.'],
-        ['GPT is encoder-only', 'GPT is decoder-only (predicts the next word). BERT is encoder-only. T5/BART are encoder-decoder.'],
-        ['Always use an LLM, it is the most accurate', 'For spam, 0.7% accuracy can cost 3000×. Check cost, latency (users leave after ~100 ms), privacy, interpretability and hallucination risk first.'],
+      "traps": [
+        [
+          "A token is always a word",
+          "A token is the atomic unit the tokenizer produces. It can be a word, a subword (\"##ness\"), punctuation or \"n't\"."
+        ],
+        [
+          "BoW keeps word order",
+          "BoW only counts. \"dog bites man\" and \"man bites dog\" get the same vector. N-grams recover some local order."
+        ],
+        [
+          "A high TF-IDF means the word is positive",
+          "TF-IDF is a feature weight (how distinctive a word is for a document). It is not a sentiment or a probability."
+        ],
+        [
+          "IDF counts how often a word occurs",
+          "IDF uses document frequency: how many documents contain the word at least once. Repeating a word inside one document doesn't change df."
+        ],
+        [
+          "An embedding ID tells the model the meaning",
+          "The ID only selects a row of the embedding table. The learned vector in that row carries the features."
+        ]
       ],
-      activities: [
-        { id: 'w1-tokenizer', title: 'Tokenizer Lab', desc: 'Split text by spaces, then train BPE merge by merge, then run BERT-style WordPiece (including Turkish "gel ##di ##ğin ##de"). See how subwords kill the OOV problem.', href: 'w1/tokenizer.html' },
-        { id: 'w1-vectors', title: 'Words → Numbers', desc: 'Type documents and watch the vocabulary, one-hot, bag-of-words, n-grams and TF-IDF tables build. Reproduce the lecture\'s TF-IDF("cat") = 0.183.', href: 'w1/vectors.html' },
-        { id: 'w1-embeddings', title: 'Embedding Space', desc: 'Do king − man + woman on a map, measure cosine similarity, and watch a contextual model move "bank" toward the river or the money.', href: 'w1/embeddings.html' },
-        { id: 'w1-righttool', title: 'Bulldozer or Nutcracker?', desc: 'A cost and latency calculator for LLM vs classical NLP, plus job scenarios: pick the right tool and see why.', href: 'w1/right-tool.html' },
+      "activities": [
+        {
+          "id": "w1-tokenizer",
+          "title": "Tokenizer Lab",
+          "desc": "Split text by spaces, then train BPE merge by merge, then run BERT-style WordPiece (including Turkish \"gel ##di ##ğin ##de\"). See how subwords kill the OOV problem.",
+          "href": "w1/tokenizer.html"
+        },
+        {
+          "id": "w1-vectors",
+          "title": "Words → Numbers",
+          "desc": "Type documents and watch the vocabulary, one-hot, bag-of-words, n-grams and TF-IDF tables build. Reproduce the lecture's TF-IDF(\"cat\") = 0.183.",
+          "href": "w1/vectors.html"
+        },
+        {
+          "id": "w1-embeddings",
+          "title": "Embedding Space",
+          "desc": "Do king − man + woman on a map, measure cosine similarity, and watch a contextual model move \"bank\" toward the river or the money.",
+          "href": "w1/embeddings.html"
+        }
       ],
-      quiz: [
-        { q: 'The lecture defines NLP as…', options: ['Teaching computers to understand, interpret and generate human language', 'Translating programming languages into machine code', 'Storing text efficiently in databases', 'Building chatbots with hand-written rules only'], answer: 0, explain: 'Definition slide: understand, interpret and generate human language. Its three pillars are linguistics, statistics and computer science.' },
-        { q: 'Which era do n-grams and Hidden Markov Models belong to?', options: ['1990s — the statistical revolution', '1950s — the rule-based era', '2010s — the deep learning era', '2017+ — Transformers & LLMs'], answer: 0, explain: '1950s: rules (ELIZA). 1990s: statistics (n-grams, HMMs). 2010s: Word2Vec, LSTMs, attention. 2017+: BERT, GPT, ChatGPT.' },
-        { q: 'ELIZA (1966) was…', options: ['A rule-based mock Rogerian psychotherapist that matched patterns and reflected them back', 'The first neural network language model', 'A statistical machine translation system', 'An early version of BERT'], answer: 0, explain: 'Joseph Weizenbaum\'s ELIZA used hand-crafted pattern rules ("Can you think of a specific example?"). It had no learning at all.' },
-        { q: 'A model has never seen "unhappiness" during training. What does subword tokenization do?', options: ['Splits it into known pieces such as ["un", "happiness"] or ["un", "happy", "ness"]', 'Replaces it with an [UNK] token and loses it', 'Deletes the word from the input', 'Adds the word to the vocabulary at test time'], answer: 0, explain: 'That is the OOV problem. BPE, WordPiece and SentencePiece build rare words from frequent fragments, so almost nothing is unknown.' },
-        { q: 'What does BPE (used by GPT/ChatGPT) do during training?', options: ['Repeatedly merges the most frequent adjacent pair of symbols into a new symbol', 'Marks every non-initial subword with ##', 'Assigns each word a random integer ID', 'Removes stop words before counting'], answer: 0, explain: 'Byte-Pair Encoding starts from characters/bytes and greedily merges the most frequent pair, again and again, until the vocabulary reaches its target size.' },
-        { q: 'In WordPiece (BERT) output "Yarın gel ##di ##ğin ##de", what does ## mean?', options: ['This piece continues the previous token (it is not the start of a word)', 'The piece is masked', 'The piece is a number', 'The piece is out of vocabulary'], answer: 0, explain: '## marks a continuation subword. "geldiğinde" = gel + ##di + ##ğin + ##de.' },
-        { q: 'Doc 1 = "The cat sat on the mat", Doc 2 = "The dog sat on the log", vocabulary [the, cat, sat, on, mat, dog, log]. What is the BoW vector of Doc 1?', options: ['[2, 1, 1, 1, 1, 0, 0]', '[1, 1, 1, 1, 1, 0, 0]', '[2, 0, 1, 1, 0, 1, 1]', '[0, 1, 0, 0, 1, 0, 0]'], answer: 0, explain: '"the" appears twice, cat/sat/on/mat once, dog and log zero times. Doc 2 is [2, 0, 1, 1, 0, 1, 1].' },
-        { q: 'Three documents all contain "the". Using IDF = log(N/df), IDF("the") is…', options: ['log(3/3) = 0, so TF-IDF("the") = 0 everywhere', 'log(3) ≈ 1.099', '3', '1/3'], answer: 0, explain: 'A word that appears in every document carries no distinguishing information, so its IDF is log(1) = 0.' },
-        { q: 'Doc 1 = "the cat sat on the mat" (6 words); "cat" appears only in Doc 1 of 3 docs. With TF = count/length and IDF = ln(N/df), TF-IDF("cat", Doc 1) ≈', options: ['1/6 × ln(3) ≈ 0.167 × 1.099 ≈ 0.183', '1 × ln(3) ≈ 1.099', '1/6 × ln(1) = 0', '2/6 × ln(3) ≈ 0.366'], answer: 0, explain: 'TF = 1/6 = 0.167. IDF = ln(3/1) = 1.099. Product ≈ 0.183 — the lecture\'s worked example.' },
-        { q: 'For "New York is great", which list contains exactly the bigrams?', options: ['[new york, york is, is great]', '[new, york, is, great]', '[new york is, york is great]', '[new york, is great]'], answer: 0, explain: 'Bigrams are every pair of adjacent tokens. A combined unigram + bigram vector has all 7 features.' },
-        { q: 'What do dense word embeddings give you that one-hot vectors cannot?', options: ['Similar meanings get similar vectors (e.g. king − man + woman ≈ queen)', 'Vectors exactly the size of the vocabulary', 'Perfect word order', 'Guaranteed correct translations'], answer: 0, explain: 'One-hot vectors are all equally far apart. Dense 50–300-dimensional embeddings place related words near each other.' },
-        { q: 'Why does "bank" need contextualized embeddings?', options: ['"river bank" and "bank loan" mean different things, and contextual models give each occurrence a different vector', 'Because "bank" is out of vocabulary', 'Because "bank" is a stop word', 'Because static embeddings cannot store nouns'], answer: 0, explain: 'Static Word2Vec/GloVe store one vector per word. ELMo (BiLSTM) and BERT/GPT (Transformers) compute a vector from the surrounding words.' },
-        { q: 'Which architecture is BERT?', options: ['Encoder-only — understanding tasks such as classification, NER and Q&A', 'Decoder-only — next-word generation', 'Encoder-decoder — translation and summarization', 'A recurrent LSTM'], answer: 0, explain: 'BERT: encoder, bidirectional, fill-in-the-blank. GPT: decoder, predicts the next word. T5/BART: encoder-decoder (seq2seq).' },
-        { q: 'For spam filtering 1M emails/day, the lecture compared an LLM ($30,000/month, 99.2%) with Naive Bayes (<$10/month, 98.5%). The point is…', options: ['A 0.7% accuracy gain is rarely worth a ~3000× cost — use the right tool for the job', 'LLMs are always cheaper at scale', 'Naive Bayes is more accurate than LLMs', 'Spam filtering cannot be done with classical ML'], answer: 0, explain: '"Don\'t use a bulldozer to crack a chestnut." Ask: when would I NOT use an LLM?' },
-        { q: 'Which is NOT one of the lecture\'s "reality check" reasons against LLMs?', options: ['LLMs cannot process English text', 'Latency: 100–1000 ms vs < 10 ms for a simple classifier', 'Privacy: medical/military data can\'t go to external APIs', 'Hallucinations: plausible but false output'], answer: 0, explain: 'The checks were unit cost, latency, interpretability, privacy, customization (small labeled data) and hallucinations.' },
-        { q: 'Right tool for the right job: sentiment analysis was paired with…', options: ['BERT-small — balanced performance and cost', 'Naive Bayes only', 'A huge LLM', 'ELIZA-style rules'], answer: 0, explain: 'Spam → Naive Bayes (fast, 99%+). Sentiment → BERT-small. Creative writing and complex Q&A → LLMs.' },
+      "quiz": [
+        {
+          "q": "The lecture defines NLP as…",
+          "options": [
+            "Understand, interpret and generate human language",
+            "Translating programming languages into machine code",
+            "Storing text efficiently in databases",
+            "Building chatbots with hand-written rules only"
+          ],
+          "answer": 0,
+          "explain": "Definition slide: understand, interpret and generate human language. Its three pillars are linguistics, statistics and computer science."
+        },
+        {
+          "q": "A model has never seen \"unhappiness\" during training. What does subword tokenization do?",
+          "options": [
+            "Replaces it with an [UNK] token and loses it",
+            "Split it into known subwords",
+            "Deletes the word from the input",
+            "Adds the word to the vocabulary at test time"
+          ],
+          "answer": 1,
+          "explain": "That is the OOV problem. BPE, WordPiece and SentencePiece build rare words from frequent fragments, so almost nothing is unknown."
+        },
+        {
+          "q": "What does BPE (used by GPT/ChatGPT) do during training?",
+          "options": [
+            "Marks every non-initial subword with ##",
+            "Assigns each word a random integer ID",
+            "Merge the most frequent adjacent pair",
+            "Removes stop words before counting"
+          ],
+          "answer": 2,
+          "explain": "Byte-Pair Encoding starts from characters/bytes and greedily merges the most frequent pair, again and again, until the vocabulary reaches its target size."
+        },
+        {
+          "q": "In WordPiece (BERT) output \"Yarın gel ##di ##ğin ##de\", what does ## mean?",
+          "options": [
+            "The piece is masked",
+            "The piece is a number",
+            "The piece is out of vocabulary",
+            "A continuation of the preceding word"
+          ],
+          "answer": 3,
+          "explain": "## marks a continuation subword. \"geldiğinde\" = gel + ##di + ##ğin + ##de."
+        },
+        {
+          "q": "Doc 1 = \"The cat sat on the mat\", Doc 2 = \"The dog sat on the log\", vocabulary [the, cat, sat, on, mat, dog, log]. What is the BoW vector of Doc 1?",
+          "options": [
+            "[2,1,1,1,1,0,0]",
+            "[1, 1, 1, 1, 1, 0, 0]",
+            "[2, 0, 1, 1, 0, 1, 1]",
+            "[0, 1, 0, 0, 1, 0, 0]"
+          ],
+          "answer": 0,
+          "explain": "\"the\" appears twice, cat/sat/on/mat once, dog and log zero times. Doc 2 is [2, 0, 1, 1, 0, 1, 1]."
+        },
+        {
+          "q": "Three documents all contain \"the\". Using IDF = log(N/df), IDF(\"the\") is…",
+          "options": [
+            "log(3) ≈ 1.099",
+            "0",
+            "3",
+            "1/3"
+          ],
+          "answer": 1,
+          "explain": "A word that appears in every document carries no distinguishing information, so its IDF is log(1) = 0."
+        },
+        {
+          "q": "Doc 1 = \"the cat sat on the mat\" (6 words); \"cat\" appears only in Doc 1 of 3 docs. With TF = count/length and IDF = ln(N/df), TF-IDF(\"cat\", Doc 1) ≈",
+          "options": [
+            "1 × ln(3) ≈ 1.099",
+            "1/6 × ln(1) = 0",
+            "0.183",
+            "2/6 × ln(3) ≈ 0.366"
+          ],
+          "answer": 2,
+          "explain": "TF = 1/6 = 0.167. IDF = ln(3/1) = 1.099. Product ≈ 0.183 — the lecture's worked example."
+        },
+        {
+          "q": "For \"New York is great\", which list contains exactly the bigrams?",
+          "options": [
+            "[new, york, is, great]",
+            "[new york is, york is great]",
+            "[new york, is great]",
+            "New York; York is; is great"
+          ],
+          "answer": 3,
+          "explain": "Bigrams are every pair of adjacent tokens. A combined unigram + bigram vector has all 7 features."
+        },
+        {
+          "q": "What do dense word embeddings give you that one-hot vectors cannot?",
+          "options": [
+            "Similar meanings can have similar vectors",
+            "Vectors exactly the size of the vocabulary",
+            "Perfect word order",
+            "Guaranteed correct translations"
+          ],
+          "answer": 0,
+          "explain": "One-hot vectors are all equally far apart. Dense 50–300-dimensional embeddings place related words near each other."
+        },
+        {
+          "q": "Why does \"bank\" need contextualized embeddings?",
+          "options": [
+            "Because \"bank\" is out of vocabulary",
+            "Its meaning changes with context",
+            "Because \"bank\" is a stop word",
+            "Because static embeddings cannot store nouns"
+          ],
+          "answer": 1,
+          "explain": "Static Word2Vec/GloVe store one vector per word. ELMo (BiLSTM) and BERT/GPT (Transformers) compute a vector from the surrounding words."
+        },
+        {
+          "q": "Which architecture is BERT?",
+          "options": [
+            "Decoder-only — next-word generation",
+            "Encoder-decoder — translation and summarization",
+            "Encoder-only",
+            "A recurrent LSTM"
+          ],
+          "answer": 2,
+          "explain": "BERT: encoder, bidirectional, fill-in-the-blank. GPT: decoder, predicts the next word. T5/BART: encoder-decoder (seq2seq)."
+        },
+        {
+          "q": "Before replacing a classical spam filter with an LLM, what should the decision consider?",
+          "options": [
+            "LLMs are always cheaper at scale",
+            "Naive Bayes is more accurate than LLMs",
+            "Spam filtering cannot be done with classical ML",
+            "Compare accuracy with cost and latency"
+          ],
+          "answer": 3,
+          "explain": "Compare measured quality with cost, latency, privacy and interpretability on the actual task."
+        }
       ],
-      cards: [
-        ['NLP', 'Teaching computers to understand, interpret and generate human language. Pillars: linguistics, statistics, computer science.'],
-        ['Corpus (pl. corpora)', 'Your collection of text documents.'],
-        ['Document', 'One unit of text: a tweet, an article, a paragraph.'],
-        ['Token', 'The atomic unit after tokenization — usually a word, but can be a subword or punctuation.'],
-        ['Tokenization', 'Breaking text into tokens. Harder than it sounds: "don\'t" → "do" + "n\'t".'],
-        ['OOV (out-of-vocabulary)', 'A word never seen in training. With a word-level vocabulary it becomes "unknown".'],
-        ['BPE (Byte-Pair Encoding)', 'Subword method used by GPT: repeatedly merge the most frequent adjacent pair of symbols.'],
-        ['WordPiece', 'BERT\'s subword method. Continuation pieces start with ##: play ##ing.'],
-        ['SentencePiece', 'Language-agnostic subword tokenizer that works on raw text (no pre-split by spaces).'],
-        ['One-hot encoding', 'Binary vector the size of the vocabulary with a single 1. "cat" = [0,0,0,1,0,…,0].'],
-        ['Bag of Words (BoW)', 'Vector of word counts per document. Loses word order.'],
-        ['TF-IDF', 'Term frequency × inverse document frequency. Weights words that are frequent in this document but rare across the corpus.'],
-        ['IDF', 'log(N / df): N = number of documents, df = number of documents containing the term.'],
-        ['N-gram', 'A sequence of n consecutive tokens. Bigram "new york" captures a phrase that unigrams split.'],
-        ['Word embedding', 'Dense vector (50–300 dims) where similar meaning → similar vector. Word2Vec, GloVe, FastText.'],
-        ['Contextualized embedding', 'A vector computed from the whole sentence, so "bank" differs by context. ELMo, BERT, GPT.'],
-        ['Encoder-only / decoder-only / encoder-decoder', 'BERT (understand) / GPT (generate next word) / T5, BART (seq2seq: translate, summarize).'],
-        ['HuggingFace', '"The GitHub of NLP": 100K+ pre-trained models, standardized datasets, BERT in 3 lines of code.'],
-      ],
+      "cards": [
+        [
+          "NLP",
+          "Teaching computers to understand, interpret and generate human language. Pillars: linguistics, statistics, computer science."
+        ],
+        [
+          "Corpus (pl. corpora)",
+          "Your collection of text documents."
+        ],
+        [
+          "Token",
+          "The atomic unit after tokenization — usually a word, but can be a subword or punctuation."
+        ],
+        [
+          "OOV (out-of-vocabulary)",
+          "A word never seen in training. With a word-level vocabulary it becomes \"unknown\"."
+        ],
+        [
+          "BPE (Byte-Pair Encoding)",
+          "Subword method used by GPT: repeatedly merge the most frequent adjacent pair of symbols."
+        ],
+        [
+          "WordPiece",
+          "BERT's subword method. Continuation pieces start with ##: play ##ing."
+        ],
+        [
+          "One-hot encoding",
+          "Binary vector the size of the vocabulary with a single 1. \"cat\" = [0,0,0,1,0,…,0]."
+        ],
+        [
+          "Bag of Words (BoW)",
+          "Vector of word counts per document. Loses word order."
+        ],
+        [
+          "TF-IDF",
+          "Term frequency × inverse document frequency. Weights words that are frequent in this document but rare across the corpus."
+        ],
+        [
+          "IDF",
+          "log(N / df): N = number of documents, df = number of documents containing the term."
+        ],
+        [
+          "Word embedding",
+          "Dense vector (50–300 dims) where similar meaning → similar vector. Word2Vec, GloVe, FastText."
+        ],
+        [
+          "Contextualized embedding",
+          "A vector computed from the whole sentence, so \"bank\" differs by context. ELMo, BERT, GPT."
+        ]
+      ]
     },
-
-    /* ================================================================ */
     {
-      n: 2,
-      title: 'Text Classification',
-      summary: 'f(text) → label. Sentiment, spam and topic classification; the ML pipeline; three classical methods (Naive Bayes, logistic regression, SVM); feature engineering. Also Project 1.',
-      takeaways: [
-        'Text classification = assigning predefined labels to documents: f(text) → label. Binary (spam vs ham) or multi-class (sports, politics, tech…).',
-        'Main tasks: sentiment (positive/neutral/negative; hard because of sarcasm and context), spam detection (spam vs ham), topic classification. Others: intent, content moderation, authorship, medical, legal, emotion.',
-        'ML pipeline: 1 Data (labeled examples) → 2 Features (text → numbers) → 3 Model (learn patterns) → 4 Prediction (new text → label) → 5 Evaluation (how good?) → back to data.',
-        'Why classical first: fast to train, easy to interpret, works with small data, cheap, and a strong baseline for comparison.',
-        'Naive Bayes: P(class | text) ∝ P(class) × ∏ P(word | class). "Naive" = assumes words are independent. Pros: fast, small data. Cons: unrealistic independence. It is generative.',
-        'Logistic regression: P(y=1) = σ(w₁x₁ + w₂x₂ + … + b). Despite the name it is a CLASSIFIER. Interpretable weights and probabilistic output, but a linear boundary. It is discriminative.',
-        'SVM: the hyperplane that maximizes the margin between classes. Kernel trick (linear, RBF, polynomial) for non-linear data. Good in high dimensions, but slow on large data and sensitive to feature scaling.',
-        'Feature engineering: statistical (length, punctuation, caps ratio), lexical (BoW, TF-IDF, n-grams, char n-grams), linguistic (POS, lexicons, entities), domain-specific (spam words, emoticons). Combine them.',
-        'Project plan: start with Naive Bayes as a baseline → try logistic regression → if time permits, SVM. Datasets: HuggingFace, Kaggle, UCI; ≥ 1,000 examples, clear labels, check the license.',
+      "n": 2,
+      "title": "Text Classification",
+      "summary": "f(text) → label. Sentiment, spam and topic classification; the ML pipeline; three classical methods (Naive Bayes, logistic regression, SVM); feature engineering. Also Project 1.",
+      "takeaways": [
+        "Text classification means giving each document one label from a fixed list: f(text) → label.",
+        "Every project follows the same loop: data → features → model → prediction → evaluation, then improve and go round again.",
+        "For each class, multiply how common the class is by how likely each word is in that class. The bigger product wins. Add-one smoothing stops a single unseen word from making it 0.",
+        "Give every word a weight, add them up into a score z, and squash z into a probability with the sigmoid. Predict positive if p ≥ 0.5.",
+        "Many lines separate the classes. The SVM picks the one with the widest street (maximum margin). Only the points on the edge of the street, the support vectors, decide it.",
+        "The model only sees the numbers you give it. Better features (n-grams, TF-IDF, handling negation…) often help more than a fancier model."
       ],
-      traps: [
-        ['Logistic regression is a regression algorithm', 'Despite its name it is a classification algorithm: a sigmoid turns a linear score into P(class).'],
-        ['Naive Bayes is "naive" because it is simple', '"Naive" refers to the assumption that words are conditionally independent given the class. "not good" is treated as "not" + "good".'],
-        ['Naive Bayes and logistic regression are both discriminative', 'NB is generative (models how each class generates words). LR is discriminative (learns the boundary directly).'],
-        ['Without smoothing NB still works on new word combinations', 'One unseen word gives P(word|class) = 0, and the whole product becomes 0. Add-one (Laplace) smoothing fixes this.'],
-        ['SVM picks any line that separates the classes', 'It picks the boundary with the maximum margin — as far as possible from both classes.'],
-        ['Use the most powerful model first', 'Start with a simple baseline (Naive Bayes) and improve from there — the lecture\'s project advice.'],
-        ['When data is tiny and you need speed, choose LR over NB', 'Quick-poll answer: Naive Bayes shines with very small training data and when speed matters.'],
+      "traps": [
+        [
+          "Logistic regression is a regression algorithm",
+          "Despite its name it is a classification algorithm: a sigmoid turns a linear score into P(class)."
+        ],
+        [
+          "Naive Bayes is \"naive\" because it is simple",
+          "\"Naive\" refers to the assumption that words are conditionally independent given the class. \"not good\" is treated as \"not\" + \"good\"."
+        ],
+        [
+          "Naive Bayes and logistic regression are both discriminative",
+          "NB is generative (models how each class generates words). LR is discriminative (learns the boundary directly)."
+        ],
+        [
+          "Without smoothing NB still works on new word combinations",
+          "One unseen word gives P(word|class) = 0, and the whole product becomes 0. Add-one (Laplace) smoothing fixes this."
+        ],
+        [
+          "SVM picks any line that separates the classes",
+          "It picks the boundary with the maximum margin — as far as possible from both classes."
+        ]
       ],
-      activities: [
-        { id: 'w2-nb', title: 'Naive Bayes Spam Lab', desc: 'Train on the lecture\'s 4 emails, classify "Win free tickets", turn smoothing off and watch a single zero kill the product. Switch to log space and normalize.', href: 'w2/naive-bayes.html' },
-        { id: 'w2-logreg', title: 'Logistic Regression Playground', desc: 'Drag weights and bias, follow z → σ(z) on the curve, take one gradient step by hand, and fix "not good" with a bigram feature.', href: 'w2/logreg.html' },
-        { id: 'w2-svm', title: 'SVM Margin Lab', desc: 'Rotate and slide a boundary between review points, find the maximum margin, add an outlier and see what C does. Compute functional vs geometric margin and hinge loss.', href: 'w2/svm.html' },
-        { id: 'w2-features', title: 'Feature Engineering Lab', desc: 'Type any message and see its statistical, lexical and domain features. A toy spam scorer shows which features push the decision.', href: 'w2/features.html' },
+      "activities": [
+        {
+          "id": "w2-nb",
+          "title": "Naive Bayes Spam Lab",
+          "desc": "Train on the lecture's 4 emails, classify \"Win free tickets\", turn smoothing off and watch a single zero kill the product. Switch to log space and normalize.",
+          "href": "w2/naive-bayes.html"
+        },
+        {
+          "id": "w2-logreg",
+          "title": "Logistic Regression Playground",
+          "desc": "Drag weights and bias, follow z → σ(z) on the curve, take one gradient step by hand, and fix \"not good\" with a bigram feature.",
+          "href": "w2/logreg.html"
+        },
+        {
+          "id": "w2-svm",
+          "title": "SVM Margin Lab",
+          "desc": "Rotate and slide a boundary between review points, find the maximum margin, add an outlier and see what C does. Compute functional vs geometric margin and hinge loss.",
+          "href": "w2/svm.html"
+        }
       ],
-      quiz: [
-        { q: 'Which formula summarizes text classification?', options: ['f(text) → label', 'f(label) → text', 'f(text) → next word', 'f(text) → translated text'], answer: 0, explain: 'A classifier maps a document to one of a fixed set of predefined labels, e.g. "This movie was amazing!" → Positive.' },
-        { q: 'Spam vs ham is an example of…', options: ['Binary classification', 'Multi-class classification', 'Sequence labeling', 'Text generation'], answer: 0, explain: 'Two classes → binary. Topic classification (sports, politics, tech, business) is multi-class.' },
-        { q: 'Which is the correct order of the ML pipeline?', options: ['Data → Features → Model → Prediction → Evaluation', 'Features → Data → Evaluation → Model → Prediction', 'Model → Data → Features → Prediction → Evaluation', 'Data → Model → Features → Evaluation → Prediction'], answer: 0, explain: 'Labeled data → text to numbers → learn patterns → new text to label → how good? Then loop back to improve the data.' },
-        { q: 'Naive Bayes chooses the class that maximizes…', options: ['P(class) × P(text | class)', 'P(text) × P(class | text)', 'The distance to the margin', 'σ(w·x + b)'], answer: 0, explain: 'P(class | text) ∝ P(class) × P(text | class). P(text) is the same for every class, so it can be ignored.' },
-        { q: 'Why is Naive Bayes called "naive"?', options: ['It assumes words are independent given the class', 'It only works for English', 'It never uses probabilities', 'It ignores the class prior'], answer: 0, explain: '"not good" is treated as "not" and "good" separately. The assumption is false, but it works surprisingly well.' },
-        { q: 'Training spam: "Win free money now!", "Click here for prize". Ham: "Meeting tomorrow at 3pm", "Dinner with family tonight". Without smoothing, what is P("win" | HAM)?', options: ['0 — so any email containing "win" gets P(HAM | text) = 0', '1/16', '0.5', '1'], answer: 0, explain: '"win" never appears in ham. A single zero factor makes the product zero, which is why we add-one (Laplace) smooth.' },
-        { q: 'In the week-3 toy model (positive [good, bad, movie] totals [3, 0, 2], add-one smoothing, vocabulary 3), P(good | +) =', options: ['(3 + 1) / (5 + 3) = 4/8 = 0.5', '3/5 = 0.6', '(3 + 1) / 5 = 0.8', '1/8 = 0.125'], answer: 0, explain: 'Add one to the count and the vocabulary size to the denominator: 5 tokens + 3 words = 8.' },
-        { q: 'Logistic regression computes P(y = 1) as…', options: ['σ(w₁x₁ + w₂x₂ + … + b)', 'P(class) × ∏ P(word | class)', 'The sign of the distance to the margin only', 'A count of positive words'], answer: 0, explain: 'Learn one weight per feature, take the weighted sum, apply the sigmoid to get a probability between 0 and 1.' },
-        { q: 'Weights [good: 0.8, bad: −1], bias −0.4, input [good, bad] = [2, 0]. What is z and the prediction at threshold 0.5?', options: ['z = 1.2, p = σ(1.2) ≈ 0.769 → positive', 'z = 1.6, p ≈ 0.83 → positive', 'z = −0.4, p ≈ 0.40 → negative', 'z = 0.8, p ≈ 0.69 → positive'], answer: 0, explain: '0.8×2 − 1×0 − 0.4 = 1.2. 1/(1 + e^−1.2) ≈ 0.769 > 0.5.' },
-        { q: 'Key difference between Naive Bayes and logistic regression (lecture)?', options: ['LR is discriminative (learns the boundary); NB is generative (models distributions)', 'NB is discriminative; LR is generative', 'Both are generative', 'Only NB outputs probabilities'], answer: 0, explain: 'NB models P(text | class) for each class. LR directly models P(class | text) with a weighted boundary.' },
-        { q: 'What does an SVM optimize?', options: ['The margin (distance) between the boundary and the closest points of each class', 'The number of features', 'The probability of each word', 'The training time'], answer: 0, explain: 'The boundary should be as far as possible from both classes. The closest points are the support vectors.' },
-        { q: 'What is the kernel trick?', options: ['Implicitly mapping data to higher dimensions where it becomes linearly separable (linear, RBF, polynomial kernels)', 'Removing stop words', 'Smoothing zero probabilities', 'Splitting words into subwords'], answer: 0, explain: 'Kernels let SVMs draw non-linear boundaries in the original space.' },
-        { q: 'Which is a listed con of SVMs?', options: ['Slow for large datasets and sensitive to feature scaling', 'Cannot work in high dimensions', 'Requires no training data', 'Always assumes word independence'], answer: 0, explain: 'Pros: effective in high dimensions, memory efficient, versatile. Cons: slow on big data, scaling-sensitive.' },
-        { q: '"Capital letter ratio" and "punctuation counts" are which type of feature?', options: ['Statistical features', 'Lexical features', 'Linguistic features', 'Domain-specific features'], answer: 0, explain: 'Statistical: length, word count, average word length, punctuation, caps ratio. Lexical: BoW, TF-IDF, n-grams. Linguistic: POS, lexicons, entities. Domain: spam words, emoticons.' },
-        { q: 'Quick poll: when would you use Naive Bayes over logistic regression?', options: ['When you have VERY small training data and need fast training', 'When you need the absolute best accuracy regardless of speed', 'Never — LR always wins', 'Only for multi-class problems'], answer: 0, explain: 'The lecture\'s answer: A. NB shines with small data and when speed matters.' },
-        { q: 'In the comparison table, which method is "best for: spam, quick baselines"?', options: ['Naive Bayes', 'Logistic regression', 'SVM', 'BERT'], answer: 0, explain: 'NB: fastest, great with small data. LR: sentiment / general purpose, most interpretable. SVM: when accuracy matters on smaller datasets.' },
-        { q: 'Project 1 requires implementing at least…', options: ['Naive Bayes + one other method from class, compared with benchmarks', 'Only BERT', 'Any LLM API', 'Three neural networks'], answer: 0, explain: '5-person teams, one classification problem, NB + one more method, a 3-minute talk + 2-minute Q&A in Week 4, GitHub repo before the talk.' },
+      "quiz": [
+        {
+          "q": "Which formula summarizes text classification?",
+          "options": [
+            "f(text) → label",
+            "f(label) → text",
+            "f(text) → next word",
+            "f(text) → translated text"
+          ],
+          "answer": 0,
+          "explain": "A classifier maps a document to one of a fixed set of predefined labels, e.g. \"This movie was amazing!\" → Positive."
+        },
+        {
+          "q": "Spam vs ham is an example of…",
+          "options": [
+            "Multi-class classification",
+            "Binary classification",
+            "Sequence labeling",
+            "Text generation"
+          ],
+          "answer": 1,
+          "explain": "Two classes → binary. Topic classification (sports, politics, tech, business) is multi-class."
+        },
+        {
+          "q": "Which is the correct order of the ML pipeline?",
+          "options": [
+            "Features → Data → Evaluation → Model → Prediction",
+            "Model → Data → Features → Prediction → Evaluation",
+            "Data → Features → Model → Prediction → Evaluation",
+            "Data → Model → Features → Evaluation → Prediction"
+          ],
+          "answer": 2,
+          "explain": "Labeled data → text to numbers → learn patterns → new text to label → how good? Then loop back to improve the data."
+        },
+        {
+          "q": "Naive Bayes chooses the class that maximizes…",
+          "options": [
+            "P(text) × P(class | text)",
+            "The distance to the margin",
+            "σ(w·x + b)",
+            "P(c) × P(text | c)"
+          ],
+          "answer": 3,
+          "explain": "P(class | text) ∝ P(class) × P(text | class). P(text) is the same for every class, so it can be ignored."
+        },
+        {
+          "q": "Why is Naive Bayes called \"naive\"?",
+          "options": [
+            "Conditional independence given the class",
+            "It only works for English",
+            "It never uses probabilities",
+            "It ignores the class prior"
+          ],
+          "answer": 0,
+          "explain": "\"not good\" is treated as \"not\" and \"good\" separately. The assumption is false, but it works surprisingly well."
+        },
+        {
+          "q": "Training spam: \"Win free money now!\", \"Click here for prize\". Ham: \"Meeting tomorrow at 3pm\", \"Dinner with family tonight\". Without smoothing, what is P(\"win\" | HAM)?",
+          "options": [
+            "1/16",
+            "0",
+            "0.5",
+            "1"
+          ],
+          "answer": 1,
+          "explain": "\"win\" never appears in ham. A single zero factor makes the product zero, which is why we add-one (Laplace) smooth."
+        },
+        {
+          "q": "In the week-3 toy model (positive [good, bad, movie] totals [3, 0, 2], add-one smoothing, vocabulary 3), P(good | +) =",
+          "options": [
+            "3/5 = 0.6",
+            "(3 + 1) / 5 = 0.8",
+            "4/8 = 0.5",
+            "1/8 = 0.125"
+          ],
+          "answer": 2,
+          "explain": "Add one to the count and the vocabulary size to the denominator: 5 tokens + 3 words = 8."
+        },
+        {
+          "q": "Logistic regression computes P(y = 1) as…",
+          "options": [
+            "P(class) × ∏ P(word | class)",
+            "The sign of the distance to the margin only",
+            "A count of positive words",
+            "σ(w·x + b)"
+          ],
+          "answer": 3,
+          "explain": "Learn one weight per feature, take the weighted sum, apply the sigmoid to get a probability between 0 and 1."
+        },
+        {
+          "q": "Weights [good: 0.8, bad: −1], bias −0.4, input [good, bad] = [2, 0]. What is z and the prediction at threshold 0.5?",
+          "options": [
+            "z = 1.2; positive",
+            "z = 1.6, p ≈ 0.83 → positive",
+            "z = −0.4, p ≈ 0.40 → negative",
+            "z = 0.8, p ≈ 0.69 → positive"
+          ],
+          "answer": 0,
+          "explain": "0.8×2 − 1×0 − 0.4 = 1.2. 1/(1 + e^−1.2) ≈ 0.769 > 0.5."
+        },
+        {
+          "q": "Key difference between Naive Bayes and logistic regression (lecture)?",
+          "options": [
+            "NB is discriminative; LR is generative",
+            "NB: generative; LR: discriminative",
+            "Both are generative",
+            "Only NB outputs probabilities"
+          ],
+          "answer": 1,
+          "explain": "NB models P(text | class) for each class. LR directly models P(class | text) with a weighted boundary."
+        },
+        {
+          "q": "What does an SVM optimize?",
+          "options": [
+            "The number of features",
+            "The probability of each word",
+            "Maximum margin",
+            "The training time"
+          ],
+          "answer": 2,
+          "explain": "The boundary should be as far as possible from both classes. The closest points are the support vectors."
+        },
+        {
+          "q": "\"Capital letter ratio\" and \"punctuation counts\" are which type of feature?",
+          "options": [
+            "Lexical features",
+            "Linguistic features",
+            "Domain-specific features",
+            "Statistical features"
+          ],
+          "answer": 3,
+          "explain": "Statistical: length, word count, average word length, punctuation, caps ratio. Lexical: BoW, TF-IDF, n-grams. Linguistic: POS, lexicons, entities. Domain: spam words, emoticons."
+        }
       ],
-      cards: [
-        ['Text classification', 'Assigning predefined categories/labels to text documents: f(text) → label.'],
-        ['Binary vs multi-class', 'Two labels (spam/ham) vs many (sports, politics, tech, business…).'],
-        ['Sentiment analysis', 'Positive / neutral / negative opinion. Challenges: sarcasm, context, domain language.'],
-        ['Spam vs ham', 'Spam = unwanted messages (ALL CAPS, "!!!", urgency, offers). Ham = legitimate messages.'],
-        ['ML pipeline', 'Data → Features → Model → Prediction → Evaluation (→ back to Data).'],
-        ['Naive Bayes formula', 'P(class | text) ∝ P(class) × P(text | class), with P(text | class) = ∏ P(word | class).'],
-        ['Naive assumption', 'Words are conditionally independent given the class.'],
-        ['Add-one (Laplace) smoothing', 'P(w | c) = (count(w, c) + 1) / (tokens in c + |V|). No probability is ever zero.'],
-        ['Generative vs discriminative', 'Generative models how the data is produced (NB). Discriminative learns the boundary directly (LR, SVM).'],
-        ['Logistic regression', 'P(y=1) = σ(w·x + b). A linear CLASSIFIER with probabilistic output and interpretable weights.'],
-        ['Sigmoid σ(z)', '1 / (1 + e^−z). Maps any score to (0, 1). σ(0) = 0.5.'],
-        ['SVM', 'Finds the hyperplane that maximizes the margin between classes.'],
-        ['Support vectors', 'The training points closest to the boundary — they alone determine the SVM.'],
-        ['Kernel trick', 'Map data to higher dimensions where it becomes linearly separable. Linear, RBF, polynomial.'],
-        ['Feature engineering', 'Designing input features. Good features = good performance for classical ML.'],
-        ['Baseline', 'A simple model (e.g. Naive Bayes) that every fancier model must beat.'],
-      ],
+      "cards": [
+        [
+          "Text classification",
+          "Assigning predefined categories/labels to text documents: f(text) → label."
+        ],
+        [
+          "Binary vs multi-class",
+          "Two labels (spam/ham) vs many (sports, politics, tech, business…)."
+        ],
+        [
+          "ML pipeline",
+          "Data → Features → Model → Prediction → Evaluation (→ back to Data)."
+        ],
+        [
+          "Naive Bayes formula",
+          "P(class | text) ∝ P(class) × P(text | class), with P(text | class) = ∏ P(word | class)."
+        ],
+        [
+          "Naive assumption",
+          "Words are conditionally independent given the class."
+        ],
+        [
+          "Add-one (Laplace) smoothing",
+          "P(w|c)=(count(w,c)+1)/(tokens(c)+|V|). Gives positive likelihoods to known vocabulary terms; unknown-word handling is separate."
+        ],
+        [
+          "Generative vs discriminative",
+          "Generative models how the data is produced (NB). Discriminative learns the boundary directly (LR, SVM)."
+        ],
+        [
+          "Logistic regression",
+          "P(y=1) = σ(w·x + b). A linear CLASSIFIER with probabilistic output and interpretable weights."
+        ],
+        [
+          "Sigmoid σ(z)",
+          "1 / (1 + e^−z). Maps any score to (0, 1). σ(0) = 0.5."
+        ],
+        [
+          "SVM",
+          "Finds the hyperplane that maximizes the margin between classes."
+        ],
+        [
+          "Feature engineering",
+          "Designing input features. Good features = good performance for classical ML."
+        ],
+        [
+          "Baseline",
+          "A simple model (e.g. Naive Bayes) that every fancier model must beat."
+        ]
+      ]
     },
-
-    /* ================================================================ */
     {
-      n: 3,
-      title: 'From Counts to BERT',
-      summary: 'Neural text classification and honest evaluation: count and TF-IDF features, leakage-free splits, the math behind NB / LR / SVM, embeddings (Word2Vec, GloVe, FastText), CNN, RNN, LSTM, BiLSTM, attention, Transformers, BERT, and accuracy / precision / recall / F1.',
-      takeaways: [
-        'Text → representation (counts, TF-IDF or vectors) → classifier (classical or neural) → label. Training learns parameters; inference reuses them on new text.',
-        'Fit the vocabulary, IDF and classifier on TRAIN only. Validation chooses between models; the test set is used ONCE at the end. Calling fit_transform on test data is leakage.',
-        'NB in log space: score(c) = ln P(c) + Σ n(t,d) ln P(t|c). LR: binary cross-entropy, gradient (p − y)x. SVM: hinge loss max(0, 1 − y·f(x)) and the objective ½||w||² + C Σ Lᵢ. SVM scores are not probabilities.',
-        'Embedding table: ID → row. Word2Vec: CBOW (context → center) or skip-gram (center → context), negative sampling. GloVe fits global co-occurrence counts. FastText uses character n-grams ("<ev", "evl", …), so it handles rare words.',
-        'CNN: filters slide over word windows, then ReLU, then max/mean pooling, which removes the position axis. RNN: h[t] = tanh(x[t] + W·h[t−1]), so order matters, but gradients vanish or explode. LSTM: forget/input/output gates, new cell = f·c + i·g.',
-        'BiLSTM concatenates both directions: 256 + 256 = 512 features, still the same number of tokens. Padding makes batches rectangular; masks (1 = real, 0 = PAD) tell the model to ignore the pads.',
-        'Attention = softmax(QKᵀ / √dₖ)V. Weights in a row sum to 1 and mix the value vectors. Masks set blocked scores to −∞. BERT sees both sides; a causal decoder blocks future tokens.',
-        'BERT input = token + segment + position embeddings. [CLS] … [SEP] … [SEP]. Pretrain with masked LM ("The film was [MASK]"), then fine-tune a classification head. Truncation can drop the decisive ending.',
-        'Accuracy = (TP+TN)/all. Precision = TP/(TP+FP). Recall = TP/(TP+FN). F1 = 2TP/(2TP+FP+FN). Macro-F1 averages class F1s equally. Always compare against the majority baseline.',
+      "n": 3,
+      "title": "From Counts to BERT",
+      "summary": "Neural text classification and honest evaluation: count and TF-IDF features, leakage-free splits, the math behind NB / LR / SVM, embeddings (Word2Vec, GloVe, FastText), CNN, RNN, LSTM, BiLSTM, attention, Transformers, BERT, and accuracy / precision / recall / F1.",
+      "takeaways": [
+        "\"You shall know a word by the company it keeps.\" Word2Vec learns a word's vector by predicting its neighbours.",
+        "A CNN slides a small filter over every 2–3-word window, scores each window, then keeps the maximum (max-pooling). It finds key phrases wherever they are.",
+        "An RNN reads one word at a time and carries a memory h forward. Plain RNNs forget early words (vanishing gradient); LSTM gates decide what to keep.",
+        "With attention, each word looks at all the other words and decides how much each one matters to it. The weights in a row add up to 1.",
+        "BERT is a stack of attention layers. It is pretrained by guessing hidden words, then fine-tuned with a small head on the [CLS] output for your task.",
+        "Precision: of everything I flagged, how much was right? Recall: of everything that was really there, how much did I find? F1 balances the two."
       ],
-      traps: [
-        ['fit_transform on the test set is fine because it has no labels', 'It learns a new vocabulary/IDF from test data (leakage) and can change what each column means. Use transform with the training-fitted vectorizer.'],
-        ['df(good) = 2 inside "good good movie"', 'Document frequency counts documents, not occurrences. Within one review the TF is 2; df counts reviews containing the word.'],
-        ['A NB posterior of 0.80 means the model is 80% accurate', 'It is the toy model\'s probability for one input, not a measured accuracy. Probabilities may also be poorly calibrated.'],
-        ['An SVM score of 2 means 200% confidence', 'SVM produces a decision score, not a calibrated probability.'],
-        ['Max pooling tells you where the phrase was', 'Pooling discards the position axis. It keeps the strongest response only.'],
-        ['A BiLSTM doubles the number of tokens', 'There are still the same token positions; the feature width doubles (256 + 256 = 512).'],
-        ['Inserting a PAD token is enough for the model to ignore it', 'The encoder, pooling and attention must apply the mask or lengths. PAD alone is not automatically ignored.'],
-        ['High attention weight = the reason for the prediction', 'Attention weights mix features. They are not a causal explanation of the output.'],
-        ['model.eval() turns off gradients', 'eval() changes layer behaviour (dropout etc.). torch.no_grad() disables gradient recording.'],
-        ['Accuracy is enough', 'With 60% negatives, always-negative scores 60% accuracy. Report per-class precision/recall/F1 and macro-F1.'],
-        ['F1 is the average of precision and recall', 'F1 is the harmonic mean: 2PR/(P+R). For P = 6/7, R = 3/4 it is 0.800, not 0.804.'],
+      "traps": [
+        [
+          "fit_transform on the test set is fine because it has no labels",
+          "It learns a new vocabulary/IDF from test data (leakage) and can change what each column means. Use transform with the training-fitted vectorizer."
+        ],
+        [
+          "df(good) = 2 inside \"good good movie\"",
+          "Document frequency counts documents, not occurrences. Within one review the TF is 2; df counts reviews containing the word."
+        ],
+        [
+          "A NB posterior of 0.80 means the model is 80% accurate",
+          "It is the toy model's probability for one input, not a measured accuracy. Probabilities may also be poorly calibrated."
+        ],
+        [
+          "An SVM score of 2 means 200% confidence",
+          "SVM produces a decision score, not a calibrated probability."
+        ],
+        [
+          "Max pooling tells you where the phrase was",
+          "Pooling discards the position axis. It keeps the strongest response only."
+        ]
       ],
-      activities: [
-        { id: 'w3-word2vec', title: 'Static Embeddings Lab', desc: 'Slide a Word2Vec window to make CBOW and skip-gram pairs, compute a CBOW softmax and negative-sampling loss, build a GloVe co-occurrence table, and split words into FastText n-grams.', href: 'w3/word2vec.html' },
-        { id: 'w3-cnn', title: 'CNN Text Filter', desc: 'Slide a width-2 filter over "not very good", apply ReLU, max/mean-pool the responses, then trace the PyTorch shapes [2,7,8] → [2,4].', href: 'w3/cnn.html' },
-        { id: 'w3-rnn', title: 'RNN & LSTM Stepper', desc: 'Run a recurrent state through text, reverse the input, watch gradients vanish or explode, open and close LSTM gates, and pad and mask a batch.', href: 'w3/rnn.html' },
-        { id: 'w3-attention', title: 'Attention & BERT Lab', desc: 'Scores → scale by √dₖ → mask → softmax → mix values. Switch between bidirectional, causal and padding masks. Build a BERT input and watch truncation drop "…but the ending ruined it".', href: 'w3/attention.html' },
-        { id: 'w3-metrics', title: 'Confusion Matrix & F1', desc: 'Move the decision threshold over 20 scored reviews and watch TP/FP/FN/TN, precision, recall, F1, macro-F1 and accuracy react. Reproduce the 30/10/5/55 example.', href: 'w3/metrics.html' },
+      "activities": [
+        {
+          "id": "w3-rnn",
+          "title": "RNN & LSTM Stepper",
+          "desc": "Run a recurrent state through text, reverse the input, watch gradients vanish or explode, open and close LSTM gates, and pad and mask a batch.",
+          "href": "w3/rnn.html"
+        },
+        {
+          "id": "w3-attention",
+          "title": "Attention & BERT Lab",
+          "desc": "Scores → scale by √dₖ → mask → softmax → mix values. Switch between bidirectional, causal and padding masks. Build a BERT input and watch truncation drop \"…but the ending ruined it\".",
+          "href": "w3/attention.html"
+        },
+        {
+          "id": "w3-metrics",
+          "title": "Confusion Matrix & F1",
+          "desc": "Move the decision threshold over 20 scored reviews and watch TP/FP/FN/TN, precision, recall, F1, macro-F1 and accuracy react. Reproduce the 30/10/5/55 example.",
+          "href": "w3/metrics.html"
+        }
       ],
-      quiz: [
-        { q: 'You must turn reviews into features for a test set. What is correct?', options: ['vectorizer.fit_transform(train), then vectorizer.transform(test)', 'fit_transform(train) and fit_transform(test) separately', 'fit_transform on train + test together, then split', 'fit_transform(test) first because it has no labels'], answer: 0, explain: 'Vocabulary and IDF are learned statistics. Learn them on training data only and reuse them, otherwise information leaks from the test set.' },
-        { q: 'Corpus: "good good movie", "good movie", "bad bad movie", "bad movie". With weight = count × ln(N/df), what is the weight of "good" in "good good movie"?', options: ['2 × ln(4/2) ≈ 1.386', '2 × ln(4/3) ≈ 0.575', '1 × ln(4/2) ≈ 0.693', '0'], answer: 0, explain: 'N = 4, df(good) = 2 reviews (not 3 occurrences), count = 2. "movie" gets 1 × ln(4/4) = 0.' },
-        { q: 'Why does Naive Bayes work with log probabilities in practice?', options: ['Products of many small probabilities underflow; ln turns products into sums and preserves the winner', 'Logs make the probabilities larger than 1', 'Logs remove the class prior', 'Logs make the independence assumption true'], answer: 0, explain: 'score(c) = ln P(c) + Σ n(t,d) ln P(t|c). ln is increasing, so the argmax does not change.' },
-        { q: 'Toy NB scores: positive 0.09375, negative 0.0234375. What is P(+ | "good movie") after normalizing?', options: ['0.09375 / 0.1171875 = 0.80', '0.09375', '0.5', '0.20'], answer: 0, explain: 'Divide by the sum of both class scores: 0.09375 + 0.0234375 = 0.1171875. P(−) = 0.20.' },
-        { q: 'Logistic regression with binary cross-entropy: the gradient for weight w is…', options: ['(p − y) · x', '(y − p) / x', 'p(1 − p)', 'σ(z) · w'], answer: 0, explain: 'Chain rule: dL/dp · dp/dz · dz/dw. The p(1 − p) terms cancel, leaving (p − y)x. Bias gradient: p − y.' },
-        { q: 'x = 2, y = 1, w = 0.8, b = −0.4 (fixed), η = 0.1. p = σ(1.2) = 0.7685. New w after one gradient step?', options: ['0.8 − 0.1 × (0.7685 − 1) × 2 ≈ 0.846', '0.8 − 0.1 × 0.7685 ≈ 0.723', '0.8 + 0.7685 ≈ 1.569', '0.8 (unchanged)'], answer: 0, explain: 'g = (p − y)x = −0.463. Subtracting a negative gradient raises w, so the positive probability rises (≈ 0.785).' },
-        { q: 'SVM with labels ±1, score f(x) and margin m = y·f(x). The hinge loss for m = 0.5 is…', options: ['max(0, 1 − 0.5) = 0.5 — correct side but inside the margin', '0 — it is correctly classified', '1.5', '−0.5'], answer: 0, explain: 'Loss is 0 only when m ≥ 1. 0 < m < 1: right sign but too close. m < 0: wrong side, loss > 1.' },
-        { q: 'In the SVM objective J = ½||w||² + C Σ max(0, 1 − yᵢ f(xᵢ)), a larger C…', options: ['Penalizes margin violations more (narrower margin, fewer violations)', 'Always widens the margin', 'Turns the SVM into Naive Bayes', 'Makes SVM scores into probabilities'], answer: 0, explain: '½||w||² prefers a wide margin; C weights the violations. Choose C on validation data.' },
-        { q: 'CBOW vs skip-gram, window radius 1, sentence "I love this movie", center "this":', options: ['CBOW: [love, movie] → this.   Skip-gram: this → love, this → movie', 'CBOW: this → love, movie.   Skip-gram: [love, movie] → this', 'Both predict the sentiment label', 'Both use "I" as context'], answer: 0, explain: 'CBOW predicts the center from the context; skip-gram predicts each context word from the center. "I" is 2 positions away, outside radius 1.' },
-        { q: 'FastText splits "<evler>" into character trigrams. How many?', options: ['7 − 3 + 1 = 5: <ev, evl, vle, ler, er>', '3', '6', '7'], answer: 0, explain: 'Boundary markers make 7 characters. A width-3 window with stride 1 fits 5 times. Fragments are not necessarily morphemes.' },
-        { q: 'A CNN filter produced responses [0.20, 0.30, 0.95, 0.88, 0.82]. Max pooling and mean pooling give…', options: ['0.95 and 0.63', '0.63 and 0.95', '0.95 and 3.15', '0.20 and 0.63'], answer: 0, explain: 'Max = strongest signal. Mean = 3.15 / 5 = 0.63. Both discard the position.' },
-        { q: 'nn.Conv1d(8, 16, 3) on input [2, 7, 8] (after transpose to [2, 8, 7]) gives which shape?', options: ['[2, 16, 5] — 7 − 3 + 1 = 5 windows', '[2, 8, 5]', '[2, 16, 7]', '[2, 7, 16]'], answer: 0, explain: 'Conv1d wants [batch, channels, length]. 16 filters; no padding, so 5 positions. Max pooling over dim 2 → [2, 16]; Linear(16, 4) → [2, 4] logits.' },
-        { q: 'Toy RNN h[t] = tanh(x[t] + 0.5·h[t−1]), h[0] = 0, inputs [1, −1]. h[2] ≈', options: ['tanh(−1 + 0.5 × 0.762) ≈ −0.551', 'tanh(0) = 0', 'tanh(−1) ≈ −0.762', '0.551'], answer: 0, explain: 'h[1] = tanh(1) = 0.762. Reversing the input to [−1, 1] gives +0.551 — order matters, unlike mean pooling.' },
-        { q: 'Why do simple RNNs struggle with long dependencies?', options: ['Gradients multiply many local factors: 0.5²⁰ ≈ 0.000001 (vanish) and 1.5²⁰ ≈ 3325 (explode)', 'They cannot process more than 20 tokens', 'They have no parameters', 'They only work with one-hot vectors'], answer: 0, explain: 'Clipping controls exploding gradients but cannot restore a vanished signal. That motivates LSTM gates.' },
-        { q: 'LSTM: old cell 0.50, forget/retain gate 0.8, input/write gate 0.25, candidate −0.40. New cell =', options: ['0.8 × 0.50 + 0.25 × (−0.40) = 0.30', '0.50 + 0.25 − 0.40 = 0.35', '0.8 × 0.25 = 0.20', '0.50'], answer: 0, explain: 'Retained old content (0.40) + written new content (−0.10). A negative candidate can reduce the memory.' },
-        { q: 'A BiLSTM with 256 features per direction on a 4-token sentence produces…', options: ['4 positions × 512 features (concatenation)', '8 positions × 256 features', '4 positions × 256 features (averaged)', '1 position × 1024 features'], answer: 0, explain: 'The two directions are concatenated, not added or averaged. The token count does not change.' },
-        { q: 'Row scores [0, ln 2, 0] where position 3 is padding. After adding mask [0, 0, −∞] and softmax, the weights are…', options: ['[1/3, 2/3, 0]', '[1/4, 1/2, 1/4]', '[0, 1, 0]', '[1/3, 1/3, 1/3]'], answer: 0, explain: 'exp → [1, 2, 0]; normalize by 3. The padded key gets exactly zero weight, and the valid weights still sum to 1.' },
-        { q: 'Why divide QKᵀ by √dₖ?', options: ['With unit-variance components, q·k has variance dₖ; dividing by √dₖ brings it back to 1 and stops softmax getting too sharp', 'To make every weight equal', 'Because dₖ is the vocabulary size', 'To turn attention into a probability over classes'], answer: 0, explain: 'BERT-base: 768 features / 12 heads = 64 per head, √64 = 8.' },
-        { q: 'Weights [.25, .50, .25] mix values [2, 0], [0, 4], [2, 2]. The output vector is…', options: ['[1, 2.5]', '[4, 6]', '[1.33, 2]', '[0.5, 2]'], answer: 0, explain: '[.5, 0] + [0, 2] + [.5, .5] = [1, 2.5]. The output has the same width as each value vector.' },
-        { q: 'A causal (GPT-style) mask differs from BERT\'s attention because…', options: ['It blocks future tokens; BERT attends to both sides (but not to padding)', 'It blocks past tokens', 'It replaces tokens with [MASK]', 'It has no softmax'], answer: 0, explain: 'Causal decoders can\'t peek at the text they will generate. BERT\'s [MASK] is input corruption, not an attention block.' },
-        { q: 'BERT input vector at each position =', options: ['token embedding + segment embedding + position embedding (added, same width)', 'token ⊕ segment ⊕ position concatenated (3× width)', 'Only the token embedding', 'TF-IDF + one-hot'], answer: 0, explain: 'The three vectors are added element-wise. [CLS] starts the sequence; [SEP] separates and ends segments A and B.' },
-        { q: 'A long review is truncated to 128 tokens and loses "…but the ending ruined it." The prediction is POSITIVE but the gold label is NEGATIVE. Best first step?', options: ['Inspect the retained tokens — the evidence never reached the model', 'Add more attention heads', 'Switch to Naive Bayes', 'Lower the learning rate'], answer: 0, explain: 'More attention cannot use text that was removed. Consider longer input or chunking, and validate the choice.' },
-        { q: 'TP = 30, FN = 10, FP = 5, TN = 55. Precision, recall, F1?', options: ['0.857, 0.750, 0.800', '0.750, 0.857, 0.800', '0.850, 0.850, 0.850', '0.857, 0.750, 0.804'], answer: 0, explain: 'P = 30/35. R = 30/40. F1 = 2·30 / (60 + 5 + 10) = 60/75 = 0.80. Accuracy = 85/100.' },
-        { q: '40 positive and 60 negative reviews; class F1 = 0.80 and 0.88. Macro-F1 =', options: ['(0.80 + 0.88) / 2 = 0.84', '(40×0.80 + 60×0.88)/100 = 0.848', '0.85', '0.60'], answer: 0, explain: 'Macro averaging gives each class equal weight. 0.848 is support-weighted F1, 0.85 is accuracy, 0.60 is the always-negative baseline.' },
-        { q: 'Raising the decision threshold from 0.5 to 0.7 usually…', options: ['Gives fewer positive predictions: precision tends to rise and recall tends to fall', 'Retrains the model weights', 'Increases recall and precision together', 'Has no effect on the confusion matrix'], answer: 0, explain: 'A threshold changes decisions, not weights. Choose it on validation data using the task\'s costs.' },
+      "quiz": [
+        {
+          "q": "You must turn reviews into features for a test set. What is correct?",
+          "options": [
+            "Fit train; transform validation and test",
+            "fit_transform(train) and fit_transform(test) separately",
+            "fit_transform on train + test together, then split",
+            "fit_transform(test) first because it has no labels"
+          ],
+          "answer": 0,
+          "explain": "Vocabulary and IDF are learned statistics. Learn them on training data only and reuse them, otherwise information leaks from the test set."
+        },
+        {
+          "q": "Corpus: \"good good movie\", \"good movie\", \"bad bad movie\", \"bad movie\". With weight = count × ln(N/df), what is the weight of \"good\" in \"good good movie\"?",
+          "options": [
+            "2 × ln(4/3) ≈ 0.575",
+            "2 ln 2 ≈ 1.386",
+            "1 × ln(4/2) ≈ 0.693",
+            "0"
+          ],
+          "answer": 1,
+          "explain": "N = 4, df(good) = 2 reviews (not 3 occurrences), count = 2. \"movie\" gets 1 × ln(4/4) = 0."
+        },
+        {
+          "q": "Toy NB scores: positive 0.09375, negative 0.0234375. What is P(+ | \"good movie\") after normalizing?",
+          "options": [
+            "0.09375",
+            "0.5",
+            "0.8",
+            "0.20"
+          ],
+          "answer": 2,
+          "explain": "Divide by the sum of both class scores: 0.09375 + 0.0234375 = 0.1171875. P(−) = 0.20."
+        },
+        {
+          "q": "SVM with labels ±1, score f(x) and margin m = y·f(x). The hinge loss for m = 0.5 is…",
+          "options": [
+            "0 — it is correctly classified",
+            "1.5",
+            "−0.5",
+            "0.5"
+          ],
+          "answer": 3,
+          "explain": "Loss is 0 only when m ≥ 1. 0 < m < 1: right sign but too close. m < 0: wrong side, loss > 1."
+        },
+        {
+          "q": "CBOW vs skip-gram, window radius 1, sentence \"I love this movie\", center \"this\":",
+          "options": [
+            "CBOW: context → this; skip-gram: this → love, movie",
+            "CBOW: this → love, movie.   Skip-gram: [love, movie] → this",
+            "Both predict the sentiment label",
+            "Both use \"I\" as context"
+          ],
+          "answer": 0,
+          "explain": "CBOW predicts the center from the context; skip-gram predicts each context word from the center. \"I\" is 2 positions away, outside radius 1."
+        },
+        {
+          "q": "A CNN filter produced responses [0.20, 0.30, 0.95, 0.88, 0.82]. Max pooling and mean pooling give…",
+          "options": [
+            "0.63 and 0.95",
+            "Max = 0.95; mean = 0.63",
+            "0.95 and 3.15",
+            "0.20 and 0.63"
+          ],
+          "answer": 1,
+          "explain": "Max = strongest signal. Mean = 3.15 / 5 = 0.63. Both discard the position."
+        },
+        {
+          "q": "Why do simple RNNs struggle with long dependencies?",
+          "options": [
+            "They cannot process more than 20 tokens",
+            "They have no parameters",
+            "Vanishing or exploding gradients",
+            "They only work with one-hot vectors"
+          ],
+          "answer": 2,
+          "explain": "Clipping controls exploding gradients but cannot restore a vanished signal. That motivates LSTM gates."
+        },
+        {
+          "q": "LSTM: old cell 0.50, forget/retain gate 0.8, input/write gate 0.25, candidate −0.40. New cell =",
+          "options": [
+            "0.50 + 0.25 − 0.40 = 0.35",
+            "0.8 × 0.25 = 0.20",
+            "0.50",
+            "0.30"
+          ],
+          "answer": 3,
+          "explain": "Retained old content (0.40) + written new content (−0.10). A negative candidate can reduce the memory."
+        },
+        {
+          "q": "Row scores [0, ln 2, 0] where position 3 is padding. After adding mask [0, 0, −∞] and softmax, the weights are…",
+          "options": [
+            "[1/3, 2/3, 0]",
+            "[1/4, 1/2, 1/4]",
+            "[0, 1, 0]",
+            "[1/3, 1/3, 1/3]"
+          ],
+          "answer": 0,
+          "explain": "exp → [1, 2, 0]; normalize by 3. The padded key gets exactly zero weight, and the valid weights still sum to 1."
+        },
+        {
+          "q": "Weights [.25, .50, .25] mix values [2, 0], [0, 4], [2, 2]. The output vector is…",
+          "options": [
+            "[4, 6]",
+            "[1, 2.5]",
+            "[1.33, 2]",
+            "[0.5, 2]"
+          ],
+          "answer": 1,
+          "explain": "[.5, 0] + [0, 2] + [.5, .5] = [1, 2.5]. The output has the same width as each value vector."
+        },
+        {
+          "q": "BERT input vector at each position =",
+          "options": [
+            "token ⊕ segment ⊕ position concatenated (3× width)",
+            "Only the token embedding",
+            "Token + segment + position embeddings",
+            "TF-IDF + one-hot"
+          ],
+          "answer": 2,
+          "explain": "The three vectors are added element-wise. [CLS] starts the sequence; [SEP] separates and ends segments A and B."
+        },
+        {
+          "q": "TP = 30, FN = 10, FP = 5, TN = 55. Precision, recall, F1?",
+          "options": [
+            "0.750, 0.857, 0.800",
+            "0.850, 0.850, 0.850",
+            "0.857, 0.750, 0.804",
+            "P = 6/7; R = 3/4; F1 = 4/5"
+          ],
+          "answer": 3,
+          "explain": "P = 30/35. R = 30/40. F1 = 2·30 / (60 + 5 + 10) = 60/75 = 0.80. Accuracy = 85/100."
+        }
       ],
-      cards: [
-        ['Document–term matrix', 'One row per document, one column per vocabulary word, cells = counts.'],
-        ['Data leakage', 'Information from validation/test data entering training (e.g. fitting IDF on the full dataset).'],
-        ['Train / validation / test', 'Train: fit. Validation: choose models and settings. Test: evaluate the selected model once.'],
-        ['Binary cross-entropy', 'L = −[y ln p + (1 − y) ln(1 − p)]. A confidently wrong prediction has a large loss.'],
-        ['Logistic gradient', 'dL/dw = (p − y)x, dL/db = p − y.'],
-        ['Hinge loss', 'max(0, 1 − y·f(x)). Zero only when the margin m = y·f(x) ≥ 1.'],
-        ['Geometric margin', 'Distance = |f(x)| / ||w||. Street width between f = ±1 is 2 / ||w||.'],
-        ['CBOW / skip-gram', 'CBOW: context → center word. Skip-gram: center → each context word.'],
-        ['Negative sampling', 'Train binary decisions (observed pair = 1, sampled pair = 0) instead of a full-vocabulary softmax.'],
-        ['GloVe', 'Fits word vectors to global co-occurrence counts (log counts, frequency-weighted).'],
-        ['FastText', 'Represents a word by character n-grams with < > markers, so rare or unseen forms get vectors.'],
-        ['ReLU', 'max(0, z). Keeps positive responses, zeroes negative ones.'],
-        ['Pooling', 'Max or mean over positions → one fixed-size feature per filter, position lost.'],
-        ['Vanishing / exploding gradients', 'Repeated multiplication by factors < 1 or > 1 through time steps. Clipping helps explode only.'],
-        ['LSTM gates', 'Forget (retain) f, input (write) i, output o — sigmoid values in (0,1). c_new = f·c_old + i·g; h = o·tanh(c).'],
-        ['Padding & mask', 'PAD fills short rows; mask 1 = real token, 0 = padding.'],
-        ['Scaled dot-product attention', 'softmax(QKᵀ / √dₖ)V. Q, K choose; V carries content.'],
-        ['Multi-head attention', 'Several attention heads in parallel, concatenated, then a learned projection.'],
-        ['Residual + layer norm', 'Add the input back (bypass), then normalize the features within each token.'],
-        ['Masked language modeling', 'BERT pretraining: hide a token ("The film was [MASK].") and predict it. Text supplies the target.'],
-        ['Fine-tuning', 'Train a task head (and usually the encoder) on labeled examples, e.g. POSITIVE/NEGATIVE.'],
-        ['Precision / recall', 'TP/(TP+FP): how reliable the alerts are. TP/(TP+FN): how much of the class we find.'],
-        ['F1 / macro-F1', '2TP/(2TP+FP+FN). Macro-F1 = average of per-class F1, each class weighted equally.'],
-      ],
+      "cards": [
+        [
+          "Data leakage",
+          "Information from validation/test data entering training (e.g. fitting IDF on the full dataset)."
+        ],
+        [
+          "Train / validation / test",
+          "Train: fit. Validation: choose models and settings. Test: evaluate the selected model once."
+        ],
+        [
+          "Binary cross-entropy",
+          "L = −[y ln p + (1 − y) ln(1 − p)]. A confidently wrong prediction has a large loss."
+        ],
+        [
+          "Logistic gradient",
+          "dL/dw = (p − y)x, dL/db = p − y."
+        ],
+        [
+          "Hinge loss",
+          "max(0, 1 − y·f(x)). Zero only when the margin m = y·f(x) ≥ 1."
+        ],
+        [
+          "CBOW / skip-gram",
+          "CBOW: context → center word. Skip-gram: center → each context word."
+        ],
+        [
+          "FastText",
+          "Represents a word by character n-grams with < > markers, so rare or unseen forms get vectors."
+        ],
+        [
+          "Pooling",
+          "Max or mean over positions → one fixed-size feature per filter, position lost."
+        ],
+        [
+          "LSTM gates",
+          "Forget (retain) f, input (write) i, output o — sigmoid values in (0,1). c_new = f·c_old + i·g; h = o·tanh(c)."
+        ],
+        [
+          "Scaled dot-product attention",
+          "softmax(QKᵀ / √dₖ)V. Q, K choose; V carries content."
+        ],
+        [
+          "Masked language modeling",
+          "BERT pretraining: hide a token (\"The film was [MASK].\") and predict it. Text supplies the target."
+        ],
+        [
+          "F1 / macro-F1",
+          "2TP/(2TP+FP+FN). Macro-F1 = average of per-class F1, each class weighted equally."
+        ]
+      ]
     },
-
-    /* ================================================================ */
     {
-      n: 4,
-      title: 'Sequence Labeling: POS & NER',
-      summary: 'Cycle 2 (Project 2): one label per token. Parts of speech (open vs closed class, the Universal Dependencies tagset, ambiguity) and named entity recognition with BIO tagging. (Slides: Jurafsky & Martin\'s deck. The lecturer\'s own Week 6 deck is built on it and adds HMM and CRF; see Week 6.)',
-      takeaways: [
-        'POS tagging maps words x₁…xₙ to tags y₁…yₙ, exactly one tag per word. It is a disambiguation task: "book" is a VERB in "Book that flight" and a NOUN in "Hand me that book".',
-        'Closed class (function words: determiners, pronouns, prepositions, conjunctions, auxiliaries, particles) has fixed membership. Open class (content words: nouns, verbs, adjectives, adverbs, interjections) gains new members like "iPhone" or "to fax".',
-        'Only ~15% of English word TYPES are ambiguous, but they are common words, so ~60% of word TOKENS are ambiguous. "back" can be ADJ, NOUN, VERB, PART or ADV.',
-        'Taggers reach ~97% accuracy (HMMs, CRFs, BERT and humans are all similar), but the most-frequent-tag baseline already gets ~92% (unknown words → NOUN).',
-        'Information sources: the word\'s prior tag ("will" is usually AUX), neighboring words ("the" → the next word is probably not a verb), and morphology/word shape (un- → ADJ, -ly → ADV, Capitalized → PROPN).',
-        'NER finds spans that are proper names and labels their type: PER, LOC, ORG, GPE (often extended to dates, times, money). NER is harder than POS because of segmentation and type ambiguity (Washington = person, team, location, GPE).',
-        'BIO tagging turns spans into one tag per token: B = begins a span, I = inside, O = outside. With n entity types there are 2n + 1 tags. Variants: IO (n + 1 tags) and BIOES (4n + 1 tags).',
-        'Algorithms for both: HMMs, CRFs/MEMMs, neural sequence models (RNNs, Transformers), fine-tuned LLMs like BERT — all supervised, needing hand-labeled data.',
+      "n": 4,
+      "title": "Sequence Labeling: POS & NER",
+      "summary": "Cycle 2 (Project 2): one label per token. Parts of speech (open vs closed class, the Universal Dependencies tagset, ambiguity) and named entity recognition with BIO tagging. (Slides: Jurafsky & Martin's deck. The lecturer's own Week 6 deck is built on it and adds HMM and CRF; see Week 6.)",
+      "takeaways": [
+        "In sequence labeling, the model gives every token its own label, not just one label for the whole text. POS tagging and NER are both like this.",
+        "Ask: can someone invent a new word of this type tomorrow? Yes, so it is an open class (nouns, verbs). No, so it is a closed class (the, in, and).",
+        "Most words have one tag, but the common words are ambiguous. Just picking each word's most frequent tag already gives ~92%.",
+        "NER finds names of things in text and says what type they are: person, organisation, location, geo-political entity…",
+        "B = begins an entity, I = inside it, O = outside. With n entity types, BIO needs 2n + 1 tags."
       ],
-      traps: [
-        ['POS tagging has a segmentation problem like NER', 'In POS tagging every word gets exactly one tag. Only NER has to find where spans begin and end.'],
-        ['15% of tokens are ambiguous', '15% of word TYPES are ambiguous. Because those types are frequent, about 60% of TOKENS in running text are ambiguous.'],
-        ['97% accuracy means POS tagging is hard to beat', 'The dumb most-frequent-tag baseline already gets ~92%. Always compare against it.'],
-        ['Parts of speech are defined by meaning', 'They are defined by grammatical relations with neighboring words and by morphology (affixes), though they have semantic tendencies.'],
-        ['"I-PER" can start an entity', 'In BIO, every span starts with B-. An I- tag right after O (or after a different type) is invalid.'],
-        ['BIO has 3 tags', 'One O tag plus a B- and an I- tag per entity type: 2n + 1. With PER, ORG, LOC that is 7.'],
-        ['A proper noun and a named entity are the same thing', 'PROPN is a grammatical property of a word. A named entity is a semantic span with a type (PER/ORG/LOC/GPE), often several words long.'],
+      "traps": [
+        [
+          "POS tagging has a segmentation problem like NER",
+          "In POS tagging every word gets exactly one tag. Only NER has to find where spans begin and end."
+        ],
+        [
+          "15% of tokens are ambiguous",
+          "15% of word TYPES are ambiguous. Because those types are frequent, about 60% of TOKENS in running text are ambiguous."
+        ],
+        [
+          "97% accuracy means POS tagging is hard to beat",
+          "The dumb most-frequent-tag baseline already gets ~92%. Always compare against it."
+        ],
+        [
+          "Parts of speech are defined by meaning",
+          "They are defined by grammatical relations with neighboring words and by morphology (affixes), though they have semantic tendencies."
+        ],
+        [
+          "\"I-PER\" can start an entity",
+          "In BIO, every span starts with B-. An I- tag right after O (or after a different type) is invalid."
+        ]
       ],
-      activities: [
-        { id: 'w4-pos', title: 'POS Tagging Workbench', desc: 'Tag sentences with the 17 Universal Dependencies tags, disambiguate the five uses of "back", and race the most-frequent-tag baseline. Morphology clues for any word.', href: 'w4/pos.html' },
-        { id: 'w4-bio', title: 'NER & BIO Lab', desc: 'Mark entity spans in the "Jane Villanueva of United…" sentence and see BIO, IO and BIOES tags appear. Then find the invalid tag sequences and count 2n + 1.', href: 'w4/bio.html' },
+      "activities": [
+        {
+          "id": "w4-pos",
+          "title": "POS Tagging Workbench",
+          "desc": "Tag sentences with the 17 Universal Dependencies tags, disambiguate the five uses of \"back\", and race the most-frequent-tag baseline. Morphology clues for any word.",
+          "href": "w4/pos.html"
+        },
+        {
+          "id": "w4-bio",
+          "title": "NER & BIO Lab",
+          "desc": "Mark entity spans in the \"Jane Villanueva of United…\" sentence and see BIO, IO and BIOES tags appear. Then find the invalid tag sequences and count 2n + 1.",
+          "href": "w4/bio.html"
+        }
       ],
-      quiz: [
-        { q: 'POS tagging maps a word sequence x₁…xₙ to…', options: ['A tag sequence y₁…yₙ, one tag per word', 'A single label for the whole sentence', 'Spans of variable length with types', 'A translated sentence'], answer: 0, explain: 'Each output yᵢ corresponds to exactly one input xᵢ. That is why POS has no segmentation problem.' },
-        { q: '"Book that flight" vs "Hand me that book". What is "book" in each?', options: ['VERB, then NOUN', 'NOUN, then VERB', 'NOUN in both', 'VERB in both'], answer: 0, explain: 'Tagging is disambiguation: the same word type takes different tags in different contexts.' },
-        { q: 'Which word class is CLOSED?', options: ['Prepositions (on, under, over, near, by)', 'Nouns', 'Verbs', 'Adjectives'], answer: 0, explain: 'Closed: determiners, pronouns, prepositions, conjunctions, auxiliaries, particles. New nouns and verbs ("iPhone", "to fax") are coined all the time, so those are open.' },
-        { q: 'Roughly what share of English word TOKENS in running text are ambiguous?', options: ['~60% (even though only ~15% of word types are)', '~15%', '~3%', '~97%'], answer: 0, explain: 'The ambiguous types (back, that, will, …) are very frequent, so they cover most of the running text.' },
-        { q: 'The most-frequent-class baseline for POS tagging…', options: ['Tags each word with its most frequent tag (unknown words → NOUN) and gets ~92%', 'Tags every word as NOUN and gets ~97%', 'Uses BERT and gets ~92%', 'Randomly assigns tags'], answer: 0, explain: 'Modern taggers (HMM, CRF, BERT) and humans reach ~97%. The baseline is surprisingly strong because many words are unambiguous.' },
-        { q: '"a clear majority of senators back the bill" — "back" is…', options: ['VERB', 'NOUN', 'ADV', 'PART'], answer: 0, explain: 'back/ADJ: "a back seat"; NOUN: "in the back"; VERB: "senators back the bill"; PART: "buy back debt"; ADV: "back then".' },
-        { q: 'Which clue is a morphology / word-shape feature for POS tagging?', options: ['The suffix -ly in "importantly"', '"will" is usually an AUX', '"the" is usually followed by a noun or adjective', 'The sentence length'], answer: 0, explain: 'The three information sources: prior probability of word/tag, neighboring words, and morphology/word shape (prefixes, suffixes, capitalization).' },
-        { q: 'In "There/PRO were/VERB 70/NUM children/NOUN there/ADV", which word shows the same type getting two tags in one sentence?', options: ['"There/there" — PRO (existential) at the start, ADV at the end', '"were"', '"70"', '"children"'], answer: 0, explain: 'Existential "There were…" is a pronoun; "children there" is an adverb of place.' },
-        { q: 'NER is harder than POS tagging mainly because of…', options: ['Segmentation (finding span boundaries) and type ambiguity', 'Having more words per sentence', 'Not having any training data', 'Needing to translate'], answer: 0, explain: 'Most words are not entities, spans can be multi-word, and "Washington" could be PER, ORG (team), LOC or GPE.' },
-        { q: 'The four most common NER tags are…', options: ['PER, LOC, ORG, GPE', 'NOUN, VERB, ADJ, ADV', 'B, I, O, E', 'DATE, TIME, MONEY, PERCENT'], answer: 0, explain: 'Person, location, organization, geo-political entity. The term is often extended to dates, times and prices.' },
-        { q: 'BIO tags for "[PER Jane Villanueva] of [ORG United]":', options: ['Jane/B-PER Villanueva/I-PER of/O United/B-ORG', 'Jane/I-PER Villanueva/I-PER of/O United/I-ORG', 'Jane/B-PER Villanueva/B-PER of/O United/B-ORG', 'Jane/PER Villanueva/PER of/O United/ORG'], answer: 0, explain: 'B begins each span, I continues it, O is outside. The third option would split Jane Villanueva into two people.' },
-        { q: 'With n = 4 entity types, how many BIO tags are there?', options: ['2n + 1 = 9', '3', '4n + 1 = 17', 'n + 1 = 5'], answer: 0, explain: 'One O, plus B-X and I-X for each type. IO has n + 1 = 5 and BIOES has 4n + 1 = 17.' },
-        { q: 'Which BIO sequence is INVALID?', options: ['O I-ORG I-ORG', 'B-ORG I-ORG O', 'B-PER B-PER', 'O B-LOC O'], answer: 0, explain: 'An I- tag cannot follow O: spans must begin with B-. "B-PER B-PER" is valid (two adjacent one-word people).' },
-        { q: 'What does the IO scheme lose compared with BIO?', options: ['It cannot separate two adjacent entities of the same type', 'It cannot mark tokens outside entities', 'It cannot handle multi-word entities', 'Nothing — they are identical'], answer: 0, explain: 'Without B, "I-PER I-PER" could be one two-word person or two one-word people.' },
-        { q: 'Which statement about POS taggers is TRUE (per the slides)?', options: ['HMMs, CRFs and fine-tuned BERT all reach about 97% on English and all need hand-labeled data', 'BERT gets 99.9% while HMMs get 60%', 'POS tagging needs no training data', 'Only neural models use morphology'], answer: 0, explain: 'HMMs/CRFs use human-designed features; neural models learn representations. Accuracy is similar for English.' },
+      "quiz": [
+        {
+          "q": "POS tagging maps a word sequence x₁…xₙ to…",
+          "options": [
+            "A POS tag sequence of the same length",
+            "A single label for the whole sentence",
+            "Spans of variable length with types",
+            "A translated sentence"
+          ],
+          "answer": 0,
+          "explain": "Each output yᵢ corresponds to exactly one input xᵢ. That is why POS has no segmentation problem."
+        },
+        {
+          "q": "\"Book that flight\" vs \"Hand me that book\". What is \"book\" in each?",
+          "options": [
+            "NOUN, then VERB",
+            "VERB; NOUN",
+            "NOUN in both",
+            "VERB in both"
+          ],
+          "answer": 1,
+          "explain": "Tagging is disambiguation: the same word type takes different tags in different contexts."
+        },
+        {
+          "q": "Which word class is CLOSED?",
+          "options": [
+            "Nouns",
+            "Verbs",
+            "Determiners",
+            "Adjectives"
+          ],
+          "answer": 2,
+          "explain": "Closed: determiners, pronouns, prepositions, conjunctions, auxiliaries, particles. New nouns and verbs (\"iPhone\", \"to fax\") are coined all the time, so those are open."
+        },
+        {
+          "q": "The most-frequent-class baseline for POS tagging…",
+          "options": [
+            "Tags every word as NOUN and gets ~97%",
+            "Uses BERT and gets ~92%",
+            "Randomly assigns tags",
+            "Uses each word’s most frequent tag"
+          ],
+          "answer": 3,
+          "explain": "Modern taggers (HMM, CRF, BERT) and humans reach ~97%. The baseline is surprisingly strong because many words are unambiguous."
+        },
+        {
+          "q": "\"a clear majority of senators back the bill\" — \"back\" is…",
+          "options": [
+            "VERB",
+            "NOUN",
+            "ADV",
+            "PART"
+          ],
+          "answer": 0,
+          "explain": "back/ADJ: \"a back seat\"; NOUN: \"in the back\"; VERB: \"senators back the bill\"; PART: \"buy back debt\"; ADV: \"back then\"."
+        },
+        {
+          "q": "Which clue is a morphology / word-shape feature for POS tagging?",
+          "options": [
+            "\"will\" is usually an AUX",
+            "Suffix or capitalization",
+            "\"the\" is usually followed by a noun or adjective",
+            "The sentence length"
+          ],
+          "answer": 1,
+          "explain": "The three information sources: prior probability of word/tag, neighboring words, and morphology/word shape (prefixes, suffixes, capitalization)."
+        },
+        {
+          "q": "NER is harder than POS tagging mainly because of…",
+          "options": [
+            "Having more words per sentence",
+            "Not having any training data",
+            "Finding both boundaries and entity types",
+            "Needing to translate"
+          ],
+          "answer": 2,
+          "explain": "Most words are not entities, spans can be multi-word, and \"Washington\" could be PER, ORG (team), LOC or GPE."
+        },
+        {
+          "q": "The four most common NER tags are…",
+          "options": [
+            "NOUN, VERB, ADJ, ADV",
+            "B, I, O, E",
+            "DATE, TIME, MONEY, PERCENT",
+            "PER, ORG, LOC, GPE"
+          ],
+          "answer": 3,
+          "explain": "Person, location, organization, geo-political entity. The term is often extended to dates, times and prices."
+        },
+        {
+          "q": "BIO tags for \"[PER Jane Villanueva] of [ORG United]\":",
+          "options": [
+            "B-PER I-PER O B-ORG",
+            "Jane/I-PER Villanueva/I-PER of/O United/I-ORG",
+            "Jane/B-PER Villanueva/B-PER of/O United/B-ORG",
+            "Jane/PER Villanueva/PER of/O United/ORG"
+          ],
+          "answer": 0,
+          "explain": "B begins each span, I continues it, O is outside. B-PER B-PER would split Jane Villanueva into two people."
+        },
+        {
+          "q": "With n = 4 entity types, how many BIO tags are there?",
+          "options": [
+            "3",
+            "9",
+            "4n + 1 = 17",
+            "n + 1 = 5"
+          ],
+          "answer": 1,
+          "explain": "One O, plus B-X and I-X for each type. IO has n + 1 = 5 and BIOES has 4n + 1 = 17."
+        },
+        {
+          "q": "Which BIO sequence is INVALID?",
+          "options": [
+            "B-ORG I-ORG O",
+            "B-PER B-PER",
+            "O I-PER",
+            "O B-LOC O"
+          ],
+          "answer": 2,
+          "explain": "An I- tag cannot follow O: spans must begin with B-. \"B-PER B-PER\" is valid (two adjacent one-word people)."
+        },
+        {
+          "q": "What does the IO scheme lose compared with BIO?",
+          "options": [
+            "It cannot mark tokens outside entities",
+            "It cannot handle multi-word entities",
+            "Nothing — they are identical",
+            "Adjacent same-type entity boundaries"
+          ],
+          "answer": 3,
+          "explain": "Without B, \"I-PER I-PER\" could be one two-word person or two one-word people."
+        }
       ],
-      cards: [
-        ['Part of speech (POS)', 'Grammatical category of a word (noun, verb, …), defined by relations with neighbors and morphology.'],
-        ['POS tagging', 'Assign one POS tag to every word: x₁…xₙ → y₁…yₙ. A disambiguation task.'],
-        ['Closed class', 'Fixed membership, function words: determiners, pronouns, prepositions, conjunctions, auxiliaries, particles.'],
-        ['Open class', 'Content words that gain new members: nouns, verbs, adjectives, adverbs, interjections.'],
-        ['Universal Dependencies tagset', '17 tags (Nivre et al. 2016): ADJ ADP ADV AUX CCONJ DET INTJ NOUN NUM PART PRON PROPN PUNCT SCONJ SYM VERB X.'],
-        ['ADP', 'Adposition — prepositions/postpositions: in, on, of, by.'],
-        ['AUX', 'Auxiliary verb: can, will, had, were (in "were reported").'],
-        ['PART', 'Particle: possessive \'s, "up" in "buy back"/"look up", negation "not".'],
-        ['Ambiguity numbers', '~15% of word types ambiguous → ~60% of tokens ambiguous.'],
-        ['Most-frequent-tag baseline', 'Tag each word with its most common tag; unknown → NOUN. ~92% (state of the art ~97%).'],
-        ['Named entity', 'Anything referred to with a proper name: PER, LOC, ORG, GPE (+ dates, times, money).'],
-        ['NER', 'Find the spans of text that are named entities and tag their type.'],
-        ['GPE', 'Geo-political entity — a place with a government: "Boulder, Colorado", countries, cities.'],
-        ['BIO tagging', 'B = begins a span, I = inside, O = outside. Gives one tag per token. 2n + 1 tags.'],
-        ['IO / BIOES', 'IO: no B tag (n + 1 tags). BIOES adds E (end) and S (single-token span): 4n + 1 tags.'],
-        ['Sequence labeling algorithms', 'HMM, CRF/MEMM, RNN/Transformer sequence models, fine-tuned BERT.'],
-      ],
+      "cards": [
+        [
+          "Part of speech (POS)",
+          "Grammatical category of a word (noun, verb, …), defined by relations with neighbors and morphology."
+        ],
+        [
+          "POS tagging",
+          "Assign one POS tag to every word: x₁…xₙ → y₁…yₙ. A disambiguation task."
+        ],
+        [
+          "Closed class",
+          "Fixed membership, function words: determiners, pronouns, prepositions, conjunctions, auxiliaries, particles."
+        ],
+        [
+          "Open class",
+          "Content words that gain new members: nouns, verbs, adjectives, adverbs, interjections."
+        ],
+        [
+          "Universal Dependencies tagset",
+          "17 tags (Nivre et al. 2016): ADJ ADP ADV AUX CCONJ DET INTJ NOUN NUM PART PRON PROPN PUNCT SCONJ SYM VERB X."
+        ],
+        [
+          "Ambiguity numbers",
+          "~15% of word types ambiguous → ~60% of tokens ambiguous."
+        ],
+        [
+          "Most-frequent-tag baseline",
+          "Tag each word with its most common tag; unknown → NOUN. ~92% (state of the art ~97%)."
+        ],
+        [
+          "Named entity",
+          "Anything referred to with a proper name: PER, LOC, ORG, GPE (+ dates, times, money)."
+        ],
+        [
+          "NER",
+          "Find the spans of text that are named entities and tag their type."
+        ],
+        [
+          "GPE",
+          "Geo-political entity — a place with a government: \"Boulder, Colorado\", countries, cities."
+        ],
+        [
+          "BIO tagging",
+          "B = begins a span, I = inside, O = outside. Gives one tag per token. 2n + 1 tags."
+        ],
+        [
+          "IO / BIOES",
+          "IO: no B tag (n + 1 tags). BIOES adds E (end) and S (single-token span): 4n + 1 tags."
+        ]
+      ]
     },
-    /* ================================================================ */
     {
-      n: 6,
-      title: 'Token Classification: HMM & CRF',
-      summary: 'One label per token, then read structure back from the labels. Hour 1: POS, NER, BIO, chunking, slot filling, punctuation restoration, subword alignment (−100) and exact-span evaluation. Hour 2: why HMMs and CRFs exist, the "can fish" calculations (four paths, Viterbi, Z, loss), BIO constraints and neural token heads. (Slides: the lecturer\'s Week 6 deck, which builds on the Jurafsky & Martin deck from Week 4.)',
-      takeaways: [
-        'The contract: input = an ordered sequence of tokens, output = one aligned label per token. "Ada visits Paris ." → POS PROPN VERB PROPN PUNCT, NER B-PER O B-LOC O. It is not one label per document.',
-        'POS is a role in context ("Book that flight" → VERB, "that book" → NOUN). NER predicts boundaries and types; it is labeled per token but evaluated as recovered spans. The same name can have different types ("Washington" = location, government, person or team).',
-        'BIO (IOB2): B begins a span, I continues the same type, O is outside. I-X needs a preceding B-X or I-X. B-PER B-PER is valid (two neighbouring people). With n types: 2n + 1 labels, 3 types → 7.',
-        'One output pattern, many tasks: POS, NER, chunking (B-NP I-NP, shallow phrases, no full parse), slot filling (Boston → departure), morphological tagging (evlerden → NOUN; Number=Plur; Case=Abl), punctuation restoration (label = what to insert after the word). The task is defined by the label meaning, not the architecture.',
-        'Subword alignment, first-subword policy: [CLS] Ada Wash ##ington [SEP] → −100, B-PER, B-PER, −100, −100. −100 means "ignore in the loss"; O is a real label that the model learns.',
-        'Accuracy can hide missed entities: 90 O + 10 entity tokens, predict O everywhere → 90% accuracy but 0% entity recall. Exact match = same boundaries and type. 3 gold, 4 predicted, 2 matches → P = 0.50, R = 0.667, F1 = 2TP/(2TP+FP+FN) = 4/7 ≈ 0.571.',
-        'HMM: hidden states (tags) generate observations (words). P(X,Y) = π(y₁)·b(y₁,x₁)·a(y₁,y₂)·b(y₂,x₂). An emission b(tag,word) = P(word | tag), not P(tag | word). "can fish": NN 0.0432, NV 0.0504, VN 0.1344, VV 0.0168, sum 0.2448 → VN wins. Posterior of VN = 0.1344/0.2448 ≈ 0.549.',
-        'Viterbi keeps one best partial path per ending tag, then backtraces: O(TK²) instead of Kᵀ paths. HMM training with labels = count and normalize (N→N 3, N→V 7 → 0.3, 0.7); zero counts need smoothing.',
-        'CRF: P(Y|X) = exp(S(X,Y)) / Z(X), Z = sum over all label sequences. Scores are any real numbers, not probabilities. "can fish": unary alone picks NV, adding a(V,N) = ln 8 makes VN win: weights 2, 4, 8, 2, Z = 16, P(VN) = 0.5, loss = −ln 0.5 = ln Z − gold score ≈ 0.6931. Decoding uses max (Viterbi); Z uses a sum.',
-        'BIO constraints: O → I-PER and START → I-PER are forbidden; a hard constraint sets the score to −∞. A learned finite score gives no guarantee. Neural taggers: zᵢ = W hᵢ + b, then per-token softmax or a CRF. logits (2, 5, 3) = 30 scores; (ln 1, ln 2, ln 1) → (0.25, 0.50, 0.25) → B-PER.',
+      "n": 6,
+      "title": "Token Classification: HMM & CRF",
+      "summary": "One label per token, then read structure back from the labels. Hour 1: POS, NER, BIO, chunking, slot filling, punctuation restoration, subword alignment (−100) and exact-span evaluation. Hour 2: why HMMs and CRFs exist, the \"can fish\" calculations (four paths, Viterbi, Z, loss), BIO constraints and neural token heads. (Slides: the lecturer's Week 6 deck, which builds on the Jurafsky & Martin deck from Week 4.)",
+      "takeaways": [
+        "A transformer splits words into subwords. With the first-subword policy the first piece gets the word's label and every other piece and special token gets −100 (ignored in the loss).",
+        "Token accuracy can look great while no entity is found. NER is scored by exact span match: same boundaries and same type. F1 = 2TP / (2TP + FP + FN).",
+        "An HMM says: a hidden state sequence (the tags) generates the observations (the words). Its score is a product of three ingredients: start × emission × transition × emission…",
+        "List all paths and multiply: VN = 0.1344 wins. Viterbi gets the same answer by keeping one best partial path per ending tag and backtracing.",
+        "With tagged data an HMM learns by counting and normalizing. Its weakness: the emission sees only one word given one tag, so rich overlapping clues are hard to add.",
+        "A CRF gives each complete label sequence a real-valued score S(X,Y), turns it into a weight with exp, and divides by Z(X), the sum over all sequences. Max picks the best path; sum builds Z."
       ],
-      traps: [
-        ['Token classification predicts one label per document', 'It predicts an aligned sequence: one label per token. NER is then decoded into spans.'],
-        ['I means "any entity token"', 'I continues a span of the SAME type that is already open. O I-PER and B-ORG I-PER are invalid.'],
-        ['B-PER B-PER is invalid because the type repeats', 'It is valid: two adjacent one-token person mentions, each starting with its own B.'],
-        ['−100 is an extra label for subword pieces', '−100 removes that position from the loss. O is a real outside label the model learns.'],
-        ['90% token accuracy means 90% of entities were found', 'Predict O everywhere on 90 O + 10 entity tokens: 90% accuracy, 0% entity recall. Different denominators.'],
-        ['Predicting "York" for gold "New York" earns partial credit', 'Exact match needs the same boundaries AND type. York adds an FP and New York stays an FN.'],
-        ['An emission b(N, can) is P(N | can)', 'It is P(can | N): the probability of the word given the tag.'],
-        ['0.1344 is the probability that VN is correct', '0.1344 is the joint weight P(words, VN). The posterior is 0.1344 / 0.2448 ≈ 0.549.'],
-        ['Viterbi keeps only the single best tag at each word', 'It keeps the best partial path for EACH ending tag, because future transitions differ.'],
-        ['A CRF score of 2 is invalid because it is above 1', 'CRF scores are any real numbers. Only after exp and division by Z do they become probabilities.'],
-        ['You need Z to pick the best path', 'No. Z is the same for every path, so max of S picks the winner. Z is needed for probabilities and the loss.'],
-        ['Training a CRF guarantees legal BIO output', 'Learned finite transition scores only discourage illegal pairs. A hard constraint (−∞) forbids them.'],
-        ['A contextual encoder makes the output labels jointly decoded', 'Reading the whole input (encoder) and decoding labels jointly (CRF) are different choices. Softmax decides each token separately.'],
-        ['-ly always means ADV', 'Spelling is a clue, not a rule: "friendly" is usually an adjective, "importantly" an adverb.'],
+      "traps": [
+        [
+          "Token classification predicts one label per document",
+          "It predicts an aligned sequence: one label per token. NER is then decoded into spans."
+        ],
+        [
+          "I means \"any entity token\"",
+          "I continues a span of the SAME type that is already open. O I-PER and B-ORG I-PER are invalid."
+        ],
+        [
+          "B-PER B-PER is invalid because the type repeats",
+          "It is valid: two adjacent one-token person mentions, each starting with its own B."
+        ],
+        [
+          "−100 is an extra label for subword pieces",
+          "−100 removes that position from the loss. O is a real outside label the model learns."
+        ],
+        [
+          "90% token accuracy means 90% of entities were found",
+          "Predict O everywhere on 90 O + 10 entity tokens: 90% accuracy, 0% entity recall. Different denominators."
+        ]
       ],
-      activities: [
-        { id: 'w6-span', title: 'Span Scorer', desc: 'Annotate "Ada visited New York .", score a prediction with exact span matching, watch 90% accuracy hide 0% recall, and align subwords with −100.', href: 'w6/spans.html' },
-        { id: 'w6-hmm', title: 'HMM & Viterbi Lab', desc: 'The "can fish" HMM with editable start, transition and emission tables: all four paths, the Viterbi trellis with backpointers, posteriors and count-and-normalize training.', href: 'w6/hmm.html' },
-        { id: 'w6-crf', title: 'CRF Score Lab', desc: 'Unary and transition scores for "can fish": path scores, exp weights, Z, P(Y|X), loss and Viterbi. Then BIO hard constraints (−∞) and one softmax decision.', href: 'w6/crf.html' },
+      "activities": [
+        {
+          "id": "w6-span",
+          "title": "Span Scorer",
+          "desc": "Annotate \"Ada visited New York .\", score a prediction with exact span matching, watch 90% accuracy hide 0% recall, and align subwords with −100.",
+          "href": "w6/spans.html"
+        },
+        {
+          "id": "w6-hmm",
+          "title": "HMM & Viterbi Lab",
+          "desc": "The \"can fish\" HMM with editable start, transition and emission tables: all four paths, the Viterbi trellis with backpointers, posteriors and count-and-normalize training.",
+          "href": "w6/hmm.html"
+        },
+        {
+          "id": "w6-crf",
+          "title": "CRF Score Lab",
+          "desc": "Unary and transition scores for \"can fish\": path scores, exp weights, Z, P(Y|X), loss and Viterbi. Then BIO hard constraints (−∞) and one softmax decision.",
+          "href": "w6/crf.html"
+        }
       ],
-      quiz: [
-        { q: 'What is the basic output of token classification for one sentence?', options: ['One aligned label per token', 'One label for the whole document', 'One label per sentence pair', 'A probability for each word type'], answer: 0, explain: 'Slide 1 check: this week does not predict one label per document. The output is an aligned sequence of token labels.' },
-        { q: '"Ada visits Paris ." Why do Ada and Paris share a POS label but get different NER labels?', options: ['Both are proper nouns, but one names a person and one a location', 'POS tags are random for names', 'NER ignores the token position', 'Paris is not a proper noun'], answer: 0, explain: 'POS: PROPN for both. NER: B-PER for Ada, B-LOC for Paris.' },
-        { q: 'In "They back the plan", "back" is…', options: ['VERB (support)', 'ADJ (modifies plan)', 'NOUN (a body part)', 'ADV (direction)'], answer: 0, explain: 'In "The back door is open" it is ADJ. A dictionary lists possible tags; context selects the one for this occurrence.' },
-        { q: 'Is an open class an unlimited number of labels?', options: ['No: new words join it, the label stays fixed', 'Yes: every new word gets a new label', 'Yes: open classes have no label at all', 'No: open classes accept no new words'], answer: 0, explain: 'Open: NOUN, VERB, ADJ, ADV gain members (robot, stream). Closed: DET, PRON, ADP, AUX, NUM are relatively stable.' },
-        { q: 'Which statement about the frequent-tag baseline is correct?', options: ['It uses training-set counts and ignores context', 'It always tags "book" as VERB', 'It reads the neighbouring words', 'It needs no training data at all'], answer: 0, explain: 'Count each word–tag pair in training, choose the largest count. "Book that flight" shows the context it misses.' },
-        { q: 'Does the suffix -ly guarantee ADV?', options: ['No: "friendly" is usually an adjective', 'Yes: -ly is always an adverb', 'Yes, but only at sentence start', 'No: -ly always marks a noun'], answer: 0, explain: 'Word form and capitalization are clues, not guarantees.' },
-        { q: '"Ada Lovelace joined Acme." Would "Ada" alone count as the exact person mention?', options: ['No, the gold span includes Lovelace', 'Yes, the first name is enough', 'Yes, if the type is PERSON', 'No, Ada should be ORGANIZATION'], answer: 0, explain: 'NER predicts both boundaries and types. The gold span is Ada Lovelace.' },
-        { q: 'Can a gazetteer (list) of city names solve every "Washington" mention?', options: ['No, the string alone does not fix the type', 'Yes, Washington is always a city', 'Yes, if the list is long enough', 'No, gazetteers only store people'], answer: 0, explain: 'Washington lies on the river (LOCATION), announced a policy (GOVERNMENT/ORG), scored again (PERSON or TEAM).' },
-        { q: 'BIO labels for "Jane Villanueva of United":', options: ['B-PER I-PER O B-ORG', 'B-PER B-PER O B-ORG', 'I-PER I-PER O I-ORG', 'B-PER I-PER O I-ORG'], answer: 0, explain: 'Each new entity starts with B, even a one-word one like United.' },
-        { q: 'Which BIO sequence is VALID?', options: ['B-PER B-PER', 'O I-PER', 'B-ORG I-PER', 'START I-PER'], answer: 0, explain: 'Two adjacent person spans. I-PER after O or after B-ORG has no PER span to continue.' },
-        { q: 'With 3 entity types (PER, ORG, LOC), how many BIO labels are there?', options: ['7', '3', '4', '6'], answer: 0, explain: 'n B labels + n I labels + O = 2n + 1 = 7.' },
-        { q: 'In chunking, does I-NP mean the word is a noun?', options: ['No: the adjective "small" can be inside an NP', 'Yes: I-NP is only for nouns', 'Yes: I-NP is the POS tag NOUN', 'No: I-NP marks a verb phrase'], answer: 0, explain: '"The small cat sleeps" → B-NP I-NP I-NP B-VP. Chunk labels group roles into phrases; no full parse tree.' },
-        { q: 'In "fly from Boston to Paris", why is slot filling needed instead of plain LOCATION tags?', options: ['It separates departure from arrival', 'LOCATION tags cannot handle cities', 'Slots give one label per document', 'It removes the word "to"'], answer: 0, explain: 'Boston → departure, Paris → arrival. "from" and "to" decide the role.' },
-        { q: 'Why is punctuation restoration still token classification?', options: ['Each word gets a label for its following boundary', 'It classifies the whole sentence', 'It generates new words', 'It labels only the punctuation marks'], answer: 0, explain: '"hello Ada how are you" → hello: comma, Ada: comma, you: ?. NONE means insert nothing.' },
-        { q: 'Turkish "evlerden" (from houses) is annotated as…', options: ['NOUN; Number=Plur; Case=Abl', 'VERB; Tense=Past', 'B-LOC', 'PROPN; Case=Nom'], answer: 0, explain: 'ev + ler + den = house + plural + from (ablative). Morphology can need several attributes per word.' },
-        { q: 'In a biomedical NER scheme, "aspirin" is…', options: ['CHEMICAL', 'O, because it is not a person or place', 'B-PER', 'DISEASE'], answer: 0, explain: 'A medical entity need not be a proper name. Tags only mean something together with their ontology.' },
-        { q: 'Will a punctuation-restoration checkpoint from the Hub return person names?', options: ['No, its output head predicts punctuation', 'Yes, all token classifiers share labels', 'Yes, if you give it names', 'No, Hub models only do POS'], answer: 0, explain: 'A Hub task tag tells you the interface. Read the model or dataset card to learn what the labels mean.' },
-        { q: '[CLS] Ada Wash ##ington [SEP] (two people) with the first-subword policy gives…', options: ['−100, B-PER, B-PER, −100, −100', 'O, B-PER, B-PER, I-PER, O', '−100, B-PER, I-PER, I-PER, −100', 'O, B-PER, I-PER, O, O'], answer: 0, explain: 'Label the first piece of each word, ignore later pieces and special tokens. Ada and Washington are two separate people, so both get B-PER.' },
-        { q: 'What does the label −100 do during training?', options: ['Removes that position from the loss', 'Marks an outside-entity token', 'Adds a new entity category', 'Gives the token a negative score'], answer: 0, explain: 'O is a real modeled label. −100 is the ignore index of PyTorch cross-entropy.' },
-        { q: '100 tokens: 90 O and 10 entity tokens. A model predicts O everywhere. Its token accuracy and entity recall are…', options: ['90% and 0%', '90% and 90%', '10% and 0%', '100% and 10%'], answer: 0, explain: 'It gets the 90 O labels right but finds no span. Precision has a zero denominator, so the evaluator must state a convention.' },
-        { q: '3 gold spans, 4 predicted spans, 2 exact matches. F1 = ?', options: ['4/7 ≈ 0.571', '2/4 = 0.50', '2/3 ≈ 0.667', '5/7 ≈ 0.714'], answer: 0, explain: 'TP 2, FP 4 − 2 = 2, FN 3 − 2 = 1. F1 = 2TP/(2TP + FP + FN) = 4/7. P = 0.50 and R = 0.667 are the two distractors.' },
-        { q: 'Gold: Ada (PER), New York (LOC). Prediction: Ada (PER), York (LOC). F1 = ?', options: ['0.50', '1.00', '0.67', '0.75'], answer: 0, explain: 'Only Ada matches: TP 1, FP 1 (York), FN 1 (New York). F1 = 2/(2+1+1) = 0.5.' },
-        { q: 'Can an excellent classifier fix a label map that swaps PER and ORG?', options: ['No, the reported types stay wrong', 'Yes, it learns the swap back', 'Yes, if accuracy is above 90%', 'No, but F1 is unaffected'], answer: 0, explain: 'Integer IDs are arbitrary; save id2label with the model. Evaluate the whole pipeline.' },
-        { q: 'In an HMM, which nodes are given at prediction time?', options: ['The observations x (words)', 'The hidden states y (tags)', 'Both states and observations', 'Neither; the model generates both'], answer: 0, explain: 'The hidden tags must be inferred from the observed words.' },
-        { q: 'What does the emission b(N, can) mean?', options: ['P(can | N)', 'P(N | can)', 'P(N | previous N)', 'P(can, fish)'], answer: 0, explain: 'An emission is P(word | tag), not P(tag | word). Write both directions to avoid inverting it.' },
-        { q: '"can fish": π(V) = 0.4, P(can|V) = 0.7, a(V,N) = 0.8, P(fish|N) = 0.6. The joint weight of path VN is…', options: ['0.1344', '0.0504', '0.0432', '0.2448'], answer: 0, explain: '0.4 × 0.7 × 0.8 × 0.6 = 0.1344, the largest of the four paths. 0.2448 is P(words), the sum of all four.' },
-        { q: 'The four path weights are 0.0432, 0.0504, 0.1344, 0.0168. What is 0.1344 / 0.2448 ≈ 0.549?', options: ['The posterior P(VN | words)', 'The joint weight of VN', 'The transition V → N', 'The accuracy of the tagger'], answer: 0, explain: '0.1344 is joint. Dividing every path by the same P(X) = 0.2448 gives posteriors but cannot change the winner.' },
-        { q: 'Why does Viterbi keep a best partial path for EACH ending tag?', options: ['Future transitions differ by ending tag', 'To list all Kᵀ full paths', 'Because emissions sum to 1', 'To compute Z for the CRF'], answer: 0, explain: 'At "fish", N is best from V (0.1344), V is best from N (0.0504). Cost O(TK²) instead of Kᵀ.' },
-        { q: 'HMM training with tagged data: N→N occurs 3 times, N→V 7 times. P(V | N) = ?', options: ['0.7', '0.3', '7', '0.07'], answer: 0, explain: 'Count and normalize: 7 / (3 + 7). A zero count would zero a whole path, so smoothing is needed.' },
-        { q: 'Why look beyond the basic HMM?', options: ['Its emission sees one word given one tag', 'It cannot model neighbouring labels', 'Its states cannot be BIO labels', 'It has no decoding algorithm'], answer: 0, explain: 'Suffixes, capitalization and surrounding words are overlapping clues that are hard to fit into P(word | tag). Transitions and Viterbi are its strengths.' },
-        { q: 'In a CRF, what is Z(X)?', options: ['The sum of exp(S) over all label sequences', 'The score of the gold sequence', 'The best path found by Viterbi', 'A transition probability row'], answer: 0, explain: 'The partition function makes the probabilities of all candidate sequences for this input sum to 1.' },
-        { q: 'Is a CRF transition score of 2 invalid?', options: ['No, scores can be any real number', 'Yes, scores must be between 0 and 1', 'Yes, each row must sum to 1', 'No, but only for the gold path'], answer: 0, explain: 'Scores are not probabilities. exp turns them into positive weights; dividing by Z normalizes complete paths.' },
-        { q: 'CRF "can fish": u₁ = (N ln 2, V 0), u₂ = (N 0, V ln 2), no transitions. Which path wins?', options: ['NV', 'VN', 'NN', 'VV'], answer: 0, explain: 'Independent choices: N at can, V at fish, total ln 4.' },
-        { q: 'Now add a(V,N) = ln 8. Path weights exp(S) are NN 2, NV 4, VN 8, VV 2. P(VN | words) = ?', options: ['0.500', '0.250', '0.125', '0.800'], answer: 0, explain: 'Z = 2 + 4 + 8 + 2 = 16, so 8/16. The transition changed the winner from NV to VN.' },
-        { q: 'If the gold path is VN with P = 0.5, the CRF training loss is…', options: ['ln 2 ≈ 0.6931', '0.5', 'ln 8 ≈ 2.079', '16'], answer: 0, explain: '−ln 0.5 = ln Z − gold score = ln 16 − ln 8 = ln 2.' },
-        { q: 'Which operation does CRF Viterbi use to find the best path, and which builds Z?', options: ['Max for the path, sum for Z', 'Sum for the path, max for Z', 'Max for both', 'Sum for both'], answer: 0, explain: 'You do not need Z to decode: it is the same for every path. It is needed for probabilities and the loss.' },
-        { q: 'How does a hard BIO constraint forbid O → I-PER?', options: ['Its transition score is set to −∞', 'Its transition score is set to 0', 'The CRF learns it from data', 'The softmax head removes it'], answer: 0, explain: 'exp(−∞) = 0, so the path is impossible. A finite learned score only discourages it.' },
-        { q: 'Does a contextual transformer encoder guarantee valid BIO labels?', options: ['No, input context and output constraints differ', 'Yes, attention sees every label', 'Yes, softmax enforces BIO rules', 'No, encoders never see the context'], answer: 0, explain: 'The encoder produces hᵢ from the whole input. Joint decoding with constraints is a separate decision.' },
-        { q: 'Logits of shape (2, 5, 3) contain how many scores?', options: ['30', '10', '15', '3'], answer: 0, explain: 'B = 2 sequences × L = 5 positions × K = 3 labels: three candidate label scores at each position.' },
-        { q: 'At one position the logits are (ln 1, ln 2, ln 1) for (O, B-PER, I-PER). The softmax output is…', options: ['(0.25, 0.50, 0.25), so B-PER', '(0.33, 0.33, 0.33), a tie', '(0, 1, 0), so B-PER', '(0.50, 0.25, 0.25), so O'], answer: 0, explain: 'exp gives 1, 2, 1, sum 4, divide by 4.' },
-        { q: 'Which method models the whole label sequence given the input and decodes with Viterbi on scores?', options: ['Linear-chain CRF', 'HMM', 'Contextual softmax', 'Frequent-tag baseline'], answer: 0, explain: 'HMM: joint words + label path, Viterbi on probabilities. Contextual softmax: each label given the input, argmax per position.' },
+      "quiz": [
+        {
+          "q": "[CLS] Ada Wash ##ington [SEP] (two people) with the first-subword policy gives…",
+          "options": [
+            "−100, B-PER, B-PER, −100, −100",
+            "O, B-PER, B-PER, I-PER, O",
+            "−100, B-PER, I-PER, I-PER, −100",
+            "O, B-PER, I-PER, O, O"
+          ],
+          "answer": 0,
+          "explain": "Label the first piece of each word, ignore later pieces and special tokens. Ada and Washington are two separate people, so both get B-PER."
+        },
+        {
+          "q": "What does the label −100 do during training?",
+          "options": [
+            "Marks an outside-entity token",
+            "Skip this loss target",
+            "Adds a new entity category",
+            "Gives the token a negative score"
+          ],
+          "answer": 1,
+          "explain": "O is a real modeled label. −100 is the ignore index of PyTorch cross-entropy."
+        },
+        {
+          "q": "100 tokens: 90 O and 10 entity tokens. A model predicts O everywhere. Its token accuracy and entity recall are…",
+          "options": [
+            "90% and 90%",
+            "10% and 0%",
+            "90%; 0%",
+            "100% and 10%"
+          ],
+          "answer": 2,
+          "explain": "It gets the 90 O labels right but finds no span. Precision has a zero denominator, so the evaluator must state a convention."
+        },
+        {
+          "q": "3 gold spans, 4 predicted spans, 2 exact matches. F1 = ?",
+          "options": [
+            "2/4 = 0.50",
+            "2/3 ≈ 0.667",
+            "5/7 ≈ 0.714",
+            "4/7"
+          ],
+          "answer": 3,
+          "explain": "TP 2, FP 4 − 2 = 2, FN 3 − 2 = 1. F1 = 2TP/(2TP + FP + FN) = 4/7. P = 0.50 and R = 0.667 are the two distractors."
+        },
+        {
+          "q": "In an HMM, which nodes are given at prediction time?",
+          "options": [
+            "Words",
+            "The hidden states y (tags)",
+            "Both states and observations",
+            "Neither; the model generates both"
+          ],
+          "answer": 0,
+          "explain": "The hidden tags must be inferred from the observed words."
+        },
+        {
+          "q": "What does the emission b(N, can) mean?",
+          "options": [
+            "P(N | can)",
+            "P(can | N)",
+            "P(N | previous N)",
+            "P(can, fish)"
+          ],
+          "answer": 1,
+          "explain": "An emission is P(word | tag), not P(tag | word). Write both directions to avoid inverting it."
+        },
+        {
+          "q": "\"can fish\": π(V) = 0.4, P(can|V) = 0.7, a(V,N) = 0.8, P(fish|N) = 0.6. The joint weight of path VN is…",
+          "options": [
+            "0.0504",
+            "0.0432",
+            "0.1344",
+            "0.2448"
+          ],
+          "answer": 2,
+          "explain": "0.4 × 0.7 × 0.8 × 0.6 = 0.1344, the largest of the four paths. 0.2448 is P(words), the sum of all four."
+        },
+        {
+          "q": "Why does Viterbi keep a best partial path for EACH ending tag?",
+          "options": [
+            "To list all Kᵀ full paths",
+            "Because emissions sum to 1",
+            "To compute Z for the CRF",
+            "Ending tags affect future transitions"
+          ],
+          "answer": 3,
+          "explain": "At \"fish\", N is best from V (0.1344), V is best from N (0.0504). Cost O(TK²) instead of Kᵀ."
+        },
+        {
+          "q": "HMM training with tagged data: N→N occurs 3 times, N→V 7 times. P(V | N) = ?",
+          "options": [
+            "7/10",
+            "0.3",
+            "7",
+            "0.07"
+          ],
+          "answer": 0,
+          "explain": "Count and normalize: 7 / (3 + 7). A zero count would zero a whole path, so smoothing is needed."
+        },
+        {
+          "q": "In a CRF, what is Z(X)?",
+          "options": [
+            "The score of the gold sequence",
+            "Σ over paths exp(S)",
+            "The best path found by Viterbi",
+            "A transition probability row"
+          ],
+          "answer": 1,
+          "explain": "The partition function makes the probabilities of all candidate sequences for this input sum to 1."
+        },
+        {
+          "q": "Now add a(V,N) = ln 8. Path weights exp(S) are NN 2, NV 4, VN 8, VV 2. P(VN | words) = ?",
+          "options": [
+            "0.250",
+            "0.125",
+            "8/16 = 1/2",
+            "0.800"
+          ],
+          "answer": 2,
+          "explain": "Z = 2 + 4 + 8 + 2 = 16, so 8/16. The transition changed the winner from NV to VN."
+        },
+        {
+          "q": "How does a hard BIO constraint forbid O → I-PER?",
+          "options": [
+            "Its transition score is set to 0",
+            "The CRF learns it from data",
+            "The softmax head removes it",
+            "Illegal score = −∞"
+          ],
+          "answer": 3,
+          "explain": "exp(−∞) = 0, so the path is impossible. A finite learned score only discourages it."
+        }
       ],
-      cards: [
-        ['Token classification', 'Assign one label to each token (POS, NER, chunks, slots, punctuation), then recover structure from the labels.'],
-        ['Input–output contract', 'Ordered tokens in, one aligned label per token out; sometimes decoded into spans.'],
-        ['NER', 'Identify text spans (contiguous token ranges) and assign semantic types. Labeled per token, evaluated as spans.'],
-        ['BIO / IOB2', 'B begins a span, I continues the same type, O is outside. 2n + 1 labels.'],
-        ['Chunking', 'Shallow, non-overlapping phrase segments (B-NP, I-NP, B-VP), not a full syntax tree.'],
-        ['Slot filling', 'A field in a request: fly from Boston (departure) to Paris (arrival).'],
-        ['Punctuation restoration', 'Each word is labeled with what to insert after it: none, comma, period, ?.'],
-        ['First-subword policy', 'Give a word\'s label to its first subword; later pieces and special tokens get −100.'],
-        ['−100', 'Ignore index: the position is left out of the loss. Not a label. O is a real label.'],
-        ['Exact span match', 'Same boundaries AND same type. A partial name or wrong type is an FP plus an FN.'],
-        ['Span F1', '2TP / (2TP + FP + FN). 3 gold, 4 pred, 2 match → 4/7 ≈ 0.571.'],
-        ['HMM', 'Hidden states (tags) generate observations (words). Joint P(X,Y) = π · b · a · b …'],
-        ['Emission b(y,x)', 'P(word x | tag y). Rows sum to 1.'],
-        ['Transition a(y,z)', 'P(next tag z | previous tag y). Rows sum to 1.'],
-        ['Viterbi', 'Dynamic programming: best partial path per ending tag, backpointers, backtrace. O(TK²).'],
-        ['HMM training', 'With tagged data: count and normalize (3/10, 7/10). Unseen events need smoothing.'],
-        ['CRF', 'Conditional model P(Y|X) = exp(S(X,Y)) / Z(X). Combines overlapping input features with label compatibility.'],
-        ['Partition function Z(X)', 'Sum of exp(S) over all label sequences for this input. "can fish": 2 + 4 + 8 + 2 = 16.'],
-        ['Unary score uᵢ(tag)', 'Evidence for one label at one position; may use the whole input.'],
-        ['CRF loss', '−ln P(gold | X) = ln Z − gold score. Example: ln 16 − ln 8 = ln 2 ≈ 0.6931.'],
-        ['Hard constraint', 'Illegal transition (O → I-PER, START → I-PER) gets score −∞, so exp = 0.'],
-        ['Neural token head', 'zᵢ = W hᵢ + b from a contextual vector hᵢ; then per-token softmax or a CRF.'],
-      ],
-    },
+      "cards": [
+        [
+          "First-subword policy",
+          "Give a word's label to its first subword; later pieces and special tokens get −100."
+        ],
+        [
+          "−100",
+          "Ignore index: the position is left out of the loss. Not a label. O is a real label."
+        ],
+        [
+          "Exact span match",
+          "Same boundaries AND same type. A partial name or wrong type is an FP plus an FN."
+        ],
+        [
+          "Span F1",
+          "2TP / (2TP + FP + FN). 3 gold, 4 pred, 2 match → 4/7 ≈ 0.571."
+        ],
+        [
+          "HMM",
+          "Hidden states (tags) generate observations (words). Joint P(X,Y) = π · b · a · b …"
+        ],
+        [
+          "Emission b(y,x)",
+          "P(word x | tag y). Rows sum to 1."
+        ],
+        [
+          "Transition a(y,z)",
+          "P(next tag z | previous tag y). Rows sum to 1."
+        ],
+        [
+          "Viterbi",
+          "Dynamic programming: best partial path per ending tag, backpointers, backtrace. O(TK²)."
+        ],
+        [
+          "HMM training",
+          "With tagged data: count and normalize (3/10, 7/10). Unseen events need smoothing."
+        ],
+        [
+          "CRF",
+          "Conditional model P(Y|X) = exp(S(X,Y)) / Z(X). Combines overlapping input features with label compatibility."
+        ],
+        [
+          "Partition function Z(X)",
+          "Sum of exp(S) over all label sequences for this input. \"can fish\": 2 + 4 + 8 + 2 = 16."
+        ],
+        [
+          "Hard constraint",
+          "Illegal transition (O → I-PER, START → I-PER) gets score −∞, so exp = 0."
+        ]
+      ]
+    }
   ],
-
-  /* ================================================================ */
-  games: {
-    'nlp-era': {
-      ch: 1, type: 'order', title: 'NLP Through Time',
-      intro: 'Put the eras of NLP in chronological order.',
-      items: [
-        '1950s · Rule-based era — ELIZA, hand-crafted rules',
-        '1990s · Statistical revolution — n-grams, Hidden Markov Models',
-        '2010s · Deep learning era — Word2Vec, LSTMs, attention',
-        '2017+ · Transformers & LLMs — BERT, GPT, ChatGPT',
-        'Now · Post-LLM practical era — choosing the right tool for the job',
+  "games": {
+    "text-to-numbers": {
+      "ch": 1,
+      "type": "match",
+      "title": "Representation Match",
+      "intro": "Match each text representation to what it does.",
+      "pairs": [
+        [
+          "One-hot encoding",
+          "Binary vector the size of the vocabulary, a single 1"
+        ],
+        [
+          "Bag of Words",
+          "Counts word occurrences, loses order"
+        ],
+        [
+          "TF-IDF",
+          "Term frequency × inverse document frequency"
+        ],
+        [
+          "N-grams",
+          "Sequences of n tokens — \"New York\" ≠ \"York New\""
+        ],
+        [
+          "Word2Vec / GloVe",
+          "Dense static vectors, similar meaning → similar vector"
+        ],
+        [
+          "ELMo / BERT",
+          "Contextualized vectors — \"bank\" differs by sentence"
+        ]
+      ]
+    },
+    "architectures": {
+      "ch": 1,
+      "type": "bucket",
+      "title": "Model Zoo",
+      "intro": "Sort each model family into the right group.",
+      "buckets": [
+        "Classical ML",
+        "Neural networks",
+        "Transformer: encoder-only",
+        "Transformer: decoder-only",
+        "Transformer: encoder-decoder"
       ],
+      "items": [
+        [
+          "Naive Bayes — probabilistic, fast",
+          0
+        ],
+        [
+          "Logistic regression — linear classifier",
+          0
+        ],
+        [
+          "SVM — maximum margin",
+          0
+        ],
+        [
+          "CNN — local patterns, fast",
+          1
+        ],
+        [
+          "RNN / LSTM / GRU — sequential data",
+          1
+        ],
+        [
+          "BERT — fill in the blank; classification, NER, Q&A",
+          2
+        ],
+        [
+          "RoBERTa / ALBERT — improved BERT variants",
+          2
+        ],
+        [
+          "GPT — predict the next word; chat",
+          3
+        ],
+        [
+          "T5 / BART — translation, summarization",
+          4
+        ]
+      ]
     },
-    'text-to-numbers': {
-      ch: 1, type: 'match', title: 'Representation Match',
-      intro: 'Match each text representation to what it does.',
-      pairs: [
-        ['One-hot encoding', 'Binary vector the size of the vocabulary, a single 1'],
-        ['Bag of Words', 'Counts word occurrences, loses order'],
-        ['TF-IDF', 'Term frequency × inverse document frequency'],
-        ['N-grams', 'Sequences of n tokens — "New York" ≠ "York New"'],
-        ['Word2Vec / GloVe', 'Dense static vectors, similar meaning → similar vector'],
-        ['ELMo / BERT', 'Contextualized vectors — "bank" differs by sentence'],
+    "classical-methods": {
+      "ch": 2,
+      "type": "bucket",
+      "title": "NB, LR or SVM?",
+      "intro": "Which classical method does each statement describe?",
+      "buckets": [
+        "Naive Bayes",
+        "Logistic regression",
+        "SVM"
       ],
+      "items": [
+        [
+          "P(class | text) ∝ P(class) × P(text | class)",
+          0
+        ],
+        [
+          "Assumes words are independent",
+          0
+        ],
+        [
+          "Generative model",
+          0
+        ],
+        [
+          "Best for spam / quick baselines",
+          0
+        ],
+        [
+          "P(y=1) = σ(w₁x₁ + w₂x₂ + … + b)",
+          1
+        ],
+        [
+          "Discriminative, probabilistic output",
+          1
+        ],
+        [
+          "\"Despite the name, it's a CLASSIFICATION algorithm\"",
+          1
+        ],
+        [
+          "Maximizes the margin between classes",
+          2
+        ],
+        [
+          "Kernel trick: linear, RBF, polynomial",
+          2
+        ],
+        [
+          "Slow for large data, sensitive to feature scaling",
+          2
+        ]
+      ]
     },
-    'subwords': {
-      ch: 1, type: 'match', title: 'Subword Tokenizers',
-      intro: 'Match each tokenizer or term with its description.',
-      pairs: [
-        ['BPE', 'Merge the most frequent adjacent pair (GPT / ChatGPT)'],
-        ['WordPiece', 'Continuation pieces marked with ## (BERT)'],
-        ['SentencePiece', 'Language-agnostic, works on raw text'],
-        ['OOV word', 'Never seen in training — "unhappiness" → unknown'],
-        ['"don\'t" → "do" + "n\'t"', 'Why tokenization is harder than it sounds'],
+    "feature-types": {
+      "ch": 2,
+      "type": "bucket",
+      "title": "Feature Engineering",
+      "intro": "Sort each feature into its family (lecture slide \"Feature Engineering\").",
+      "buckets": [
+        "Statistical",
+        "Lexical",
+        "Linguistic",
+        "Domain-specific"
       ],
+      "items": [
+        [
+          "Text length, word count",
+          0
+        ],
+        [
+          "Punctuation counts",
+          0
+        ],
+        [
+          "Capital letter ratio",
+          0
+        ],
+        [
+          "Average word length",
+          0
+        ],
+        [
+          "Bag of words",
+          1
+        ],
+        [
+          "TF-IDF",
+          1
+        ],
+        [
+          "Bigrams, trigrams",
+          1
+        ],
+        [
+          "Character n-grams",
+          1
+        ],
+        [
+          "POS tags",
+          2
+        ],
+        [
+          "Sentiment lexicons",
+          2
+        ],
+        [
+          "Named entities",
+          2
+        ],
+        [
+          "Dependency patterns",
+          2
+        ],
+        [
+          "Spam words: \"free\", \"click\", \"!!!\"",
+          3
+        ],
+        [
+          "Emoticons for sentiment",
+          3
+        ],
+        [
+          "Medical terminology",
+          3
+        ]
+      ]
     },
-    'architectures': {
-      ch: 1, type: 'bucket', title: 'Model Zoo',
-      intro: 'Sort each model family into the right group.',
-      buckets: ['Classical ML', 'Neural networks', 'Transformer: encoder-only', 'Transformer: decoder-only', 'Transformer: encoder-decoder'],
-      items: [
-        ['Naive Bayes — probabilistic, fast', 0], ['Logistic regression — linear classifier', 0], ['SVM — maximum margin', 0],
-        ['CNN — local patterns, fast', 1], ['RNN / LSTM / GRU — sequential data', 1],
-        ['BERT — fill in the blank; classification, NER, Q&A', 2], ['RoBERTa / ALBERT — improved BERT variants', 2],
-        ['GPT — predict the next word; chat', 3],
-        ['T5 / BART — translation, summarization', 4],
+    "attention-steps": {
+      "ch": 3,
+      "type": "order",
+      "title": "Scaled Dot-Product Attention",
+      "intro": "Order the steps of softmax(QKᵀ/√dₖ)V for one layer.",
+      "items": [
+        "Project token vectors into queries Q, keys K and values V",
+        "Compute matching scores QKᵀ (one per query–key pair)",
+        "Divide the scores by √dₖ",
+        "Add the mask (−∞ for padding or future positions)",
+        "Row-wise softmax → weights that sum to 1",
+        "Multiply the weights by V → contextual vectors"
+      ]
+    },
+    "metric-formula": {
+      "ch": 3,
+      "type": "match",
+      "title": "Metric Formulas",
+      "intro": "Match each metric to its formula.",
+      "pairs": [
+        [
+          "Accuracy",
+          "(TP + TN) / all"
+        ],
+        [
+          "Precision",
+          "TP / (TP + FP)"
+        ],
+        [
+          "Recall",
+          "TP / (TP + FN)"
+        ],
+        [
+          "F1",
+          "2TP / (2TP + FP + FN)"
+        ],
+        [
+          "Macro-F1",
+          "Average of per-class F1, equal weight"
+        ],
+        [
+          "Weighted F1",
+          "Per-class F1 weighted by class support"
+        ]
+      ]
+    },
+    "pos-clues": {
+      "ch": 4,
+      "type": "bucket",
+      "title": "Sources of Information",
+      "intro": "Which information source does each tagging clue use? (Sentence: \"Janet will back the bill\".)",
+      "buckets": [
+        "Prior word/tag probability",
+        "Neighboring words",
+        "Morphology / word shape"
       ],
+      "items": [
+        [
+          "\"will\" is usually an AUX",
+          0
+        ],
+        [
+          "\"Janet\" is always PROPN",
+          0
+        ],
+        [
+          "\"hesitantly\" is always ADV",
+          0
+        ],
+        [
+          "After \"the\", the next word is probably not a verb",
+          1
+        ],
+        [
+          "After AUX \"will\", a verb is likely",
+          1
+        ],
+        [
+          "Prefix un- → ADJ (unable)",
+          2
+        ],
+        [
+          "Suffix -ly → ADV (importantly)",
+          2
+        ],
+        [
+          "Capitalized → PROPN (Janet)",
+          2
+        ]
+      ]
     },
-    'right-tool': {
-      ch: 1, type: 'bucket', title: 'Right Tool for the Right Job',
-      intro: 'Would you reach for a classical/small model or an LLM? (Lecture: "When would I NOT use an LLM?")',
-      buckets: ['Classical / small model', 'LLM'],
-      items: [
-        ['Spam filter for 1M emails/day', 0, 'Naive Bayes: < $10/month and 99%+.'],
-        ['Autocomplete that must answer in < 10 ms', 0, 'LLM inference is 100–1000 ms; users drop off after ~100 ms.'],
-        ['Hospital note classifier that must stay on-premise', 0, 'Privacy: you can\'t send medical data to an external API.'],
-        ['Loan-rejection model that must explain "why?"', 0, 'Interpretability is required in finance.'],
-        ['Product-review sentiment at moderate cost', 0, 'The lecture pairs sentiment with BERT-small.'],
-        ['Write a short story in a given style', 1, 'Open-ended creative generation.'],
-        ['Answer complex, multi-step questions', 1, 'Reasoning capabilities are valuable here.'],
+    "entity-types": {
+      "ch": 4,
+      "type": "bucket",
+      "title": "Entity Types",
+      "intro": "Sort each mention into its entity type.",
+      "buckets": [
+        "PER",
+        "ORG",
+        "LOC",
+        "GPE",
+        "Not a named entity"
       ],
+      "items": [
+        [
+          "Marie Curie",
+          0
+        ],
+        [
+          "Jane Villanueva",
+          0
+        ],
+        [
+          "Stanford University",
+          1
+        ],
+        [
+          "United Airlines Holding",
+          1
+        ],
+        [
+          "New York City",
+          2,
+          "The slides use LOC for \"New York City\"."
+        ],
+        [
+          "Chicago (route)",
+          2
+        ],
+        [
+          "Boulder, Colorado",
+          3
+        ],
+        [
+          "the fare",
+          4
+        ],
+        [
+          "route",
+          4
+        ]
+      ]
     },
-
-    'ml-pipeline': {
-      ch: 2, type: 'order', title: 'The ML Pipeline',
-      intro: 'Order the stages of the machine learning pipeline for text classification.',
-      items: ['Data — labeled examples', 'Features — text → numbers', 'Model — learn patterns', 'Prediction — new text → label', 'Evaluation — how good? (then improve the data)'],
-    },
-    'task-type': {
-      ch: 2, type: 'bucket', title: 'Which Classification Task?',
-      intro: 'Sort each real-world example into the task it belongs to.',
-      buckets: ['Sentiment analysis', 'Spam detection', 'Topic classification', 'Intent classification', 'Content moderation'],
-      items: [
-        ['"Love this product!" → Positive', 0], ['"Terrible experience" → Negative', 0],
-        ['"CONGRATULATIONS! You\'ve WON $1000000!!!"', 1], ['"Click HERE for FREE iPhone"', 1],
-        ['"The Lakers won 108–102 in overtime…" → Sports', 2], ['"Congress passed the new bill…" → Politics', 2],
-        ['"Book a flight" → booking_intent', 3],
-        ['Hate speech / harassment detection', 4],
+    "w6-hmm-crf": {
+      "ch": 6,
+      "type": "bucket",
+      "title": "HMM, CRF or Softmax Head?",
+      "intro": "Which method does each statement describe?",
+      "buckets": [
+        "HMM",
+        "Linear-chain CRF",
+        "Contextual softmax head"
       ],
+      "items": [
+        [
+          "Models the joint P(words, label path)",
+          0
+        ],
+        [
+          "Emission = P(word | tag)",
+          0
+        ],
+        [
+          "Trained by counting and normalizing tagged data",
+          0
+        ],
+        [
+          "P(Y|X) = exp(S) / Z(X)",
+          1
+        ],
+        [
+          "Scores can be any real number",
+          1
+        ],
+        [
+          "Loss = ln Z − gold score",
+          1
+        ],
+        [
+          "Argmax at each position separately",
+          2
+        ],
+        [
+          "zᵢ = W hᵢ + b, then softmax per token",
+          2
+        ]
+      ]
     },
-    'classical-methods': {
-      ch: 2, type: 'bucket', title: 'NB, LR or SVM?',
-      intro: 'Which classical method does each statement describe?',
-      buckets: ['Naive Bayes', 'Logistic regression', 'SVM'],
-      items: [
-        ['P(class | text) ∝ P(class) × P(text | class)', 0], ['Assumes words are independent', 0], ['Generative model', 0], ['Best for spam / quick baselines', 0],
-        ['P(y=1) = σ(w₁x₁ + w₂x₂ + … + b)', 1], ['Discriminative, probabilistic output', 1], ['"Despite the name, it\'s a CLASSIFICATION algorithm"', 1],
-        ['Maximizes the margin between classes', 2], ['Kernel trick: linear, RBF, polynomial', 2], ['Slow for large data, sensitive to feature scaling', 2],
-      ],
-    },
-    'feature-types': {
-      ch: 2, type: 'bucket', title: 'Feature Engineering',
-      intro: 'Sort each feature into its family (lecture slide "Feature Engineering").',
-      buckets: ['Statistical', 'Lexical', 'Linguistic', 'Domain-specific'],
-      items: [
-        ['Text length, word count', 0], ['Punctuation counts', 0], ['Capital letter ratio', 0], ['Average word length', 0],
-        ['Bag of words', 1], ['TF-IDF', 1], ['Bigrams, trigrams', 1], ['Character n-grams', 1],
-        ['POS tags', 2], ['Sentiment lexicons', 2], ['Named entities', 2], ['Dependency patterns', 2],
-        ['Spam words: "free", "click", "!!!"', 3], ['Emoticons for sentiment', 3], ['Medical terminology', 3],
-      ],
-    },
-    'nb-steps': {
-      ch: 2, type: 'order', title: 'Classify "Win free tickets"',
-      intro: 'Order the steps Naive Bayes takes to classify a new email.',
-      items: [
-        'Count words per class in the labeled training emails',
-        'Estimate the priors P(SPAM), P(HAM) from class frequencies',
-        'Estimate P(word | class) with add-one smoothing',
-        'Tokenize the new email: win, free, tickets',
-        'Multiply prior × P(win|c) × P(free|c) × … for each class (or add logs)',
-        'Pick the class with the higher score → SPAM',
-      ],
-    },
-
-    'leakage': {
-      ch: 3, type: 'bucket', title: 'Leak or Legit?',
-      intro: 'Which practices keep the evaluation honest, and which leak test information?',
-      buckets: ['Correct practice', 'Leakage / unfair'],
-      items: [
-        ['Fit TfidfVectorizer on the training reviews only', 0],
-        ['Transform validation and test with the training-fitted vectorizer', 0],
-        ['Choose C or the threshold on validation data', 0],
-        ['Evaluate the selected model once on the test set', 0],
-        ['Keep chunks of the same long document in the same split', 0],
-        ['Call fit_transform on the test set', 1, 'This learns a new vocabulary/IDF from test data.'],
-        ['Compute IDF on the full dataset before splitting', 1],
-        ['Tune hyperparameters until the test score is highest', 1, 'Test information has entered model selection.'],
-        ['Let near-duplicate reviews appear in train and test', 1],
-      ],
-    },
-    'neural-blocks': {
-      ch: 3, type: 'match', title: 'Neural Building Blocks',
-      intro: 'Match each component to its job.',
-      pairs: [
-        ['Embedding table', 'ID → dense learned vector (a row lookup)'],
-        ['CNN filter', 'Detects a local word-window pattern'],
-        ['Max pooling', 'Keeps the strongest response, drops position'],
-        ['RNN state h[t]', 'Running summary combining x[t] and h[t−1]'],
-        ['LSTM forget gate', 'How much old cell memory to retain'],
-        ['Padding mask', '1 = real token, 0 = PAD'],
-        ['Self-attention', 'Lets each token mix information from other tokens'],
-        ['Residual connection', 'Adds the block input back (a bypass)'],
-      ],
-    },
-    'embedding-methods': {
-      ch: 3, type: 'match', title: 'Embedding Methods',
-      intro: 'Match each method with its training idea.',
-      pairs: [
-        ['CBOW', 'Average the context, predict the center word'],
-        ['Skip-gram', 'Center word predicts each context word'],
-        ['Negative sampling', 'Observed pair → 1, sampled pair → 0 (binary)'],
-        ['GloVe', 'Fit vectors to global co-occurrence counts'],
-        ['FastText', 'Sum of character n-gram vectors (<ev, evl, …)'],
-        ['BERT', 'Contextual vectors from masked language modeling'],
-      ],
-    },
-    'attention-steps': {
-      ch: 3, type: 'order', title: 'Scaled Dot-Product Attention',
-      intro: 'Order the steps of softmax(QKᵀ/√dₖ)V for one layer.',
-      items: [
-        'Project token vectors into queries Q, keys K and values V',
-        'Compute matching scores QKᵀ (one per query–key pair)',
-        'Divide the scores by √dₖ',
-        'Add the mask (−∞ for padding or future positions)',
-        'Row-wise softmax → weights that sum to 1',
-        'Multiply the weights by V → contextual vectors',
-      ],
-    },
-    'metric-formula': {
-      ch: 3, type: 'match', title: 'Metric Formulas',
-      intro: 'Match each metric to its formula.',
-      pairs: [
-        ['Accuracy', '(TP + TN) / all'],
-        ['Precision', 'TP / (TP + FP)'],
-        ['Recall', 'TP / (TP + FN)'],
-        ['F1', '2TP / (2TP + FP + FN)'],
-        ['Macro-F1', 'Average of per-class F1, equal weight'],
-        ['Weighted F1', 'Per-class F1 weighted by class support'],
-      ],
-    },
-    'bert-life': {
-      ch: 3, type: 'order', title: 'Life of a BERT Classifier',
-      intro: 'Order the steps from raw pretraining to a sentiment prediction.',
-      items: [
-        'Pretrain on raw text with masked LM: "The film was [MASK]." → excellent',
-        'Add a classification head on top of the encoder',
-        'Fine-tune on labeled reviews (POSITIVE / NEGATIVE)',
-        'Tokenize a new review: [CLS] … [SEP], truncate to max_length',
-        'model.eval() + torch.no_grad(): compute logits [1, 2]',
-        'argmax → class ID → id2label gives the name',
-      ],
-    },
-
-    'open-closed': {
-      ch: 4, type: 'bucket', title: 'Open or Closed Class?',
-      intro: 'Sort each word by its word class family.',
-      buckets: ['Open class (content)', 'Closed class (function)'],
-      items: [
-        ['Janet, Italy (proper nouns)', 0], ['cat, mango (common nouns)', 0], ['eat, went (main verbs)', 0], ['old, green, tasty (adjectives)', 0], ['slowly, yesterday (adverbs)', 0], ['ow, hello (interjections)', 0], ['iPhone, to fax (new words)', 0],
-        ['the, some (determiners)', 1], ['to, with (prepositions)', 1], ['and, or (conjunctions)', 1], ['they, its (pronouns)', 1], ['can, had (auxiliaries)', 1], ['off, up (particles)', 1],
-      ],
-    },
-    'back-tags': {
-      ch: 4, type: 'match', title: 'Five Faces of "back"',
-      intro: 'Match each sentence with the POS of "back".',
-      pairs: [
-        ['earnings growth took a back seat', 'ADJ'],
-        ['a small building in the back', 'NOUN'],
-        ['a clear majority of senators back the bill', 'VERB'],
-        ['enable the country to buy back debt', 'PART'],
-        ['I was twenty-one back then', 'ADV'],
-      ],
-    },
-    'pos-clues': {
-      ch: 4, type: 'bucket', title: 'Sources of Information',
-      intro: 'Which information source does each tagging clue use? (Sentence: "Janet will back the bill".)',
-      buckets: ['Prior word/tag probability', 'Neighboring words', 'Morphology / word shape'],
-      items: [
-        ['"will" is usually an AUX', 0], ['"Janet" is always PROPN', 0], ['"hesitantly" is always ADV', 0],
-        ['After "the", the next word is probably not a verb', 1], ['After AUX "will", a verb is likely', 1],
-        ['Prefix un- → ADJ (unable)', 2], ['Suffix -ly → ADV (importantly)', 2], ['Capitalized → PROPN (Janet)', 2],
-      ],
-    },
-    'entity-types': {
-      ch: 4, type: 'bucket', title: 'Entity Types',
-      intro: 'Sort each mention into its entity type.',
-      buckets: ['PER', 'ORG', 'LOC', 'GPE', 'Not a named entity'],
-      items: [
-        ['Marie Curie', 0], ['Jane Villanueva', 0],
-        ['Stanford University', 1], ['United Airlines Holding', 1],
-        ['New York City', 2, 'The slides use LOC for "New York City".'], ['Chicago (route)', 2],
-        ['Boulder, Colorado', 3],
-        ['the fare', 4], ['route', 4],
-      ],
-    },
-    'w6-tasks': {
-      ch: 6, type: 'match', title: 'One Output Pattern, Many Tasks',
-      intro: 'Match each token-classification task with what its label describes.',
-      pairs: [
-        ['POS', 'Grammatical role: NOUN, VERB, ADJ'],
-        ['NER', 'Mention type + boundary: B-PER, I-PER, O'],
-        ['Chunking', 'Shallow phrase boundary: B-NP, I-NP, B-VP'],
-        ['Slot filling', 'A field in a request: departure-city'],
-        ['Morphological tagging', 'Grammatical features: plural, past, ablative'],
-        ['Punctuation restoration', 'What to insert after the word: none, comma, ?'],
-      ],
-    },
-    'w6-bio-valid': {
-      ch: 6, type: 'bucket', title: 'Valid BIO?',
-      intro: 'Strict IOB2: I continues a span of the same type. Sort each label sequence.',
-      buckets: ['Valid', 'Invalid'],
-      items: [
-        ['B-PER I-PER O', 0], ['B-PER B-PER', 0, 'Two adjacent person spans.'], ['I-PER B-ORG', 1, 'It starts inside a span.'],
-        ['B-PER I-PER B-ORG', 0], ['O B-LOC I-LOC O', 0],
-        ['O I-PER', 1, 'No PER span to continue.'], ['B-ORG I-PER', 1, 'The continuation changes type.'], ['START → I-PER', 1, 'A sequence cannot start inside a span.'],
-      ],
-    },
-    'w6-hmm-crf': {
-      ch: 6, type: 'bucket', title: 'HMM, CRF or Softmax Head?',
-      intro: 'Which method does each statement describe?',
-      buckets: ['HMM', 'Linear-chain CRF', 'Contextual softmax head'],
-      items: [
-        ['Models the joint P(words, label path)', 0], ['Emission = P(word | tag)', 0], ['Trained by counting and normalizing tagged data', 0],
-        ['P(Y|X) = exp(S) / Z(X)', 1], ['Scores can be any real number', 1], ['Loss = ln Z − gold score', 1],
-        ['Argmax at each position separately', 2], ['zᵢ = W hᵢ + b, then softmax per token', 2],
-      ],
-    },
-    'w6-viterbi': {
-      ch: 6, type: 'order', title: 'Viterbi on "can fish"',
-      intro: 'Put the HMM Viterbi steps in order.',
-      items: [
-        'At "can": start × emission for each tag → N 0.24, V 0.28',
-        'At "fish", for ending tag N: max over predecessors of weight × transition',
-        'Multiply by the emission P(fish | N) → 0.1344, store predecessor V',
-        'Do the same for ending tag V → 0.0504, predecessor N',
-        'Pick the larger final cell: N (0.1344)',
-        'Backtrace the stored predecessor: V → N, so the path is VN',
-      ],
-    },
-    'w6-pipeline': {
-      ch: 6, type: 'order', title: 'Make the Method Fit the Task',
-      intro: 'Order the workflow for a token-classification experiment.',
-      items: [
-        'Define the label set and the token unit',
-        'Align word labels to subwords; mark excluded positions with −100',
-        'Train: HMM counts, or optimize the neural / CRF loss',
-        'Decode with the chosen label constraints',
-        'Return to word / span units',
-        'Report POS accuracy or exact entity-span metrics on held-out data',
-      ],
-    },
-  },
-};
-
-/* hub: exam and extra resources (assets/js/hub.js) */
-Object.assign(window.COURSE, {
- "exam": {
-  "title": "Midterm",
-  "when": "9 Nov 2026",
-  "scope": "all weeks (1, 2, 3, 4, 6)",
-  "done": true,
-  "parts": [
-   [
-    "Multiple choice",
-    null
-   ],
-   [
-    "Two open-ended",
-    null,
-    "half a page each: verdict + mechanism"
-   ]
-  ]
- },
- "resources": [
-  {
-   "kind": "summary",
-   "href": "ozet.html",
-   "title": "Vize özeti",
-   "meta": "Türkçe",
-   "desc": "Built on the lecturer's announcement; every hand calculation step by step."
-  },
-  {
-   "kind": "scenarios",
-   "href": "senaryo.html",
-   "title": "Senaryo soruları",
-   "meta": "3 solved scenarios",
-   "desc": "Situation → small calculation → decision, as on paper."
-  },
-  {
-   "kind": "drill",
-   "href": "drill.html",
-   "title": "Hesap pratiği",
-   "meta": "hand calculations",
-   "desc": "Every worked example from the study slides with new easy numbers."
-  },
-  {
-   "kind": "mock",
-   "href": "mock.html",
-   "title": "Mock midterm",
-   "meta": "89 questions",
-   "desc": "Multiple choice plus open-ended questions with model answers."
-  },
-  {
-   "kind": "videos",
-   "href": "videos.html",
-   "title": "Study videos",
-   "meta": "5 videos + 1 combined · 10 min",
-   "desc": "One short, slow English video per week: big ideas only."
+    "w6-viterbi": {
+      "ch": 6,
+      "type": "order",
+      "title": "Viterbi on \"can fish\"",
+      "intro": "Put the HMM Viterbi steps in order.",
+      "items": [
+        "At \"can\": start × emission for each tag → N 0.24, V 0.28",
+        "At \"fish\", for ending tag N: max over predecessors of weight × transition",
+        "Multiply by the emission P(fish | N) → 0.1344, store predecessor V",
+        "Do the same for ending tag V → 0.0504, predecessor N",
+        "Pick the larger final cell: N (0.1344)",
+        "Backtrace the stored predecessor: V → N, so the path is VN"
+      ]
+    }
   }
- ]
+};
+Object.assign(window.COURSE, {
+  "exam": {
+    "title": "Midterm",
+    "when": "9 Nov 2026",
+    "scope": "weeks 1, 2, 3, 4, 6",
+    "done": true,
+    "parts": [
+      [
+        "Multiple choice",
+        null,
+        "Concepts, traps and easy hand calculations"
+      ],
+      [
+        "Two open-ended",
+        null,
+        "About half a page each: verdict + mechanism; understand/compare and apply"
+      ]
+    ],
+    "plan": [
+      [
+        "ozet.html",
+        "Review MC traps and open-ended methods",
+        25
+      ],
+      [
+        "mock.html",
+        "Practise 20 MC + 2 open-ended questions",
+        35
+      ],
+      [
+        "drill.html",
+        "Recompute the calculations",
+        20
+      ]
+    ]
+  },
+  "resources": [
+    {
+      "kind": "summary",
+      "href": "ozet.html",
+      "title": "Midterm özeti",
+      "meta": "Türkçe · MC + 2 open-ended",
+      "desc": "Exam traps, comparisons and short worked calculations with self-testing."
+    },
+    {
+      "kind": "scenarios",
+      "href": "senaryo.html",
+      "title": "Senaryo soruları",
+      "meta": "3 solved scenarios",
+      "desc": "Situation → small calculation → decision, as on paper."
+    },
+    {
+      "kind": "drill",
+      "href": "drill.html",
+      "title": "Hesap pratiği",
+      "meta": "8 calculation types",
+      "desc": "Easy numbers; new variants with step-by-step solutions."
+    },
+    {
+      "kind": "mock",
+      "href": "mock.html",
+      "title": "Mock midterm",
+      "meta": "20 MC + 2 open-ended",
+      "desc": "Instant feedback for each choice; reveal short English model answers."
+    },
+    {
+      "kind": "videos",
+      "href": "videos.html",
+      "title": "Study videos",
+      "meta": "5 videos + 1 combined · 10 min",
+      "desc": "One short, slow English video per week: big ideas only."
+    }
+  ]
 });

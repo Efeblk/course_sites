@@ -1,411 +1,57 @@
-<!doctype html>
-<html lang="tr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ENS010 — Vize özeti · Course Sites</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
-  <style>
-    h2 { margin-top: 52px; padding-top: 10px; border-top: 2px solid var(--text); }
-    table.t { margin: 8px 0 14px; width: 100%; }
-    table.t td, table.t th { vertical-align: top; }
-    /* one-glance table */
-    table.map td:first-child { font-family: var(--mono); font-size: .8rem; color: var(--muted); white-space: nowrap; }
-    table.map td.a { transition: filter .15s; }
-    table.map.hide td.a { filter: blur(6px); cursor: pointer; user-select: none; }
-    table.map.hide td.a.open { filter: none; }
-    .hot { color: var(--bad); font-family: var(--mono); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
-    /* topic cards */
-    .xp { padding: 20px 0 4px; }
-    .xp + .xp { border-top: 1px solid var(--line); }
-    .xp h3 { margin: 0 0 2px; font-size: 1.25rem; }
-    .xp .meta { font-family: var(--mono); font-size: .76rem; color: var(--muted); margin-bottom: 8px; }
-    .xp .meta .hot { margin-left: 6px; }
-    .idea { margin: 6px 0 10px; }
-    .idea b { background: var(--hi); padding: 0 3px; border-radius: 2px; }
-    .write { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--ok); border-radius: 0 var(--radius) var(--radius) 0; padding: 10px 16px 10px 14px; margin: 10px 0; }
-    .write ol, .write ul { margin: 2px 0; padding-left: 22px; }
-    .write li { margin: 3px 0; }
-    .write p { margin: 6px 0 2px; }
-    .lab { display: block; font-family: var(--sans); font-size: .74rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4px; }
-    .write > .lab { color: var(--ok); }
-    .traps { border-left: 3px solid var(--bad); padding: 4px 14px; margin: 10px 0; }
-    .traps > .lab { color: var(--bad); }
-    .traps ul { margin: 2px 0; padding-left: 18px; }
-    .traps s { text-decoration-color: var(--bad); }
-    .said { font-size: .86rem; font-style: italic; color: var(--muted); margin: 8px 0 10px; }
-    .said::before { content: "Hoca: "; font-style: normal; font-weight: 600; }
-    .chain { font-family: var(--mono); font-size: .9rem; margin: 6px 0 10px; }
-    details.more { margin: 12px 0; border-top: 1px solid var(--line); padding-top: 8px; }
-    details.more > summary { cursor: pointer; font-weight: 600; }
-    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; margin: 10px 0; }
-    .compare > div { border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; background: var(--panel); }
-    @media (max-width: 640px) { .compare { grid-template-columns: 1fr; gap: 10px; } table.map td:first-child, table.map th:first-child { display: none; } table.map td, table.map th { padding: 7px 6px; } }
-  </style>
-</head>
-<body data-root="..">
-  <main>
-    <div class="mono small muted">ENS010 — vize özeti</div>
-    <h1 style="font-size:2.4rem;margin-top:4px">Nanoscience vize özeti</h1>
-    <p class="lead">Sadece hocanın kayıtlarda "sınavda sorarım" dediği 13 konu. Sınav İngilizce, kampüste; çoğu <b>multiple choice</b>, 1–2 tane <b>yazılı</b> soru (hocanın örneği: 8 sorudan 6 test, 2 yazılı). Sorular yalnızca slaytlardan ve derste anlattıklarından.</p>
-
-    <nav class="row toc">
-      <a href="#how"><b>0</b>Yazılı nasıl yazılır</a>
-      <a href="#map"><b>1</b>Tek bakışta</a>
-      <a href="#l2"><b>L2–L3</b>Tanımlar</a>
-      <a href="#l4"><b>L4</b>Boyut, quantum</a>
-      <a href="#l5"><b>L5</b>Radyasyon</a>
-      <a href="#l6"><b>L6</b>MRI, PAI, bubbles</a>
-      <a href="#l7"><b>L7</b>Biosensors</a>
-      <a href="#extra"><b>+</b>Ek ve sorulmayanlar</a>
-    </nav>
-
-    <!-- ================= HOW TO WRITE ================= -->
-    <h2 id="how">0. Yazılı soruyu nasıl yazarsın</h2>
-    <p><b>Paragraf ezberlemen gerekmiyor.</b> Hoca hep "slayttaki şu kısmı yaz" diyor ve slaytları zaten <b>madde madde</b>. Yani istediği şey, slayttaki maddelerin <b>hepsinin</b> cevabında olması. Kelimesi kelimesine aynı cümle değil.</p>
-    <p>Örnek: photoacoustic için <i>"you should completely describe these three steps"</i> dedi. Burada <b>completely</b> = "üç adımın üçü de olsun, ortadaki adımı atlama". Hoca aynı derste süreci kendisi tek satırda özetledi: <i>"it's just laser, acoustic wave out, that's it."</i> Sadece bu satırı yazarsan eksik kalır, çünkü aradaki <b>heat → expansion</b> kısmı yok. Ama her adım için <b>bir kısa satır</b> yeterli. Aşağıdaki PAI kutusuna bak: üç satır.</p>
-    <div class="callout ok"><b>Her yazılı soru için kalıp:</b>
-      <ol style="margin:4px 0 0">
-        <li><b>Bir cümle tanım</b> ("X is …").</li>
-        <li><b>Numaralı maddeler</b>: slayttaki adımlar ya da parçalar, her biri bir satır, içinde <b>kalın yazılmış anahtar kelime</b>.</li>
-        <li>Mümkünse <b>bir örnek</b> (nanotube, gold NPs, MRI…).</li>
-      </ol>
-      Bu sayfadaki yeşil <b>Kâğıda yaz</b> kutuları tam bu kalıpta. <b>Kalın</b> kelimeler, puanın geldiği yerler; onları ezberle, cümleyi kendin kur. İngilizcen bozuk olsa da olur, anahtar kelime doğru olsun.</div>
-
-    <!-- ================= MAP ================= -->
-    <h2 id="map">1. Tek bakışta: 13 konu</h2>
-    <p>Sınavdan önceki son 10 dakika için bu tablo. <button id="hideBtn" type="button">Cevapları gizle (kendini test et)</button> <span class="small muted">Gizliyken bir cevaba tıklarsan açılır.</span></p>
-    <table class="t map" id="map-t">
-      <tr><th>#</th><th>Soru</th><th>Kısa cevap</th></tr>
-      <tr><td>1 · L2</td><td><a href="#k1">Nanoscience vs nanotechnology?</a></td><td class="a">science = <b>study</b> (theory); technology = <b>create and control</b> atom by atom at 1–100 nm (lab)</td></tr>
-      <tr><td>2 · L3</td><td><a href="#k2">What is a nanomaterial?</a> <span class="hot" lang="en">most likely</span></td><td class="a"><b>at least one dimension</b> in <b>1–100 nm</b>. (Math nano size = anything &lt; 1000 nm.)</td></tr>
-      <tr><td>3 · L3</td><td><a href="#k3">Which is a physical property?</a></td><td class="a"><b>melting point</b>. reactivity = chemical, conductivity = electrical, strength = mechanical, light emission = optical</td></tr>
-      <tr><td>4 · L4</td><td><a href="#k4">0D / 1D / 2D?</a> <span class="hot" lang="en">most likely</span></td><td class="a">number = dimensions still <b>big</b>. 2D = film, 1D = wire/tube, 0D = <b>nanoparticle</b></td></tr>
-      <tr><td>5 · L4</td><td><a href="#k5">All nanomaterials quantum?</a> <span class="hot" lang="en">most likely</span></td><td class="a"><b>No.</b> quantum = 1–10 nm. All quantum are nano, not all nano are quantum (50 nm)</td></tr>
-      <tr><td>6 · L5</td><td><a href="#k6">Ionizing vs non-ionizing?</a></td><td class="a">ionizing <b>breaks molecular bonds</b>: UV, X-ray, gamma. non-ionizing: radio, mobile, IR, visible</td></tr>
-      <tr><td>7 · L5–6</td><td><a href="#k7">Invasive vs non-invasive?</a></td><td class="a">invasive = ionizing: <b>CT, PET, SPECT</b>. non-invasive: <b>MRI, ultrasound</b>, optical</td></tr>
-      <tr><td>8 · L6</td><td><a href="#k8">Roles of NPs in MRI?</a></td><td class="a">two points: (1) magnetic NPs (<b>SPIO</b>) <b>as contrast agents</b>, (2) <b>carriers</b> for gadolinium → targeting, less toxicity</td></tr>
-      <tr><td>9 · L6</td><td><a href="#k9">Photoacoustic: 3 steps?</a></td><td class="a"><b>laser</b> → electrons excited, relax, <b>heat</b> → <b>thermal expansion</b> → sound wave → US transducer</td></tr>
-      <tr><td>10 · L6</td><td><a href="#k10">How do bubbles work?</a></td><td class="a"><b>oscillate</b> (expand, contract, no burst) → nonlinear response → higher <b>signal-to-noise</b></td></tr>
-      <tr><td>11 · L7</td><td><a href="#k11">Receptor? Is an antigen a receptor?</a></td><td class="a">receptor = <b>enzyme, antibody, nucleic acid, cell</b>. antigen = <b>analyte</b>, not receptor</td></tr>
-      <tr><td>12 · L7</td><td><a href="#k12">Amperometric / calorimetric / optical?</a> <span class="hot" lang="en">most likely</span></td><td class="a"><b>current</b> / <b>heat</b> / <b>light intensity</b></td></tr>
-      <tr><td>13 · L7</td><td><a href="#k13">Performance parameters?</a> <span class="hot" lang="en">most likely</span></td><td class="a">sensitivity = how sharply signal changes; selectivity = target among others; LOD = <b>minimum</b></td></tr>
-    </table>
-    <p class="small muted">Öncelik: L7 (12, 13) &gt; L4 (4, 5) &gt; L6 (9, 8, 10) &gt; L5 &gt; L2–L3. Hoca son derste "transducers ve performance slaytı en çok sorulacak kısımlar" dedi.</p>
-
-    <!-- ================= L2–L3 ================= -->
-    <h2 id="l2">Lecture 2–3: temel tanımlar</h2>
-
-    <div class="xp" id="k1">
-      <h3>1. Nanoscience vs nanotechnology</h3>
-      <div class="meta">L2 · yazılı da çıkabilir, test de</div>
-      <p class="idea">Fark tek kelime: <b>science = incelemek</b>, <b>technology = yapmak</b>.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <ul>
-          <li><b>Nanoscience</b> is the <b>study</b> of phenomena at the nano scale. It is <b>theoretical</b> (on paper, by computer).</li>
-          <li><b>Nanotechnology</b> is <b>creating and controlling</b> materials, devices and systems <b>atom by atom</b> in the <b>1–100 nm</b> range, using the new properties at that scale. It is <b>practical</b> (in the lab).</li>
-        </ul>
-      </div>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li>Şıkta <i>create, control, atom by atom, lab</i> geçiyorsa → nanotechnology.</li>
-        <li><s>"They are the same thing"</s></li>
-      </ul></div>
-      <p class="said">"If I ask you something in your mid-term exam, the differences between Nanoscience and nanotechnology."</p>
-    </div>
-
-    <div class="xp" id="k2">
-      <h3>2. What is a nanomaterial?</h3>
-      <div class="meta">L3 <span class="hot" lang="en">most likely</span></div>
-      <p class="idea">Sihirli sayı <b>100 nm</b>: bunun altında yüzey atomları çoğunluğa geçer ve özellikler değişir.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <ul>
-          <li>A nanomaterial is a material with <b>at least one dimension</b> in the range <b>1 to 100 nm</b>.</li>
-          <li>Why 100 nm: below it the <b>surface-to-volume ratio</b> increases sharply, so the <b>properties change</b>. A 500 nm material still behaves like a <b>bulk</b> material.</li>
-        </ul>
-      </div>
-      <p><b>Yan soru (L4):</b> <i>"What is nano size in mathematics?"</i> → <b>any size less than 1 micron (1000 nm)</b>. Yani 900 nm matematikte "nano"dur ama nanomaterial değildir.</p>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"all three dimensions in 1–100 nm"</s> (bu nanoparticle; nanomaterial için <b>bir</b> boyut yeter)</li>
-        <li><s>"a nanomaterial is 1–1000 nm"</s> (1000 = matematikteki nano size)</li>
-      </ul></div>
-      <p class="said">"Be careful of this description. This is very important. If somebody asks you what is a nanomaterial, you should say a material with at least one dimension in the range 1 to 100 nanometers."</p>
-    </div>
-
-    <div class="xp" id="k3">
-      <h3>3. Property categories: hangi örnek hangi kategori?</h3>
-      <div class="meta">L3 · sadece test (eşleştirme)</div>
-      <p class="idea">Hoca yüzde tablosunu sormayacak, ama <b>her kategorinin örneğini</b> bilmeni istiyor.</p>
-      <table class="t">
-        <tr><th>Category</th><th>Example</th><th>At nano size</th></tr>
-        <tr><td><b>Physical</b></td><td><b>melting point</b></td><td>decreases</td></tr>
-        <tr><td>Chemical</td><td>reactivity, catalytic activity</td><td>increases</td></tr>
-        <tr><td>Electrical</td><td>conductivity</td><td>changes</td></tr>
-        <tr><td>Mechanical</td><td>strength</td><td>changes</td></tr>
-        <tr><td>Optical</td><td>light emission, colour</td><td>changes (nano gold is red)</td></tr>
-      </table>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"Reactivity / conductivity / strength is a physical property"</s>. Physical olan sadece <b>melting point</b>.</li>
-      </ul></div>
-      <p class="said">"If I ask you about the physical properties, you should know that reactivity is a chemical, not a physical property … Melting point is a physical property."</p>
-    </div>
-
-    <!-- ================= L4 ================= -->
-    <h2 id="l4">Lecture 4: boyuta göre sınıflandırma ve quantum</h2>
-
-    <div class="xp" id="k4">
-      <h3>4. Classification by dimension: 0D, 1D, 2D</h3>
-      <div class="meta">L4 <span class="hot" lang="en">most likely</span></div>
-      <p class="idea">Tek kural: isimdeki sayı = <b>hâlâ büyük kalan</b> (100 nm üstü) boyut sayısı. Nano olan boyut sayısı <b>değil</b>.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <p>Nanomaterials are classified by how many dimensions are <b>still outside</b> the nano range:</p>
-        <ul>
-          <li><b>2D</b>: <b>one</b> dimension in 1–100 nm → nano-<b>film</b>, coating, layer, sheet (graphene).</li>
-          <li><b>1D</b>: <b>two</b> dimensions in 1–100 nm → nano<b>wire</b>, nanorod, nanofiber, nano<b>tube</b>.</li>
-          <li><b>0D</b>: <b>all three</b> dimensions in 1–100 nm → <b>nanoparticle</b>.</li>
-          <li>No dimension below 100 nm → <b>bulk</b> material.</li>
-        </ul>
-      </div>
-      <p><b>Yan soru:</b> <i>"What are nanoparticles?"</i> → <b>0D nanomaterials</b>: all three dimensions are in 1–100 nm, no free dimension left.</p>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"A 2D nanomaterial has two nano dimensions"</s> (tersi)</li>
-        <li><s>"A nanotube is 2D"</s> (1D)</li>
-        <li><s>"3D nanomaterial"</s> (yok; üç boyutu nano olan 0D)</li>
-      </ul></div>
-      <p class="said">"This slide and the whole information that I will talk in this slide could be a good option for your midterm exam… most probably I will ask you something from this slide."</p>
-    </div>
-
-    <div class="xp" id="k5">
-      <h3>5. Are all nanomaterials quantum materials?</h3>
-      <div class="meta">L4 <span class="hot" lang="en">most likely</span></div>
-      <p class="idea">100 nm'deki sıçramanın bir benzeri <b>10 nm</b>'de olur; oradan aşağısı quantum. 1–10, 1–100'ün içinde.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <ul>
-          <li><b>No.</b> Quantum materials have at least one dimension in <b>1–10 nm</b>.</li>
-          <li>1–10 nm is inside 1–100 nm, so <b>all quantum materials are nanomaterials</b>.</li>
-          <li>But <b>not all nanomaterials are quantum</b>: a <b>50 nm</b> material is nano but not quantum.</li>
-          <li>Quantum forms: <b>quantum well</b> (1 dimension), <b>quantum wire</b> (2), <b>quantum dot</b> (3).</li>
-        </ul>
-      </div>
-      <p class="said">"All quantum materials could be considered as nanomaterials, but not necessarily all nanomaterials could be considered as quantum materials. This is important to know."</p>
-    </div>
-
-    <!-- ================= L5 ================= -->
-    <h2 id="l5">Lecture 5: radyasyon ve invasive teknikler</h2>
-    <p>6 ve 7 birbirine bağlı: önce radyasyon türü, sonra hangi teknik onu kullanıyor.</p>
-
-    <div class="xp" id="k6">
-      <h3>6. Ionizing vs non-ionizing radiation</h3>
-      <div class="meta">L5 · yazılı adayı</div>
-      <p class="idea">Tek soru: radyasyonun hücredeki <b>bağları kıracak enerjisi</b> var mı?</p>
-      <div class="compare">
-        <div><span class="lab" style="color:var(--bad)">Ionizing (harmful)</span><b>Enough energy</b> to <b>break the molecular bonds</b> of our cells.<br>Examples: <b>UV, X-rays, gamma rays</b>.</div>
-        <div><span class="lab" style="color:var(--ok)">Non-ionizing (safe)</span><b>Not enough energy</b> to ionize our cells.<br>Examples: <b>radio/TV, mobile networks, IR, visible light</b>, power lines, low-frequency EM fields.</div>
-      </div>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"IR / visible light is ionizing"</s> · <s>"UV is non-ionizing"</s></li>
-      </ul></div>
-      <p class="said">"In your exam, if I ask you about ionizing and non-ionizing radiations, you should write these descriptions."</p>
-    </div>
-
-    <div class="xp" id="k7">
-      <h3>7. Invasive vs non-invasive imaging</h3>
-      <div class="meta">L5 yazılı adayı · L6'da "which is non-invasive?" testi</div>
-      <div class="compare">
-        <div><span class="lab" style="color:var(--bad)">Invasive</span>Uses <b>ionizing radiation</b>.<br><b>CT</b> (X-ray), <b>PET</b> and <b>SPECT</b> (gamma).</div>
-        <div><span class="lab" style="color:var(--ok)">Non-invasive</span>Uses <b>non-ionizing radiation</b> or only <b>sound</b>.<br><b>MRI</b> (magnetic field + radio waves), <b>ultrasound</b>, optical imaging.</div>
-      </div>
-      <p class="small muted">Optical imaging'e "minimally invasive" da denir, çünkü boya (dye) enjekte ediliyor.</p>
-      <p class="said">"Invasive techniques are techniques that use ionizing radiations such as ultraviolet, UV, X-ray and gamma ray." · "Which of these techniques are non-invasive, MRI could be considered as one of those techniques."</p>
-    </div>
-
-    <!-- ================= L6 ================= -->
-    <h2 id="l6">Lecture 6: görüntülemede nanoparçacıklar</h2>
-
-    <div class="xp" id="k8">
-      <h3>8. Roles of nanoparticles in MRI</h3>
-      <div class="meta">L6 · yazılı adayı · hoca "two points" dedi</div>
-      <p class="idea">Sorun: klasik contrast agent <b>gadolinium toksik</b> ve vücutta her yere dağılıyor. NP ya <b>ajanın yerine geçer</b>, ya ajanı <b>taşır</b>.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <ol>
-          <li><b>NPs as contrast agents:</b> <b>magnetic</b> nanoparticles (e.g. <b>SPIO</b>, superparamagnetic iron oxide) improve the image quality. They must be <b>biocompatible</b>.</li>
-          <li><b>NPs as carriers:</b> we <b>encapsulate</b> existing agents like <b>gadolinium</b> in NPs, coat them with a polymer and <b>target</b> the site, so they don't spread everywhere → <b>less toxicity and side effects</b>.</li>
-        </ol>
-        <p>In both cases the <b>magnetic properties must be kept</b>.</p>
-      </div>
-      <p class="said">"If I ask you what are the applications of nanoparticles or roles of nanoparticles in MRI? You can consider two points."</p>
-    </div>
-
-    <div class="xp" id="k9">
-      <h3>9. Photoacoustic imaging (PAI): procedure, advantages, agents</h3>
-      <div class="meta">L6 · yazılı adayı</div>
-      <p class="idea">Hikâye: <b>ışık girer → ısınır → genleşir → ses çıkar.</b> Adındaki "photo" = giren ışık, "acoustic" = çıkan ses.</p>
-      <div class="write"><span class="lab">Kâğıda yaz (üç adım, her biri bir satır)</span>
-        <ol>
-          <li>The tissue is illuminated with a <b>laser pulse</b>.</li>
-          <li>The light is absorbed, <b>electrons are excited</b>, they relax back to the ground state and the energy is released as <b>heat</b>.</li>
-          <li>The heated area expands (<b>thermal expansion</b>) and produces a <b>thermoacoustic (sound) wave</b>, detected by an <b>ultrasound transducer</b>.</li>
-        </ol>
-        <p><b>Advantages:</b> <b>anatomical, functional and molecular</b> contrast in a <b>single modality</b>; reaches <b>several centimeters</b> deep.</p>
-        <p><b>Contrast agents:</b> <b>gold NPs, silver NPs, SWNT</b>: they absorb light strongly and convert light to sound efficiently.</p>
-      </div>
-      <p class="small">Bu kutudaki her şey slayt 10'da var, fazlası yok. Hocanın "completely" demesi: 2. adımdaki <b>electrons → heat</b> ve 3. adımdaki <b>expansion → wave → transducer</b> eksik olmasın.</p>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"PAI is the same as ultrasound"</s>: PAI'de giren <b>ışık</b>, ultrasound'da giren de çıkan da <b>ses</b>.</li>
-        <li><s>"The detected signal in PAI is light"</s>: algılanan <b>ses</b>.</li>
-      </ul></div>
-      <p class="said">"If I ask you what is the procedure of photoacoustic, you should completely describe these three steps. If I ask you about the advantages, here it is. And if I ask you about the contrast agents, these are the contrast agents."</p>
-    </div>
-
-    <div class="xp" id="k10">
-      <h3>10. How do micro/nano-bubbles work in ultrasound?</h3>
-      <div class="meta">L6 · yazılı adayı</div>
-      <p class="idea">Baloncuklar <b>patlamaz</b>, ses dalgasında <b>şişip büzülür</b>; bu titreşim echo'yu güçlendirir.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <ul>
-          <li>Bubbles have a <b>gas core</b> and a <b>shell</b> (protein, lipid or <b>polymer</b>). They are the <b>only clinically used</b> ultrasound contrast agent and stay <b>intravascular</b>.</li>
-          <li>In ultrasound waves they undergo <b>volumetric oscillation</b>: they <b>expand and contract</b> (they don't burst).</li>
-          <li>This gives a <b>strong nonlinear acoustic response</b> and high backscatter → higher <b>signal-to-noise ratio</b> → sharp contrast.</li>
-        </ul>
-      </div>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"Bubbles work by bursting"</s> · <s>"Ultrasound is invasive"</s></li>
-      </ul></div>
-      <p class="said">"I have written in this specifically because if I ask you, you know how to respond me."</p>
-    </div>
-
-    <!-- ================= L7 ================= -->
-    <h2 id="l7">Lecture 7: biosensors (en önemli ders)</h2>
-    <div class="callout warn">Son derste "en çok neye odaklanalım?" sorusuna cevap: <i>"The transducers are important. The performance slide is very important. These are the parts that are mostly examinable."</i> Yani 12 ve 13.</div>
-
-    <div class="xp" id="k11">
-      <h3>11. Biosensor parts: analyte, receptor, transducer</h3>
-      <div class="meta">L7 · test ağırlıklı</div>
-      <p class="chain">analyte → receptor (biocatalyst) → transducer → readable signal</p>
-      <p class="idea"><b>Analyte</b> = aradığımız şey (örn. antigen). <b>Receptor</b> = ona yapışan parça. <b>Transducer</b> = olanı okunabilir sinyale çeviren parça.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <ul>
-          <li>A <b>biosensor</b> is a device that detects an <b>analyte</b> (a sign of a disease) to diagnose it.</li>
-          <li>The <b>receptor (biocatalyst)</b> binds the analyte by <b>lock and key</b>: an <b>enzyme, antibody, nucleic acid or cell</b>.</li>
-          <li>The <b>transducer</b> converts this biological signal into a <b>readable, quantifiable signal</b> (electrochemical, optical, thermal, piezoelectric).</li>
-        </ul>
-      </div>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"An antigen is a receptor"</s>: antigen = <b>analyte</b>, antibody = receptor.</li>
-        <li><s>"A thermal transducer is a receptor"</s></li>
-      </ul></div>
-      <p class="said">"If I ask you in your midterm next week if the antigens could be considered as receptor. Of course they are not. Antigens are analytes."</p>
-    </div>
-
-    <div class="xp" id="k12">
-      <h3>12. Amperometric, calorimetric, optical biosensors</h3>
-      <div class="meta">L7 <span class="hot" lang="en">most likely</span> · tanım yazdırabilir ya da test</div>
-      <p class="idea">Biosensor adını <b>neyi ölçtüğünden</b> alır: <b>ampere = akım</b>, <b>calorie = ısı</b>, <b>optic = ışık</b>.</p>
-      <div class="write"><span class="lab">Kâğıda yaz</span>
-        <ul>
-          <li><b>Amperometric</b>: measures the <b>current</b> produced in proportion to the bioreaction (more analyte → more current).</li>
-          <li><b>Calorimetric (thermal)</b>: measures the <b>heat</b> produced or absorbed by the bioreaction.</li>
-          <li><b>Optical</b>: measures the change in <b>light intensity</b> when the bioreaction happens.</li>
-        </ul>
-      </div>
-      <p class="small muted">Tablonun geri kalanı (test şıkkı olabilir): potentiometric = <b>potential</b> · piezo-electric = <b>mass</b> · thermistor = temperature · fluorescence = intensity, colour.</p>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"Amperometric measures heat"</s> (hocanın kendi örneği) · <s>"Potentiometric measures current"</s></li>
-      </ul></div>
-      <p class="said">"I expect you, specifically for your midterm, to memorize these three different transducers… I may ask you to write the definition of each of them, or … in a multiple choice question, which of them is correct."</p>
-    </div>
-
-    <div class="xp" id="k13">
-      <h3>13. Performance parameters of a biosensor</h3>
-      <div class="meta">L7 <span class="hot" lang="en">most likely</span> · tanım eşleştirme</div>
-      <p class="idea">Hoca tanımları <b>yer değiştirip</b> soruyor ("selectivity is how sharply…" → yanlış). Her tanımı doğru isimle eşle.</p>
-      <table class="t">
-        <tr><th>Parameter</th><th>Definition (write this)</th><th>Akılda tut</th></tr>
-        <tr><td><b>Selectivity</b></td><td>detects the <b>target analyte</b> among other <b>interfering</b> species</td><td>seçer</td></tr>
-        <tr><td><b>Sensitivity</b></td><td><b>how sharply</b> the signal changes with the concentration</td><td>hassas tepki</td></tr>
-        <tr><td><b>Response time</b></td><td>how long until the signal <b>stabilizes</b> at a reliable value</td><td>hız</td></tr>
-        <tr><td><b>Limit of detection</b></td><td>the <b>minimum</b> concentration it can detect (lower = earlier diagnosis)</td><td>minimum!</td></tr>
-        <tr><td><b>Accuracy</b></td><td><b>reproducibility</b> and reliability (same sample, same signal)</td><td>tekrar edilebilir</td></tr>
-        <tr><td><b>Durability</b></td><td><b>maintains the signal over time</b> (important in vivo)</td><td>zamanla</td></tr>
-        <tr><td><b>Cost, ease of use</b></td><td>affordable, easy to use at home</td><td></td></tr>
-      </table>
-      <div class="traps"><span class="lab">Tuzak</span><ul>
-        <li><s>"Selectivity = how sharply the signal changes"</s> (bu sensitivity)</li>
-        <li><s>"Limit of detection = the maximum concentration"</s> (minimum)</li>
-        <li><s>"Accuracy = maintaining the signal over time"</s> (bu durability)</li>
-      </ul></div>
-      <p class="said">"I may ask you, for example, if the selectivity is how sharply the signal change. Of course it is not. This is the definition for sensitivity. I may tell you that the limit of detection is the maximum concentration. Of course it is not."</p>
-    </div>
-
-    <!-- ================= EXTRA ================= -->
-    <h2 id="extra">Ek: "sorarım" demedi ama test şıkkında çıkabilir</h2>
-    <p>Bunları ezberleme, bir kez oku. Gördüğünde tanı yeter.</p>
-
-    <details class="more"><summary>L2–L3: nano, NBIC, neden boyut önemli</summary>
-      <ul>
-        <li><b>Nano = 10<sup>-9</sup></b> (Greek <i>nanos</i> = dwarf). 1 nm = 10<sup>-9</sup> m = 10 Å.</li>
-        <li><b>NBIC</b>: Nano, Bio, Info, Cogno; ortak amaç <b>enhancing human performance</b>.</li>
-        <li><b>S-curve</b>: nanotechnology şu an <b>rapid growth phase</b>'in başında.</li>
-        <li>Boyut küçülünce <b>surface-to-volume ratio</b> artar. <b>Catalytic activity</b> artar (activation energy düşer). <b>Melting point</b> düşer (yüzey atomları az bağlı, ilk onlar erir).</li>
-        <li><b>Carbon nanotube</b> küçük çapta bile iletir → çipler küçüldü. NPs <b>blood-brain barrier</b>'dan geçebilir; sağlık uygulamaları "the most important".</li>
-      </ul>
-    </details>
-    <details class="more"><summary>L5: önleme ve erken teşhis</summary>
-      <ul>
-        <li>Sağlıkta üç alan: <b>prevention, diagnosis, treatment</b>.</li>
-        <li>Prevention: antibacterial NPs (<b>Ag, ZnO, TiO<sub>2</sub></b>) maske, eldiven, PPE, sunscreen içinde. Uzun vadeli etkisi bilinmiyor → certificate, precaution.</li>
-        <li>Early diagnosis neden önemli: en iyi tedaviyi seçmek, tedavinin etkisini artırmak, kaynak israfını önlemek.</li>
-        <li>Diagnosis türleri: <b>imaging, biosensors, wearable sensors</b>. Tek bir imaging tekniği yetmez: her birinin artısı eksisi var.</li>
-        <li>Optical imaging: NIR + dye (<b>ICG</b>); zayıf yanı derine inmemesi. Nano probes: gold NPs, upconversion NPs, quantum dots.</li>
-      </ul>
-    </details>
-    <details class="more"><summary>L6: tekniklerin artı ve eksileri, PET/SPECT</summary>
-      <table class="t">
-        <tr><th>Technique</th><th>Pros</th><th>Cons</th></tr>
-        <tr><td>MRI</td><td>high spatial resolution, no depth limit</td><td>low sensitivity, high cost, long time</td></tr>
-        <tr><td>PET / SPECT</td><td>unlimited depth, high sensitivity</td><td>poor resolution, radiation risk</td></tr>
-        <tr><td>CT</td><td>high resolution, strong penetration</td><td>radiation risk</td></tr>
-        <tr><td>Ultrasound</td><td>high sensitivity, real-time, low cost</td><td>poor resolution, operator-dependent</td></tr>
-        <tr><td>Optical</td><td>high sensitivity, real-time, cheap</td><td>low resolution, shallow</td></tr>
-      </table>
-      <ul>
-        <li><b>PET</b>: <b>positron</b> yayan isotope (<sup>18</sup>F) → annihilation → gamma. <b>SPECT</b>: doğrudan <b>gamma</b> yayan isotope (technetium-99m). NP rolü: radiotracer'ı hedefe taşımak.</li>
-        <li><b>Multimodal imaging</b>: teknikleri birleştirmek (PET/CT, SPECT/CT). CT anatomy, SPECT function gösterir.</li>
-      </ul>
-    </details>
-    <details class="more"><summary>L7: in vivo / ex vivo, nanomalzeme nerede</summary>
-      <ul>
-        <li><b>In vivo</b> = vücut içi (implantable, monitoring). <b>Ex vivo</b> = vücut dışı (glucose sensor, wearable).</li>
-        <li>Nanomalzemeler (nanofibers, functionalized NPs, graphene) receptor'ları <b>stabilize</b> eder, transducer'ı verimli ve küçük yapar → wearable, implantable.</li>
-      </ul>
-    </details>
-
-    <h3 style="margin-top:28px">Sorulmayacaklar (hoca kendisi söyledi)</h3>
-    <ul>
-      <li>Derste izletilen <b>kısa videolar</b>.</li>
-      <li><b>Tarihler</b>, tarihçe; "hangi boyut hangi renk" sayıları.</li>
-      <li>L3'teki yüzey atomu <b>yüzde tablosu</b>.</li>
-      <li>Boyut dışındaki <b>diğer sınıflandırmalar</b> (origin, composition…).</li>
-    </ul>
-
-    <div class="callout" style="margin-top:28px"><b>Sonra:</b> <a href="mock.html">Deneme vize sınavı</a> (test + yazılı). Yukarıdaki tabloyu <b>Cevapları gizle</b> ile bir kez daha çöz. Dinleyerek tekrar: <a href="videos.html">İngilizce videolar</a>.</div>
-    <p class="small muted">Ders ders anlatım: <a href="learn.html?ch=2">L2</a> · <a href="learn.html?ch=3">L3</a> · <a href="learn.html?ch=4">L4</a> · <a href="learn.html?ch=5">L5</a> · <a href="learn.html?ch=6">L6</a> · <a href="learn.html?ch=7">L7</a>.</p>
-  </main>
-  <script>
-    document.body.dataset.course = 'ens010';
-    (function () {
-      var t = document.getElementById('map-t'), b = document.getElementById('hideBtn');
-      b.addEventListener('click', function () {
-        var hide = !t.classList.contains('hide');
-        t.classList.toggle('hide', hide);
-        t.querySelectorAll('td.a.open').forEach(function (c) { c.classList.remove('open'); });
-        b.textContent = hide ? 'Cevapları göster' : 'Cevapları gizle (kendini test et)';
-      });
-      t.addEventListener('click', function (e) {
-        var c = e.target.closest('td.a');
-        if (c && t.classList.contains('hide')) c.classList.toggle('open');
-      });
-    })();
-  </script>
-  <script src="../assets/js/common.js"></script>
-</body>
-</html>
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Midterm özeti · ENS010</title><link rel="stylesheet" href="../assets/css/style.css"><style>h2{border-top:1px solid var(--text);padding-top:18px;margin-top:38px}table.t{width:100%;margin:16px 0}th,td{vertical-align:top}.scroll{overflow-x:auto}.source{color:var(--muted);font: .8rem var(--mono)}.answer-hidden .answer{visibility:hidden}button{margin:6px 0}details{border-top:1px solid var(--line);padding:12px 0}summary{cursor:pointer}li{margin:6px 0}.feedback,.model{border-left:3px solid var(--accent);padding:10px 14px}.question{border-top:1px solid var(--line);padding:20px 0}.options{display:grid;gap:8px}.options button{text-align:left;margin:0;width:100%;white-space:normal}.options button[aria-pressed=true]{border:2px solid var(--accent)}textarea{width:100%;min-height:90px;background:var(--panel);color:var(--text);border:1px solid var(--line);font:inherit;padding:10px}fieldset{min-width:0;border:0;padding:0}legend{font-weight:600;margin-bottom:12px}@media(max-width:600px){td,th{padding:7px!important}h1{font-size:2rem}}</style></head><body data-root=".." data-course="ens010" data-title="Midterm özeti" data-activity="ens010-summary"><main><div class="source">ENS010 · Lectures 1–7 · Midterm</div><h1>Midterm özeti</h1><nav class="row"><a href="index.html">Course</a><a href="ozet.html">Midterm özeti</a><a href="mock.html">Mock midterm</a></nav><p class="lead">Vizeye yönelik 20–30 dakikalık tekrar: önce çoktan seçmeli tuzakları ayır, sonra yazılı soruların adımlarını kendin açıkla.</p>
+<p><b>Midterm</b> %50, <b>final</b> %50. Vize kapsamı Lectures 1–7. Çoğu soru <b>multiple choice</b>; bir veya iki <b>written question</b> bekleniyor. Soru sayısı ve bölüm puanları kesin açıklanmış değil. “6 MC + 2 written” hocanın örneği.</p>
+<p>Kaynak sınırı: slaytlar ve hocanın kayıtlı açıklamaları. Sınıfta açılan kısa videolar, tarih ezberi ve belirli boyuta karşılık gelen renk sayıları sorulmuyor. Tedavi konuları vizeden sonra.</p>
+<nav class="row"><a href="#mc">MC tuzakları</a><a href="#written">Yazılı noktaları</a><a href="#test">Cevapları gizle ve dene</a></nav>
+<h2 id="mc">1. Multiple choice: birbirine yakın seçenekleri ayır</h2>
+<p>Önce soru kökündeki eylemi bul: <b>study</b> mi, <b>create</b> mi? Sonra boyut, sinyal veya ölçülen parametreyi ayır. Aşağıdaki karşılaştırmalar aynı konudaki yanlış eşleştirmeleri hedefler.</p>
+<h3>Lecture 2: ölçek ve amaç</h3>
+<div class="scroll"><table class="t"><tr><th>Terim</th><th>Ayırıcı nokta</th><th>Tuzak</th></tr>
+<tr><td><b>Nano</b></td><td>10⁻⁹; birimin milyarda biri.</td><td>Yalnız uzunluk değildir: nm, ns, ng olabilir.</td></tr>
+<tr><td><b>Nanoscience</b></td><td>Nano ölçekte olguları incelemek.</td><td>İşlevsel cihaz üretme göreviyle karıştırma.</td></tr>
+<tr><td><b>Nanotechnology</b></td><td>Maddeyi kontrol ederek malzeme veya cihaz oluşturmak.</td><td>Hocanın kısa ayrımı: study / create.</td></tr>
+<tr><td><b>NBIC</b></td><td>Nano, Bio, Info, Cogno.</td><td>Ortak hedef: <b>enhancing human performance</b>.</td></tr>
+<tr><td><b>Size and shape</b></td><td>Nano ölçekte optik özellikleri değiştirebilir.</td><td>Altın veya gümüş örneklerinde sayıları değil ilişkiyi öğren.</td></tr></table></div>
+<p><b>Unit conversion</b>: büyük birime geçince sayı küçülür. 1 µm = 1000 nm; 1 nm = 10 Å.</p>
+<ol><li>Verilen değer: <b>100 nm</b>.</li><li>µm için 1000'e böl: 100 / 1000 = <b>0.1 µm</b>.</li><li>Å için 10 ile çarp: 100 × 10 = <b>1000 Å</b>.</li></ol>
+<p>Kendi kontrolün: 0.1 µm değerini tekrar nm'ye çevirince 100 elde etmelisin. Buradaki sayılar birim alıştırmasıdır; dışlanan renk–boyut ezberiyle aynı şey değildir.</p>
+<h3>Lecture 3: küçülünce yüzeyin payı artar</h3>
+<p><b>Surface area / volume</b> oranı yükselir. Birimi m²/m³. Atomlar küçülmez ve element değişmez; yüzeydeki atomların toplam içindeki payı artar. Yüzey atomlarının daha az komşusu vardır: <b>unsaturated bonds</b>.</p>
+<div class="scroll"><table class="t"><tr><th>Hocanın kategorisi</th><th>Örnek</th><th>Ne ile karışır?</th></tr>
+<tr><td><b>Physical</b></td><td><b>Melting point</b></td><td>Bu dersin listesinde conductivity değildir.</td></tr>
+<tr><td><b>Chemical</b></td><td><b>Reactivity / catalytic activity</b></td><td>Reactivity = physical seçeneği yanlış.</td></tr>
+<tr><td><b>Electrical</b></td><td><b>Conductivity</b></td><td>CNT için çap ve bükülme önemlidir.</td></tr>
+<tr><td><b>Mechanical</b></td><td><b>Strength</b></td><td>Light emission ile eşleştirme.</td></tr>
+<tr><td><b>Optical</b></td><td><b>Light emission</b></td><td>Renk değişimi yeni element demek değildir.</td></tr></table></div>
+<p><b>Activation energy</b> azalınca derste anlatılan <b>catalytic activity</b> artar. Küçük altın parçacıklarında <b>melting point</b> düşer: yüzey atomları daha az komşuya bağlıdır ve hareket etmek için daha az enerji ister. Sayısal erime sıcaklıklarını ezberlemek yerine bu zinciri açıkla.</p>
+<h3>Lecture 4: isimdeki sayı küçük boyutları saymaz</h3>
+<p><b>Nanomaterial</b>: en az bir boyutu 1–100 nm. “Üç boyutu da” koşulu ekleme. Dersin sınıflandırmasındaki sayı, büyük kalan <b>free dimensions</b> sayısıdır.</p>
+<div class="scroll"><table class="t"><tr><th>Nano boyut sayısı</th><th>Serbest boyut</th><th>İsim</th><th>Örnek</th></tr>
+<tr><td>1</td><td>2</td><td><b>2D</b></td><td>Film, coating, graphene sheet</td></tr>
+<tr><td>2</td><td>1</td><td><b>1D</b></td><td>Wire, rod, tube, fiber</td></tr>
+<tr><td>3</td><td>0</td><td><b>0D</b></td><td>Nanoparticle</td></tr></table></div>
+<p><b>0D</b> fiziksel boyut yok demek değildir. Bu şemada bütün boyutlar 100 nm üzerindeyse malzeme <b>bulk</b> olur. “3D nano yok” ifadesi bu dersin serbest-boyut şemasına aittir.</p>
+<p>Yaklaşık 10 nm altı için dersteki adlar: bir küçük boyut <b>quantum well</b>, iki <b>quantum wire</b>, üç <b>quantum dot</b>. Hoca sınırın malzemeye göre değişebildiğini de belirtir. Dersin 1–10 nm aralığı, 1–100 nm içinde olduğundan <b>quantum → nano</b>; tersi zorunlu değil. Örnek: 50 nm parçacık nano olabilir ama bu şemada quantum değildir.</p>
+<div class="callout warn">“<b>Nano in mathematics</b> = 1000 nm altı” hocanın kullandığı ayrı bir ifade. Bunu <b>nano prefix = 10⁻⁹</b> veya <b>nanomaterial = 1–100 nm</b> tanımı yerine kullanma.</div>
+<h3>Lectures 5–6: yöntemin giriş ve çıkış sinyalini izle</h3>
+<p><b>Prevention</b> nedeni azaltmayı hedefler. Nano, maske ve sprey gibi mevcut yöntemlerde malzemeyi geliştirir. Örnekler: tekstilde <b>silver NPs</b>, güneş koruyucuda <b>ZnO / TiO₂</b>. Hoca uzun dönem etkiler ve <b>genotoxicity</b> konusunda dikkat ister.</p>
+<p><b>Early diagnosis</b> daha uygun tedavi seçimi, tedavi etkinliği ve kaynakların gereksiz kullanımını azaltmak için önemlidir. Tanı kategorileri: <b>imaging, biosensors, wearable sensors</b>.</p>
+<div class="scroll"><table class="t"><tr><th>Yöntem</th><th>Sinyal / mekanizma</th><th>Nano katkısı</th></tr>
+<tr><td><b>Optical</b></td><td>Işık; derinlik sınırlı.</td><td>Gold NPs, UCNPs, quantum dots. UCNP: NIR alır, UV/visible verir.</td></tr>
+<tr><td><b>MRI</b></td><td>Manyetik alan → RF pulse → protonların yeniden hizalanması.</td><td>Manyetik contrast agent veya taşıyıcı.</td></tr>
+<tr><td><b>PET</b></td><td>Positron + electron → annihilation → gamma.</td><td>Radiotracer taşıma ve targeting.</td></tr>
+<tr><td><b>SPECT</b></td><td>Tracer doğrudan gamma yayar.</td><td>Hedefe taşımayla dağılımı iyileştirme.</td></tr>
+<tr><td><b>Photoacoustic</b></td><td>Laser → heat → expansion → sound.</td><td>Au NPs, Ag NPs, SWNT ile absorpsiyon.</td></tr>
+<tr><td><b>Ultrasound</b></td><td>Sound → echo.</td><td>Bubble oscillation ile daha güçlü akustik yanıt.</td></tr>
+<tr><td><b>SPECT/CT</b></td><td>SPECT: function; CT: anatomy.</td><td>Tek yöntem yerine tamamlayıcı bilgi.</td></tr></table></div>
+<p><b>Non-ionizing</b> ile “iğne kullanılmaz” aynı şey değildir. Ders <b>MRI, ultrasound, optical</b> grubuna non-invasive; <b>PET, SPECT, CT</b> grubuna invasive der. Ancak boya enjeksiyonlu optical için minimally invasive ifadesini de kullanır. Bunları tek bir mutlak tanıma sıkıştırma.</p>
+<h3>Lecture 7: hedef, tanıyan parça ve sinyal dönüştürücü</h3>
+<p><b>Analyte</b> aranan hedeftir. <b>Receptor</b> onu tanır. <b>Transducer</b> biyolojik değişimi okunabilir sinyale çevirir. Antigen–antibody örneğinde antigen hedeftir, antibody reseptördür. Enzyme, nucleic acid ve cell de receptor olabilir.</p>
+<div class="scroll"><table class="t"><tr><th>Karıştırılan terimler</th><th>Ayırıcı soru</th></tr>
+<tr><td><b>Selectivity</b> / <b>Sensitivity</b></td><td>Doğru hedefi ayırıyor mu? / Konsantrasyon değişince sinyal ne kadar değişiyor?</td></tr>
+<tr><td><b>Response time</b> / <b>Durability</b></td><td>Ne zaman sabitleniyor? / Sinyali ne kadar süre koruyor?</td></tr>
+<tr><td><b>Limit of detection</b></td><td>Algılanabilen minimum konsantrasyon. Maximum değildir.</td></tr>
+<tr><td><b>Accuracy (precision)</b></td><td>Mevcut ders notlarında reproducibility ve reliability ile anlatılıyor. Burada hocanın adlandırması kullanılıyor.</td></tr></table></div>
+<p>Birinci nano katmanı <b>bioreceptor stabilization</b> sağlar; ikinci katman <b>electrical interface</b> ve küçük transducer yapısını geliştirir. Bunları analyte üretmek veya reseptörü kaldırmak olarak yorumlama.</p>
+<h2 id="written">2. Written questions: hocanın işaretlediği noktalar</h2>
+<p>Bunlar soru garantisi değil, mevcut notlarda hocanın “tanımla / prosedürü açıkla” diye vurguladığı konular. Her cevabı önce kendi sözlerinle kur. Aşağıdaki İngilizce satırlar yalnız gerekli anahtarları gösterir.</p>
+<h3>Nanoscience / nanotechnology ve nanomaterial</h3><p class="source">L2–4</p><p>İncelemek ile oluşturmayı ayır; tanımda en az bir boyut koşulunu koru.</p><ul><li lang="en">Nanoscience: study of nanoscale phenomena.</li><li lang="en">Nanotechnology: create and control functional materials and devices.</li><li lang="en">Nanomaterial: at least one dimension in 1–100 nm.</li></ul><h3>Ionizing / non-ionizing ve dersteki invasive adları</h3><p class="source">L5</p><p>Enerjinin moleküllere etkisini açıkla; sonra dersin örneklerini ver. Optical boya enjeksiyonu için kullanılan farklı ifadeyi hatırla.</p><ul><li lang="en">Ionizing: can ionize matter and break molecular bonds.</li><li lang="en">Course examples: CT, PET, SPECT — invasive.</li><li lang="en">Course non-ionizing group: MRI, ultrasound, optical — non-invasive; injected dye: minimally invasive.</li></ul><h3>Photoacoustic imaging: üç adım</h3><p class="source">L6</p><p>Sadece “laser kullanır” yeterli değil. Enerjinin nasıl sese dönüştüğünü sırasıyla bağla.</p><ul><li lang="en">Laser pulse → optical absorption and electron excitation.</li><li lang="en">Electron relaxation → heat release.</li><li lang="en">Thermal expansion → thermoacoustic wave → ultrasound transducer.</li><li lang="en">Agents: Au NPs, Ag NPs, SWNT. Contrast: anatomical, functional, molecular.</li></ul><h3>MRI içinde nanoparticle rolleri</h3><p class="source">L6</p><p>İki ayrı rolü söyle; taşıma işleminin koruması gereken özelliği ekle.</p><ul><li lang="en">Magnetic nanoparticles as contrast agents.</li><li lang="en">Carriers: encapsulation, stabilization, biocompatible coating, targeting.</li><li lang="en">Reduce toxicity / side effects; preserve magnetic properties.</li></ul><h3>Ultrasound bubbles nasıl çalışır?</h3><p class="source">L6</p><p>Baloncuklar patladığı için değil, genişleyip daraldığı için yanıt güçlenir.</p><ul><li lang="en">Volumetric oscillation: expansion and contraction.</li><li lang="en">Strong nonlinear acoustic response / backscatter.</li><li lang="en">Improved signal-to-noise ratio and contrast.</li></ul><h3>Üç biosensor türü</h3><p class="source">L7</p><p>Tür adıyla ölçülen büyüklüğü eşleştir. Bu üçlü özellikle vurgulanmış.</p><ul><li lang="en">Amperometric: current proportional to the bioreaction.</li><li lang="en">Calorimetric / thermal: heat produced or absorbed.</li><li lang="en">Optical: change in light intensity.</li></ul><h3>Biosensor performance</h3><p class="source">L7</p><p>Tanımları birbiri yerine kullanma. Düşük detection limit erken tanıyı destekler.</p><ul><li lang="en">Selectivity: target among interfering species.</li><li lang="en">Sensitivity: signal change with analyte concentration.</li><li lang="en">Response time: time to a stable reliable value.</li><li lang="en">Limit of detection: minimum detectable concentration.</li><li lang="en">Course accuracy (precision): reproducibility / reliability. Durability: signal maintained over time.</li></ul><h2 id="test">3. Kendini dene: cevapları gizle</h2><p>Her satırın düzeltmesini söyle. Bir terimi karıştırırsan ilgili lecture'a dön; sonra aynı satırı yeniden dene.</p><button id="toggle" type="button" aria-pressed="false" aria-controls="selftest">Cevapları gizle / Hide answers</button><div class="scroll"><table class="t" id="selftest"><thead><tr><th>İddia veya soru</th><th>Cevap ve kısa gerekçe</th></tr></thead><tbody><tr><td>Reactivity bir physical property midir?</td><td class="answer">Hayır: <b>chemical</b>. Physical örneği <b>melting point</b>.</td></tr><tr><td>Bütün boyutlar nano olmak zorunda mı?</td><td class="answer">Hayır: <b>at least one dimension</b> yeterli.</td></tr><tr><td>2D: iki nano boyut mu?</td><td class="answer">Hayır: iki <b>free dimensions</b>, bir nano boyut.</td></tr><tr><td>Her nano malzeme quantum mudur?</td><td class="answer">Hayır. Dersteki şemada <b>quantum → nano</b>.</td></tr><tr><td>PAI ile ultrasound aynı giriş sinyalini mi kullanır?</td><td class="answer">Hayır: <b>laser</b> / <b>sound</b>.</td></tr><tr><td>SPECT gamma için annihilation mı bekler?</td><td class="answer">Hayır: <b>direct gamma emission</b>.</td></tr><tr><td>CT / SPECT hangi bilgiyi sağlar?</td><td class="answer"><b>Anatomy</b> / <b>function</b>.</td></tr><tr><td>MRI taşıyıcıya eklenince magnetism kaybolabilir mi?</td><td class="answer">Contrast görevi için <b>magnetic properties</b> korunmalı.</td></tr><tr><td>Bubbles kontrast için patlar mı?</td><td class="answer">Dersteki mekanizma <b>volumetric oscillation</b>.</td></tr><tr><td>Antigen receptor müdür?</td><td class="answer">Bu örnekte <b>analyte</b>; antibody <b>receptor</b>.</td></tr><tr><td>Amperometric heat mi ölçer?</td><td class="answer">Hayır: <b>current</b>. Heat = <b>calorimetric</b>.</td></tr><tr><td>Selectivity = signal slope mu?</td><td class="answer">Hayır: slope <b>sensitivity</b>; selectivity hedefi ayırır.</td></tr><tr><td>Detection limit maximum mudur?</td><td class="answer">Hayır: <b>minimum detectable concentration</b>.</td></tr><tr><td>100 nm kaç µm ve Å?</td><td class="answer"><b>0.1 µm; 1000 Å</b>.</td></tr><tr><td>Non-ionizing, enjeksiyon yok anlamına mı gelir?</td><td class="answer">Hayır. Derste boya enjeksiyonu için <b>minimally invasive</b> de kullanılır.</td></tr></tbody></table></div></main><script src="data.js"></script><script src="../assets/js/common.js"></script><script>document.getElementById('toggle').onclick=function(){const hidden=document.getElementById('selftest').classList.toggle('answer-hidden');this.setAttribute('aria-pressed',String(hidden));this.textContent=hidden?'Cevapları göster / Show answers':'Cevapları gizle / Hide answers';};</script></body></html>
