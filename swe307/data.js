@@ -5739,3 +5739,100 @@ window.COURSE = {
     }
   }
 };
+
+/* hub: exam and extra resources (assets/js/hub.js) */
+Object.assign(window.COURSE, {
+ "examFormat": "Project 20% · Midterm 30% (week 8, chapters 1–7) · Final 50%.",
+ "exam": {
+  "title": "Midterm",
+  "when": "Week 8 (around 11–12 Nov 2026)",
+  "scope": "Chapters 1–7",
+  "length": "50 minutes",
+  "parts": [
+   [
+    "Discussion",
+    30,
+    "Systems Analyst, Verification vs Validation, Waterfall vs Agile, FR vs NFR"
+   ],
+   [
+    "True/False + fill-in",
+    20,
+    "short definitions; give the reason for every False"
+   ],
+   [
+    "Function Point Analysis",
+    30,
+    "UFP → VAF → AFP from a table"
+   ],
+   [
+    "Fishbone",
+    20,
+    "purpose and drawing, then apply it to a scenario"
+   ]
+  ],
+  "plan": [
+   [
+    "past.html",
+    "Solve both past papers on paper, then compare",
+    "45 min"
+   ],
+   [
+    "drill.html",
+    "Function point drill 3–4 times until it is automatic",
+    "30 min"
+   ],
+   [
+    "past.html#a4b",
+    "Draw one fishbone from memory",
+    "15 min"
+   ],
+   [
+    "videos.html",
+    "Watch the 16 short videos (1.25× is fine)",
+    "22 min"
+   ],
+   [
+    "ozet.html",
+    "Summary: hide the answers in the first table and recall",
+    "20 min"
+   ]
+  ]
+ },
+ "resources": [
+  {
+   "kind": "past",
+   "href": "past.html",
+   "title": "Past midterms",
+   "meta": "2 papers, solved",
+   "desc": "The real format, every question with a short model answer. Start here."
+  },
+  {
+   "kind": "summary",
+   "href": "ozet.html",
+   "title": "Vize özeti",
+   "meta": "Türkçe · 28 topics",
+   "desc": "Turkish explanations, English terms, every calculation step by step."
+  },
+  {
+   "kind": "drill",
+   "href": "drill.html",
+   "title": "Hesap pratiği",
+   "meta": "10 generators",
+   "desc": "FP, COCOMO, engineering rules, critical path, sampling with new numbers each time."
+  },
+  {
+   "kind": "mock",
+   "href": "mock.html",
+   "title": "Mock midterm",
+   "meta": "60 MC + 6 written",
+   "desc": "Right or wrong as soon as you pick; model answers for the written ones."
+  },
+  {
+   "kind": "videos",
+   "href": "videos.html",
+   "title": "Explainer videos",
+   "meta": "16 videos · 22 min",
+   "desc": "One idea each, drawn and narrated in English, with the slides' examples."
+  }
+ ]
+});

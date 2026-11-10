@@ -839,3 +839,43 @@ window.COURSE = window.UNI480 = {
     },
   },
 };
+
+/* hub: exam and extra resources (assets/js/hub.js) */
+Object.assign(window.COURSE, {
+ "exam": {
+  "title": "Midterm",
+  "when": "7 Nov 2026",
+  "scope": "Weeks 1–4",
+  "done": true,
+  "parts": [
+   [
+    "Multiple choice",
+    null,
+    "the final is multiple choice too"
+   ]
+  ]
+ },
+ "resources": [
+  {
+   "kind": "summary",
+   "href": "ozet.html",
+   "title": "Vize özeti",
+   "meta": "Türkçe anlatım, English terms",
+   "desc": "All four weeks plus what Dr. Arsan stressed, on one page."
+  },
+  {
+   "kind": "mock",
+   "href": "mock.html",
+   "title": "Mock midterm",
+   "meta": "74 questions, two forms",
+   "desc": "Written from the slides and the recorded lectures."
+  },
+  {
+   "kind": "videos",
+   "href": "videos.html",
+   "title": "Explainer videos",
+   "meta": "5 videos · Week 4 · 7.5 min",
+   "desc": "Thresholds, confusion matrix, prevalence, prediction to action, trust."
+  }
+ ]
+});

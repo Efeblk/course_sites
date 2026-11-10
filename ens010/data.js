@@ -638,3 +638,48 @@ window.COURSE = window.ENS010 = {
     },
   },
 };
+
+/* hub: exam and extra resources (assets/js/hub.js) */
+Object.assign(window.COURSE, {
+ "exam": {
+  "title": "Midterm",
+  "when": "Week 8 (around 9 Nov), on campus",
+  "done": true,
+  "scope": "Lectures 1–7",
+  "parts": [
+   [
+    "Multiple choice",
+    null,
+    "mostly"
+   ],
+   [
+    "Written",
+    null,
+    "one or two classical questions"
+   ]
+  ]
+ },
+ "resources": [
+  {
+   "kind": "summary",
+   "href": "ozet.html",
+   "title": "Vize özeti",
+   "meta": "sınav noktaları",
+   "desc": "Every place Dr. Zarrabi said \"I may ask you\", with the answer to write in English."
+  },
+  {
+   "kind": "mock",
+   "href": "mock.html",
+   "title": "Mock midterm",
+   "meta": "62 questions",
+   "desc": "Multiple choice plus written questions with model answers."
+  },
+  {
+   "kind": "videos",
+   "href": "videos.html",
+   "title": "Study videos",
+   "meta": "6 videos + 1 combined · 24 min",
+   "desc": "One narrated, illustrated English video per lecture."
+  }
+ ]
+});

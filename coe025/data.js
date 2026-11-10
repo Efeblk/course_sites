@@ -722,3 +722,61 @@ window.COURSE = window.COE025 = {
     },
   },
 };
+
+/* hub: exam and extra resources (assets/js/hub.js) */
+Object.assign(window.COURSE, {
+ "exam": {
+  "title": "Midterm",
+  "when": "9 Nov 2026",
+  "scope": "all weeks (1, 2, 3, 4, 6)",
+  "done": true,
+  "parts": [
+   [
+    "Multiple choice",
+    null
+   ],
+   [
+    "Two open-ended",
+    null,
+    "half a page each: verdict + mechanism"
+   ]
+  ]
+ },
+ "resources": [
+  {
+   "kind": "summary",
+   "href": "ozet.html",
+   "title": "Vize özeti",
+   "meta": "Türkçe",
+   "desc": "Built on the lecturer's announcement; every hand calculation step by step."
+  },
+  {
+   "kind": "scenarios",
+   "href": "senaryo.html",
+   "title": "Senaryo soruları",
+   "meta": "3 solved scenarios",
+   "desc": "Situation → small calculation → decision, as on paper."
+  },
+  {
+   "kind": "drill",
+   "href": "drill.html",
+   "title": "Hesap pratiği",
+   "meta": "hand calculations",
+   "desc": "Every worked example from the study slides with new easy numbers."
+  },
+  {
+   "kind": "mock",
+   "href": "mock.html",
+   "title": "Mock midterm",
+   "meta": "89 questions",
+   "desc": "Multiple choice plus open-ended questions with model answers."
+  },
+  {
+   "kind": "videos",
+   "href": "videos.html",
+   "title": "Study videos",
+   "meta": "5 videos + 1 combined · 10 min",
+   "desc": "One short, slow English video per week: big ideas only."
+  }
+ ]
+});

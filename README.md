@@ -70,6 +70,8 @@ assets/js/ml.js       seeded RNG, least squares, entropy, colors (COE305, UNI480
 <course>/data.js      all content for a course: takeaways, quizzes, cards, games (sets window.COURSE)
 <course>/guide.js     step-by-step guided lessons per chapter (sets window.GUIDE)
 <course>/{index,learn,test,quiz,cards,game}.html   generic hub + engines (?ch=N / ?id=game); identical in every course folder
+assets/js/hub.js      the course hub layout: next exam + "start here" plan, everything the course has (with counts),
+                      then one row per chapter; reads COURSE.exam and COURSE.resources from data.js
 coe303/chN/, coe025/wN/, coe305/wN/, uni480/wN/, ens010/lN/   custom simulations per chapter / week / lecture
 materials/            raw course files — local only, gitignored (copyrighted)
 ```
@@ -95,3 +97,6 @@ Pages opened inside a lesson (in an iframe) hide their top bar and report their 
 1. Copy `coe303/{index,learn,test,quiz,cards,game}.html` into the new folder unchanged.
 2. Write its `data.js` (`window.COURSE = { id, code, name, chapters, games, ... }`) and `guide.js`.
 3. Register the folder in `COURSES` in `assets/js/common.js` and add a card to `index.html`.
+4. Exam pages (summary, mock, drill, past papers, videos) are listed in `COURSE.resources` and the exam in `COURSE.exam`
+   (`{ title, when, scope, length, parts: [[name, points, note]], plan: [[href, label, minutes]], done }`) at the end of
+   `data.js`. The hub and the home page show them; do not hand-edit `<course>/index.html`.

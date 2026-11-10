@@ -7,117 +7,12 @@
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body data-root="..">
-  <main>
-    <div class="mono small muted" id="code"></div>
-    <h1 id="h" style="font-size:2.8rem;margin-top:4px"></h1>
-    <p class="lead" id="meta"></p>
-    <div class="callout small"><b>How to study:</b> open the guided lesson for the week your class is on and follow it step by step. The labs, games, quiz and flashcards are all built into the lesson. You only need the "extra practice" lists under each week for quick review.</div>
-    <div class="callout ok small"><b>Midterm tomorrow?</b> <a href="ozet.html">Vize özeti (Türkçe anlatım, İngilizce terimler)</a>: all four weeks plus what Dr. Arsan stressed, on one page. Then take the <a href="mock.html">mock midterm</a> (two forms, 74 questions).</div>
-    <div class="callout small"><b>Watch:</b> <a href="videos.html">five short explainer videos</a> on Week 4: thresholds, the confusion matrix, prevalence and the 99% accuracy trap, prediction to action, and augmented intelligence.</div>
-    <nav class="row toc" id="toc"></nav>
-    <div id="chapters"></div>
-  </main>
+  <!-- generic course hub: identical in every course folder; the layout is assets/js/hub.js -->
+  <main><p class="muted">Loading…</p></main>
   <script src="data.js"></script>
   <script src="guide.js"></script>
   <script>document.body.dataset.course = COURSE.id;</script>
   <script src="../assets/js/common.js"></script>
-  <script>
-    const { el, progress } = CS;
-    const C = window.COURSE;
-    const U = CS.unit;
-    const G = window.GUIDE || {};
-
-    document.getElementById('code').textContent = C.code;
-    document.getElementById('h').textContent = C.name;
-    document.title = `${C.code} — ${C.name} · Course Sites`;
-    document.getElementById('meta').textContent =
-      [C.term, C.lecturer, C.examFormat].filter(Boolean).join(' · ');
-
-    const toc = document.getElementById('toc');
-    for (const ch of C.chapters)
-      toc.append(el('a', { href: `#ch${ch.n}` }, el('b', {}, String(ch.n).padStart(2, '0')), ch.title));
-
-    function actCard({ href, title, desc, kind, id, extra }) {
-      const done = id && progress.visited(id);
-      return el('a', { class: 'card', href },
-        el('h3', {}, el('span', {}, title),
-          el('span', { class: `tag ${done ? 'done' : kind}` }, done ? 'done' : kind)),
-        el('p', {}, desc),
-        extra || null);
-    }
-
-    const wrap = document.getElementById('chapters');
-    for (const ch of C.chapters) {
-      const games = Object.entries(C.games).filter(([, g]) => g.ch === ch.n);
-      const best = progress.best(`quiz-ch${ch.n}`);
-
-      const sec = el('section', { class: 'chapter', id: `ch${ch.n}` },
-        el('div', { class: 'chapter-head' },
-          el('span', { class: 'chnum' }, `${U} ${ch.n}`),
-          el('h2', { style: { margin: 0 } }, ch.title),
-          (() => { const st = CS.testStatus(C.id, ch.n); return el('span', { class: `tag ${st.cls}` }, st.label); })()),
-        el('p', { class: 'muted' }, ch.summary),
-
-        G[ch.n] ? (() => {
-          const k = `guide:${C.id}:${ch.n}`, d = Math.min((progress.get(k) || []).length, G[ch.n].steps.length + 1), tot = G[ch.n].steps.length + 1;
-          const at = Number(progress.get(k + ':at')) || 0, st = CS.testStatus(C.id, ch.n);
-          const label = d === 0 ? 'Start the lesson →' : d >= tot ? 'Review the lesson' : `Continue at step ${at + 1} →`;
-          return el('a', { class: 'lesson-card', href: `learn.html?ch=${ch.n}` },
-            el('div', { class: 'lc-main' },
-              el('div', { class: 'kicker' }, 'Guided lesson'),
-              el('p', {}, G[ch.n].goal),
-              el('div', { class: 'row', style: { gap: '8px' } },
-                el('span', { class: 'pill' }, `${tot} steps`),
-                G[ch.n].time ? el('span', { class: 'pill' }, 'about ' + G[ch.n].time.replace('≈', '').trim()) : null,
-                el('span', { class: 'pill' }, `${ch.activities.length} labs, ${games.length} games, a quiz`))),
-            el('div', { class: 'lc-side' },
-              el('div', { class: 'progressbar' }, el('div', { style: { width: `${(100 * d) / tot}%` } })),
-              el('div', { class: 'small muted' }, `${d} of ${tot} steps done`),
-              el('span', { class: 'btn primary-btn' }, label)));
-        })() : null,
-
-        el('details', { class: 'extra' },
-          el('summary', {}, 'Extra practice: every lab, game, quiz and flashcard set on its own page'),
-        el('h3', {}, 'Simulations'),
-        el('div', { class: 'act-list' },
-          ch.activities.map((a) => actCard({ ...a, kind: 'sim' }))),
-
-        el('h3', { style: { marginTop: '18px' } }, 'Quick games'),
-        el('div', { class: 'act-list' },
-          games.map(([id, g]) => actCard({
-            id: `game-${id}`, href: `game.html?id=${id}`, title: g.title, kind: 'game',
-            desc: { order: 'Put in order', bucket: 'Sort into groups', match: 'Match pairs' }[g.type] + ' — ' + g.intro,
-          }))),
-
-        el('h3', { style: { marginTop: '18px' } }, 'Check yourself'),
-        el('div', { class: 'act-list' },
-          actCard({ href: `quiz.html?ch=${ch.n}`, title: `${U} ${ch.n} Quiz`, kind: 'quiz', id: `quiz-ch${ch.n}`,
-            desc: `${ch.quiz.length} questions with explanations.` + (best ? ` Best: ${best.score}/${best.total}.` : '') }),
-          actCard({ href: `cards.html?ch=${ch.n}`, title: 'Flashcards', kind: 'quiz', id: `cards-ch${ch.n}`,
-            desc: `${ch.cards.length} key terms — flip, then mark known or again.` }),
-          (() => {
-            const st = CS.testStatus(C.id, ch.n);
-            return el('a', { class: 'card test-card', href: `test.html?ch=${ch.n}` },
-              el('h3', {}, el('span', {}, 'Did I understand it?'), el('span', { class: `tag ${st.cls}` }, st.label)),
-              el('p', {}, 'An honest final test with no hints. You rate how sure you are, and guesses do not count. ' + st.tip));
-          })())),
-
-        el('details', { class: 'takeaways' },
-          el('summary', {}, 'Key takeaways & exam traps'),
-          el('ul', {}, ch.takeaways.map((t) => el('li', {}, t))),
-          el('table', { class: 't' },
-            el('tr', {}, el('th', {}, 'Students often say…'), el('th', {}, 'Correct version')),
-            ch.traps.map(([a, b]) => el('tr', {}, el('td', {}, a), el('td', {}, b))))),
-      );
-      wrap.append(sec);
-    }
-
-    wrap.append(el('section', { class: 'chapter' },
-      C.textbooks && C.textbooks.length ? [el('h2', {}, 'Textbooks'), el('ul', {}, C.textbooks.map((t) => el('li', {}, t)))] : null,
-      C.projects ? [el('h2', {}, 'Projects'), el('ul', {}, C.projects.map((t) => el('li', {}, t)))] : null,
-      el('p', { class: 'muted small' }, `Local copies of the course files are in materials/${C.code}/ (not published).`)));
-
-    if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
-  </script>
+  <script src="../assets/js/hub.js"></script>
 </body>
 </html>

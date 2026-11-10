@@ -48,7 +48,9 @@
           el('div', {},
             el('div', { class: 'code' }, C.code),
             el('h2', {}, el('a', { href: `${dir}/index.html` }, C.name)),
-            el('p', { class: 'about' }, [about[dir], C.lecturer].filter(Boolean).join(' · '))),
+            el('p', { class: 'about' }, [about[dir], C.lecturer].filter(Boolean).join(' · ')),
+            C.exam && !C.exam.done && C.exam.when ? el('div', { class: 'exam-next' }, el('b', {}, `${C.exam.title}: `), [C.exam.when, C.exam.scope].filter(Boolean).join(' · '), ' — ', el('a', { href: `${dir}/index.html` }, 'start here →')) : null,
+            (C.resources || []).length ? el('div', { class: 'res-links' }, C.resources.map((r) => el('a', { href: `${dir}/${r.href}` }, r.title))) : null),
           el('ul', { class: 'lesson-list' }, C.chapters.filter((ch) => G[ch.n]).map((ch) => {
             const tot = G[ch.n].steps.length + 1, d = Math.min((progress.get(`guide:${C.id}:${ch.n}`) || []).length, tot);
             const st = CS.testStatus(C.id, ch.n);

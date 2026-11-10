@@ -470,3 +470,21 @@ window.COURSE = window.COE303 = {
     },
   },
 };
+
+/* hub: exam and extra resources (assets/js/hub.js) */
+Object.assign(window.COURSE, {
+ "exam": {
+  "title": "Midterm",
+  "label": "Exam format",
+  "parts": [
+   [
+    "10 short questions",
+    null
+   ],
+   [
+    "2 long questions",
+    null
+   ]
+  ]
+ }
+});
