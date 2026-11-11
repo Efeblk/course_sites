@@ -1946,6 +1946,11 @@ Object.assign(window.COURSE, {
         "30 min"
       ],
       [
+        "past.html",
+        "Old midterm papers: the questions tagged \"Bu yıl\" first",
+        "25 min"
+      ],
+      [
         "mock.html",
         "Mock midterm: 20 questions + 8 explain-why",
         "35 min"
@@ -1953,6 +1958,13 @@ Object.assign(window.COURSE, {
     ]
   },
   "resources": [
+    {
+      "kind": "past",
+      "href": "past.html",
+      "title": "Geçmiş vizeler",
+      "meta": "2 old papers · 26 questions",
+      "desc": "Every question from two older midterms with a Turkish hint and a short English answer; the ones on this year's slides are tagged."
+    },
     {
       "kind": "summary",
       "href": "ozet.html",

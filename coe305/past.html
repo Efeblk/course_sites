@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Geçmiş vizeler · COE305</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .exam { margin: 48px 0 0; padding-top: 18px; border-top: 2px solid var(--text); }
+    .q { border-top: 1px solid var(--line); padding: 22px 0 8px; }
+    .q h3 { margin: 0 0 6px; }
+    .q .pts { font: .82rem var(--mono); color: var(--muted); }
+    .q .pts b { color: var(--accent); font-weight: 600; }
+    .q.out h3 { color: var(--muted); }
+    .stem { border-left: 3px solid var(--line); padding: 4px 0 4px 16px; margin: 10px 0; }
+    .stem ol { margin: 6px 0; padding-left: 22px; }
+    .how { margin: 10px 0; }
+    .model { border-left: 3px solid var(--accent); background: var(--panel); padding: 12px 18px; margin: 10px 0; }
+    .model ol, .model ul { margin: 4px 0; padding-left: 22px; }
+    .model[hidden] { display: none; }
+    table.t { width: 100%; margin: 10px 0; }
+    table.cm { margin: 10px 0; }
+    table.cm td, table.cm th { text-align: center; }
+    .scroll { overflow-x: auto; }
+    td, th { vertical-align: top; }
+    svg.dia { width: 100%; max-width: 760px; height: auto; color: var(--text); }
+    .src { font: .78rem var(--mono); color: var(--muted); }
+    @media (max-width: 600px) { td, th { padding: 6px !important; } }
+  </style>
+</head>
+<body data-root=".." data-course="coe305" data-title="Geçmiş vizeler" data-activity="coe305-past">
+  <main>
+    <div class="mono small muted">COE305 · eski vize kâğıtları (fotoğraf)</div>
+    <h1>Geçmiş vizeler</h1>
+    <nav class="row"><a href="index.html">Course</a><a href="ozet.html">Midterm özeti</a><a href="mock.html">Mock midterm</a><a href="videos.html">Videolar</a></nav>
+    <p class="lead">İki eski vize kâğıdının fotoğrafları geldi. Her soruda önce nasıl düşüneceğin (Türkçe), sonra kâğıda yazılacak kısa İngilizce cevap var. Cevabı açmadan önce kendin çöz.</p>
+
+    <h2>Önce şunu bil</h2>
+    <p>Bu kâğıtlar <b>bu yılın slaytlarından daha geniş</b>: SVM, Random Forest, Naive Bayes, Tomek link, one-hot encoding, Python/pandas fonksiyonları soruyorlar. Bunların hiçbiri Week 1–6 slaytlarında ve hocanın vize listesinde yok. Yani büyük ihtimalle başka bir dönemin (belki başka bir hocanın) kâğıtları.</p>
+    <p>Bu yüzden her sorunun yanında bir etiket var:</p>
+    <ul>
+      <li><b>Bu yıl: Week N</b>: konu bu yılın slaytlarında veya hocanın listesinde. <b>Önce bunları çöz.</b></li>
+      <li><span class="muted">Slaytlarda yok</span>: cevap yine burada, ama genel ML bilgisinden; vize için öncelik düşük.</li>
+    </ul>
+
+    <h3>Kâğıtlar ne söylüyor</h3>
+    <div class="scroll"><table class="t">
+      <tr><th>Soru tipi</th><th>Puan</th><th>Örnek</th></tr>
+      <tr><td><b>Çoktan seçmeli</b>, çoğu küçük bir hesap</td><td>3–10</td><td>saf düğümün entropy'si, 5-fold ortalaması, MSE, sensitivity</td></tr>
+      <tr><td><b>Kısa hesap</b>, adımları göstererek</td><td>5–7</td><td>8 pozitif 4 negatif düğümün entropy'si; confusion matrix'ten accuracy, recall</td></tr>
+      <tr><td><b>Açıkla / karşılaştır</b>, bazen çizimle</td><td>5–10</td><td>overfit ve underfit nedenleri; ML türleri diyagramı</td></tr>
+    </table></div>
+    <div class="callout">Bu yılın hocası "formül yazmayacağız, kavramı ve mantığını anlayın" dedi. Eski kâğıtlarda yine de küçük hesaplar var. <b>Entropy</b> hocanın listesinde: 8'e 4 bölünmüş bir düğümü hesaplayabiliyorsan konuyu anlamışsın demektir.</div>
+
+    <h3>Bu yılın konusuna denk gelenler (önce bunlar)</h3>
+    <div class="scroll"><table class="t">
+      <tr><th>Soru</th><th>Hocanın listesi</th></tr>
+      <tr><td><a href="#a1-1">A1.I</a>, <a href="#a1-4">A1.IV</a> entropy hesabı</td><td>5. What is entropy</td></tr>
+      <tr><td><a href="#a3-4">A3.IV</a> ML türleri diyagramı</td><td>4. Learning types</td></tr>
+      <tr><td><a href="#b2-b">B2.B</a> lazy learners</td><td>1. Parametric or nonparametric</td></tr>
+      <tr><td><a href="#b3-b">B3.B</a> overfit ve underfit</td><td>Week 2 (generalization)</td></tr>
+      <tr><td><a href="#a1-2">A1.II</a> ağacın derinliği, <a href="#a2-2">A2.II</a> cross-validation, <a href="#a3-2">A3.II</a> regression</td><td>Week 5, Week 2</td></tr>
+    </table></div>
+
+    <!-- ========================================================= PAPER A -->
+    <section class="exam" id="paperA">
+      <h2>Kâğıt A</h2>
+      <p class="small muted">Beş soru, her biri üç çoktan seçmeli (3 puan) ve bir iki açık uçlu kısımdan oluşuyor. Question 4'ün fotoğrafı yok. Question 3'ün fotoğrafı bulanık; metni okunabildiği kadarıyla yazıldı.</p>
+
+      <h3 style="margin-top:28px">Question 1: Decision trees ve sınıflandırıcılar</h3>
+
+      <div class="q" id="a1-1"><h3>A1.I Saf düğümün entropy'si</h3><div class="pts">3 puan · <b>Bu yıl: Week 5</b></div>
+        <div class="stem">In a specific node of the decision tree, there are 20 instances of Class A but no instances of other classes. Calculate the entropy of the target variable at this node.
+          <ol type="a"><li>1.0</li><li>2.0</li><li>0.918</li><li>0.0</li></ol></div>
+        <p class="how">Hepsi aynı sınıfsa düğüm <b>pure</b> (saf). Hesap yapmana gerek yok: saf düğümde belirsizlik yok, entropy sıfır. 1.0 ise tam tersi uç: iki sınıf yarı yarıya ("fifty-fifty is the worst").</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>d. 0.0</b></li>
+          <li>p(A) = 20/20 = 1 → Entropy = −1 · log₂(1) = 0. All instances belong to one class, so the node is <b>pure</b>: no impurity, it becomes a leaf.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a1-2"><h3>A1.II Ağacın derinliğini sınırlayan parametre</h3><div class="pts">3 puan · <b>Bu yıl: Week 5 (pruning)</b></div>
+        <div class="stem">You are building a decision tree classifier for a binary classification problem, and you want to prevent the tree from growing too deep to avoid overfitting. Which parameter from scikit-learn can you adjust to control the depth of the decision tree?
+          <ol type="a"><li>min_samples_split</li><li>max_depth</li><li>criterion</li><li>n_estimators</li></ol></div>
+        <p class="how">Soru "depth" kelimesini veriyor. Slayttaki karşılığı <b>prepruning (early stopping)</b>: ağacı büyürken erken durdurmak. Diğerlerini ele: criterion = gini/entropy seçimi, n_estimators = ormandaki ağaç sayısı.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>b. max_depth</b></li>
+          <li>It stops the tree at a fixed depth: a form of <b>prepruning</b> (early stopping), which reduces variance and overfitting.</li>
+          <li>min_samples_split also limits growth, but through node size, not depth. criterion chooses the impurity measure. n_estimators is the number of trees in an ensemble.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a1-3"><h3>A1.III Basit, olasılıksal bir sınıflandırıcı</h3><div class="pts">3 puan · Slaytlarda yok</div>
+        <div class="stem">You have a dataset with 1000 instances and 20 features. The target variable is binary. You decide to use a simple, probabilistic model for classification. Which algorithm is suitable?
+          <ol type="a"><li>k-Nearest Neighbors (k-NN)</li><li>Random Forest</li><li>Gaussian Naive Bayes</li><li>Support Vector Machines (SVM)</li></ol></div>
+        <p class="how">Anahtar kelime <b>probabilistic</b>: seçeneklerden yalnızca biri doğrudan olasılık hesaplar (Bayes kuralıyla).</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>c. Gaussian Naive Bayes</b></li>
+          <li>It computes P(class | features) with Bayes' rule, assuming the features are independent given the class; simple and fast. k-NN is distance-based, SVM is margin-based, Random Forest is an ensemble of trees.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a1-4"><h3>A1.IV 8 pozitif, 4 negatif: entropy</h3><div class="pts">7 puan · <b>Bu yıl: Week 5</b></div>
+        <div class="stem">You are building a decision tree for a binary classification problem. The dataset at a node contains the following class distribution: 8 positive samples, 4 negative samples. Calculate the entropy of this node. Show your work.</div>
+        <p class="how">Üç adım: (1) oranları bul, (2) her oran için p · log₂(p), (3) topla ve eksiyle çarp. Kontrol: sonuç 0 ile 1 arasında olmalı; düğüm yarı yarıya değil, saf da değil, yani 1'e yakın ama 1'den küçük.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ol>
+          <li>N = 8 + 4 = 12 · p₊ = 8/12 = 2/3 ≈ 0.667 · p₋ = 4/12 = 1/3 ≈ 0.333</li>
+          <li>Entropy = −p₊ log₂ p₊ − p₋ log₂ p₋</li>
+          <li>log₂(2/3) ≈ −0.585 · log₂(1/3) ≈ −1.585</li>
+          <li>= 0.667 × 0.585 + 0.333 × 1.585 = 0.390 + 0.528 ≈ <b>0.918</b></li>
+          <li>Meaning: the node is impure but not the worst case (a 50/50 node gives 1.0).</li>
+        </ol></div>
+      </div>
+
+      <h3 style="margin-top:36px">Question 2: Ensembles, değerlendirme, SVM</h3>
+
+      <div class="q out" id="a2-1"><h3>A2.I Bagging: toplam örnek sayısı</h3><div class="pts">3 puan · Slaytlarda yok (hesap basit)</div>
+        <div class="stem">You decide to create a Bagging ensemble with 50 base models. Each base model is trained independently on a bootstrap sample. What is the total number of instances used across all base models if each bootstrap sample contains 700 instances on average?
+          <ol type="a"><li>35,000</li><li>7,500</li><li>25,000</li><li>50,000</li></ol></div>
+        <p class="how">Konuyu bilmesen de çözülür: 50 model × modele düşen 700 örnek.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>a. 35,000</b> = 50 × 700</li>
+          <li><b>Bagging</b> (bootstrap aggregating): each model gets its own sample drawn <b>with replacement</b>, so the same instance can appear many times; the models' predictions are combined by voting or averaging.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a2-2"><h3>A2.II 5-fold cross-validation: son accuracy</h3><div class="pts">3 puan · <b>Bu yıl: Week 2 (cross-validation)</b></div>
+        <div class="stem">In a 5-fold cross-validation technique fold 1 to fold 5 have received an accuracy of 0.975, 0.882, 0.915, 0.955, 0.900 respectively. What will be the final accuracy the model would achieve?
+          <ol type="a"><li>0.928</li><li>0.932</li><li>0.925</li><li>0.938</li></ol></div>
+        <p class="how">Slayttaki tanım cevabı veriyor: cross-validation = veriyi tekrar tekrar bölüp <b>performansın ortalamasını</b> almak. Beşini topla, beşe böl.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li>0.975 + 0.882 + 0.915 + 0.955 + 0.900 = 4.627 · 4.627 / 5 = 0.9254 → <b>c. 0.925</b></li>
+          <li>K-fold CV: each fold is the test set once, the other K−1 folds train; the final score is the <b>average</b> over the K folds.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a2-3"><h3>A2.III Confusion matrix'i okumak</h3><div class="pts">3 puan · Slaytlarda yok (projede var)</div>
+        <div class="stem">A dataset with 200 observations; the task is to predict the number of people holding more than 500 dollars in their account using SVM. How will you interpret the matrix?
+          <div class="scroll"><table class="t cm" style="max-width:420px">
+            <tr><th>N = 200</th><th>Prediction = No</th><th>Prediction = Yes</th></tr>
+            <tr><th>Actual = No</th><td>65</td><td>5</td></tr>
+            <tr><th>Actual = Yes</th><td>10</td><td>120</td></tr>
+          </table></div>
+          <ol type="a"><li>The model has predicted "Yes" 125 times and predicted "No" 75 times</li><li>… "Yes" 120 times and "No" 65 times</li><li>… "Yes" 125 times and "No" 10 times</li><li>… "Yes" 120 times and "No" 75 times</li></ol></div>
+        <p class="how">"Predicted" sorusu = <b>sütunları</b> topla. Satırlar gerçek değer, sütunlar tahmin.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>a.</b> Predicted Yes = 5 + 120 = 125 · Predicted No = 65 + 10 = 75 (check: 125 + 75 = 200)</li>
+          <li>Correct predictions are on the diagonal: 65 + 120 = 185, so accuracy = 185/200 = 0.925.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a2-4"><h3>A2.IV Random Forest'ı SVM ve KNN'den ayıran ne</h3><div class="pts">5 puan · Slaytlarda yok</div>
+        <div class="stem">Discuss how Random Forest algorithm stands unique when compared with SVM, KNN algorithms.</div>
+        <p class="how">Ana fikir: Random Forest <b>tek model değil, birçok karar ağacının oylaması</b>. SVM tek bir sınır çizer, KNN hiç model kurmaz, komşulara bakar.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>Random Forest</b>: an <b>ensemble</b> of many decision trees; each tree is trained on a bootstrap sample and a random subset of features; the forest predicts by <b>majority vote</b> (or average).</li>
+          <li>Averaging many trees <b>reduces the overfitting</b> of a single deep tree; it gives <b>feature importance</b>; trees split on thresholds, so <b>no feature scaling</b> is needed.</li>
+          <li><b>SVM</b>: one model that finds the maximum-margin boundary; needs scaling and a kernel for non-linear data.</li>
+          <li><b>KNN</b>: a lazy, nonparametric learner: stores the training data and classifies by the nearest neighbours' distance; slow at prediction and sensitive to scaling.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a2-5"><h3>A2.V SVM: kernel, soft margin, hard margin</h3><div class="pts">6 puan · Slaytlarda yok (Week 10, Kernel Machines: final konusu)</div>
+        <div class="stem">Write about kernels, soft margin, hard margin in Support Vector Machine.</div>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>SVM</b> finds the separating hyperplane with the <b>largest margin</b>; the closest points are the <b>support vectors</b>.</li>
+          <li><b>Hard margin</b>: no point may be misclassified or inside the margin; works only if the data is <b>linearly separable</b>; very sensitive to outliers.</li>
+          <li><b>Soft margin</b>: allows some points inside the margin or on the wrong side (slack); the parameter <b>C</b> sets the trade-off: large C = few errors, narrow margin; small C = wider margin, more tolerance.</li>
+          <li><b>Kernel</b>: maps the data into a higher-dimensional space where it becomes linearly separable, without computing the mapping (<b>kernel trick</b>). Examples: linear, polynomial, RBF.</li>
+        </ul></div>
+      </div>
+
+      <h3 style="margin-top:36px">Question 3: Python ve regression <span class="small muted">(fotoğraf bulanık)</span></h3>
+
+      <div class="q out" id="a3-1"><h3>A3.I Veri analizi için Python kütüphanesi</h3><div class="pts">3 puan · Slaytlarda yok</div>
+        <div class="stem">In the context of your data analytics project, which Python library would you choose to assist in performing data analysis, providing functionalities such as data manipulation, cleaning, and exploration?
+          <ol type="a"><li>NumPy</li><li>Pandas</li><li>Matplotlib</li><li>Seaborn</li></ol></div>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>b. Pandas</b>: DataFrames for loading, cleaning, manipulating and exploring tabular data. NumPy = arrays and math; Matplotlib and Seaborn = plotting.</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a3-2"><h3>A3.II Bu veri için hangi algoritma</h3><div class="pts">3 puan · <b>Bu yıl: Week 1–2 (regression)</b></div>
+        <div class="stem">Consider the following dataset. As a data scientist which algorithm will you choose to handle it?
+          <div class="scroll"><table class="t" style="max-width:520px">
+            <tr><th>Name</th><th>Age</th><th>Monthly Salary ($)</th><th>Amount spent for Annual Trip ($)</th></tr>
+            <tr><td>Alice</td><td>35</td><td>6000</td><td>5000</td></tr>
+            <tr><td>Bryan</td><td>42</td><td>5600</td><td>3000</td></tr>
+          </table></div>
+          <ol type="a"><li>Linear regression</li><li>Naive Bayes</li><li>Multiple linear regression</li><li>Logistic regression</li></ol></div>
+        <p class="how">İki soru sor: (1) Tahmin edilen şey bir <b>sayı mı, sınıf mı</b>? Harcanan para bir sayı → regression. (2) Kaç girdi var? Yaş ve maaş, yani <b>iki</b> → "multiple".</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>c. Multiple linear regression</b></li>
+          <li>The target (amount spent) is a <b>continuous number</b> → regression, not classification (rules out Naive Bayes and logistic regression).</li>
+          <li>There are <b>two inputs</b> (age, salary) → multiple, not simple linear regression. Name is an identifier, not a feature.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a3-3"><h3>A3.III Modeli eğiten metot</h3><div class="pts">3 puan · Slaytlarda yok</div>
+        <div class="stem">You are building a machine learning model to predict house prices. Which method will you use to train the Linear Regression model?
+          <ol type="a"><li>train()</li><li>fit()</li><li>predict()</li><li>transform()</li></ol></div>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>b. fit()</b>: <code>model.fit(X_train, y_train)</code> learns the coefficients. predict() is used after training; transform() belongs to preprocessing (e.g. scalers); scikit-learn has no train().</li>
+        </ul></div>
+      </div>
+
+      <div class="q" id="a3-4"><h3>A3.IV ML türleri diyagramı</h3><div class="pts">6 puan · <b>Bu yıl: Week 1 (hocanın 4. maddesi)</b></div>
+        <div class="stem">Draw a classification diagram for Machine Learning, categorizing it into its main types, and list the tasks for each type.</div>
+        <p class="how">Ağaç gibi çiz: kökte "Machine Learning", altında <b>üç dal</b>. Her dalın altına görevlerini yaz ve tek satırla "ne fark eder"i ekle: etiket var mı, ödül mü var.</p>
+        <button class="chip" data-show>Cevabı ve çizimi göster</button>
+        <div class="model" hidden>
+          <svg class="dia" viewBox="0 0 760 260" role="img" aria-label="Machine learning types diagram">
+            <g fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="290" y="12" width="180" height="40" rx="6"/>
+              <line x1="380" y1="52" x2="380" y2="76"/><line x1="125" y1="76" x2="635" y2="76"/>
+              <line x1="125" y1="76" x2="125" y2="96"/><line x1="380" y1="76" x2="380" y2="96"/><line x1="635" y1="76" x2="635" y2="96"/>
+              <rect x="25" y="96" width="200" height="40" rx="6"/><rect x="280" y="96" width="200" height="40" rx="6"/><rect x="535" y="96" width="200" height="40" rx="6"/>
+            </g>
+            <g fill="currentColor" font-size="15" text-anchor="middle">
+              <text x="380" y="37" font-weight="700">Machine Learning</text>
+              <text x="125" y="121" font-weight="700">Supervised</text>
+              <text x="380" y="121" font-weight="700">Unsupervised</text>
+              <text x="635" y="121" font-weight="700">Reinforcement</text>
+              <g font-size="13">
+                <text x="125" y="160">labelled data (x, r)</text>
+                <text x="125" y="186">• Classification</text>
+                <text x="125" y="208">• Regression</text>
+                <text x="380" y="160">input only, no labels</text>
+                <text x="380" y="186">• Clustering</text>
+                <text x="380" y="208">• Association rules</text>
+                <text x="380" y="230">• Dimensionality reduction</text>
+                <text x="635" y="160">delayed reward, no labels</text>
+                <text x="635" y="186">• Learning a policy</text>
+                <text x="635" y="208">• Game playing</text>
+                <text x="635" y="230">• Robot in a maze</text>
+              </g>
+            </g>
+          </svg>
+          <ul>
+            <li><b>Supervised</b>: learns from inputs with known outputs. <b>Classification</b> = output is a class (credit scoring: low-risk / high-risk). <b>Regression</b> = output is a number (price of a used car).</li>
+            <li><b>Unsupervised</b>: only inputs; finds structure. <b>Clustering</b> (customer segmentation), <b>association</b> (basket analysis: people who buy X also buy Y), dimensionality reduction (PCA).</li>
+            <li><b>Reinforcement</b>: no supervised output, only a <b>delayed reward</b>; learns a <b>policy</b> (a sequence of actions), e.g. game playing, a robot in a maze.</li>
+          </ul>
+          <p class="small muted">Week 1 slaytında association ayrı bir başlık olarak da geçiyor; diyagramda unsupervised altına koymak yaygın ve güvenli.</p>
+        </div>
+      </div>
+
+      <div class="q out" id="a3-5"><h3>A3.V Linear regression: homoscedasticity ve residual normality</h3><div class="pts">5 puan · Slaytlarda yok</div>
+        <div class="stem">In the context of Linear Regression, explain the assumptions of homoscedasticity and normality of residuals, and why they are important.</div>
+        <p class="how">Önce <b>residual</b>'ı tanımla (gerçek − tahmin). Sonra iki varsayımı birer cümleyle, nasıl kontrol edildiğini ve bozulursa ne olduğunu yaz.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>Residual</b> = actual − predicted value.</li>
+          <li><b>Homoscedasticity</b>: the residuals have <b>constant variance</b> for all values of x. Check: residual plot shows an even band, not a funnel. Violation = heteroscedasticity.</li>
+          <li><b>Normality of residuals</b>: residuals are roughly <b>normally distributed</b> around 0. Check: histogram or Q-Q plot.</li>
+          <li><b>Why</b>: standard errors, confidence intervals and significance tests of the coefficients rely on them; if they fail, these become unreliable even if predictions look fine.</li>
+        </ul></div>
+      </div>
+
+      <h3 style="margin-top:36px">Question 5: Ölçüler ve veri hazırlama</h3>
+
+      <div class="q out" id="a5-1"><h3>A5.I Sensitivity</h3><div class="pts">3 puan · Slaytlarda yok (projede recall)</div>
+        <div class="stem">Calculate the sensitivity if the number of true positives is 50 and the number of false negatives is 20.
+          <ol type="a"><li>0.71</li><li>0.46</li><li>0.72</li><li>0.47</li></ol></div>
+        <p class="how"><b>Sensitivity = recall</b>: gerçekten pozitif olanların kaçını yakaladık? Gerçek pozitifler = TP + FN.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li>Sensitivity = TP / (TP + FN) = 50 / 70 = 0.714 → <b>a. 0.71</b></li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a5-2"><h3>A5.II İki değişkenin ilişkisi</h3><div class="pts">3 puan · Slaytlarda yok</div>
+        <div class="stem">If you perform an exploratory data analysis on a dataset, what option will you choose to understand the relationship between two variables?
+          <ol type="a"><li>Box plot</li><li>Scatterplot</li><li>Histogram</li><li>Swarm plot</li></ol></div>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>b. Scatterplot</b>: one variable on each axis, one point per instance; the shape shows the relationship. Histogram and box plot describe <b>one</b> variable's distribution.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a5-3"><h3>A5.III RMSE = 0 ise R² kaç</h3><div class="pts">3 puan · Slaytlarda yok</div>
+        <div class="stem">If RMSE = 0, what does it indicate about the model, and what would the corresponding R² (coefficient of determination) value be?
+          <ol type="a"><li>The model is overfitting the data, and R² is negative.</li><li>The model has perfect predictions with no errors, and R² = 1.</li><li>The model is underfitting the data, and R² = 0.</li><li>The model has infinite variance, and R² is undefined.</li></ol></div>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>b.</b> RMSE = 0 means every prediction equals the actual value: no error. R² = 1 − (error / total variance) = 1 − 0 = <b>1</b>.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a5-4"><h3>A5.IV Tomek link</h3><div class="pts">5 puan · Slaytlarda yok</div>
+        <div class="stem">What is the purpose of Tomek link? How does it work?</div>
+        <p class="how">Amaç (dengesiz veriyi temizlemek) + mekanizma (farklı sınıftan, birbirinin en yakın komşusu olan çift) + sonuç (sınır netleşir).</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>Purpose</b>: an <b>undersampling</b> / cleaning method for <b>imbalanced</b> data; removes noisy and overlapping points near the class boundary.</li>
+          <li><b>How</b>: a Tomek link is a pair of points from <b>different classes</b> that are <b>each other's nearest neighbours</b>. For every link, remove the <b>majority-class</b> point (or both points).</li>
+          <li><b>Result</b>: the classes overlap less, the decision boundary becomes clearer, and the majority class shrinks a little.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="a5-5"><h3>A5.V One-hot encoding ve dummy variable trap</h3><div class="pts">6 puan · Slaytlarda yok</div>
+        <div class="stem">In a dataset with 5 categorical variables (A, B, C, D, E), all of which are non-numeric, demonstrate how one-hot encoding can be applied to convert these variables into numerical format. Explain the concept of the dummy variable trap and how to address it.</div>
+        <p class="how">Bir değişkenle küçük bir örnek göster, sonra "A–E'nin her birine aynısı" de. Trap: sütunların toplamı hep 1, yani biri diğerlerinden bulunabilir.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden>
+          <ul>
+            <li><b>One-hot encoding</b>: a variable with k categories becomes <b>k binary (0/1) columns</b>; each row has a single 1. Example, A ∈ {red, green, blue}:</li>
+          </ul>
+          <div class="scroll"><table class="t" style="max-width:420px">
+            <tr><th>A</th><th>A_red</th><th>A_green</th><th>A_blue</th></tr>
+            <tr><td>red</td><td>1</td><td>0</td><td>0</td></tr>
+            <tr><td>green</td><td>0</td><td>1</td><td>0</td></tr>
+            <tr><td>blue</td><td>0</td><td>0</td><td>1</td></tr>
+          </table></div>
+          <ul>
+            <li>Repeat for B, C, D, E (e.g. <code>pd.get_dummies(df, columns=['A','B','C','D','E'])</code>).</li>
+            <li><b>Dummy variable trap</b>: the k columns of one variable always add up to 1, so one column can be predicted from the others → <b>perfect multicollinearity</b>; regression coefficients become unstable.</li>
+            <li><b>Fix</b>: keep <b>k − 1</b> columns per variable (drop one: <code>drop_first=True</code>); the dropped category is the baseline (all zeros).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= PAPER B -->
+    <section class="exam" id="paperB">
+      <h2>Kâğıt B</h2>
+      <p class="small muted">Daha az ama daha büyük puanlı sorular (5–15 puan). Question 1'in fotoğrafı yok.</p>
+
+      <h3 style="margin-top:28px">Question 2</h3>
+
+      <div class="q out" id="b2-a"><h3>B2.A Mean squared error</h3><div class="pts">10 puan · Slaytlarda MSE adıyla yok (Week 2'de "error" var)</div>
+        <div class="stem">An organization builds a Linear Regression model to predict sales based on advertising expenditure. The table shows actual and predicted sales for 5 test samples. Choose the correct mean squared error.
+          <div class="scroll"><table class="t" style="max-width:380px">
+            <tr><th>Actual</th><td>10</td><td>15</td><td>20</td><td>25</td><td>30</td></tr>
+            <tr><th>Predicted</th><td>12</td><td>14</td><td>18</td><td>28</td><td>27</td></tr>
+          </table></div>
+          A. 6 · B. 5.4 · C. 6.4 · D. 5.0</div>
+        <p class="how">Kâğıtta tahmin sütunu bir satır kaymış basılmış; sıra yine aynı. Adımlar: fark al, karesini al, topla, örnek sayısına böl.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ol>
+          <li>Errors (actual − predicted): −2, 1, 2, −3, 3</li>
+          <li>Squares: 4, 1, 4, 9, 9 → sum = 27</li>
+          <li>MSE = 27 / 5 = <b>5.4 → B</b></li>
+        </ol></div>
+      </div>
+
+      <div class="q" id="b2-b"><h3>B2.B Lazy learners</h3><div class="pts">5 puan · <b>Bu yıl: Week 4 (parametric vs nonparametric)</b></div>
+        <div class="stem">Which of the following statements about lazy learners is correct?<br>
+          A. They build the model during training. · B. They generalize immediately after receiving data. · C. They delay generalization until a query is made. · D. They are parametric models.</div>
+        <p class="how">"Lazy" = tembel: eğitimde iş yapmaz, veriyi saklar; bir soru (query) gelince komşulara bakar. A ve B tam tersini (eager learner) anlatıyor. D: hocanın 1. maddesi! Önceden belirlenmiş bir fonksiyonu yok → <b>nonparametric</b>.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>C.</b> A lazy learner (e.g. k-NN) only <b>stores</b> the training data and does the work when a query arrives: it finds the nearest stored instances and answers from them.</li>
+          <li>A and B describe <b>eager</b> learners. D is false: lazy learners are <b>nonparametric</b>; they assume no predefined mapping function.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="b2-c"><h3>B2.C Spam: confusion matrix, accuracy, recall</h3><div class="pts">15 puan (3 × 5) · Slaytlarda yok (projede var)</div>
+        <div class="stem">A classification model was tested on 120 samples: 70 emails were correctly predicted as Spam; 10 spam emails were incorrectly predicted as Not Spam; 15 normal emails were incorrectly predicted as Spam; 25 normal emails were correctly predicted as Not Spam.<br>
+          i. Draw the confusion matrix with clear labels. ii. Calculate the Accuracy. iii. Calculate Recall (Sensitivity).</div>
+        <p class="how">Önce dördüne isim ver: pozitif sınıf = <b>Spam</b>. Doğru yakalanan spam = TP, kaçırılan spam = FN, yanlışlıkla spam denen normal mail = FP, doğru normal = TN. Kontrol: dördü toplanınca 120.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden>
+          <div class="scroll"><table class="t cm" style="max-width:460px">
+            <tr><th></th><th>Predicted Spam</th><th>Predicted Not Spam</th></tr>
+            <tr><th>Actual Spam</th><td><b>TP = 70</b></td><td>FN = 10</td></tr>
+            <tr><th>Actual Not Spam</th><td>FP = 15</td><td><b>TN = 25</b></td></tr>
+          </table></div>
+          <ol type="i">
+            <li>Matrix above; check: 70 + 10 + 15 + 25 = 120</li>
+            <li><b>Accuracy</b> = (TP + TN) / total = (70 + 25) / 120 = 95 / 120 ≈ <b>0.792 (79.2%)</b></li>
+            <li><b>Recall</b> = TP / (TP + FN) = 70 / (70 + 10) = 70 / 80 = <b>0.875 (87.5%)</b>: the model catches 87.5% of the real spam.</li>
+          </ol>
+        </div>
+      </div>
+
+      <h3 style="margin-top:36px">Question 3</h3>
+
+      <div class="q out" id="b3-a"><h3>B3.A Oversampling ve undersampling</h3><div class="pts">10 puan · Slaytlarda yok</div>
+        <div class="stem">Compare oversampling and undersampling in balancing the datasets. Illustrate your answer with a clear labeled diagram.</div>
+        <p class="how">Önce sorunu söyle (bir sınıf çok az), sonra iki çözüm: azı <b>çoğalt</b> ya da çoğu <b>azalt</b>. Her birinin bir artısı, bir eksisi. Çizim: üç çubuk grafiği, öncesi ve iki sonrası.</p>
+        <button class="chip" data-show>Cevabı ve çizimi göster</button>
+        <div class="model" hidden>
+          <svg class="dia" viewBox="0 0 760 250" role="img" aria-label="Oversampling and undersampling diagram">
+            <g fill="currentColor" font-size="14" text-anchor="middle">
+              <text x="125" y="22" font-weight="700">Original (imbalanced)</text>
+              <text x="380" y="22" font-weight="700">Oversampling</text>
+              <text x="635" y="22" font-weight="700">Undersampling</text>
+            </g>
+            <g stroke="currentColor" stroke-width="1.5">
+              <line x1="40" y1="200" x2="210" y2="200"/><line x1="295" y1="200" x2="465" y2="200"/><line x1="550" y1="200" x2="720" y2="200"/>
+            </g>
+            <g style="fill:var(--accent)" fill-opacity=".85">
+              <rect x="60" y="50" width="50" height="150"/><rect x="315" y="50" width="50" height="150"/><rect x="570" y="175" width="50" height="25"/>
+            </g>
+            <g fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="140" y="175" width="50" height="25"/><rect x="395" y="50" width="50" height="150" stroke-dasharray="6 4"/><rect x="650" y="175" width="50" height="25"/>
+            </g>
+            <g fill="currentColor" font-size="12" text-anchor="middle">
+              <text x="85" y="44">900</text><text x="165" y="169">100</text>
+              <text x="340" y="44">900</text><text x="420" y="44">900</text>
+              <text x="595" y="169">100</text><text x="675" y="169">100</text>
+              <text x="85" y="218">majority</text><text x="165" y="218">minority</text>
+              <text x="340" y="218">majority</text><text x="420" y="218">minority +</text>
+              <text x="420" y="234">copies / synthetic</text>
+              <text x="595" y="218">majority −</text><text x="595" y="234">removed</text><text x="675" y="218">minority</text>
+            </g>
+          </svg>
+          <div class="scroll"><table class="t">
+            <tr><th></th><th>Oversampling</th><th>Undersampling</th></tr>
+            <tr><td>What</td><td>add minority samples (random copies or synthetic, e.g. SMOTE) until classes match</td><td>remove majority samples (random, or Tomek links) until classes match</td></tr>
+            <tr><td>+</td><td>no information is lost</td><td>smaller data, faster training</td></tr>
+            <tr><td>−</td><td>copies can cause <b>overfitting</b>; bigger data, slower</td><td>throws away useful data → <b>information loss</b></td></tr>
+            <tr><td>Use when</td><td>the dataset is small</td><td>the dataset is very large</td></tr>
+          </table></div>
+          <p class="small">Either way: balance only the <b>training</b> set, never the test set.</p>
+        </div>
+      </div>
+
+      <div class="q" id="b3-b"><h3>B3.B Overfit ve underfit: nedenleri, örnekleri</h3><div class="pts">10 puan · <b>Bu yıl: Week 2, Week 5 (pruning)</b></div>
+        <div class="stem">Explain what causes a machine learning model to overfit and underfit with suitable examples.</div>
+        <p class="how">Slayttaki iki tanımla başla: model (H) gerçek fonksiyondan <b>daha karmaşık</b> → overfit, <b>daha basit</b> → underfit. Sonra her birine neden, örnek, belirti, çare. Örnek olarak ağaç iyi: budanmamış derin ağaç = overfit.</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>Overfitting</b>: the hypothesis H is <b>more complex</b> than the true function; the model learns the noise of the training data. Sign: <b>high training accuracy, low test accuracy</b>.</li>
+          <li>Causes: too complex a model, too little training data, noisy data. Examples: a very deep, unpruned decision tree with one leaf per training instance; a high-degree polynomial that passes through every training point.</li>
+          <li><b>Underfitting</b>: H is <b>less complex</b> than the true function; the model misses the pattern. Sign: <b>low accuracy on both</b> training and test data.</li>
+          <li>Causes: too simple a model, too few or weak features. Example: a straight line fitted to curved data; a tree stopped at depth 1.</li>
+          <li><b>Remedies</b>: overfit → pruning, simpler model, more data, cross-validation to choose complexity; underfit → more complex model, better features. Goal: good <b>generalization</b> (performance on new data).</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="b3-c"><h3>B3.C Eksik değerleri bulan pandas fonksiyonu</h3><div class="pts">5 puan · Slaytlarda yok</div>
+        <div class="stem">To check if there are any missing values in the dataset, which Pandas function should you use?<br>A. dataset.hasnull() · B. dataset.isnull().sum() · C. dataset.empty() · D. dataset.isnan()</div>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>B. dataset.isnull().sum()</b>: isnull() marks each missing cell True; sum() counts them per column.</li>
+          <li>hasnull() does not exist; empty only says whether the whole table has no rows; isnan is a NumPy function, not a DataFrame method.</li>
+        </ul></div>
+      </div>
+
+      <div class="q out" id="b3-d"><h3>B3.D KNN'den önce neden StandardScaler</h3><div class="pts">5 puan · Slaytlarda yok (projede "scaling")</div>
+        <div class="stem">Why is StandardScaler used before fitting the KNN model?<br>A. To improve the interpretability of coefficients · B. To ensure that all features contribute equally to distance calculations · C. To remove duplicate rows from the dataset · D. To reduce dimensionality</div>
+        <p class="how">KNN <b>uzaklık</b> ölçer. Maaş binlerle, yaş onlarla ölçülürse uzaklığı neredeyse yalnız maaş belirler. K-Means'te de aynı sorun var (Week 4).</p>
+        <button class="chip" data-show>Cevabı göster</button>
+        <div class="model" hidden><ul>
+          <li><b>B.</b> StandardScaler gives every feature mean 0 and standard deviation 1, so a feature with a large range (salary) does not dominate the distance over a small-range one (age).</li>
+          <li>A: KNN has no coefficients. C, D: scaling removes no rows and no columns.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <p class="src" style="margin-top:40px">Kaynak: öğrencinin paylaştığı iki eski vize kâğıdının fotoğrafları (yerelde materials/COE305/exams/). "Bu yıl" etiketli cevaplar Week 1–6 slaytlarından; "Slaytlarda yok" etiketliler genel ML bilgisinden.</p>
+  </main>
+  <script src="data.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    document.querySelectorAll('[data-show]').forEach((b) => {
+      const m = b.nextElementSibling;
+      b.addEventListener('click', () => { m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace('gizle', 'göster') : b.textContent.replace('göster', 'gizle'); });
+    });
+  </script>
+</body>
+</html>
