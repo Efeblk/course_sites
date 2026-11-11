@@ -2011,7 +2011,7 @@ Object.assign(window.COURSE, {
       ],
       [
         "mock.html",
-        "Practise the two mock papers",
+        "Practise two mock papers: scenarios, tables and code",
         ""
       ],
       [
@@ -2035,7 +2035,7 @@ Object.assign(window.COURSE, {
       "href": "mock.html",
       "title": "Mock midterm",
       "meta": "2 papers · 10 short + 2 long each",
-      "desc": "Instant feedback for short checks; keyword models for written answers."
+      "desc": "Short scenarios, process tables and synchronization code in the old-paper style; immediate feedback and worked Gantt models. Chapters 1–6 only."
     },
     {
       "kind": "drill",
