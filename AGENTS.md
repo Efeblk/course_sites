@@ -144,7 +144,7 @@ One page, readable in about 20–30 minutes, **only for the midterm** (and later
 Narrated, 1080p, **English**, no slides and no captions: drawn scenes that move with the voice, few ideas per video,
 slow, intuition first, the course's own examples. Two Remotion pipelines exist:
 
-- `tools/video/` (UNI480, SWE307 and COE303 explainers; Kokoro voice `af_heart`; the style the owner asked for most recently;
+- `tools/video/` (UNI480, SWE307, COE303 and COE305 explainers; Kokoro voice `af_heart`; the style the owner asked for most recently;
   the COE303 episodes in `src/os/` add a recurring cast, camera moves and a scheduling simulator, see its README).
   Windows workflow in its README: `tts.py` → scenes in `src/swe/` → `check.mjs sheet` + `sheet.py` contact sheet →
   `render_all.mjs` (re-encodes to yuv420p; Firefox/Zen refuse yuvj420p).

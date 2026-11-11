@@ -1,0 +1,99 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "The weighted sum can be any number: minus twelve, zero, three point seven. But for a class, we want a probability."
+  },
+  {
+   "id": "act",
+   "text": "That is the job of the activation function. It takes the sum, and turns it into the unit's output."
+  },
+  {
+   "id": "sig",
+   "text": "For two classes, we use the sigmoid. It squeezes any number into the range zero to one."
+  },
+  {
+   "id": "sig2",
+   "text": "A big positive sum gives almost one. A big negative sum gives almost zero. And a sum of exactly zero gives zero point five."
+  },
+  {
+   "id": "sig3",
+   "text": "So one sigmoid output is read as the probability of class one. Choose class one when it is above zero point five: that is the same as the sum being above zero.",
+   "pause": 0.5
+  },
+  {
+   "id": "other",
+   "text": "The slides list other common ones. tanh gives values from minus one to one. ReLU keeps a positive sum, and turns a negative one into zero. For regression, the output simply stays linear.",
+   "pause": 0.5
+  },
+  {
+   "id": "multi",
+   "text": "With more than two classes, the network has one output per class, and we use softmax."
+  },
+  {
+   "id": "sm1",
+   "text": "Say the scores are two, one and zero. Raise e to each: about seven point three nine, two point seven two, and one."
+  },
+  {
+   "id": "sm2",
+   "text": "Divide each by the total, eleven point one one. You get zero point six seven, zero point two four, and zero point zero nine."
+  },
+  {
+   "id": "sm3",
+   "text": "They add up to one, and the network chooses class one, the largest. Because they share one total, the classes compete: raise one score, and the others fall.",
+   "pause": 0.5
+  },
+  {
+   "id": "why",
+   "text": "But activations do something bigger. Look at XOR. It is one when exactly one input is one."
+  },
+  {
+   "id": "xor1",
+   "text": "The two ones sit on one diagonal, the two zeros on the other. No single straight line can separate them."
+  },
+  {
+   "id": "xor2",
+   "text": "So we add a hidden layer. One hidden unit draws one line, the other draws a second, and the output unit combines them."
+  },
+  {
+   "id": "lin",
+   "text": "This works only because each hidden unit applies its activation. Without it, the network is just sums of sums, and it collapses back into one line.",
+   "pause": 0.5
+  },
+  {
+   "id": "when",
+   "text": "And when are they used? Not before training. They are part of the network. Every forward pass applies them, in training and in prediction, and backpropagation uses their slope.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "The activation turns the sum into the output."
+  },
+  {
+   "id": "ex2",
+   "text": "Sigmoid: one output, two classes."
+  },
+  {
+   "id": "ex3",
+   "text": "Softmax: one output per class, summing to one."
+  },
+  {
+   "id": "ex4",
+   "text": "Without activations, the layers collapse into one line."
+  },
+  {
+   "id": "ex5",
+   "text": "They are used in training and in prediction.",
+   "pause": 0.8
+  }
+ ]
+}

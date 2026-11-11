@@ -1,0 +1,132 @@
+{
+ "fps": 30,
+ "total": 4200,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 316,
+   "file": "vo/ml-entropy/hook.wav",
+   "text": "Fourteen days of Play Tennis. On nine days they played. On five, they did not. A decision tree will predict the answer by asking one question at a time."
+  },
+  "which": {
+   "start": 407,
+   "dur": 137,
+   "file": "vo/ml-entropy/which.wav",
+   "text": "But which question comes first? Outlook, humidity, wind, or temperature?"
+  },
+  "idea": {
+   "start": 568,
+   "dur": 193,
+   "file": "vo/ml-entropy/idea.wav",
+   "text": "A good question leaves each group pure: all yes, or all no. Entropy measures how mixed a group is."
+  },
+  "pure": {
+   "start": 774,
+   "dur": 147,
+   "file": "vo/ml-entropy/pure.wav",
+   "text": "A pure group, all one class, has entropy zero. There is nothing left to ask."
+  },
+  "half": {
+   "start": 933,
+   "dur": 181,
+   "file": "vo/ml-entropy/half.wav",
+   "text": "A fifty fifty group has entropy one bit. That is the worst case. You know nothing about the answer."
+  },
+  "curve": {
+   "start": 1127,
+   "dur": 177,
+   "file": "vo/ml-entropy/curve.wav",
+   "text": "In between, entropy climbs from zero to its peak at fifty fifty, and falls back to zero."
+  },
+  "root": {
+   "start": 1316,
+   "dur": 191,
+   "file": "vo/ml-entropy/root.wav",
+   "text": "Our fourteen days, nine yes and five no, are quite mixed: zero point nine four zero bits."
+  },
+  "split": {
+   "start": 1535,
+   "dur": 265,
+   "file": "vo/ml-entropy/split.wav",
+   "text": "Now try outlook. Sunny gets two yes and three no. Overcast gets four yes, and no no at all. Rain gets three yes and two no."
+  },
+  "child": {
+   "start": 1812,
+   "dur": 198,
+   "file": "vo/ml-entropy/child.wav",
+   "text": "Overcast is pure: entropy zero. Sunny and rain are mixed: zero point nine seven one each."
+  },
+  "weight": {
+   "start": 2023,
+   "dur": 286,
+   "file": "vo/ml-entropy/weight.wav",
+   "text": "Weight each child by its size: five out of fourteen, four out of fourteen, five out of fourteen. Together they leave zero point six nine four."
+  },
+  "gain": {
+   "start": 2321,
+   "dur": 305,
+   "file": "vo/ml-entropy/gain.wav",
+   "text": "Entropy fell from zero point nine four zero to zero point six nine four. That drop, about zero point two four six, is the information gain."
+  },
+  "others": {
+   "start": 2639,
+   "dur": 359,
+   "file": "vo/ml-entropy/others.wav",
+   "text": "Humidity would leave zero point seven eight eight. Wind, zero point eight nine two. Temperature, zero point nine one one. Outlook leaves the least, so outlook becomes the root."
+  },
+  "rec": {
+   "start": 3026,
+   "dur": 214,
+   "file": "vo/ml-entropy/rec.wav",
+   "text": "Then repeat inside every branch that is still mixed. Sunny asks about humidity. Rain asks about wind."
+  },
+  "stop": {
+   "start": 3253,
+   "dur": 168,
+   "file": "vo/ml-entropy/stop.wav",
+   "text": "The slides stop when a leaf holds a single example, or when splitting would raise the entropy."
+  },
+  "prune": {
+   "start": 3433,
+   "dur": 208,
+   "file": "vo/ml-entropy/prune.wav",
+   "text": "A tree grown too far starts to fit noise. Pruning cuts it back, and the tree is judged on new examples."
+  },
+  "ex0": {
+   "start": 3672,
+   "dur": 33,
+   "file": "vo/ml-entropy/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3717,
+   "dur": 68,
+   "file": "vo/ml-entropy/ex1.wav",
+   "text": "Entropy measures how mixed a node is."
+  },
+  "ex2": {
+   "start": 3798,
+   "dur": 99,
+   "file": "vo/ml-entropy/ex2.wav",
+   "text": "Pure is zero. Fifty fifty is one bit, the worst."
+  },
+  "ex3": {
+   "start": 3909,
+   "dur": 54,
+   "file": "vo/ml-entropy/ex3.wav",
+   "text": "Weight each child by its size."
+  },
+  "ex4": {
+   "start": 3975,
+   "dur": 65,
+   "file": "vo/ml-entropy/ex4.wav",
+   "text": "Choose the split with the largest gain."
+  },
+  "ex5": {
+   "start": 4053,
+   "dur": 63,
+   "file": "vo/ml-entropy/ex5.wav",
+   "text": "On Play Tennis, outlook wins."
+  }
+ }
+}

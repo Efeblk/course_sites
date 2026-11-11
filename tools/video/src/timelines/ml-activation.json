@@ -1,0 +1,132 @@
+{
+ "fps": 30,
+ "total": 4797,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 230,
+   "file": "vo/ml-activation/hook.wav",
+   "text": "The weighted sum can be any number: minus twelve, zero, three point seven. But for a class, we want a probability."
+  },
+  "act": {
+   "start": 320,
+   "dur": 193,
+   "file": "vo/ml-activation/act.wav",
+   "text": "That is the job of the activation function. It takes the sum, and turns it into the unit's output."
+  },
+  "sig": {
+   "start": 526,
+   "dur": 174,
+   "file": "vo/ml-activation/sig.wav",
+   "text": "For two classes, we use the sigmoid. It squeezes any number into the range zero to one."
+  },
+  "sig2": {
+   "start": 712,
+   "dur": 282,
+   "file": "vo/ml-activation/sig2.wav",
+   "text": "A big positive sum gives almost one. A big negative sum gives almost zero. And a sum of exactly zero gives zero point five."
+  },
+  "sig3": {
+   "start": 1007,
+   "dur": 342,
+   "file": "vo/ml-activation/sig3.wav",
+   "text": "So one sigmoid output is read as the probability of class one. Choose class one when it is above zero point five: that is the same as the sum being above zero."
+  },
+  "other": {
+   "start": 1376,
+   "dur": 406,
+   "file": "vo/ml-activation/other.wav",
+   "text": "The slides list other common ones. tanh gives values from minus one to one. ReLU keeps a positive sum, and turns a negative one into zero. For regression, the output simply stays linear."
+  },
+  "multi": {
+   "start": 1810,
+   "dur": 159,
+   "file": "vo/ml-activation/multi.wav",
+   "text": "With more than two classes, the network has one output per class, and we use softmax."
+  },
+  "sm1": {
+   "start": 1982,
+   "dur": 234,
+   "file": "vo/ml-activation/sm1.wav",
+   "text": "Say the scores are two, one and zero. Raise e to each: about seven point three nine, two point seven two, and one."
+  },
+  "sm2": {
+   "start": 2229,
+   "dur": 276,
+   "file": "vo/ml-activation/sm2.wav",
+   "text": "Divide each by the total, eleven point one one. You get zero point six seven, zero point two four, and zero point zero nine."
+  },
+  "sm3": {
+   "start": 2518,
+   "dur": 300,
+   "file": "vo/ml-activation/sm3.wav",
+   "text": "They add up to one, and the network chooses class one, the largest. Because they share one total, the classes compete: raise one score, and the others fall."
+  },
+  "why": {
+   "start": 2845,
+   "dur": 195,
+   "file": "vo/ml-activation/why.wav",
+   "text": "But activations do something bigger. Look at XOR. It is one when exactly one input is one."
+  },
+  "xor1": {
+   "start": 3053,
+   "dur": 204,
+   "file": "vo/ml-activation/xor1.wav",
+   "text": "The two ones sit on one diagonal, the two zeros on the other. No single straight line can separate them."
+  },
+  "xor2": {
+   "start": 3269,
+   "dur": 230,
+   "file": "vo/ml-activation/xor2.wav",
+   "text": "So we add a hidden layer. One hidden unit draws one line, the other draws a second, and the output unit combines them."
+  },
+  "lin": {
+   "start": 3512,
+   "dur": 294,
+   "file": "vo/ml-activation/lin.wav",
+   "text": "This works only because each hidden unit applies its activation. Without it, the network is just sums of sums, and it collapses back into one line."
+  },
+  "when": {
+   "start": 3834,
+   "dur": 327,
+   "file": "vo/ml-activation/when.wav",
+   "text": "And when are they used? Not before training. They are part of the network. Every forward pass applies them, in training and in prediction, and backpropagation uses their slope."
+  },
+  "ex0": {
+   "start": 4191,
+   "dur": 33,
+   "file": "vo/ml-activation/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 4237,
+   "dur": 83,
+   "file": "vo/ml-activation/ex1.wav",
+   "text": "The activation turns the sum into the output."
+  },
+  "ex2": {
+   "start": 4332,
+   "dur": 69,
+   "file": "vo/ml-activation/ex2.wav",
+   "text": "Sigmoid: one output, two classes."
+  },
+  "ex3": {
+   "start": 4414,
+   "dur": 92,
+   "file": "vo/ml-activation/ex3.wav",
+   "text": "Softmax: one output per class, summing to one."
+  },
+  "ex4": {
+   "start": 4518,
+   "dur": 104,
+   "file": "vo/ml-activation/ex4.wav",
+   "text": "Without activations, the layers collapse into one line."
+  },
+  "ex5": {
+   "start": 4635,
+   "dur": 78,
+   "file": "vo/ml-activation/ex5.wav",
+   "text": "They are used in training and in prediction."
+  }
+ }
+}

@@ -1,0 +1,132 @@
+{
+ "fps": 30,
+ "total": 4694,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 154,
+   "file": "vo/ml-kinds/hook.wav",
+   "text": "Writing a payroll program is easy. The rules are known, so you simply code them."
+  },
+  "hook2": {
+   "start": 244,
+   "dur": 179,
+   "file": "vo/ml-kinds/hook2.wav",
+   "text": "But what are the rules for recognising speech? People do it every day, and nobody can explain how."
+  },
+  "learn": {
+   "start": 436,
+   "dur": 284,
+   "file": "vo/ml-kinds/learn.wav",
+   "text": "So we let the computer learn from examples. Machine learning optimises a performance criterion, using example data or past experience."
+  },
+  "model": {
+   "start": 732,
+   "dur": 141,
+   "file": "vo/ml-kinds/model.wav",
+   "text": "What it learns is a model: a useful approximation, not the perfect truth."
+  },
+  "sup": {
+   "start": 901,
+   "dur": 206,
+   "file": "vo/ml-kinds/sup.wav",
+   "text": "The first kind of learning has a teacher. Every example comes with the right answer. That is supervised learning."
+  },
+  "cls": {
+   "start": 1120,
+   "dur": 377,
+   "file": "vo/ml-kinds/cls.wav",
+   "text": "A bank knows each customer's income and savings, and whether they were low risk or high risk. Learning finds the thresholds that separate them. The answer is a class, so this is classification."
+  },
+  "reg": {
+   "start": 1509,
+   "dur": 237,
+   "file": "vo/ml-kinds/reg.wav",
+   "text": "Now predict a used car's price from its mileage. The answer is a number, so this is regression. Learning finds the line."
+  },
+  "unsup": {
+   "start": 1774,
+   "dur": 157,
+   "file": "vo/ml-kinds/unsup.wav",
+   "text": "Take the answers away. Only the inputs are left. That is unsupervised learning."
+  },
+  "clus": {
+   "start": 1944,
+   "dur": 275,
+   "file": "vo/ml-kinds/clus.wav",
+   "text": "The learner can still find groups of similar examples, like customer segments. These groups are clusters, not classes. Nobody has named them."
+  },
+  "rl": {
+   "start": 2247,
+   "dur": 259,
+   "file": "vo/ml-kinds/rl.wav",
+   "text": "The third kind is reinforcement learning. A robot in a maze gets no answer for each step. It gets a reward only at the end."
+  },
+  "rl2": {
+   "start": 2518,
+   "dur": 156,
+   "file": "vo/ml-kinds/rl2.wav",
+   "text": "From that delayed reward, it learns a policy: which move to make, in every place."
+  },
+  "assoc": {
+   "start": 2701,
+   "dur": 355,
+   "file": "vo/ml-kinds/assoc.wav",
+   "text": "Week one also finds associations. Of ten baskets with a computer, seven also hold a mouse. So the probability of a mouse, given a computer, is zero point seven."
+  },
+  "par": {
+   "start": 3084,
+   "dur": 200,
+   "file": "vo/ml-kinds/par.wav",
+   "text": "One last idea. Some learners fix the form of the answer before they see any data. They are parametric."
+  },
+  "par2": {
+   "start": 3297,
+   "dur": 410,
+   "file": "vo/ml-kinds/par2.wav",
+   "text": "The line, y equals w x plus w zero, is parametric. Its shape is chosen in advance. Learning only fills in w and w zero. More data never changes the form."
+  },
+  "npar": {
+   "start": 3719,
+   "dur": 262,
+   "file": "vo/ml-kinds/npar.wav",
+   "text": "A nonparametric learner has no such fixed formula. A decision tree's questions, and how deep it grows, come from the data itself."
+  },
+  "ex0": {
+   "start": 4012,
+   "dur": 33,
+   "file": "vo/ml-kinds/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 4058,
+   "dur": 86,
+   "file": "vo/ml-kinds/ex1.wav",
+   "text": "Supervised: every example has its answer."
+  },
+  "ex2": {
+   "start": 4157,
+   "dur": 103,
+   "file": "vo/ml-kinds/ex2.wav",
+   "text": "Classification gives a class. Regression gives a number."
+  },
+  "ex3": {
+   "start": 4272,
+   "dur": 93,
+   "file": "vo/ml-kinds/ex3.wav",
+   "text": "Unsupervised finds clusters, without labels."
+  },
+  "ex4": {
+   "start": 4378,
+   "dur": 108,
+   "file": "vo/ml-kinds/ex4.wav",
+   "text": "Reinforcement learns a policy from a delayed reward."
+  },
+  "ex5": {
+   "start": 4499,
+   "dur": 111,
+   "file": "vo/ml-kinds/ex5.wav",
+   "text": "Parametric fixes the form. Nonparametric does not."
+  }
+ }
+}

@@ -1,0 +1,99 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "A student is described by five features: age, G P A, attendance, study hours and income. Five features, so d equals five."
+  },
+  {
+   "id": "why",
+   "text": "Fewer features means less computation, cheaper data, and simpler models. With two, you can even plot the data."
+  },
+  {
+   "id": "why2",
+   "text": "But fewer features does not promise higher accuracy. What matters is keeping the useful information.",
+   "pause": 0.5
+  },
+  {
+   "id": "sel",
+   "text": "There are two ways to get fewer features. Feature selection keeps some of the original columns. Keep G P A and study hours, and drop the rest. They stay easy to read."
+  },
+  {
+   "id": "ext",
+   "text": "Feature extraction builds new features out of the old ones. Height and weight become one new number: z one equals zero point six times height, plus zero point eight times weight.",
+   "pause": 0.5
+  },
+  {
+   "id": "fwd",
+   "text": "How do you choose which columns to keep? Forward search starts with no features. It tries adding each one, and keeps the one with the lowest validation error."
+  },
+  {
+   "id": "fwd2",
+   "text": "It goes on adding while the error improves. Backward search starts with all of them, and removes. Both are greedy, so neither guarantees the best subset.",
+   "pause": 0.5
+  },
+  {
+   "id": "pca",
+   "text": "The best known extraction method is P C A: principal component analysis."
+  },
+  {
+   "id": "pca1",
+   "text": "Here are students' heights and weights. First, centre the cloud, by subtracting the mean."
+  },
+  {
+   "id": "pca2",
+   "text": "Now pick a direction, and project every point onto it. Some directions squeeze the points together. Others spread them out."
+  },
+  {
+   "id": "pca3",
+   "text": "P C A picks the direction with the greatest spread: the largest variance. That is the first principal component."
+  },
+  {
+   "id": "pca4",
+   "text": "The second is perpendicular to the first, and holds the next largest variance. Here the first keeps ninety two percent, and the second the other eight.",
+   "pause": 0.4
+  },
+  {
+   "id": "iris",
+   "text": "On the iris data in the slides, two components keep ninety seven point seven seven percent of the variance."
+  },
+  {
+   "id": "trap",
+   "text": "One trap. P C A never looks at the labels. The direction with the most spread is not always the one that separates the classes."
+  },
+  {
+   "id": "lda",
+   "text": "When separating the classes is the goal, the slides name L D A, which uses the class labels.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "Selection keeps original features."
+  },
+  {
+   "id": "ex2",
+   "text": "Extraction builds new ones."
+  },
+  {
+   "id": "ex3",
+   "text": "Forward search adds. Backward search removes."
+  },
+  {
+   "id": "ex4",
+   "text": "P C A keeps the direction of largest variance."
+  },
+  {
+   "id": "ex5",
+   "text": "P C A ignores the labels.",
+   "pause": 0.8
+  }
+ ]
+}

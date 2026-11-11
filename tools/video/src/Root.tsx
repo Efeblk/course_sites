@@ -13,6 +13,7 @@ import action from './timelines/action.json';
 import trust from './timelines/trust.json';
 import { SweComps } from './swe';
 import { OsComps } from './os';
+import { MlComps } from './ml';
 
 const comp = (id: string, component: React.FC, t: unknown) => {
   const { TL } = makeTL(t);
@@ -27,4 +28,5 @@ export const Root: React.FC = () => <>
   {comp('Trust', Trust, trust)}
   <SweComps />
   <OsComps />
+  <MlComps />
 </>;

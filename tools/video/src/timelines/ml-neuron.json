@@ -1,0 +1,132 @@
+{
+ "fps": 30,
+ "total": 4178,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 215,
+   "file": "vo/ml-neuron/hook.wav",
+   "text": "Week six builds a model out of tiny units. Each one does the simplest thing there is: multiply, then add."
+  },
+  "unit": {
+   "start": 306,
+   "dur": 184,
+   "file": "vo/ml-neuron/unit.wav",
+   "text": "This is a perceptron. Inputs x one and x two come in, and every connection has a weight."
+  },
+  "sum": {
+   "start": 503,
+   "dur": 146,
+   "file": "vo/ml-neuron/sum.wav",
+   "text": "Multiply each input by its weight, add them up, and that sum is the output."
+  },
+  "bias": {
+   "start": 661,
+   "dur": 191,
+   "file": "vo/ml-neuron/bias.wav",
+   "text": "There is one more input, x zero, which is always one. Its weight, w zero, is the bias."
+  },
+  "tq": {
+   "start": 880,
+   "dur": 162,
+   "file": "vo/ml-neuron/tq.wav",
+   "text": "The slides write all of this as w transpose x. So what does transpose mean?"
+  },
+  "t1": {
+   "start": 1055,
+   "dur": 278,
+   "file": "vo/ml-neuron/t1.wav",
+   "text": "In the slides, vectors are columns. Transpose turns a column into a row. Here, w is minus one point five, one, and one."
+  },
+  "t2": {
+   "start": 1345,
+   "dur": 236,
+   "file": "vo/ml-neuron/t2.wav",
+   "text": "A row times a column pairs the entries: first with first, second with second, third with third. Multiply each pair."
+  },
+  "t3": {
+   "start": 1594,
+   "dur": 313,
+   "file": "vo/ml-neuron/t3.wav",
+   "text": "Add the products. Minus one point five, plus one, plus one, is zero point five. A row times a column is always one number: the weighted sum."
+  },
+  "whyb": {
+   "start": 1934,
+   "dur": 50,
+   "file": "vo/ml-neuron/whyb.wav",
+   "text": "So why do we need the bias?"
+  },
+  "reg": {
+   "start": 1997,
+   "dur": 322,
+   "file": "vo/ml-neuron/reg.wav",
+   "text": "For regression, the unit draws a line: y equals w x plus w zero. w sets the slope. w zero moves the whole line up or down."
+  },
+  "nob": {
+   "start": 2331,
+   "dur": 168,
+   "file": "vo/ml-neuron/nob.wav",
+   "text": "Take the bias away, and every line must pass through the origin, whatever the data look like."
+  },
+  "and": {
+   "start": 2524,
+   "dur": 283,
+   "file": "vo/ml-neuron/and.wav",
+   "text": "For classification, the unit outputs one when the sum is above zero. Keep both weights at one, and set the bias to minus one point five."
+  },
+  "and2": {
+   "start": 2820,
+   "dur": 256,
+   "file": "vo/ml-neuron/and2.wav",
+   "text": "The boundary is the line x one plus x two equals one point five. Only the corner one, one is above it. That is AND."
+  },
+  "or": {
+   "start": 3088,
+   "dur": 246,
+   "file": "vo/ml-neuron/or.wav",
+   "text": "Now change only the bias, to minus zero point five. The line slides down, and three corners are above it. That is OR."
+  },
+  "shift": {
+   "start": 3347,
+   "dur": 245,
+   "file": "vo/ml-neuron/shift.wav",
+   "text": "Same weights, different bias. The weights choose the direction of the line. The bias chooses where it sits. That is bias shifting."
+  },
+  "ex0": {
+   "start": 3623,
+   "dur": 33,
+   "file": "vo/ml-neuron/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3668,
+   "dur": 70,
+   "file": "vo/ml-neuron/ex1.wav",
+   "text": "A perceptron outputs the weighted sum."
+  },
+  "ex2": {
+   "start": 3751,
+   "dur": 68,
+   "file": "vo/ml-neuron/ex2.wav",
+   "text": "Transpose turns a column into a row."
+  },
+  "ex3": {
+   "start": 3832,
+   "dur": 77,
+   "file": "vo/ml-neuron/ex3.wav",
+   "text": "w transpose x is one number."
+  },
+  "ex4": {
+   "start": 3922,
+   "dur": 96,
+   "file": "vo/ml-neuron/ex4.wav",
+   "text": "Without a bias, the line must pass through the origin."
+  },
+  "ex5": {
+   "start": 4030,
+   "dur": 63,
+   "file": "vo/ml-neuron/ex5.wav",
+   "text": "AND and OR differ only in the bias."
+  }
+ }
+}

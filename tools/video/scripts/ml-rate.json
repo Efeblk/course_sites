@@ -1,0 +1,95 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "Training a network means changing its weights, a little at a time, so that the error goes down. But how big should each step be?"
+  },
+  {
+   "id": "ex",
+   "text": "The slides use the smallest possible example. One weight, and the output is y equals x times w."
+  },
+  {
+   "id": "nums",
+   "text": "The input x is one point five. The target is zero point five. The weight starts at zero point eight."
+  },
+  {
+   "id": "y",
+   "text": "So the output is one point two. Far too big."
+  },
+  {
+   "id": "err",
+   "text": "The error is one half times the difference squared: one half times zero point seven squared, which is zero point two four five.",
+   "pause": 0.5
+  },
+  {
+   "id": "curve",
+   "text": "Now draw the error for every possible weight. It is a valley, and the best weight sits at the bottom."
+  },
+  {
+   "id": "slope",
+   "text": "At zero point eight, the curve slopes upward. The slope is one point zero five. A positive slope says: make the weight smaller."
+  },
+  {
+   "id": "step",
+   "text": "Gradient descent steps against the slope. The new weight is the old one, minus the learning rate times the slope."
+  },
+  {
+   "id": "step2",
+   "text": "With a learning rate of zero point one, w goes from zero point eight to zero point six nine five, and the error drops.",
+   "pause": 0.5
+  },
+  {
+   "id": "small",
+   "text": "Keep the learning rate at zero point one, and every step is small. The weight creeps down the valley. It gets there, but slowly."
+  },
+  {
+   "id": "mid",
+   "text": "Raise it to zero point four. Now it reaches the bottom in a couple of steps."
+  },
+  {
+   "id": "big",
+   "text": "Raise it to one. Each step jumps right over the minimum, and lands higher up the other side. The error grows instead of shrinking.",
+   "pause": 0.5
+  },
+  {
+   "id": "rule",
+   "text": "So the learning rate is the step size. Too small is slow. Too big overshoots, and can blow up.",
+   "pause": 0.5
+  },
+  {
+   "id": "deep",
+   "text": "In a network with hidden layers, backpropagation passes the error back, layer by layer, so every weight gets its own slope. Then each one takes the same kind of step, sized by the learning rate.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "Training moves each weight against the slope of the error."
+  },
+  {
+   "id": "ex2",
+   "text": "The learning rate is the step size."
+  },
+  {
+   "id": "ex3",
+   "text": "Too small is slow. Too big overshoots."
+  },
+  {
+   "id": "ex4",
+   "text": "On the slide, w goes from zero point eight to zero point six nine five."
+  },
+  {
+   "id": "ex5",
+   "text": "Backpropagation sends the error back through the layers.",
+   "pause": 0.8
+  }
+ ]
+}

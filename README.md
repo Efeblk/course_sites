@@ -40,6 +40,7 @@ step, no server, works offline. Progress is saved in the browser (localStorage).
     overfitting, K-fold CV, PCA, subset selection, k-means, EM, hierarchical clustering, ID3, regression trees,
     perceptron (bias, AND/OR/XOR)
   - 12 games, a quiz and flashcards per week, driven by `coe305/data.js`
+  - midterm pages: `ozet.html`, `mock.html`, `videos.html` (6 explainer episodes made in `tools/video/src/ml/`)
 - **UNI480 — AI in Health Management** (`uni480/`): Weeks 1–4
   - 10 simulations (`uni480/wN/*.html`): ward monitoring agent, hospital-manager scenario, clinical-note NLP,
     vision tasks across hospitals, verifying an AI draft, data-quality inspector, interoperability ("1.8"),

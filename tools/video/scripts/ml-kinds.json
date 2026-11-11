@@ -1,0 +1,100 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "Writing a payroll program is easy. The rules are known, so you simply code them."
+  },
+  {
+   "id": "hook2",
+   "text": "But what are the rules for recognising speech? People do it every day, and nobody can explain how."
+  },
+  {
+   "id": "learn",
+   "text": "So we let the computer learn from examples. Machine learning optimises a performance criterion, using example data or past experience."
+  },
+  {
+   "id": "model",
+   "text": "What it learns is a model: a useful approximation, not the perfect truth.",
+   "pause": 0.5
+  },
+  {
+   "id": "sup",
+   "text": "The first kind of learning has a teacher. Every example comes with the right answer. That is supervised learning."
+  },
+  {
+   "id": "cls",
+   "text": "A bank knows each customer's income and savings, and whether they were low risk or high risk. Learning finds the thresholds that separate them. The answer is a class, so this is classification."
+  },
+  {
+   "id": "reg",
+   "text": "Now predict a used car's price from its mileage. The answer is a number, so this is regression. Learning finds the line.",
+   "pause": 0.5
+  },
+  {
+   "id": "unsup",
+   "text": "Take the answers away. Only the inputs are left. That is unsupervised learning."
+  },
+  {
+   "id": "clus",
+   "text": "The learner can still find groups of similar examples, like customer segments. These groups are clusters, not classes. Nobody has named them.",
+   "pause": 0.5
+  },
+  {
+   "id": "rl",
+   "text": "The third kind is reinforcement learning. A robot in a maze gets no answer for each step. It gets a reward only at the end."
+  },
+  {
+   "id": "rl2",
+   "text": "From that delayed reward, it learns a policy: which move to make, in every place.",
+   "pause": 0.5
+  },
+  {
+   "id": "assoc",
+   "text": "Week one also finds associations. Of ten baskets with a computer, seven also hold a mouse. So the probability of a mouse, given a computer, is zero point seven.",
+   "pause": 0.5
+  },
+  {
+   "id": "par",
+   "text": "One last idea. Some learners fix the form of the answer before they see any data. They are parametric."
+  },
+  {
+   "id": "par2",
+   "text": "The line, y equals w x plus w zero, is parametric. Its shape is chosen in advance. Learning only fills in w and w zero. More data never changes the form."
+  },
+  {
+   "id": "npar",
+   "text": "A nonparametric learner has no such fixed formula. A decision tree's questions, and how deep it grows, come from the data itself.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "Supervised: every example has its answer."
+  },
+  {
+   "id": "ex2",
+   "text": "Classification gives a class. Regression gives a number."
+  },
+  {
+   "id": "ex3",
+   "text": "Unsupervised finds clusters, without labels."
+  },
+  {
+   "id": "ex4",
+   "text": "Reinforcement learns a policy from a delayed reward."
+  },
+  {
+   "id": "ex5",
+   "text": "Parametric fixes the form. Nonparametric does not.",
+   "pause": 0.8
+  }
+ ]
+}

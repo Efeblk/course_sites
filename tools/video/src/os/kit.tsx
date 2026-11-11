@@ -391,7 +391,8 @@ export const Zoom: React.FC<{ z: number; cx?: number; cy?: number; children: Rea
 // ---------------------------------------------------------------- frame of every episode
 export type Scene = [React.FC<{ f: number }>, number];
 /** title card (before the first beat), crossfading scenes, a small chapter tag in the corner, narration */
-export const Episode: React.FC<{ t: unknown; scenes: Scene[]; ch: string; title: string; children?: React.ReactNode }> = ({ t, scenes, ch, title, children }) => {
+export const Episode: React.FC<{ t: unknown; scenes: Scene[]; ch: string; title: string; children?: React.ReactNode; code?: string; subject?: string; icon?: (f: number) => React.ReactNode }> =
+  ({ t, scenes, ch, title, children, code = 'COE303', subject = 'OPERATING SYSTEMS', icon }) => {
   const f = useCurrentFrame();
   const { TL } = makeTL(t);
   const first = Math.min(...Object.values(TL.beats).map(b => b.start));
@@ -406,15 +407,15 @@ export const Episode: React.FC<{ t: unknown; scenes: Scene[]; ch: string; title:
         })}
         {/* corner tag */}
         <g opacity={p(f, first + 10, first + 30) * (1 - p(f, TL.total - 18, TL.total - 2))}>
-          <text x={56} y={66} fontFamily={MONO} fontWeight={600} fontSize={22} fill={C.muted} letterSpacing={1}>{`COE303 · ${ch}`}</text>
+          <text x={56} y={66} fontFamily={MONO} fontWeight={600} fontSize={22} fill={C.muted} letterSpacing={1}>{`${code} · ${ch}`}</text>
         </g>
         {/* title card */}
         {tOut < 1 && <g opacity={1 - tOut} transform={`translate(0,${-tOut * 40})`}>
           <g transform="translate(960,330)">
-            <g transform={`scale(${0.5 * pop(f, 2, 18)})`}><Chip f={f} x={0} y={0} busy={p(f, 10, 30)} /></g>
+            <g transform={`scale(${0.5 * pop(f, 2, 18)})`}>{icon ? icon(f) : <Chip f={f} x={0} y={0} busy={p(f, 10, 30)} />}</g>
           </g>
           <g opacity={p(f, 8, 20)}>
-            <text x={960} y={540} textAnchor="middle" fontFamily={MONO} fontWeight={600} fontSize={30} fill={C.muted} letterSpacing={3}>{`OPERATING SYSTEMS · ${ch.toUpperCase()}`}</text>
+            <text x={960} y={540} textAnchor="middle" fontFamily={MONO} fontWeight={600} fontSize={30} fill={C.muted} letterSpacing={3}>{`${subject} · ${ch.toUpperCase()}`}</text>
           </g>
           <g opacity={p(f, 14, 28)} transform={`translate(0,${(1 - p(f, 14, 32)) * 24})`}>
             <rect x={960 - title.length * 21} y={590} width={title.length * 42 * p(f, 26, 44)} height={34} fill={HL} opacity={0.7} />

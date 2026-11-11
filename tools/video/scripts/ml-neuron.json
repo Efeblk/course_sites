@@ -1,0 +1,98 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "Week six builds a model out of tiny units. Each one does the simplest thing there is: multiply, then add."
+  },
+  {
+   "id": "unit",
+   "text": "This is a perceptron. Inputs x one and x two come in, and every connection has a weight."
+  },
+  {
+   "id": "sum",
+   "text": "Multiply each input by its weight, add them up, and that sum is the output."
+  },
+  {
+   "id": "bias",
+   "text": "There is one more input, x zero, which is always one. Its weight, w zero, is the bias.",
+   "pause": 0.5
+  },
+  {
+   "id": "tq",
+   "text": "The slides write all of this as w transpose x. So what does transpose mean?"
+  },
+  {
+   "id": "t1",
+   "text": "In the slides, vectors are columns. Transpose turns a column into a row. Here, w is minus one point five, one, and one."
+  },
+  {
+   "id": "t2",
+   "text": "A row times a column pairs the entries: first with first, second with second, third with third. Multiply each pair."
+  },
+  {
+   "id": "t3",
+   "text": "Add the products. Minus one point five, plus one, plus one, is zero point five. A row times a column is always one number: the weighted sum.",
+   "pause": 0.5
+  },
+  {
+   "id": "whyb",
+   "text": "So why do we need the bias?"
+  },
+  {
+   "id": "reg",
+   "text": "For regression, the unit draws a line: y equals w x plus w zero. w sets the slope. w zero moves the whole line up or down."
+  },
+  {
+   "id": "nob",
+   "text": "Take the bias away, and every line must pass through the origin, whatever the data look like.",
+   "pause": 0.4
+  },
+  {
+   "id": "and",
+   "text": "For classification, the unit outputs one when the sum is above zero. Keep both weights at one, and set the bias to minus one point five."
+  },
+  {
+   "id": "and2",
+   "text": "The boundary is the line x one plus x two equals one point five. Only the corner one, one is above it. That is AND."
+  },
+  {
+   "id": "or",
+   "text": "Now change only the bias, to minus zero point five. The line slides down, and three corners are above it. That is OR."
+  },
+  {
+   "id": "shift",
+   "text": "Same weights, different bias. The weights choose the direction of the line. The bias chooses where it sits. That is bias shifting.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "A perceptron outputs the weighted sum."
+  },
+  {
+   "id": "ex2",
+   "text": "Transpose turns a column into a row."
+  },
+  {
+   "id": "ex3",
+   "text": "w transpose x is one number."
+  },
+  {
+   "id": "ex4",
+   "text": "Without a bias, the line must pass through the origin."
+  },
+  {
+   "id": "ex5",
+   "text": "AND and OR differ only in the bias.",
+   "pause": 0.8
+  }
+ ]
+}

@@ -15,6 +15,7 @@ Narration is a local neural voice ([Kokoro](https://github.com/thewh1teagle/koko
 | `Trust` | UNI480 · augmented intelligence and trust | `scripts/trust.json` |
 | `Swe*` (16) | SWE307 · chapters 1–7, one idea each (`src/swe/*.tsx`) | `scripts/swe307.py` → `scripts/swe-*.json` |
 | `Os*` (8) | COE303 · chapters 1–6, one episode per chapter, two each for 5 and 6 (`src/os/*.tsx`) | `scripts/coe303.py` → `scripts/os-*.json` |
+| `Ml*` (6) | COE305 · the midterm topic list, weeks 1–6 (`src/ml/*.tsx`) | `scripts/coe305.py` → `scripts/ml-*.json` |
 
 ## Setup (once)
 
@@ -86,4 +87,20 @@ python scripts/coe303.py                                   # narration -> script
 python src/os/gen_index.py                                 # register the episodes found in src/os/
 node check.mjs sheet OsFcfs os-fcfs && python sheet.py OsFcfs
 node render_all.mjs ../../materials/COE303/video OsFcfs     # writes fcfs.mp4 + fcfs.jpg
+```
+
+## COE305 episodes (`src/ml/`)
+
+Six episodes of two to three minutes (about 15 minutes in total) aimed at the lecturer's midterm topic list, rendered to
+`materials/COE305/video/` and played by `coe305/videos.html`. They reuse the COE303 kit (`Episode` now takes `code`,
+`subject` and a title-card `icon`); `src/ml/kit.tsx` adds plot axes (`ax`, `Axes`, `Curve`), data dots, neuron units,
+wires and pulses. Every number on screen is computed from the slide's example (entropy, PCA variance, softmax, the
+gradient-descent runs), so the picture and the narration cannot drift apart.
+
+```sh
+python scripts/coe305.py                                   # narration -> scripts/ml-*.json
+.tts/venv/Scripts/python.exe tts.py scripts/ml-entropy.json
+python src/ml/gen_index.py                                 # register the episodes found in src/ml/
+node check.mjs sheet MlEntropy ml-entropy && python sheet.py MlEntropy
+node render_all.mjs ../../materials/COE305/video MlEntropy  # writes entropy.mp4 + entropy.jpg
 ```

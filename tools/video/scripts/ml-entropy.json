@@ -1,0 +1,98 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "Fourteen days of Play Tennis. On nine days they played. On five, they did not. A decision tree will predict the answer by asking one question at a time."
+  },
+  {
+   "id": "which",
+   "text": "But which question comes first? Outlook, humidity, wind, or temperature?",
+   "pause": 0.4
+  },
+  {
+   "id": "idea",
+   "text": "A good question leaves each group pure: all yes, or all no. Entropy measures how mixed a group is."
+  },
+  {
+   "id": "pure",
+   "text": "A pure group, all one class, has entropy zero. There is nothing left to ask."
+  },
+  {
+   "id": "half",
+   "text": "A fifty fifty group has entropy one bit. That is the worst case. You know nothing about the answer."
+  },
+  {
+   "id": "curve",
+   "text": "In between, entropy climbs from zero to its peak at fifty fifty, and falls back to zero."
+  },
+  {
+   "id": "root",
+   "text": "Our fourteen days, nine yes and five no, are quite mixed: zero point nine four zero bits.",
+   "pause": 0.5
+  },
+  {
+   "id": "split",
+   "text": "Now try outlook. Sunny gets two yes and three no. Overcast gets four yes, and no no at all. Rain gets three yes and two no."
+  },
+  {
+   "id": "child",
+   "text": "Overcast is pure: entropy zero. Sunny and rain are mixed: zero point nine seven one each."
+  },
+  {
+   "id": "weight",
+   "text": "Weight each child by its size: five out of fourteen, four out of fourteen, five out of fourteen. Together they leave zero point six nine four."
+  },
+  {
+   "id": "gain",
+   "text": "Entropy fell from zero point nine four zero to zero point six nine four. That drop, about zero point two four six, is the information gain."
+  },
+  {
+   "id": "others",
+   "text": "Humidity would leave zero point seven eight eight. Wind, zero point eight nine two. Temperature, zero point nine one one. Outlook leaves the least, so outlook becomes the root.",
+   "pause": 0.5
+  },
+  {
+   "id": "rec",
+   "text": "Then repeat inside every branch that is still mixed. Sunny asks about humidity. Rain asks about wind."
+  },
+  {
+   "id": "stop",
+   "text": "The slides stop when a leaf holds a single example, or when splitting would raise the entropy."
+  },
+  {
+   "id": "prune",
+   "text": "A tree grown too far starts to fit noise. Pruning cuts it back, and the tree is judged on new examples.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "Entropy measures how mixed a node is."
+  },
+  {
+   "id": "ex2",
+   "text": "Pure is zero. Fifty fifty is one bit, the worst."
+  },
+  {
+   "id": "ex3",
+   "text": "Weight each child by its size."
+  },
+  {
+   "id": "ex4",
+   "text": "Choose the split with the largest gain."
+  },
+  {
+   "id": "ex5",
+   "text": "On Play Tennis, outlook wins.",
+   "pause": 0.8
+  }
+ ]
+}

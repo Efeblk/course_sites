@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COE305 — Explainer videos · Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .ch { margin: 44px 0 0; }
+    .ch > h2 { margin: 0 0 2px; }
+    .vid { margin: 26px 0 0; }
+    .vid h3 { margin: 0 0 2px; }
+    .vid video { display: block; width: 100%; max-width: 960px; aspect-ratio: 16 / 9; height: auto; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); margin: 10px 0 8px; }
+    .vid p { max-width: 720px; margin: 0; }
+    .speeds { margin: 6px 0 0; }
+  </style>
+</head>
+<body data-root="..">
+  <main>
+    <div class="mono small muted">COE305 — explainer videos</div>
+    <h1 style="font-size:2.6rem;margin-top:4px">Six short episodes for the midterm</h1>
+    <p class="lead">The lecturer's topic list as six animated episodes of two to three minutes each (about 15 minutes in total), in English like the exam. Each one starts from a puzzle, uses the slides' own examples (credit scoring, the students' features, Play Tennis, the AND unit, slide 17's one weight) and ends with a short "for the exam" card. No formulas to memorize; the point is what each idea does and why we use it.</p>
+    <div class="callout small">The video files are rendered on this computer with Remotion (<code>tools/video/</code>, see its README) into <code>materials/COE305/video/</code>. They are committed with the repo, so any checkout of course_sites plays them.</div>
+    <nav class="row toc" id="toc"></nav>
+    <div id="list"></div>
+    <div class="callout" style="margin-top:44px">Then check yourself with the <a href="mock.html">mock midterm</a>, or read the <a href="ozet.html">Midterm özeti</a>.</div>
+  </main>
+  <script src="data.js"></script>
+  <script>
+    document.body.dataset.course = COURSE.id;
+    document.body.dataset.title = 'Explainer videos';
+    document.body.dataset.activity = 'videos';
+  </script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { el } = CS;
+    const dir = `../materials/${COURSE.code}/video/`;
+    // file names = tools/video/src/ml/<Name>.tsx lower-cased; narration in tools/video/scripts/coe305.py
+    const CH = [
+      { ch: 1, title: 'Weeks 1 and 4 · Kinds of learning', vids: [
+        { id: 'kinds', t: 'Three ways to learn', d: '2:36', p: 'Why learn from examples (payroll versus speech), supervised learning with credit scoring (classification) and used-car prices (regression), clusters without labels, a robot that learns a policy from a delayed reward, the 7 / 10 basket association, and parametric (y = wx + w₀) versus nonparametric (a tree).' },
+      ] },
+      { ch: 3, title: 'Week 3 · Dimensionality reduction', vids: [
+        { id: 'features', t: 'Fewer features, same students', d: '2:31', p: 'A student with d = 5, why fewer features help (and do not promise accuracy), selection versus extraction (z₁ = 0.6·height + 0.8·weight), forward and backward search, PCA as the direction of largest variance (92% and 8%), the iris data at 97.77%, and why PCA ignores the labels while LDA uses them.' },
+      ] },
+      { ch: 5, title: 'Week 5 · Decision trees', vids: [
+        { id: 'entropy', t: 'Entropy: how mixed is a node?', d: '2:20', p: 'Play Tennis with 9 yes and 5 no: a pure group has entropy 0, a 50/50 group 1 bit (the worst), the root 0.940. Splitting on outlook leaves 0.694 (gain about 0.246) against humidity 0.788, wind 0.892 and temperature 0.911, then the tree grows on the slide 6 table (rain and strong wind stays mixed), the stopping rules and pruning.' },
+      ] },
+      { ch: 6, title: 'Week 6 · Multilayer perceptrons', vids: [
+        { id: 'neuron', t: 'One neuron: wᵀx and the bias', d: '2:19', p: 'A perceptron multiplies and adds, x₀ = 1 carries the bias, transpose turns the column w into a row so wᵀx = −1.5 + 1 + 1 = 0.5 is one number. Without w₀ every line passes through the origin; with w₁ = w₂ = 1, w₀ = −1.5 gives AND and w₀ = −0.5 gives OR.' },
+        { id: 'activation', t: 'Activation functions: why we use them', d: '2:40', p: 'The sum can be any number; sigmoid squeezes it into (0, 1) for two classes (sigmoid(0) = 0.5), tanh, ReLU and the linear output, softmax for K classes (2, 1, 0 → 0.67, 0.24, 0.09), XOR needing a hidden layer, why the layers collapse into one line without activations, and why they are used in training and in prediction, not before training.' },
+        { id: 'rate', t: 'Learning rate: how big a step?', d: '2:15', p: 'Slide 17’s one weight: x = 1.5, r = 0.5, w = 0.8, y = 1.2, E = 0.245. The error valley, the slope 1.05, one step to 0.695 with η = 0.1, then η = 0.1, 0.4 and 1.0 side by side (slow, fast, diverging), and backpropagation passing the error back. The video uses w ← w − η·slope, the form the worked example on slides 18–20 follows; slides 8–10 print the update with the opposite sign.' },
+      ] },
+    ];
+    const toc = document.getElementById('toc'), list = document.getElementById('list');
+    let n = 0;
+    for (const c of CH) {
+      const sec = el('section', { class: 'ch', id: `ch${c.ch}` }, el('h2', {}, c.title));
+      for (const v of c.vids) {
+        n++;
+        toc.append(el('a', { href: `#${v.id}` }, el('b', {}, String(n).padStart(2, '0')), v.t.split(':')[0]));
+        const base = `${dir}${v.id}`;
+        const msg = el('div', { class: 'callout bad small', style: { display: 'none' } });
+        const src = el('source', { src: `${base}.mp4`, type: 'video/mp4' });
+        const video = el('video', { controls: true, preload: 'none', poster: `${base}.jpg` }, src);
+        src.addEventListener('error', () => {
+          msg.style.display = '';
+          msg.textContent = `Could not load ${new URL(base + '.mp4', location.href).href.replace(/^file:\/\/\//, '')}. Open this page from the course_sites folder that contains materials/${COURSE.code}/video/.`;
+        });
+        sec.append(el('div', { class: 'vid', id: v.id },
+          el('h3', {}, v.t), el('div', { class: 'small muted' }, v.d),
+          video, msg, el('p', {}, v.p),
+          el('div', { class: 'row speeds small' }, el('span', { class: 'muted' }, 'Speed:'),
+            [0.85, 1, 1.25, 1.5].map((r) => el('button', { class: 'chip', onclick: () => { video.playbackRate = r; video.play(); } }, `${r}×`)))));
+      }
+      list.append(sec);
+    }
+    if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  </script>
+</body>
+</html>

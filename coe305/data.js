@@ -1926,6 +1926,11 @@ Object.assign(window.COURSE, {
     "length": "Concepts and why, no formulas",
     "plan": [
       [
+        "videos.html",
+        "Watch the 6 explainer episodes (1.25× is fine)",
+        "15 min"
+      ],
+      [
         "learn.html?ch=6",
         "Week 6 lesson: bias, transpose, activations, learning rate",
         "40 min"
@@ -1961,6 +1966,13 @@ Object.assign(window.COURSE, {
       "title": "Mock midterm",
       "meta": "28 items · instant feedback",
       "desc": "20 multiple-choice questions and 8 explain-why questions with keyword model answers."
+    },
+    {
+      "kind": "videos",
+      "href": "videos.html",
+      "title": "Explainer videos",
+      "meta": "6 episodes · 15 min",
+      "desc": "The lecturer's topics as animated stories: kinds of learning, PCA, entropy, the neuron and its bias, activations, the learning rate."
     }
   ]
 });

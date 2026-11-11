@@ -1,0 +1,132 @@
+{
+ "fps": 30,
+ "total": 4525,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 289,
+   "file": "vo/ml-features/hook.wav",
+   "text": "A student is described by five features: age, G P A, attendance, study hours and income. Five features, so d equals five."
+  },
+  "why": {
+   "start": 380,
+   "dur": 221,
+   "file": "vo/ml-features/why.wav",
+   "text": "Fewer features means less computation, cheaper data, and simpler models. With two, you can even plot the data."
+  },
+  "why2": {
+   "start": 613,
+   "dur": 193,
+   "file": "vo/ml-features/why2.wav",
+   "text": "But fewer features does not promise higher accuracy. What matters is keeping the useful information."
+  },
+  "sel": {
+   "start": 834,
+   "dur": 340,
+   "file": "vo/ml-features/sel.wav",
+   "text": "There are two ways to get fewer features. Feature selection keeps some of the original columns. Keep G P A and study hours, and drop the rest. They stay easy to read."
+  },
+  "ext": {
+   "start": 1186,
+   "dur": 358,
+   "file": "vo/ml-features/ext.wav",
+   "text": "Feature extraction builds new features out of the old ones. Height and weight become one new number: z one equals zero point six times height, plus zero point eight times weight."
+  },
+  "fwd": {
+   "start": 1572,
+   "dur": 292,
+   "file": "vo/ml-features/fwd.wav",
+   "text": "How do you choose which columns to keep? Forward search starts with no features. It tries adding each one, and keeps the one with the lowest validation error."
+  },
+  "fwd2": {
+   "start": 1876,
+   "dur": 289,
+   "file": "vo/ml-features/fwd2.wav",
+   "text": "It goes on adding while the error improves. Backward search starts with all of them, and removes. Both are greedy, so neither guarantees the best subset."
+  },
+  "pca": {
+   "start": 2193,
+   "dur": 146,
+   "file": "vo/ml-features/pca.wav",
+   "text": "The best known extraction method is P C A: principal component analysis."
+  },
+  "pca1": {
+   "start": 2352,
+   "dur": 159,
+   "file": "vo/ml-features/pca1.wav",
+   "text": "Here are students' heights and weights. First, centre the cloud, by subtracting the mean."
+  },
+  "pca2": {
+   "start": 2523,
+   "dur": 229,
+   "file": "vo/ml-features/pca2.wav",
+   "text": "Now pick a direction, and project every point onto it. Some directions squeeze the points together. Others spread them out."
+  },
+  "pca3": {
+   "start": 2765,
+   "dur": 213,
+   "file": "vo/ml-features/pca3.wav",
+   "text": "P C A picks the direction with the greatest spread: the largest variance. That is the first principal component."
+  },
+  "pca4": {
+   "start": 2991,
+   "dur": 278,
+   "file": "vo/ml-features/pca4.wav",
+   "text": "The second is perpendicular to the first, and holds the next largest variance. Here the first keeps ninety two percent, and the second the other eight."
+  },
+  "iris": {
+   "start": 3293,
+   "dur": 203,
+   "file": "vo/ml-features/iris.wav",
+   "text": "On the iris data in the slides, two components keep ninety seven point seven seven percent of the variance."
+  },
+  "trap": {
+   "start": 3508,
+   "dur": 246,
+   "file": "vo/ml-features/trap.wav",
+   "text": "One trap. P C A never looks at the labels. The direction with the most spread is not always the one that separates the classes."
+  },
+  "lda": {
+   "start": 3767,
+   "dur": 185,
+   "file": "vo/ml-features/lda.wav",
+   "text": "When separating the classes is the goal, the slides name L D A, which uses the class labels."
+  },
+  "ex0": {
+   "start": 3982,
+   "dur": 33,
+   "file": "vo/ml-features/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 4028,
+   "dur": 66,
+   "file": "vo/ml-features/ex1.wav",
+   "text": "Selection keeps original features."
+  },
+  "ex2": {
+   "start": 4106,
+   "dur": 52,
+   "file": "vo/ml-features/ex2.wav",
+   "text": "Extraction builds new ones."
+  },
+  "ex3": {
+   "start": 4171,
+   "dur": 89,
+   "file": "vo/ml-features/ex3.wav",
+   "text": "Forward search adds. Backward search removes."
+  },
+  "ex4": {
+   "start": 4272,
+   "dur": 95,
+   "file": "vo/ml-features/ex4.wav",
+   "text": "P C A keeps the direction of largest variance."
+  },
+  "ex5": {
+   "start": 4380,
+   "dur": 60,
+   "file": "vo/ml-features/ex5.wav",
+   "text": "P C A ignores the labels."
+  }
+ }
+}

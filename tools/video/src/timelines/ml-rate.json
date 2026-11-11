@@ -1,0 +1,126 @@
+{
+ "fps": 30,
+ "total": 4065,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 233,
+   "file": "vo/ml-rate/hook.wav",
+   "text": "Training a network means changing its weights, a little at a time, so that the error goes down. But how big should each step be?"
+  },
+  "ex": {
+   "start": 324,
+   "dur": 216,
+   "file": "vo/ml-rate/ex.wav",
+   "text": "The slides use the smallest possible example. One weight, and the output is y equals x times w."
+  },
+  "nums": {
+   "start": 552,
+   "dur": 202,
+   "file": "vo/ml-rate/nums.wav",
+   "text": "The input x is one point five. The target is zero point five. The weight starts at zero point eight."
+  },
+  "y": {
+   "start": 767,
+   "dur": 93,
+   "file": "vo/ml-rate/y.wav",
+   "text": "So the output is one point two. Far too big."
+  },
+  "err": {
+   "start": 873,
+   "dur": 252,
+   "file": "vo/ml-rate/err.wav",
+   "text": "The error is one half times the difference squared: one half times zero point seven squared, which is zero point two four five."
+  },
+  "curve": {
+   "start": 1152,
+   "dur": 175,
+   "file": "vo/ml-rate/curve.wav",
+   "text": "Now draw the error for every possible weight. It is a valley, and the best weight sits at the bottom."
+  },
+  "slope": {
+   "start": 1340,
+   "dur": 259,
+   "file": "vo/ml-rate/slope.wav",
+   "text": "At zero point eight, the curve slopes upward. The slope is one point zero five. A positive slope says: make the weight smaller."
+  },
+  "step": {
+   "start": 1612,
+   "dur": 208,
+   "file": "vo/ml-rate/step.wav",
+   "text": "Gradient descent steps against the slope. The new weight is the old one, minus the learning rate times the slope."
+  },
+  "step2": {
+   "start": 1832,
+   "dur": 253,
+   "file": "vo/ml-rate/step2.wav",
+   "text": "With a learning rate of zero point one, w goes from zero point eight to zero point six nine five, and the error drops."
+  },
+  "small": {
+   "start": 2113,
+   "dur": 240,
+   "file": "vo/ml-rate/small.wav",
+   "text": "Keep the learning rate at zero point one, and every step is small. The weight creeps down the valley. It gets there, but slowly."
+  },
+  "mid": {
+   "start": 2365,
+   "dur": 144,
+   "file": "vo/ml-rate/mid.wav",
+   "text": "Raise it to zero point four. Now it reaches the bottom in a couple of steps."
+  },
+  "big": {
+   "start": 2522,
+   "dur": 243,
+   "file": "vo/ml-rate/big.wav",
+   "text": "Raise it to one. Each step jumps right over the minimum, and lands higher up the other side. The error grows instead of shrinking."
+  },
+  "rule": {
+   "start": 2792,
+   "dur": 179,
+   "file": "vo/ml-rate/rule.wav",
+   "text": "So the learning rate is the step size. Too small is slow. Too big overshoots, and can blow up."
+  },
+  "deep": {
+   "start": 2998,
+   "dur": 372,
+   "file": "vo/ml-rate/deep.wav",
+   "text": "In a network with hidden layers, backpropagation passes the error back, layer by layer, so every weight gets its own slope. Then each one takes the same kind of step, sized by the learning rate."
+  },
+  "ex0": {
+   "start": 3401,
+   "dur": 33,
+   "file": "vo/ml-rate/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3446,
+   "dur": 95,
+   "file": "vo/ml-rate/ex1.wav",
+   "text": "Training moves each weight against the slope of the error."
+  },
+  "ex2": {
+   "start": 3554,
+   "dur": 62,
+   "file": "vo/ml-rate/ex2.wav",
+   "text": "The learning rate is the step size."
+  },
+  "ex3": {
+   "start": 3628,
+   "dur": 76,
+   "file": "vo/ml-rate/ex3.wav",
+   "text": "Too small is slow. Too big overshoots."
+  },
+  "ex4": {
+   "start": 3717,
+   "dur": 160,
+   "file": "vo/ml-rate/ex4.wav",
+   "text": "On the slide, w goes from zero point eight to zero point six nine five."
+  },
+  "ex5": {
+   "start": 3890,
+   "dur": 91,
+   "file": "vo/ml-rate/ex5.wav",
+   "text": "Backpropagation sends the error back through the layers."
+  }
+ }
+}
