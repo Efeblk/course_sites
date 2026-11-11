@@ -1947,12 +1947,12 @@ Object.assign(window.COURSE, {
       ],
       [
         "past.html",
-        "Old final papers: see how the lecturer asks, solve the questions tagged \"Vize konusu\"",
+        "Old papers: question style; prioritize entropy and learning types",
         "15 min"
       ],
       [
         "mock.html",
-        "Mock midterm: 20 questions + 8 explain-why",
+        "Mock midterm: 18 questions + 10 short answers / diagrams",
         "35 min"
       ]
     ]
@@ -1961,9 +1961,9 @@ Object.assign(window.COURSE, {
     {
       "kind": "past",
       "href": "past.html",
-      "title": "Geçmiş finaller",
-      "meta": "2 old finals · 26 questions",
-      "desc": "How the lecturer asks: every question from two older finals with a Turkish hint and a short English answer; the midterm-topic ones are tagged."
+      "title": "Eski sınav soruları",
+      "meta": "2 old question sets · exam type unconfirmed",
+      "desc": "26 old questions with Turkish hints and existing model answers. Probably finals; prioritize the questions matching your current topic notes."
     },
     {
       "kind": "summary",
@@ -1977,7 +1977,7 @@ Object.assign(window.COURSE, {
       "href": "mock.html",
       "title": "Mock midterm",
       "meta": "28 items · instant feedback",
-      "desc": "20 multiple-choice questions and 8 explain-why questions with keyword model answers."
+      "desc": "18 multiple-choice questions and 10 short answer / diagram tasks; old-paper question styles applied to your midterm topic notes."
     },
     {
       "kind": "videos",
