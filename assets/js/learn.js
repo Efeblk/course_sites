@@ -3,6 +3,7 @@
  *
  * GUIDE[n] = {
  *   goal: 'what you can do at the end', time: '≈ 60 min',
+ *   reading: true, opening: 'chapter introduction', summary: ['recap'], examAnswer: 'English keywords',
  *   question: 'the problem this chapter answers',                        // optional: explanation-first layout
  *   videos: [['what it explains', 'YouTube search words'], ...],
  *   steps: [{
@@ -33,6 +34,9 @@
 
   const conversational = Boolean(g.question);
   if (conversational) main.classList.add('lesson-explained');
+  const articleMode = Boolean(g.reading) && CS.param('view') !== 'steps';
+  if (articleMode) main.classList.add('lesson-reading');
+  if (g.reading) document.documentElement.lang = 'tr';
 
   const KEY = `guide:${C.id}:${n}`;
   const done = new Set(progress.get(KEY) || []);
@@ -41,9 +45,9 @@
   const games = Object.entries(C.games).filter(([, gm]) => gm.ch === n);
   const next = C.chapters[C.chapters.indexOf(ch) + 1]; // week numbers can skip (a midterm week has no lesson)
 
-  const steps = [...g.steps, { t: 'Practice & test yourself', practice: true }];
+  const steps = [...g.steps, { t: g.reading ? 'Kendini dene' : 'Practice & test yourself', practice: true }];
   const askStep = CS.param('step'); // the understanding test links straight to a step to re-learn
-  let cur = Math.max(0, Math.min(Number(askStep ?? progress.get(KEY + ':at')) || 0, steps.length - 1));
+  let cur = Math.max(0, Math.min(Number(askStep ?? progress.get(KEY + (articleMode ? ':reading-at' : ':at'))) || 0, steps.length - 1));
 
   /* ---- embedded pages (labs, games, quiz…) tell us their height; see common.js ---- */
   window.addEventListener('message', (e) => {
@@ -51,8 +55,8 @@
     for (const f of document.querySelectorAll('iframe.embed-frame'))
       if (f.contentWindow === e.source) f.style.height = Math.max(260, e.data.h) + 'px';
   });
-  function embed(href, title) {
-    const frame = el('iframe', { class: 'embed-frame', src: href, title, loading: 'lazy' });
+  function embed(href, title, deferred = false) {
+    const frame = el('iframe', { class: 'embed-frame', src: deferred ? null : href, title, loading: 'lazy' });
     return el('div', { class: 'embed' },
       el('div', { class: 'embed-bar' },
         el('span', { class: 'embed-title' }, title),
@@ -73,11 +77,15 @@
       el('div', { class: 'kicker' }, `${C.code} — ${U} ${n} — guided lesson`),
       el('h1', {}, ch.title),
       conversational ? el('p', { class: 'lesson-question' }, g.question) : null,
-      el('p', { class: 'goal' }, el('b', {}, 'By the end you can: '), g.goal),
-      el('div', { class: 'row hero-meta' },
+      !g.reading ? el('p', { class: 'goal' }, el('b', {}, 'By the end you can: '), g.goal) : null,
+      articleMode && g.opening ? el('p', { class: 'reader-intro' }, g.opening) : null,
+      articleMode ? el('div', { class: 'reader-meta' }, `${g.steps.length} bölüm · Açıklamalar Türkçe, terimler ve pratik soruları İngilizce`) : el('div', { class: 'row hero-meta' },
         el('span', { class: 'pill' }, `${steps.length} steps`),
         g.time ? el('span', { class: 'pill' }, 'about ' + g.time.replace('≈', '').trim()) : null,
         el('span', { class: 'pill' }, conversational ? 'explanation, example, quick check' : 'read, look, try, check')),
+      g.reading ? el('div', { class: 'lesson-view-switch' },
+        el('a', { href: `learn.html?ch=${n}`, 'aria-current': articleMode ? 'page' : null }, 'Dersi oku'),
+        el('a', { href: `learn.html?ch=${n}&view=steps&step=${cur}`, 'aria-current': !articleMode ? 'page' : null }, 'Adım adım çalış')) : null,
       el('div', { class: 'hero-progress' }, el('div', { class: 'progressbar' }, barFill), barText),
       g.videos && g.videos.length ? el('details', { class: 'videos' },
         el('summary', {}, `Prefer a video first? ${g.videos.length} YouTube searches`),
@@ -86,36 +94,64 @@
             el('span', { class: 'play' }, '▶'), el('span', {}, el('b', {}, label), el('span', { class: 'muted small' }, `YouTube: "${q}"`))))),
         el('p', { class: 'small muted' }, 'These links open a YouTube search, so you need internet. Choose a short video from the results. The rest of the site works offline.')) : null),
     conversational ? el('details', { class: 'lesson-course-route' },
-      el('summary', {}, `${U} ${n} of ${C.chapters.length} · See the course path`),
+      el('summary', {}, articleMode ? `${U} ${n} / ${C.chapters.length} · Dersteki yeri` : `${U} ${n} of ${C.chapters.length} · See the course path`),
       el('nav', { 'aria-label': 'Course chapters' }, C.chapters.map(c =>
         el('a', { href: `learn.html?ch=${c.n}`, 'aria-current': c.n === n ? 'page' : null }, `${c.n}. ${c.title}`)))) : null,
-    el('div', { class: 'lesson-grid' }, el('aside', {}, conversational ? el('details', { class: 'lesson-step-picker', open: window.matchMedia('(min-width: 701px)').matches }, el('summary', {}, 'Lesson steps'), nav) : [el('div', { class: 'aside-h' }, 'Steps'), nav]), stage));
+    el('div', { class: 'lesson-grid' }, el('aside', {}, conversational ? el('details', { class: 'lesson-step-picker', open: window.matchMedia('(min-width: 701px)').matches }, el('summary', {}, articleMode ? 'Bu derste' : 'Lesson steps'), nav) : [el('div', { class: 'aside-h' }, 'Steps'), nav]), stage));
 
   function go(i) {
     cur = Math.max(0, Math.min(steps.length - 1, i));
     progress.set(KEY + ':at', cur);
+    if (articleMode) {
+      progress.set(KEY + ':reading-at', cur);
+      drawNav();
+      const section = document.getElementById(`lesson-section-${cur}`);
+      section.scrollIntoView({ block: 'start', behavior: 'instant' });
+      section.querySelector('h2').focus({ preventScroll: true });
+      const url = new URL(location.href);
+      url.searchParams.set('step', cur);
+      url.hash = '';
+      history.replaceState(null, '', url);
+      return;
+    }
     draw();
     stage.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
   function finish(i) { done.add(i); saveDone(); }
 
   function drawNav() {
-    fill(nav, steps.map((s, i) => {
+    if (g.reading) {
+      main.querySelector('.lesson-view-switch a:first-child').href = `learn.html?ch=${n}&step=${cur}`;
+      main.querySelector('.lesson-view-switch a:last-child').href = `learn.html?ch=${n}&view=steps&step=${cur}`;
+    }
+    if (articleMode && nav.children.length) {
+      [...nav.children].forEach((item, i) => {
+        item.classList.toggle('on', i === cur);
+        item.classList.toggle('done', done.has(i));
+        item.querySelector('.dot').textContent = done.has(i) ? '✓' : String(i + 1);
+        const link = item.querySelector('a');
+        i === cur ? link.setAttribute('aria-current', 'location') : link.removeAttribute('aria-current');
+      });
+    } else fill(nav, steps.map((s, i) => {
       const attrs = { class: [i === cur ? 'on' : '', done.has(i) ? 'done' : ''].join(' ') };
       const content = [el('span', { class: 'dot' }, done.has(i) ? '✓' : String(i + 1)), el('span', {}, s.t)];
+      if (articleMode) return el('li', attrs, el('a', {
+        href: `#lesson-section-${i}`, 'aria-current': i === cur ? 'location' : null,
+        onclick: (event) => { event.preventDefault(); go(i); },
+      }, content));
       return conversational
         ? el('li', attrs, el('button', { type: 'button', 'aria-current': i === cur ? 'step' : null, onclick: () => go(i) }, content))
         : el('li', { ...attrs, onclick: () => go(i) }, content);
     }));
     const d = [...done].filter((i) => i < steps.length).length;
     barFill.style.width = `${(100 * d) / steps.length}%`;
-    barText.textContent = d >= steps.length ? 'All steps done' : `${d} of ${steps.length} steps done`;
+    barText.textContent = articleMode ? `${d} / ${steps.length} pratik bölümü tamamlandı` : d >= steps.length ? 'All steps done' : `${d} of ${steps.length} steps done`;
   }
 
   function checkBox(c, i) {
     const opts = shuffle(c.o.map((text, k) => ({ text, right: k === 0 })));
     const fb = el('div', { 'aria-live': 'polite' });
-    const box = el('section', { class: 'check' }, el('div', { class: 'sec-h' }, 'Check', el('b', {}, 'Did that make sense?')), el('div', { class: 'quiz-q' }, c.q));
+    const box = el('section', { class: 'check', lang: 'en' }, el('div', { class: 'sec-h' }, 'Check', el('b', {}, 'Did that make sense?')), el('div', { class: 'quiz-q' }, c.q));
     const btns = opts.map((o) => el('button', { class: 'opt', onclick: () => {
       btns.forEach((b, k) => { b.disabled = true; if (opts[k].right) b.classList.add('right'); });
       if (!o.right) btns[opts.indexOf(o)].classList.add('wrong');
@@ -140,12 +176,11 @@
         return li;
       })),
       el('p', { class: 'small muted' }, 'The lab runs right here. Tick each task when you have done it.'),
-      embed(l.href, title));
+      embed(l.href, title, conversational));
     if (!conversational) return content;
     // Delay loading the lab until the learner chooses to try it.
     const detail = el('details', { class: 'lesson-lab' }, el('summary', {}, `Try it: ${title}`));
     const frame = content.querySelector('iframe');
-    frame.removeAttribute('src');
     detail.addEventListener('toggle', () => {
       if (detail.open && !frame.hasAttribute('src')) frame.src = l.href;
     });
@@ -200,6 +235,53 @@
     ];
   }
 
+  function drawArticle() {
+    stage.classList.add('lesson-reader');
+    const sections = g.steps.map((step, i) => {
+      const section = el('section', { class: 'reader-section', id: `lesson-section-${i}`, 'aria-labelledby': `lesson-title-${i}` },
+        el('h2', { id: `lesson-title-${i}`, tabindex: '-1' }, el('span', { class: 'reader-number', 'aria-hidden': 'true' }, `${i + 1}. `), step.t),
+        el('div', { class: 'teach', html: step.html }),
+        step.fig ? CS.figure(step.fig) : null,
+        step.lab ? labBox(step.lab) : null,
+        step.check ? el('details', { class: 'reader-check' }, el('summary', {}, 'Mini sınav sorusu'), checkBox(step.check, i)) : null);
+      return section;
+    });
+    const practiceSection = el('section', { class: 'reader-section reader-practice', id: `lesson-section-${g.steps.length}` },
+      el('h2', { tabindex: '-1' }, 'Şimdi kendini dene'),
+      g.summary ? el('ul', { class: 'reader-recap' }, g.summary.map(text => el('li', {}, text))) : null,
+      g.examAnswer ? el('div', { class: 'reader-answer' }, el('h3', {}, 'Sınav için kısa İngilizce cevap'), el('p', { lang: 'en' }, g.examAnswer)) : null);
+    const practiceDetails = el('details', { class: 'reader-practice-tools' }, el('summary', {}, 'Quiz, flashcards ve diğer pratikleri aç'));
+    let practiceLoaded = false;
+    practiceDetails.addEventListener('toggle', () => {
+      if (!practiceDetails.open || practiceLoaded) return;
+      practiceLoaded = true;
+      finish(g.steps.length); drawNav();
+      practiceDetails.append(el('div', { lang: 'en' }, practice()));
+    });
+    practiceSection.append(practiceDetails);
+    fill(stage, sections, practiceSection,
+      el('nav', { class: 'reader-next', 'aria-label': 'Chapter navigation' },
+        el('a', { href: `index.html#ch${n}` }, 'Ders sayfasına dön'),
+        next ? el('a', { href: `learn.html?ch=${next.n}` }, `Sonraki: ${next.title} →`) : null));
+    drawNav();
+    // Track the section being read without marking unanswered checks as completed.
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (!visible.length) return;
+      cur = Number(visible[0].target.closest('section').id.replace('lesson-section-', ''));
+      progress.set(KEY + ':reading-at', cur);
+      progress.set(KEY + ':at', cur);
+      const url = new URL(location.href);
+      url.searchParams.set('step', cur);
+      url.hash = '';
+      history.replaceState(null, '', url);
+      drawNav();
+    }, { rootMargin: '-60px 0px -50% 0px', threshold: 0 });
+    stage.querySelectorAll('.reader-section > h2').forEach(heading => observer.observe(heading));
+    const target = cur;
+    if (askStep != null || target > 0) requestAnimationFrame(() => go(target));
+  }
+
   function draw() {
     const s = steps[cur];
     stage.classList.remove('enter');
@@ -228,9 +310,9 @@
 
   progress.markVisited(`learn-ch${n}`);
   progress.set('last-lesson', { course: C.id, n, at: Date.now() }); // for "Continue" on the home page
-  draw();
+  articleMode ? drawArticle() : draw();
   document.addEventListener('keydown', (e) => {
-    if (e.target.closest('input,select,textarea')) return;
+    if (articleMode || e.target.closest('input,select,textarea')) return;
     if (e.key === 'ArrowRight') go(cur + 1);
     if (e.key === 'ArrowLeft') go(cur - 1);
   });

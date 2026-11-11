@@ -1,13 +1,13 @@
-/* Guided lessons, refactored from the existing course content.
- * Raw slides were unavailable for this revision. Existing source-conflict notes are retained.
- * Correct check first; learn.js shuffles options. */
+/* OS/ML explanations in Turkish, with English exam terms and checks.
+ * Source: existing course lessons; raw slides unavailable for this revision.
+ * Source-conflict notes retained. Correct check first; learn.js shuffles options. */
 window.GUIDE = {
   "1": {
-    "goal": "Choose a learning task by looking at the feedback available.",
+    "goal": "Bilgisayarın örneklerden öğrenmesi ne demek?",
     "time": "25–35 min",
     "steps": [
       {
-        "t": "Start with the examples, then choose the task",
+        "t": "Önce öğrenilecek işi belirleyelim",
         "key": "Start with the <b>learning task</b>; then choose a representation and evaluate a model.",
         "fig": {
           "type": "flow",
@@ -51,7 +51,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>In credit scoring, we want a prediction: is this customer low risk or high risk? Instead of writing every decision rule ourselves, we learn a rule from examples.</p><p>The course follows that idea. Week 1 chooses the task. Week 2 learns a rule and checks it on new examples. Week 3 chooses useful inputs. Week 4 groups examples without labels. Weeks 5 and 6 build two kinds of models: trees and neural networks.</p><p>Begin with one question: what information does each training example give us?</p>",
+        "html": "<p>Credit scoring’de bir müşterinin riskini tahmin etmek istiyoruz. Her olası durum için kural yazmak yerine örneklerden işe yarayan bir kural öğrenebiliriz. Bu kural bir <b>model</b>’dir.</p><p>Altı haftayı tek akış olarak düşün: Week 1 işi seçer. Week 2 kuralı öğrenir ve yeni örneklerde dener. Week 3 girdileri düzenler. Week 4 labelsız gruplar bulur. Week 5 ve 6 iki model kurar: <b>decision tree</b> ve <b>neural network</b>.</p><p>Başlangıç sorusu “hangi algoritma?” değil, “örnekler bize nasıl bir geri bildirim veriyor?” olsun.</p>",
         "check": {
           "q": "A credit-scoring training example includes the correct risk class. What feedback is available?",
           "o": [
@@ -63,7 +63,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Learning replaces rules we cannot write down easily",
+        "t": "Kuralları biliyorsak neden öğrenme kullanalım?",
         "key": "<b>Machine learning</b> optimizes a performance criterion using examples or past experience.",
         "fig": {
           "type": "compare",
@@ -90,7 +90,7 @@ window.GUIDE = {
           ],
           "cap": "We need learning when nobody can write the rules: there is no expert (Mars), the expert cannot explain it (speech), things change (routing), or it must adapt to each user."
         },
-        "html": "<p>Some tasks already have clear rules. A payroll calculation is an example: given the rules, we can program them directly.</p><p>Other tasks are harder to describe. We recognize speech but struggle to list every recognition rule. Routing conditions change. Biometric systems must adapt to individuals. For these tasks, examples can teach a useful approximation: a <b>model</b>.</p><p>The point is not that a computer learns everything. We choose a task, provide experience and judge whether the learned model helps with that task.</p>",
+        "html": "<p>Payroll hesabının kuralları belliyse doğrudan programlayabiliriz. Her iş için machine learning gerekmez.</p><p>Fakat konuşmayı tanıyor olmamız, bütün tanıma kurallarını yazabileceğimiz anlamına gelmez. Routing koşulları zamanla değişebilir. Biometrics kişiye uyum gerektirebilir. Böyle durumlarda örneklerden bir yaklaşım öğrenmek kullanışlıdır.</p><p><b>Machine learning</b>, örnekleri veya geçmiş deneyimi kullanarak bir performance criterion’ı iyileştirir. Öğrenilen modelin görevi, verdiğimiz problemde işe yaramaktır; “bilgisayar her şeyi kendi çözer” anlamına gelmez.</p>",
         "check": {
           "q": "Which task has fixed rules in the lecture?",
           "o": [
@@ -102,7 +102,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "“Among computer baskets” tells you the denominator",
+        "t": "Association: “computer olan sepetler arasında”",
         "key": "An <b>association</b> uses P(Y | X), with X in the denominator.",
         "fig": {
           "type": "boxes",
@@ -155,7 +155,7 @@ window.GUIDE = {
           ],
           "cap": "7 of the 10 also have a mouse, so P(mouse | computer) = 7/10 = 0.7. That is <b>not</b> the same as P(computer | mouse)."
         },
-        "html": "<p>Suppose ten baskets contain a computer, and seven of those also contain a mouse. The question is: among the computer baskets, how often is there a mouse?</p><ol><li>Select the baskets containing a computer: 10.</li><li>Count those also containing a mouse: 7.</li><li>Divide: P(mouse | computer) = 7/10 = <b>0.7</b>.</li></ol><p>The symbol after the bar is the condition. Reversing it changes which baskets you count first. So P(mouse | computer) need not equal P(computer | mouse). This is an <b>association</b> between items.</p><div class=\"callout warn\">Reversing X and Y changes the denominator. P(Y | X) need not equal P(X | Y).</div>",
+        "html": "<p>10 sepette computer var. Bu 10 sepetin 7’sinde mouse da var. Sorulan şu: <em>Computer bulunan sepetler arasında mouse ne sıklıkta görülüyor?</em></p><ol><li>Önce koşulu sağlayanları seç: computer olan <b>10</b> sepet.</li><li>İçlerinden mouse da olanları say: <b>7</b>.</li><li>P(mouse | computer) = 7/10 = <b>0.7</b>.</li></ol><p>Çizgiden sonraki ifade koşuldur. Koşulu ters çevirince seçtiğin sepet kümesi, dolayısıyla payda değişir. Bu yüzden <b>P(Y | X)</b> ile <b>P(X | Y)</b> aynı olmak zorunda değildir.</p><div class=\"callout warn\">X ile Y’nin yerini değiştirmek paydayı değiştirir. <b>P(Y | X) = P(X | Y)</b> diye varsayma.</div>",
         "check": {
           "q": "Of 20 bread baskets, 5 contain butter. What is P(butter | bread)?",
           "o": [
@@ -175,7 +175,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A label supplies the answer for a training example",
+        "t": "Classification ile regression farkı",
         "key": "<b>Classification</b> predicts a class; <b>regression</b> predicts a number.",
         "fig": {
           "type": "plot",
@@ -275,7 +275,7 @@ window.GUIDE = {
           ],
           "cap": "Green = paid back (low-risk), coral = did not. \"Learning\" means choosing θ₁ and θ₂ from past data."
         },
-        "html": "<p>In credit scoring, the inputs are income and savings. The training example also supplies the desired answer: low or high risk. That answer is a <b>label</b>.</p><p>The lab’s rectangular rule predicts low risk only when both inputs exceed their thresholds. Learning chooses the thresholds from labelled examples; prediction applies the chosen rule to another customer.</p><p>Low versus high risk is <b>classification</b>: choose a class. Predicting a used car’s price is <b>regression</b>: produce a number. Both are supervised because training includes desired outputs.</p>",
+        "html": "<p>Credit scoring örneğinde input’lar income ve savings; training label ise low risk veya high risk’tir. Lab’daki dikdörtgen kural, iki eşik de aşılırsa low risk der.</p><p><b>Learning</b> bu eşikleri örneklerden seçer. <b>Prediction</b> seçilmiş kuralı başka müşteriye uygular.</p><table class=\"t\"><tr><th>İş</th><th>Çıktı</th><th>Ders örneği</th></tr><tr><td><b>Classification</b></td><td>Sınıf</td><td>Low / high risk</td></tr><tr><td><b>Regression</b></td><td>Sayı</td><td>Used-car price</td></tr></table><p>İkisinde de training sırasında istenen cevap verilir. Bu nedenle ikisi de <b>supervised</b> olabilir.</p>",
         "check": {
           "q": "What makes used-car price prediction regression?",
           "o": [
@@ -295,7 +295,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "The feedback tells you which kind of learning fits",
+        "t": "Supervised, unsupervised ve reinforcement",
         "key": "The available <b>feedback</b> determines the learning problem.",
         "fig": {
           "type": "compare",
@@ -332,7 +332,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Look at what the learner receives:</p><ul><li><b>Supervised</b>: examples include desired outputs, as in credit scoring.</li><li><b>Unsupervised</b>: only inputs are supplied. Customer segmentation and colour quantisation look for groups without answer labels.</li><li><b>Reinforcement</b>: actions lead to rewards, sometimes delayed. The learner seeks a policy for choosing actions.</li></ul><p>Do not choose from the application name alone. Ask “does training provide answers, only inputs, or rewards?” Next week follows the supervised case: how do we choose a rule that works on new examples?</p><div class=\"callout warn\">A cluster is discovered; its class name is not supplied as a training target.</div>",
+        "html": "<p>Ayrımı uygulamanın adına göre değil, training’de verilen bilgiye göre yap.</p><table class=\"t\"><tr><th>Tür</th><th>Ne verilir?</th><th>Ne öğrenilir?</th></tr><tr><td><b>Supervised</b></td><td>Input + desired output</td><td>Input’tan cevap tahmini</td></tr><tr><td><b>Unsupervised</b></td><td>Yalnızca input</td><td>Örneğin benzer gruplar</td></tr><tr><td><b>Reinforcement</b></td><td>Action sonrası reward</td><td>Action seçen policy</td></tr></table><p>Customer segmentation ve colour quantisation, labelsız gruplama örnekleridir. Reinforcement’ta reward gecikebilir.</p><p>Şimdi supervised duruma geçiyoruz: örneklerde doğru görünen bir kural, yeni bir örnekte de doğru olacak mı?</p><div class=\"callout warn\">Cluster veri içinden bulunur; class adı training target olarak verilmez.</div>",
         "check": {
           "q": "A maze robot receives a reward at the exit. Which kind of feedback is this?",
           "o": [
@@ -344,14 +344,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "What does it mean for a computer to learn from examples?"
+    "question": "Bilgisayarın örneklerden öğrenmesi ne demek?",
+    "reading": true,
+    "summary": [
+      "Classification sınıf, regression sayısal değer tahmin eder.",
+      "Supervised öğrenmede hedef cevap vardır; unsupervised öğrenmede yalnızca girdiler vardır.",
+      "Association’da koşul, hangi örnekleri paydaya aldığını belirler."
+    ],
+    "examAnswer": "Supervised: labelled examples. Unsupervised: inputs without labels. Reinforcement: actions and rewards."
   },
   "2": {
-    "goal": "Explain hypotheses, calculate prediction loss and separate training, validation and testing.",
+    "goal": "Training örneklerini doğru bilmek neden yeterli değil?",
     "time": "35–45 min",
     "steps": [
       {
-        "t": "Fitting known answers is only the beginning",
+        "t": "Bilinen cevapları tutturduk; ya yeni araba?",
         "key": "<b>Supervised learning</b> learns a rule from examples with known answers. The real test is how it does on <b>new</b> examples.",
         "fig": {
           "type": "flow",
@@ -377,7 +384,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Week 1 introduced supervised examples: an input and its desired answer. Now imagine cars described by price and engine power, labelled family car or not.</p><p>We can draw a rectangle around the positive examples. But many rectangles may fit the same data. Which should we trust for a car we have not seen?</p><p>This week connects three questions: what rules can we choose, how do we measure their mistakes, and how do we test whether they generalize?</p>",
+        "html": "<p>Arabaları price ve engine power ile tarif ediyoruz. Label, family car olup olmadığı. Pozitif örneklerin etrafına dikdörtgen çizip bir kural üretebiliriz.</p><p>Fakat aynı örnekleri doğru sınıflayan birçok dikdörtgen olabilir. Yeni bir araba geldiğinde bunlar farklı cevap verebilir.</p><p>Week 1’de öğrenmenin türünü seçtik. Burada <b>generalization</b> sorununu çözeceğiz: hangi kurallara izin veriyoruz, hatayı nasıl ölçüyoruz ve yeni veride işe yaradığını nasıl kontrol ediyoruz?</p>",
         "check": {
           "q": "Two rectangles fit every training label but disagree on a new car. What does that show?",
           "o": [
@@ -389,7 +396,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A hypothesis is one candidate rule",
+        "t": "Hypothesis: denediğimiz tek bir kural",
         "key": "A <b>hypothesis class H</b> is the set of models we search.",
         "fig": {
           "type": "plot",
@@ -474,7 +481,7 @@ window.GUIDE = {
           ],
           "cap": "Green = family car (r = 1), coral = not (r = 0). The hypothesis class H is all axis-aligned rectangles; each rectangle is one hypothesis h."
         },
-        "html": "<p>Put price on one axis and engine power on the other. A rectangle predicts family car inside, and not family car outside.</p><p>One particular rectangle is a <b>hypothesis h</b>. The set of allowed rectangles is the <b>hypothesis class H</b>. Changing a boundary chooses a different candidate rule.</p><p>To compute <b>empirical error</b>, compare h(x) with each training label r and count mismatches. The notation Σ 1(h(x) ≠ r) just says “add 1 for each wrong answer.” A zero count means the rule fits these examples, not all future cars.</p><div class=\"callout warn\">False positive: predict 1 when r = 0. False negative: predict 0 when r = 1.</div>",
+        "html": "<p>Price yatay, engine power dikey eksende olsun. Dikdörtgenin içi family car = 1, dışı 0 tahmin etsin.</p><p>Belirli bir dikdörtgen <b>hypothesis h</b>’dir. İzin verdiğimiz bütün dikdörtgenler <b>hypothesis class H</b>’yi oluşturur. Sınırı hareket ettirmek başka h seçmektir.</p><p><b>Empirical error</b> için her tahmini gerçek label r ile karşılaştırırız. <b>Σ 1(h(x) ≠ r)</b>, “yanlışsa 1 ekle” demektir.</p><p>Toplamın 0 çıkması, bu training örneklerinde hata yok demektir. Görmediğimiz bütün arabaların doğru sınıflanacağını söylemez.</p><div class=\"callout warn\"><b>False positive</b>: r = 0 iken 1 tahmin etmek. <b>False negative</b>: r = 1 iken 0 tahmin etmek.</div>",
         "check": {
           "q": "A sports car is predicted to be a family car. What is the mistake?",
           "o": [
@@ -486,7 +493,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "The same examples can support different rules",
+        "t": "Aynı training verisi birden fazla sınırı destekleyebilir",
         "key": "The <b>version space</b> contains hypotheses consistent with the training data.",
         "fig": {
           "type": "plot",
@@ -574,7 +581,7 @@ window.GUIDE = {
           ],
           "cap": "The version space is everything between S and G."
         },
-        "html": "<p>A tight rectangle S surrounds the known positive examples. A more general boundary G allows a larger consistent region without admitting the known negatives.</p><p>Both can fit the training set. They disagree about places where we have no labelled example yet. That is the uncertainty the picture illustrates.</p><p><b>Inductive bias</b> is the preference we use to choose among possibilities. The lecture discusses margin as one such preference. A training fit alone cannot tell us which unseen points should count as family cars.</p>",
+        "html": "<p>Dar sınır <b>S</b> pozitif örnekleri sıkıca çevreler. Daha genel sınır <b>G</b>, bilinen negatifleri almadan daha geniş bölgeye izin verir.</p><p>İkisi de training’e uyabilir. Aralarında kalan, label’ını bilmediğimiz bölgede ise tahminleri ayrışır. Training verisi orada tek bir cevabı zorlamamıştır.</p><p>Veriye uyan hypothesis’ler <b>version space</b> içindedir. Aralarından seçim yaparken kullandığımız tercih <b>inductive bias</b>’tır. Dersin margin örneğinde sınırı yakındaki training noktalarından uzak tutma tercihi vardır.</p><p>Yani “training hatası sıfır” ile “tek doğru model bulundu” aynı iddia değildir.</p>",
         "check": {
           "q": "Does zero training error uniquely determine the boundary?",
           "o": [
@@ -594,7 +601,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "For numeric predictions, measure how far off you are",
+        "t": "MSE ve MAE: sayısal hatayı nasıl ölçeriz?",
         "key": "<b>MSE</b> averages squared residuals; <b>MAE</b> averages their magnitudes.",
         "fig": {
           "type": "plot",
@@ -707,7 +714,7 @@ window.GUIDE = {
           ],
           "cap": "Linear and quadratic g(x) fitted to used-car prices (slide 11)."
         },
-        "html": "<p>A classification mistake is wrong or right. A numeric prediction can miss by a little or a lot. Its <b>residual</b> is the target minus the prediction.</p><p>For residuals −5, 2, 5, −5, 3:</p><ol><li><b>MAE</b>: take absolute values, then average: (5 + 2 + 5 + 5 + 3)/5 = <b>4</b>.</li><li><b>MSE</b>: square first, then average: (25 + 4 + 25 + 25 + 9)/5 = <b>17.6</b>.</li></ol><p>Signed errors could cancel even when predictions are poor. Absolute values and squares prevent that; squares penalize large misses more strongly.</p><div class=\"callout warn\">Signed errors can cancel. Squaring or taking absolute values prevents cancellation.</div>",
+        "html": "<p>Sayısal tahmin biraz veya çok yanlış olabilir. <b>Residual</b>, hedef ile tahmin arasındaki farktır. İşaretli farkları toplarsak artı ve eksiler birbirini silebilir.</p><p>Residual’lar −5, 2, 5, −5, 3 olsun:</p><table class=\"t\"><tr><th>Ölçü</th><th>Hesap</th><th>Sonuç</th></tr><tr><td><b>MAE</b></td><td>(5 + 2 + 5 + 5 + 3)/5</td><td><b>4</b></td></tr><tr><td><b>MSE</b></td><td>(25 + 4 + 25 + 25 + 9)/5</td><td><b>17.6</b></td></tr></table><p>MAE mutlak değer, MSE kare alır. İkisi de iptali önler; kare almak büyük hataları daha ağır cezalandırır.</p><div class=\"callout warn\">İşaretli error’lar birbirini silebilir. Mutlak değer veya kare almak bu iptali önler.</div>",
         "check": {
           "q": "What is the MSE for these five residuals?",
           "o": [
@@ -719,7 +726,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A more flexible rule can learn the noise",
+        "t": "Daha esnek model neden daha kötü olabilir?",
         "key": "<b>Overfitting</b> lowers training error while harming generalization.",
         "fig": {
           "type": "plot",
@@ -843,7 +850,7 @@ window.GUIDE = {
           ],
           "cap": "Triple trade-off: model complexity, amount of training data, and error on new data."
         },
-        "html": "<p>A straight line may be too simple for a curved relationship: <b>underfitting</b>. A high-degree polynomial may bend to match accidental noise: <b>overfitting</b>.</p><p>Watch the training and new-data curves separately. Making the model more flexible can keep lowering training error while making new-data error worse.</p><p>The lecture’s triple trade-off links model complexity, sample size and new-data error. More flexibility needs enough evidence to constrain it. We want a rule that captures the pattern, rather than every accident in the sample.</p>",
+        "html": "<p>İlişki eğriyse düz çizgi yetersiz kalabilir: <b>underfitting</b>. Çok yüksek dereceli polynomial ise training’deki rastlantısal dalgalanmaları da izleyebilir: <b>overfitting</b>.</p><p>Önemli olan iki eğriyi ayrı okumak: training error ve yeni veri hatası. Karmaşıklık arttıkça ilki düşerken ikincisi yükselebilir.</p><p>Dersin <b>triple trade-off</b> fikri model complexity, sample size ve new-data error’ı bağlar. Daha fazla esnekliği yönlendirecek yeterli örnek gerekir.</p><p>Hedefimiz her training noktasını kusursuz izlemek değil, yeni örneklerde de işe yarayan ilişkiyi öğrenmektir.</p>",
         "check": {
           "q": "Training error falls but validation error rises. What is happening?",
           "o": [
@@ -863,7 +870,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Use different data to fit, choose and report",
+        "t": "Training, validation ve test neden ayrılır?",
         "key": "Keep <b>training, validation and test</b> roles separate.",
         "fig": {
           "type": "anim",
@@ -871,7 +878,7 @@ window.GUIDE = {
           "t": "K-fold cross-validation",
           "cap": "Result = the average of the K scores. The <b>test</b> set is kept apart the whole time and used once at the very end."
         },
-        "html": "<p>If we choose a model because it scores well on a data set, that set has influenced our choice. It cannot also be an untouched final test.</p><ol><li><b>Training</b> fits parameters.</li><li><b>Validation</b> chooses between models or settings.</li><li><b>Test</b> reports the final model’s error.</li></ol><p>The lecture uses 50%, 25%, 25%. In <b>K-fold cross-validation</b>, rotate which fold validates: train on K − 1 folds, validate on the remaining fold and average the K errors. The final test set still stays separate.</p><div class=\"callout warn\">Do not repeatedly select models using the final test result.</div>",
+        "html": "<p>Bir modeli bir veri setindeki başarısına bakarak seçtiysek, o set seçimimizi etkilemiştir. Artık tarafsız son sınavımız olamaz.</p><table class=\"t\"><tr><th>Set</th><th>Görev</th><th>Dersin oranı</th></tr><tr><td><b>Training</b></td><td>Parametreleri öğren</td><td>%50</td></tr><tr><td><b>Validation</b></td><td>Model / ayar seç</td><td>%25</td></tr><tr><td><b>Test</b></td><td>Son performansı raporla</td><td>%25</td></tr></table><p><b>K-fold cross-validation</b>, validation görevini döndürür: K − 1 fold ile eğit, kalanla değerlendir; K sonucu ortala. Her turda validation fold değişir. Son test seti yine ayrı tutulur.</p><div class=\"callout warn\">Final test sonucuna tekrar tekrar bakarak model seçme; test’i validation yerine kullanmış olursun.</div>",
         "check": {
           "q": "In 5-fold cross-validation, how often is each example validated?",
           "o": [
@@ -891,7 +898,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Every learner needs a model, a loss and a way to improve",
+        "t": "Model, loss ve optimization farklı soruları cevaplar",
         "key": "<b>Model, loss, optimization</b> specify a supervised learner.",
         "fig": {
           "type": "flow",
@@ -916,7 +923,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Separate three jobs:</p><ul><li><b>Model</b>: what predictions are possible? For a line, g(x) = w₁x + w₀.</li><li><b>Loss</b>: how bad are the predictions? MSE is one choice.</li><li><b>Optimization</b>: which parameter values reduce that loss?</li></ul><p>For several classes, the lecture also uses K one-versus-rest classifiers: each learns one class against all others.</p><p>Return to the course map: we can now fit and evaluate a model. Week 3 asks whether we are giving it the right features.</p>",
+        "html": "<p>Bir learner’ı üç parçaya ayırabiliriz:</p><ul><li><b>Model</b>: hangi tahminler mümkün? Örneğin g(x) = w₁x + w₀.</li><li><b>Loss</b>: tahminler ne kadar kötü? Örneğin MSE.</li><li><b>Optimization</b>: loss’u azaltan parametreleri nasıl buluruz?</li></ul><p>K sınıf için ders <b>one-versus-rest</b> yaklaşımını da kullanır: her sınıfı diğerlerine karşı öğrenen K classifier.</p><p>Artık model kurup değerlendirebiliyoruz. Week 3 bir adım geriye bakıyor: modele verdiğimiz feature’ların hepsi gerekli mi?</p>",
         "check": {
           "q": "Which choice states how wrong a prediction is?",
           "o": [
@@ -928,14 +935,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "A rule fits the training examples. Will it work on new ones?"
+    "question": "Training örneklerini doğru bilmek neden yeterli değil?",
+    "reading": true,
+    "summary": [
+      "Hypothesis bir aday kural; hypothesis class izin verilen kurallar kümesidir.",
+      "Training fit eder; validation seçer; test son performansı raporlar.",
+      "Daha karmaşık model training’de iyileşirken yeni veride kötüleşebilir."
+    ],
+    "examAnswer": "Generalization: performance on unseen data. Training fits; validation selects; test evaluates. Overfitting: fitting noise."
   },
   "3": {
-    "goal": "Distinguish feature selection from extraction and trace PCA.",
+    "goal": "Modele hangi feature’ları vermeliyiz?",
     "time": "25–35 min",
     "steps": [
       {
-        "t": "Rows are examples; columns are features",
+        "t": "Daha az sayı, aynı örneği yeterince anlatabilir mi?",
         "key": "<b>Dimensionality reduction</b> uses fewer features while keeping as much useful information as possible.",
         "fig": {
           "type": "flow",
@@ -961,7 +975,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>A student may be described by age, GPA, attendance, study hours and income. That is one example with five <b>features</b>, so d = 5.</p><p>Week 2 chose a model. This week changes the description fed into it. Could fewer than five numbers carry what we need?</p><p>There are two routes: keep some original columns, or construct new coordinates from them. The difference is the central idea of dimensionality reduction.</p>",
+        "html": "<p>Bir öğrenciyi age, GPA, attendance, study hours ve income ile tarif ediyoruz. Bir satır bir öğrencidir; beş sütun beş <b>feature</b>’dır. Yani <b>d = 5</b>.</p><p>Week 2 model seçti. Bu hafta modele giren açıklamayı değiştiriyoruz: daha az feature ile gerekli bilgiyi koruyabilir miyiz?</p><p>İki yol var. Bazı orijinal sütunları tutabiliriz veya sütunları birleştirerek yeni koordinatlar üretebiliriz. <b>Dimensionality reduction</b>’ı anlamak için önce bu ayrımı netleştirelim.</p>",
         "check": {
           "q": "Keeping only GPA and study hours changes what?",
           "o": [
@@ -973,7 +987,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Fewer measurements can make the task easier",
+        "t": "Feature sayısını azaltmak ne kazandırır?",
         "key": "<b>Dimensionality</b> is the number of features describing one example.",
         "fig": {
           "type": "boxes",
@@ -1032,7 +1046,7 @@ window.GUIDE = {
           ],
           "cap": "\"More useful information is better, not necessarily more features.\""
         },
-        "html": "<p>Every feature costs something: measuring it, storing it and processing it. Some add no useful information; others largely repeat what another feature tells us.</p><p>Reducing the number of features can remove those costs and make data easier to visualize. Two dimensions can be plotted directly.</p><p>But a smaller description may discard useful information too. Dimensionality reduction is a choice about what to retain, not a guarantee of better predictions. We still need evaluation.</p>",
+        "html": "<p>Her feature’ın ölçme, saklama ve işleme maliyeti vardır. Bazıları hedefle ilgisiz olabilir; bazıları başka bir feature’ın verdiği bilgiyi büyük ölçüde tekrarlar.</p><p>Gereksiz girdileri azaltmak computation ve storage maliyetini düşürebilir. İki boyuta inmek doğrudan çizim yapmayı da kolaylaştırır.</p><p>Ama daha küçük temsil her zaman daha iyi tahmin demek değildir. Yararlı bilgiyi de atabiliriz. Bu yüzden “d azaldı” ile “model iyileşti” sonuçlarını ayrı değerlendirmeliyiz.</p>",
         "check": {
           "q": "Five columns describe 100 students. What is d?",
           "o": [
@@ -1044,7 +1058,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Keep existing columns or make new coordinates",
+        "t": "Feature selection ile feature extraction farkı",
         "key": "<b>Selection</b> keeps original features; <b>extraction</b> creates new ones.",
         "fig": {
           "type": "compare",
@@ -1074,7 +1088,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>If we keep GPA and study hours and discard the other columns, that is <b>feature selection</b>. The remaining values keep their original meaning.</p><p>If we replace height and weight by z₁ = 0.6·height + 0.8·weight, that is <b>feature extraction</b>. The new coordinate combines measurements.</p><p><b>PCA</b> extracts directions using variance. <b>LDA</b> uses known classes. So ask two things: did we keep original columns or construct new ones, and did we use labels to choose them?</p>",
+        "html": "<p>GPA ve study hours’ı tutup diğer sütunları atarsak <b>selection</b> yaparız. Kalan değerler hâlâ aynı ölçümlerdir.</p><p>Height ve weight’ten z₁ = 0.6·height + 0.8·weight üretirsek <b>extraction</b> yaparız. Artık yeni bir koordinat vardır.</p><table class=\"t\"><tr><th></th><th>Selection</th><th>Extraction</th></tr><tr><td>Ne tutulur?</td><td>Orijinal feature’lar</td><td>Yeni oluşturulan feature’lar</td></tr><tr><td>Anlamı</td><td>Orijinal ölçüm korunur</td><td>Ölçümler birleşebilir</td></tr></table><p><b>PCA</b> variance’a bakar; <b>LDA</b> bilinen sınıfları kullanır. İkisi de extraction tarafındadır. PCA’nın yüksek variance yönü, sınıfları ayıran en iyi yön olmak zorunda değildir.</p>",
         "check": {
           "q": "Keeping two original columns is which operation?",
           "o": [
@@ -1086,7 +1100,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Try one feature change and compare validation error",
+        "t": "Forward ve backward selection nasıl ilerler?",
         "key": "<b>Forward search</b> adds features; <b>backward search</b> removes them.",
         "fig": {
           "type": "flow",
@@ -1125,7 +1139,7 @@ window.GUIDE = {
           ],
           "cap": "Greedy is not guaranteed to find the best subset."
         },
-        "html": "<p>With d features there are 2ᵈ possible subsets. Checking every subset can become expensive.</p><p><b>Forward selection</b> starts empty. Try adding each available feature, compare validation errors, keep the best addition and repeat while it improves the result.</p><p><b>Backward selection</b> starts with all features. Try removing one at a time and keep the best removal.</p><p>These are stepwise searches. “Best next step” does not mean “best subset among every possibility.” In the lab, read the error after each candidate change rather than choosing by the feature’s name.</p><div class=\"callout warn\">Greedy search does not guarantee the best possible subset. A tiny apparent improvement can come from noise.</div>",
+        "html": "<p>d feature’ın <b>2ᵈ</b> alt kümesi vardır. Hepsini denemek büyüyen d için pahalıdır. Bunun yerine her turda bir değişiklik deneyebiliriz.</p><table class=\"t\"><tr><th></th><th>Forward</th><th>Backward</th></tr><tr><td>Başlangıç</td><td>Boş küme</td><td>Bütün feature’lar</td></tr><tr><td>Bir tur</td><td>Her eklemeyi dene</td><td>Her çıkarmayı dene</td></tr><tr><td>Seçim</td><td colspan=\"2\">Validation error’ı en iyi yapan değişiklik</td></tr></table><p>Forward, iyileşme sürdükçe feature ekler. Backward ters yönde ilerler. Her adımda en iyi değişikliği seçmek, bütün olası alt kümeler arasında en iyiyi bulma garantisi değildir.</p><div class=\"callout warn\"><b>Greedy search</b> en iyi alt kümeyi garanti etmez. Küçük görünen bir iyileşme noise’dan da kaynaklanabilir.</div>",
         "check": {
           "q": "Forward search begins with which subset?",
           "o": [
@@ -1145,7 +1159,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "PCA looks for a direction that preserves spread",
+        "t": "PCA: noktaların yayılımını bir eksene taşıyalım",
         "key": "<b>PC1</b> maximizes projection variance for a unit direction w.",
         "fig": {
           "type": "anim",
@@ -1153,7 +1167,7 @@ window.GUIDE = {
           "t": "Height and weight of students (centred)",
           "cap": "Press <b>New data</b> for a different cloud: PCA always finds the long axis."
         },
-        "html": "<p>Imagine the height–weight cloud projected onto a line. A poor direction makes very different points land close together. A useful direction retains more of their spread.</p><ol><li><b>Center</b> the data: subtract the mean.</li><li>Choose a unit direction w.</li><li>Project each centered point: z = wᵀx.</li><li>Choose the direction with the greatest variance of z: <b>PC1</b>.</li></ol><p>PC2 is perpendicular to PC1 and keeps the next-largest variance. The lab lets you rotate the direction and see the projection change. PCA uses the input cloud, not class labels.</p><div class=\"callout warn\">Variance is not class separation. PCA ignores the labels.</div>",
+        "html": "<p>Height–weight noktalarını bir doğruya yansıtıyoruz. Yanlış yön seçersek birbirinden farklı noktalar üst üste düşebilir. <b>PCA</b>, projection’da en fazla yayılımı koruyan yönü arar.</p><ol><li>Ortalamayı çıkar: veriyi <b>center</b> et.</li><li>Birim uzunlukta bir yön w seç.</li><li>Her centered noktayı z = wᵀx ile bu yöne yansıt.</li><li>Var(z)’yi en büyük yapan yönü seç: <b>PC1</b>.</li></ol><p><b>PC2</b>, PC1’e diktir ve sonraki en büyük variance’ı korur. Lab’da yönü döndürüp noktaların projection’da nasıl sıkışıp açıldığını izle.</p><p>PCA’nın sorusu “sınıflar nerede ayrılıyor?” değildir. Label kullanmadan girdilerin yayılımına bakar.</p><div class=\"callout warn\"><b>Variance</b> ile <b>class separation</b> aynı şey değildir. PCA label’ları kullanmaz.</div>",
         "check": {
           "q": "Slide 12 reports PC1 + PC2 = 97.77% for the iris data. What does the number describe?",
           "o": [
@@ -1174,7 +1188,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Keeping variance is different from keeping predictive information",
+        "t": "97.77% variance, 97.77% accuracy demek değil",
         "key": "<b>Representation</b> changes the input, so judge the resulting model on held-out data.",
         "fig": {
           "type": "compare",
@@ -1198,7 +1212,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>The lecture’s iris example keeps two principal components, retaining 97.77% of the variance.</p><p>Every example is still present. It now has two coordinates instead of the original feature description. We reduced columns, not rows.</p><p>The percentage tells us about preserved spread. It does not say “97.77% classification accuracy.” Check the downstream model on held-out examples.</p><p>We now know how to change the columns. Week 4 groups the rows: which examples look similar when no labels are provided?</p>",
+        "html": "<p>Dersin iris örneği iki principal component ile variance’ın <b>%97.77</b>’sini koruyor.</p><p>Öğrenci/satır örneğine dönelim: örnekleri silmedik. Her örneği daha az koordinatla tarif ettik. Değişen satır sayısı değil, feature temsili.</p><p>Bu yüzde, korunan yayılımı anlatır. Modelin sınıfları yüzde kaç doğrulukla tahmin ettiğini söylemez. Bunun için held-out veri üzerinde ayrıca ölçüm gerekir.</p><p>Week 3 sütunları düzenledi. Week 4 satırları grupluyor: label verilmeyen örneklerden hangileri birbirine benziyor?</p>",
         "check": {
           "q": "Does reducing from four features to two halve the number of examples?",
           "o": [
@@ -1210,14 +1224,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "Which measurements should we give the model?"
+    "question": "Modele hangi feature’ları vermeliyiz?",
+    "reading": true,
+    "summary": [
+      "Selection mevcut feature’ları seçer; extraction yeni koordinatlar üretir.",
+      "PCA label kullanmadan projection variance’ını korumaya çalışır.",
+      "Korunan variance yüzdesi, classification accuracy yüzdesi değildir."
+    ],
+    "examAnswer": "Feature selection: retain original features. Feature extraction: construct new features. PCA: maximum projection variance; no class labels."
   },
   "4": {
-    "goal": "Trace k-means, soft memberships and hierarchical merges.",
+    "goal": "Cevap label’ları yoksa benzer grupları nasıl buluruz?",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "Without labels, similarity replaces the teacher",
+        "t": "Burada öğretmen cevapları vermiyor",
         "key": "<b>Clustering</b> is unsupervised: it groups similar instances without any desired output.",
         "fig": {
           "type": "flow",
@@ -1243,7 +1264,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Supervised learning receives inputs and answers. In <b>clustering</b>, we receive only inputs and look for groups.</p><p>Week 3 changed the features describing each example. This week groups the examples themselves. A group is inferred from the data; it is not a supplied answer label.</p><p>We will first assign each point to one center, then allow uncertain membership, then build a hierarchy of merges. Each method gives a different view of the grouping problem.</p>",
+        "html": "<p>Supervised learning’de input ve doğru cevap vardı. <b>Clustering</b>’de yalnızca input’lar var; benzer örnekleri bir araya getirmeye çalışıyoruz.</p><p>Week 3 feature’ları, yani sütunları değiştirdi. Burada örnekleri, yani satırları grupluyoruz. Bulduğumuz cluster, verilmiş bir class label değildir.</p><p>Önce her noktayı tek merkeze atayacağız. Sonra birden fazla gruba kısmi üyeliğe izin vereceğiz. Son olarak grupları adım adım birleştirip bir hiyerarşi oluşturacağız.</p>",
         "check": {
           "q": "Clustering has no class labels. What does it try to find?",
           "o": [
@@ -1255,7 +1276,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Some models choose their form before seeing the data",
+        "t": "Parametric neyi önceden belirler?",
         "key": "<b>Parametric</b>: learning with a <b>predefined mapping function</b> and assumptions. <b>Nonparametric</b>: learning without one.",
         "fig": {
           "type": "compare",
@@ -1283,7 +1304,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A <b>parametric</b> method assumes a model form and learns its parameters. For example, choosing y = w₁x + w₀ commits to a line before fitting its weights.</p><p>The lecture contrasts this with <b>nonparametric</b> methods, which do not commit to that same fixed mapping form.</p><p>This distinction concerns the assumptions of the model. It does not tell us whether training supplies labels. Keep it separate from supervised versus unsupervised learning.</p>",
+        "html": "<p><b>Parametric</b> yöntemde modelin biçimi için bir varsayım seçilir ve parametreleri öğrenilir. Örneğin y = w₁x + w₀ yazmak, ağırlıkları bilmeden önce düz çizgi biçimine karar vermektir.</p><p>Ders <b>nonparametric</b> yaklaşımı, böyle önceden belirlenmiş mapping function olmaması üzerinden karşılaştırır.</p><p>Bu ayrım modelin varsayımları hakkındadır. Supervised / unsupervised ise training’de label bulunup bulunmaması hakkındadır. Bu iki ayrımı birbirinin yerine kullanma.</p>",
         "check": {
           "q": "By slide 2's definition, which model is parametric?",
           "o": [
@@ -1295,7 +1316,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "k-means repeats two simple operations",
+        "t": "k-means: ata, ortalamayı bul, tekrar ata",
         "key": "Assign to the nearest <b>reference vector</b>, then update that vector to the mean.",
         "fig": {
           "type": "anim",
@@ -1303,7 +1324,7 @@ window.GUIDE = {
           "t": "k-means in two dimensions",
           "cap": "Change k or press <b>New data</b>: a bad start can end in a worse clustering."
         },
-        "html": "<p>Choose k starting centers. Then repeat:</p><ol><li><b>Assign</b> each point to its nearest center.</li><li><b>Update</b> each center to the mean of its assigned points.</li></ol><p>The lecture example uses points 1, 2, 9, 10, 11 with initial centers 1 and 2. The first assignments put 1 alone and the others together; their new center is (2 + 9 + 10 + 11)/4 = 8. Reassigning then separates 1, 2 from 9, 10, 11. Centers settle at 1.5 and 10.</p><p>The centers move because group membership changes; membership changes because centers move.</p><div class=\"callout warn\">Initialization matters. Convergence does not guarantee the global best solution.</div>",
+        "html": "<p>k başlangıç merkezi seçilir. Her turda:</p><ol><li><b>Assignment</b>: noktayı en yakın merkeze ver.</li><li><b>Update</b>: her merkezi, kendisine verilen noktaların ortalamasına taşı.</li></ol><p>Noktalar 1, 2, 9, 10, 11; başlangıç merkezleri 1 ve 2 olsun. İlk atamada 1 yalnız kalır; diğerleri ikinci merkezdedir. İkinci merkez (2 + 9 + 10 + 11)/4 = <b>8</b> olur.</p><p>Yeniden atayınca 1 ve 2 aynı gruba; 9, 10, 11 diğer gruba gider. Merkezler <b>1.5</b> ve <b>10</b> olur.</p><p>Merkezler değiştiği için üyelik; üyelik değiştiği için merkez değişir. Kararlı hale gelene kadar sürdürürüz.</p><div class=\"callout warn\">Başlangıç merkezleri sonucu etkiler. Convergence, global en iyi çözümün bulunduğunu garanti etmez.</div>",
         "check": {
           "q": "What is the center of {9, 10, 11}?",
           "o": [
@@ -1324,7 +1345,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A center stands in for the points assigned to it",
+        "t": "Reconstruction error neyi ölçer?",
         "key": "<b>Reconstruction error</b> sums squared distances to assigned centers.",
         "fig": {
           "type": "flow",
@@ -1350,7 +1371,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>In colour quantisation, a cluster center is a representative colour. Each pixel stores the index of a representative instead of its full original colour.</p><p>Reconstruction replaces a point x with its assigned center m. The <b>reconstruction error</b> adds squared distances ‖x − m‖² over the points.</p><p>In the formula, bᵢᵗ is 1 when point t belongs to cluster i and 0 otherwise. It simply selects which center contributes to that point’s error. Assignment chooses the nearest center; the mean minimizes the group’s squared error.</p>",
+        "html": "<p>Bir cluster merkezi, o gruptaki noktalar için temsilci olabilir. <b>Colour quantisation</b> örneğinde pikselin tam rengini saklamak yerine temsilci rengin index’i saklanır.</p><p>Geri oluştururken x noktasını atanmış m merkeziyle değiştiririz. <b>Reconstruction error</b>, aralarındaki <b>‖x − m‖²</b> değerlerini toplar.</p><p>Formüldeki <b>bᵢᵗ</b>, t noktası i cluster’ına atanmışsa 1, değilse 0’dır. Yani toplama yalnızca seçilen merkezin mesafesini dahil eder.</p><p>Nearest-center assignment mesafeyi küçültür; mean update de o grubun squared error’ını en aza indirir.</p>",
         "check": {
           "q": "What does the encoder send?",
           "o": [
@@ -1362,7 +1383,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "EM allows a point to belong partly to several groups",
+        "t": "EM: bir nokta iki gruba kısmen ait olabilir",
         "key": "The <b>E-step</b> computes memberships; the <b>M-step</b> refits the components.",
         "fig": {
           "type": "flow",
@@ -1393,7 +1414,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>k-means makes a hard choice: one point, one cluster. A Gaussian mixture can give a point memberships such as 70% in A and 30% in B.</p><ol><li><b>E-step</b>: using the current component parameters, calculate each point’s membership probabilities.</li><li><b>M-step</b>: use those probabilities as weights to update the component parameters.</li><li>Repeat.</li></ol><p>This is <b>Expectation–Maximization (EM)</b>. The uncertain point contributes partly to both groups rather than being assigned entirely to one. Follow a point between the centers in the lab: its memberships show the uncertainty.</p>",
+        "html": "<p>k-means’in kararı kesindir: nokta yalnızca bir gruptadır. Gaussian mixture’da ise “%70 A, %30 B” gibi <b>soft membership</b> mümkündür.</p><ol><li><b>E-step</b>: mevcut component parametreleriyle üyelik olasılıklarını hesapla.</li><li><b>M-step</b>: olasılıkları ağırlık olarak kullanıp parametreleri güncelle.</li><li>Tekrar et.</li></ol><p>Bu döngü <b>Expectation–Maximization (EM)</b>’dir. Arada duran nokta tamamen bir gruba yazılmak yerine ikisine de farklı ağırlıklarla katkı verir.</p><p>Lab’da merkezlerin arasındaki bir noktaya bak: üyelik sayıları belirsizliği görünür hale getirir.</p>",
         "check": {
           "q": "Which step updates Gaussian parameters?",
           "o": [
@@ -1413,7 +1434,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A dendrogram shows which groups merged and when",
+        "t": "Dendrogram’ı nasıl okuyacağız?",
         "key": "<b>Agglomerative clustering</b> starts with one group per example.",
         "fig": {
           "type": "plot",
@@ -1559,7 +1580,7 @@ window.GUIDE = {
           ],
           "cap": "A and B merge first (closest), then D and E, then C joins A–B. No need to choose k in advance."
         },
-        "html": "<p>Hierarchical clustering starts with separate groups and repeatedly merges the closest pair.</p><p>The <b>dendrogram</b> records those merges. A horizontal cut determines the groups that remain separate at that height.</p><p>“Closest groups” needs a rule. <b>Single-link</b> uses the nearest pair of points across the groups. <b>Complete-link</b> uses the farthest pair. <b>Average-link</b> averages the cross-group distances.</p><p>So changing the linkage can change the merge order even when the points stay fixed. Read the branches below a cut, rather than treating every leaf as its own final cluster.</p>",
+        "html": "<p><b>Agglomerative clustering</b> her örneği ayrı grup olarak başlatır ve en yakın iki grubu tekrar tekrar birleştirir. <b>Dendrogram</b> bu birleşmeleri kaydeder.</p><p>Belirli yükseklikte yatay kesim yapınca, kesimin altında ayrı kalan dallar cluster’ları verir.</p><table class=\"t\"><tr><th>Linkage</th><th>İki grup arasındaki mesafe</th></tr><tr><td><b>Single-link</b></td><td>En yakın nokta çifti</td></tr><tr><td><b>Complete-link</b></td><td>En uzak nokta çifti</td></tr><tr><td><b>Average-link</b></td><td>Gruplar arası çiftlerin ortalaması</td></tr></table><p>Noktalar değişmeden linkage değişirse birleşme sırası değişebilir. Önce hangi mesafe tanımının kullanıldığını kontrol et.</p>",
         "check": {
           "q": "Single-link uses which distance?",
           "o": [
@@ -1580,7 +1601,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Lower reconstruction error does not prove better groups",
+        "t": "Daha düşük error neden her zaman daha iyi cluster değil?",
         "key": "An <b>elbow</b> marks diminishing gains in reconstruction error.",
         "fig": {
           "type": "plot",
@@ -1645,7 +1666,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Adding centers makes it easier to represent points closely. That can reduce reconstruction error without giving a more useful grouping.</p><p>An application may set k, such as a limited colour palette. Otherwise inspect the data, the error curve and the meaning of the groups. A bend in the curve can suggest a compromise.</p><p>The course now has two learning settings: labelled prediction and unlabelled grouping. Week 5 returns to labels, using a tree that predicts by asking a sequence of questions.</p><div class=\"callout warn\">The smallest reconstruction error alone favors more centers; with one center per point, error is zero.</div>",
+        "html": "<p>Daha fazla merkezle noktaları daha yakından temsil etmek kolaylaşır. Ama error’ın düşmesi, grupların daha anlamlı olduğu anlamına gelmez.</p><p>Uygulama k’yı belirleyebilir: örneğin saklayabileceğimiz renk sayısı sınırlıdır. Aksi halde veri, error eğrisi ve grupların anlamı birlikte değerlendirilir. Eğrideki <b>elbow</b>, ek merkezin artık daha küçük kazanım getirdiği noktayı düşündürür.</p><p>Artık labelsız gruplamayı biliyoruz. Week 5 yeniden label’lara dönecek; bu kez tahmini bir soru ağacıyla yapacak.</p><div class=\"callout warn\">Her noktaya bir merkez verirsen reconstruction error 0 olabilir. Yalnız error’ı küçültmek daha fazla merkeze yöneltir.</div>",
         "check": {
           "q": "Why not choose k only by the lowest training reconstruction error?",
           "o": [
@@ -1657,14 +1678,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "How can we find groups when nobody supplies class labels?"
+    "question": "Cevap label’ları yoksa benzer grupları nasıl buluruz?",
+    "reading": true,
+    "summary": [
+      "k-means, nearest-center assignment ile mean update’i tekrarlar.",
+      "EM hard assignment yerine soft membership kullanır.",
+      "Dendrogram birleşme sırasını gösterir; linkage gruplar arası mesafeyi tanımlar."
+    ],
+    "examAnswer": "k-means: assign → update means → repeat. EM: E-step memberships; M-step parameter updates. Clustering uses no target labels."
   },
   "5": {
-    "goal": "Calculate entropy and information gain, then explain leaves and pruning.",
+    "goal": "Decision tree hangi soruyu önce soracağını nasıl öğrenir?",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "A prediction can be a path of questions",
+        "t": "Tahmin yapmak için sırayla sorular sorabiliriz",
         "key": "A <b>decision tree</b> predicts by asking one question at a time; learning chooses the questions.",
         "fig": {
           "type": "flow",
@@ -1690,7 +1718,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>A rectangle makes one inside/outside decision. A <b>decision tree</b> asks a sequence of questions: follow one branch after each answer until a leaf gives a prediction.</p><p>Learning the tree means choosing the questions and where to stop. A useful question separates examples with different answers.</p><p>We will follow Play Tennis, measure how mixed the answers are, and compare possible splits. Then we will use numeric leaves and connect tree size back to Week 2’s overfitting problem.</p>",
+        "html": "<p>Bir dikdörtgen “içeride mi, dışarıda mı?” diye tek karar verir. <b>Decision tree</b> ise bir sorunun cevabına göre başka soruya gider; sonunda bir leaf tahmin verir.</p><p>Öğrenmek, hangi sorunun nerede sorulacağını ve nerede durulacağını seçmektir. İyi bir soru farklı cevaplı örnekleri ayırır.</p><p>Play Tennis örneğini takip edeceğiz. Önce ağacı okuyacağız; sonra karışıklığı <b>entropy</b> ile ölçüp soruları karşılaştıracağız. En sonda sayısal leaf ve pruning’i, Week 2’deki generalization fikrine bağlayacağız.</p>",
         "check": {
           "q": "What makes a tree split useful for classification?",
           "o": [
@@ -1702,7 +1730,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Follow one example from the root to a leaf",
+        "t": "Tek bir örneği root’tan leaf’e götürelim",
         "key": "A <b>decision node</b> asks a question; a <b>leaf</b> predicts an output.",
         "fig": {
           "type": "graph",
@@ -1797,7 +1825,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>In Play Tennis, the first question is <b>Outlook</b>. Overcast leads to Yes. Sunny asks about Humidity; Rain asks about Wind.</p><p>Each internal node tests an attribute. Each branch records an answer to that test. A leaf supplies the prediction. To classify an example, follow only the branch matching its value at each node.</p><p>The slide’s Rain/Strong examples are still mixed: D6 and D14 are No, but D10 is Yes. That branch is not pure. Keep the slide’s table in view rather than assuming every branch already separates the labels perfectly.</p>",
+        "html": "<p>Play Tennis ağacında ilk soru <b>Outlook</b>’tur. Overcast kolu Yes’e gider. Sunny ise Humidity, Rain ise Wind sorusuna gider.</p><ul><li><b>Decision node</b>: attribute hakkında soru.</li><li><b>Branch</b>: sorunun belirli cevabı.</li><li><b>Leaf</b>: tahmin edilen sonuç.</li></ul><p>Bir örnek için her node’da yalnızca kendi değerine uyan dalı izlersin.</p><p>Slaytın Rain/Strong örnekleri tam ayrılmış değildir: D6 ve D14 No, D10 Yes’tir. Yani o dal hâlâ karışıktır. Çizilen ağacı okurken bütün dalların saf olduğunu varsayma.</p>",
         "check": {
           "q": "What rule follows the Sunny then High path?",
           "o": [
@@ -1809,7 +1837,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Entropy measures how mixed the labels are",
+        "t": "Entropy: cevaplar ne kadar karışık?",
         "key": "<b>Entropy</b> measures class mixture: I = −Σ pᵢ log₂ pᵢ.",
         "fig": {
           "type": "plot",
@@ -1906,7 +1934,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>If every example at a node says Yes, there is no label uncertainty: <b>entropy = 0</b>. A 50/50 Yes/No split is maximally mixed for two classes: 1 bit.</p><p>For Play Tennis, 9 examples say Yes and 5 say No:</p><ol><li>Find shares: p(Yes) = 9/14; p(No) = 5/14.</li><li>For each share, calculate −p log₂ p.</li><li>Add: −(9/14)log₂(9/14) − (5/14)log₂(5/14) ≈ <b>0.940</b>.</li></ol><p>Entropy describes this node before a split. Next we measure what remains after the split.</p>",
+        "html": "<p>Node’daki herkes Yes ise label belirsizliği yoktur: <b>entropy = 0</b>. İki sınıf %50/%50 ise karışıklık en yüksektir: <b>1 bit</b>.</p><p>Play Tennis’de 9 Yes, 5 No var:</p><ol><li>Payları bul: p(Yes) = 9/14; p(No) = 5/14.</li><li>Her sınıf için −p log₂ p hesapla.</li><li>Topla: −(9/14)log₂(9/14) − (5/14)log₂(5/14) ≈ <b>0.940</b>.</li></ol><p>Genel gösterim <b>I = −Σ pᵢ log₂ pᵢ</b>’dir. Bu değer split’ten <em>önceki</em> karışıklığı anlatır. Sıradaki adım, bir sorunun ne kadarını giderdiğini hesaplamak.</p>",
         "check": {
           "q": "What is the entropy of four Yes and zero No?",
           "o": [
@@ -1918,14 +1946,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A good split leaves less weighted uncertainty",
+        "t": "Information gain: sorudan sonra ne kadar belirsizlik kaldı?",
         "key": "Minimize <b>weighted child entropy</b>, equivalently maximize <b>information gain</b>.",
         "fig": {
           "type": "anim",
           "name": "id3",
           "t": "ID3 grows the Play Tennis tree"
         },
-        "html": "<p>Splitting on Outlook produces Sunny (5 examples), Overcast (4) and Rain (5). Their entropies are 0.971, 0 and 0.971.</p><ol><li>Weight each child by its share of all 14 examples.</li><li>Remaining entropy = (5/14)0.971 + (4/14)0 + (5/14)0.971 ≈ <b>0.694</b>.</li><li><b>Information gain</b> = before − after = 0.940 − 0.694 ≈ <b>0.246</b>.</li></ol><p>Compare candidate splits the same way. <b>ID3</b> chooses the largest gain. An unweighted average would give a small child the same influence as a large one; that is why the fractions matter.</p><div class=\"callout warn\">Do not average child entropies equally when branch sizes differ.</div>",
+        "html": "<p>Outlook ile ayırınca Sunny’de 5, Overcast’te 4, Rain’de 5 örnek var. Entropy’leri 0.971, 0 ve 0.971.</p><ol><li>Her child’ı büyüklüğüyle ağırlıklandır: 5/14, 4/14, 5/14.</li><li>Kalan entropy: (5/14)0.971 + (4/14)0 + (5/14)0.971 ≈ <b>0.694</b>.</li><li><b>Gain</b> = önce − sonra = 0.940 − 0.694 ≈ <b>0.246</b>.</li></ol><p><b>ID3</b> en büyük gain’i seçer. Bütün child entropy’lerini düz ortalamak yanlış olur; küçük bir child’a büyük child kadar ağırlık vermiş olursun. Kesirlerin nedeni budur.</p><div class=\"callout warn\">Child boyutları farklıysa entropy’lerini eşit ağırlıkla ortalama. Her child’ın örnek sayısı önemlidir.</div>",
         "check": {
           "q": "Which child becomes a leaf immediately?",
           "o": [
@@ -1945,7 +1973,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A regression leaf predicts the average of its targets",
+        "t": "Regression tree’de leaf bir sayı verir",
         "key": "A <b>regression tree</b> leaf predicts the mean target reaching it.",
         "fig": {
           "type": "plot",
@@ -2057,7 +2085,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>For a numeric target, a leaf gives a number rather than a class. A leaf containing targets 2, 4 and 6 predicts their mean: <b>4</b>.</p><ol><li>Compute residuals from 4: −2, 0, 2.</li><li>Square: 4, 0, 4.</li><li>Average: MSE = (4 + 0 + 4)/3 = <b>8/3</b>.</li></ol><p>A regression tree chooses splits that reduce numeric error. The lecture stops splitting when node error falls below θᵣ. A smaller threshold permits more splitting and potentially a more complex tree.</p><div class=\"callout warn\">More leaves can fit noise. Compare model choices on validation data.</div>",
+        "html": "<p>Hedef sınıf değil sayıysa leaf bir ortalama tahmin eder. Leaf’e gelen target’lar 2, 4, 6 olsun:</p><ol><li>Tahmin = (2 + 4 + 6)/3 = <b>4</b>.</li><li>Residual’lar: −2, 0, 2.</li><li>MSE = (4 + 0 + 4)/3 = <b>8/3</b>.</li></ol><p>Split, sayısal hatayı azaltacak biçimde seçilir. Dersin durma kuralında node error <b>θᵣ</b> altına inince bölme durur.</p><p>θᵣ küçülürse daha çok bölmeye izin verilir; ağaç daha karmaşık hale gelebilir. Bu bizi tekrar overfitting’e getirir.</p><div class=\"callout warn\">Daha fazla leaf noise’ı öğrenebilir. Model seçimini validation üzerinde karşılaştır.</div>",
         "check": {
           "q": "Targets 2, 4 and 6 reach one leaf. What is its prediction?",
           "o": [
@@ -2077,7 +2105,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A larger tree may explain noise rather than the pattern",
+        "t": "Pruning: training’deki her ayrıntıyı tutmak zorunda değiliz",
         "key": "<b>Prepruning</b> stops growth; <b>postpruning</b> removes branches after growth.",
         "fig": {
           "type": "compare",
@@ -2101,7 +2129,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A tree can keep splitting until it fits small accidents in the training set. As in Week 2, that can lower training error while harming new-data prediction.</p><p><b>Early stopping</b> limits growth before the full tree is built. <b>Postpruning</b> grows a tree first, then removes subtrees using a separate pruning set.</p><p>The important question is whether a branch improves performance beyond the data that produced it. Next week changes the model from a tree to a network, while keeping the same model–loss–optimization framework.</p>",
+        "html": "<p>Ağaç büyüdükçe training’deki küçük rastlantıları da ayırabilir. Training error düşse bile yeni veri başarısı bozulabilir.</p><table class=\"t\"><tr><th>Yöntem</th><th>Ne zaman müdahale eder?</th></tr><tr><td><b>Prepruning / early stopping</b></td><td>Ağaç büyürken durdurur.</td></tr><tr><td><b>Postpruning</b></td><td>Ağaç büyüdükten sonra subtree’leri kaldırır.</td></tr></table><p>Ders postpruning için ayrı bir pruning set kullanır. Sorulacak şey: “Bu dal training dışında da yararlı mı?”</p><p>Week 6’da model ağaçtan network’e değişecek. Fakat model, loss ve optimization ayrımı aynı kalacak.</p>",
         "check": {
           "q": "Which method removes subtrees after growth?",
           "o": [
@@ -2113,14 +2141,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "How does a decision tree learn which question to ask?"
+    "question": "Decision tree hangi soruyu önce soracağını nasıl öğrenir?",
+    "reading": true,
+    "summary": [
+      "Entropy, node içindeki class karışıklığını ölçer; saf node’da 0’dır.",
+      "Information gain = parent entropy − weighted child entropy.",
+      "Regression leaf ortalama hedefi verir; pruning aşırı büyümeyi sınırlar."
+    ],
+    "examAnswer": "ID3: maximize information gain. Gain = parent entropy − weighted child entropy. Regression leaf: mean target."
   },
   "6": {
-    "goal": "Calculate a unit’s output and explain bias, activation, hidden layers and weight updates.",
+    "goal": "Basit weighted sum’lardan öğrenen bir network nasıl oluşur?",
     "time": "35–45 min",
     "steps": [
       {
-        "t": "Build the model, then teach it by reducing error",
+        "t": "Önce network’ün cevabı nasıl ürettiğini anlayalım",
         "key": "A <b>multilayer perceptron</b> is a new kind of model. Week 2's <b>loss</b> and <b>optimization</b> still do the training.",
         "fig": {
           "type": "flow",
@@ -2146,7 +2181,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Week 2 gave us three jobs: choose a <b>model</b>, measure its errors with a <b>loss</b>, and use <b>optimization</b> to improve its parameters.</p><p>Here the model is a network of weighted units. First understand one unit. Then add activation functions and hidden units. Finally calculate how an error leads to a weight change.</p><p>Keep forward prediction separate from learning: a forward pass computes an answer; a training update changes the weights so a later answer can be better.</p>",
+        "html": "<p>Week 2’nin üç parçasını hatırla: <b>model</b> tahmini üretir, <b>loss</b> hatayı ölçer, <b>optimization</b> parametreleri iyileştirir.</p><p>Bu hafta model, birbirine bağlanmış weighted unit’lerden oluşuyor. Önce bir unit’in hesapladığı şeyi anlayacağız. Sonra activation ve hidden layer ekleyeceğiz. En sonda hatadan weight değişimine gideceğiz.</p><p>İki işlemi ayır: <b>forward pass</b> mevcut weight’lerle cevap hesaplar. <b>Training update</b> weight’leri değiştirir; sonraki cevabın daha iyi olmasını amaçlar.</p>",
         "check": {
           "q": "Which operation changes a network during learning?",
           "o": [
@@ -2158,14 +2193,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "First multiply each input by its weight, then add",
+        "t": "wᵀx aslında çarpıp toplamak",
         "key": "The <b>weighted sum</b> is a = wᵀx (including bias). An <b>activation function</b> then determines the output.",
         "fig": {
           "type": "anim",
           "name": "wtx",
           "t": "Transpose, then multiply and add"
         },
-        "html": "<p>A unit receives inputs x₁ … x_d. Each input has a weight, which controls its contribution.</p><p>Its sum is <b>a = w₁x₁ + … + w_dx_d + w₀</b>. The extra term w₀ is the <b>bias</b>. The slides include it in wᵀx by adding a fixed input x₀ = 1.</p><p>The superscript ᵀ transposes a column into a row. Row × column gives one number: the sum of corresponding products. For a linear regression output, y = a. For classification, an activation function transforms the sum. Do not treat computing the sum and choosing an activation as the same operation.</p>",
+        "html": "<p>Unit’in girdileri x₁ … x_d; her bağlantının bir weight’i vardır. Önce her girdiyi kendi weight’iyle çarpar, sonra toplarız:</p><p class=\"lesson-equation\">a = w₁x₁ + … + w_dx_d + w₀</p><p><b>w₀</b>, bias’tır. Slaytlar x₀ = 1 sabit girdisini ekleyerek bunu <b>wᵀx</b> içine alır.</p><p>Üstteki <b>ᵀ (transpose)</b>, sütunu satıra çevirir. Satır × sütun sonucu tek sayıdır: karşılıklı çarpımların toplamı.</p><p>Linear regression çıktısında y = a olabilir. Classification’da ise activation bu toplamı dönüştürür. Toplamı hesaplamakla çıktı kuralını seçmek iki ayrı adımdır.</p>",
         "check": {
           "q": "w and x each have 3 entries. What kind of thing is wᵀx?",
           "o": [
@@ -2177,7 +2212,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Bias moves the boundary without changing its direction",
+        "t": "Bias neden gerekli? AND ve OR üzerinden görelim",
         "key": "Without the <b>bias w₀</b> the boundary must pass through (0, 0). Changing w₀ <b>shifts</b> the line: AND and OR differ <b>only</b> in the bias.",
         "fig": {
           "type": "plot",
@@ -2251,7 +2286,7 @@ window.GUIDE = {
           ],
           "cap": "Solid purple: w₀ = −1.5, only (1, 1) is above it (AND). Dashed orange: w₀ = −0.5, everything but (0, 0) is above it (OR). Moving w₀ slides the line without turning it."
         },
-        "html": "<p>With w₁ = w₂ = 1, the unit predicts 1 when x₁ + x₂ + w₀ &gt; 0. Its boundary is where that sum equals zero.</p><ol><li>Set w₀ = −1.5: the boundary is x₁ + x₂ = 1.5. Only (1,1) passes: <b>AND</b>.</li><li>Change only w₀ to −0.5: the boundary is x₁ + x₂ = 0.5. All but (0,0) pass: <b>OR</b>.</li></ol><p>The weights set direction; bias shifts position. With w₀ = 0 the boundary must pass through the origin. For regression, the same idea appears in y = wx + w₀: w₀ moves the line up or down.</p>",
+        "html": "<p>w₁ = w₂ = 1 olsun. Unit, x₁ + x₂ + w₀ &gt; 0 ise 1 versin. Karar sınırı toplamın 0 olduğu doğrudur.</p><table class=\"t\"><tr><th>Bias</th><th>Sınır</th><th>Hangi girişler 1?</th></tr><tr><td><b>−1.5</b></td><td>x₁ + x₂ = 1.5</td><td>Yalnız (1,1): AND</td></tr><tr><td><b>−0.5</b></td><td>x₁ + x₂ = 0.5</td><td>(0,0) dışındakiler: OR</td></tr></table><p>Weight’leri değiştirmedik. Yalnız bias değişince sınır kaydı. Weight yönü, <b>bias konumu</b> belirler. Bias 0 ise sınır orijinden geçmek zorundadır. Regression’daki y = wx + w₀ için de w₀ doğruyu yukarı/aşağı taşır.</p>",
         "lab": {
           "href": "w6/perceptron.html",
           "todo": [
@@ -2271,7 +2306,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Activation turns a sum into the kind of output we need",
+        "t": "Activation: bu toplamı nasıl bir çıktıya çevirelim?",
         "key": "The <b>activation function</b> turns wᵀx into the output. <b>Sigmoid</b> squeezes any sum into (0, 1), read as a probability: one sigmoid output for <b>binary classification</b>.",
         "fig": {
           "type": "plot",
@@ -2880,7 +2915,7 @@ window.GUIDE = {
           ],
           "cap": "Blue: sigmoid, between 0 and 1. Dashed orange: tanh, between −1 and 1. Green: ReLU, 0 for negative sums, then a straight line. Softmax is not one curve: it works on all K outputs at once (next step)."
         },
-        "html": "<p>The weighted sum can be any number. An <b>activation function</b> transforms it.</p><p>For binary classification, <b>sigmoid</b> maps it into (0,1), interpreted as the probability of class 1. At sum 0, sigmoid outputs 0.5. A positive sum therefore corresponds to probability above 0.5.</p><p>The lecture also lists <b>tanh</b>, with range (−1,1), and <b>ReLU</b>, max(0,a). Linear outputs suit regression. Activation is applied during prediction as well as training; it is part of the model, not a preprocessing step.</p><p>Read the plotted curves as input sum → output value.</p>",
+        "html": "<p>Weighted sum herhangi bir sayı olabilir. <b>Activation function</b>, onu ihtiyaca uygun çıktıya dönüştürür.</p><table class=\"t\"><tr><th>Activation</th><th>Çıktı fikri</th></tr><tr><td><b>Sigmoid</b></td><td>(0,1); binary classification olasılığı</td></tr><tr><td><b>tanh</b></td><td>(−1,1)</td></tr><tr><td><b>ReLU</b></td><td>max(0,a)</td></tr><tr><td><b>Linear</b></td><td>Regression’da doğrudan toplam</td></tr></table><p>Sigmoid(0) = 0.5’tir. Toplam pozitifse sigmoid çıktısı 0.5’in üstündedir; bu yüzden iki class için olasılık olarak yorumlanır.</p><p>Activation preprocessing değildir. Modelin içinde her forward pass’te, hem training hem prediction sırasında uygulanır. Grafikte yatay eksen toplamı, dikey eksen çıktıyı gösterir.</p>",
         "check": {
           "q": "A spam filter has one output: spam or not spam. Which output activation fits?",
           "o": [
@@ -2892,7 +2927,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Softmax makes several scores share one probability total",
+        "t": "Softmax: K skor, toplamı 1 olan K olasılık",
         "key": "For <b>K &gt; 2 classes</b> use <b>softmax</b>: every output is in (0, 1), the outputs <b>sum to 1</b>, and the network chooses the class with the <b>largest</b>.",
         "fig": {
           "type": "bars",
@@ -2920,7 +2955,7 @@ window.GUIDE = {
           ],
           "cap": "0.665 + 0.245 + 0.090 = 1. Choose C₁, the largest probability."
         },
-        "html": "<p>For K classes, the model produces K scores. <b>Softmax</b> turns them into probabilities that add to 1.</p><ol><li>For scores 2, 1, 0, exponentiate: e² ≈ 7.39, e¹ ≈ 2.72, e⁰ = 1.</li><li>Add them: 11.11.</li><li>Divide each by the total: approximately 0.665, 0.245, 0.090.</li><li>Choose the largest probability: class 1.</li></ol><p>Every class uses the same denominator, so their probabilities compete. This is different from applying independent sigmoids to each score. The bars show the resulting distribution, not the original scores.</p>",
+        "html": "<p>Birden fazla class için her class’ın skoru olsun. <b>Softmax</b> bunları ortak bir probability distribution’a dönüştürür.</p><ol><li>Skorlar 2, 1, 0. Üstelini al: e² ≈ 7.39; e¹ ≈ 2.72; e⁰ = 1.</li><li>Toplam = <b>11.11</b>.</li><li>Her birini toplama böl: yaklaşık <b>0.665, 0.245, 0.090</b>.</li><li>En büyük olasılığı seç: class 1.</li></ol><p>Bütün class’lar aynı paydayı kullanır; olasılıklar toplamı 1’dir. Bağımsız sigmoid’lerden farkı bu rekabettir. Grafikte görülen bar’lar ham skor değil, dönüştürülmüş olasılıklardır.</p>",
         "check": {
           "q": "Softmax outputs for four classes are 0.1, 0.5, 0.3 and one more. What is the fourth?",
           "o": [
@@ -2932,7 +2967,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "XOR needs more than one straight boundary",
+        "t": "XOR neden hidden layer istiyor?",
         "key": "A perceptron draws <b>one line</b>. XOR needs two, so a <b>multilayer perceptron</b> adds <b>hidden units</b> between input and output.",
         "fig": {
           "type": "plot",
@@ -3005,7 +3040,7 @@ window.GUIDE = {
           ],
           "cap": "Coral points: XOR = 1; blue: XOR = 0. Purple line: hidden unit z₁ (x₁ AND ~x₂) cuts off (1, 0). Orange line: z₂ (~x₁ AND x₂) cuts off (0, 1)."
         },
-        "html": "<p>XOR is 1 at (1,0) and (0,1), but 0 at (0,0) and (1,1). One line cannot put both 1s on one side and both 0s on the other.</p><p>The slide’s <b>hidden layer</b> solves two smaller problems: z₁ = x₁ AND NOT x₂, and z₂ = NOT x₁ AND x₂. The output computes z₁ OR z₂. Two hidden boundaries isolate the two positive corners.</p><p>The hidden activations matter. Without nonlinear activations, stacking weighted sums would still collapse into one linear model. More layers alone do not create the needed nonlinear decision.</p>",
+        "html": "<p>XOR, (1,0) ve (0,1)’de 1; (0,0) ve (1,1)’de 0’dır. Tek doğru, iki 1’i bir tarafta ve iki 0’ı diğer tarafta bırakamaz.</p><p>Slaytın <b>hidden layer</b>’ı işi ikiye böler:</p><ul><li>z₁ = x₁ AND NOT x₂.</li><li>z₂ = NOT x₁ AND x₂.</li><li>Çıktı = z₁ OR z₂.</li></ul><p>İki hidden unit iki pozitif köşeyi ayrı ayrı yakalar; output bunları birleştirir.</p><p>Burada <b>nonlinear activation</b> gereklidir. Sadece linear toplamları üst üste koyarsak yine tek linear model elde ederiz. Çözüm yalnız “daha fazla layer” değildir.</p>",
         "lab": {
           "href": "w6/perceptron.html",
           "todo": [
@@ -3024,14 +3059,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Learning nudges a weight in the direction that lowers error",
+        "t": "Learning rate: hatayı azaltmak için ne kadar ilerleyelim?",
         "key": "Training moves each weight against the slope of the error: <b>w ← w − η·∂E/∂w</b>. The <b>learning rate η</b> is the step size.",
         "fig": {
           "type": "anim",
           "name": "descent",
           "t": "Gradient descent on slide 17's example"
         },
-        "html": "<p>Use the lecture’s one-weight example: x = 1.5, target r = 0.5, weight w = 0.8.</p><ol><li>Predict: y = xw = 1.2.</li><li>Measure error: E = ½(r − y)² = ½(−0.7)² = <b>0.245</b>.</li><li>Calculate the slope: ∂E/∂w = x(y − r) = <b>1.05</b>.</li><li>With learning rate η = 0.1, update: w ← w − η·∂E/∂w = 0.8 − 0.105 = <b>0.695</b>.</li></ol><p>A positive slope means reducing w lowers error locally. η controls the step size. Too small learns slowly; too large can overshoot and increase error.</p><div class=\"callout warn\">Slides 8 to 10 print Δw = −η(r − y)x. The worked example needs Δw = +η(r − y)x = 0.1 × (−0.7) × 1.5 = −0.105, which takes w from 0.8 to 0.695. The slides disagree on the sign; the worked example is the one that lowers E. The error is also printed three ways: 0.249 on slide 17, 0.245 on slide 19 and 0.49 on slide 20; ½ × 0.7² = 0.245 is right.</div>",
+        "html": "<p>Ders örneği: x = 1.5, hedef r = 0.5, weight w = 0.8.</p><ol><li>Prediction: y = xw = <b>1.2</b>.</li><li>Loss: E = ½(r − y)² = ½(−0.7)² = <b>0.245</b>.</li><li>Slope: ∂E/∂w = x(y − r) = <b>1.05</b>.</li><li>η = 0.1 ile yeni w = 0.8 − 0.1 × 1.05 = <b>0.695</b>.</li></ol><p class=\"lesson-equation\">w ← w − η · ∂E/∂w</p><p>Slope pozitif olduğu için yerel olarak w’yi azaltmak error’ı düşürür. <b>Learning rate η</b> adımın boyudur. Çok küçükse yavaş ilerleriz; çok büyükse minimumu aşıp hatayı büyütebiliriz.</p><div class=\"callout warn\"><b>Slaytlarda işaret ve loss değeri çelişkisi var.</b> Slides 8–10, Δw = −η(r − y)x yazar. Çalışılmış örnekte gereken Δw = +η(r − y)x = −0.105’tir; böylece w, 0.8’den 0.695’e iner. Loss; slide 17’de 0.249, slide 19’da 0.245, slide 20’de 0.49 yazılmıştır. Buradaki ½ × 0.7² tanımıyla doğru değer <b>0.245</b>’tir.</div>",
         "check": {
           "q": "In the animation η = 1.0 makes E grow. Why?",
           "o": [
@@ -3043,7 +3078,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Backpropagation finds how each weight affected the error",
+        "t": "Backpropagation: hatada hangi weight’in ne etkisi var?",
         "key": "<b>Backpropagation</b> uses the <b>chain rule</b>: multiply the derivatives along the path from E back to a weight, then take a gradient step with η.",
         "fig": {
           "type": "graph",
@@ -3136,7 +3171,7 @@ window.GUIDE = {
           ],
           "cap": "Targets r₁ = 0.01, r₂ = 0.99. Forward pass left to right; the error travels back right to left."
         },
-        "html": "<p>A forward pass computes hidden outputs, final predictions and loss. To improve a hidden weight, we must trace its effect through the later units.</p><p><b>Backpropagation</b> applies the chain rule backwards: multiply derivatives along the path from the error to the weight, adding contributions when paths branch.</p><p>For the slide’s output weight w₅, the factors are approximately 0.741 × 0.187 × 0.593 = 0.082. With η = 0.5, update 0.4 − 0.5 × 0.082 ≈ <b>0.359</b>. The factors represent output error, sigmoid slope and hidden input.</p><p>Backpropagation calculates gradients; the update uses them. We have connected the course’s model, loss and optimization into one training procedure.</p><div class=\"callout warn\">Slide 26 prints the second hidden sum as 0.3775, copied from the first. The existing worked calculation gives 0.3925, producing h₂ ≈ 0.597.</div>",
+        "html": "<p>Forward pass, hidden çıktıları ve prediction’ı hesaplar. Hidden weight’i değiştirmek ise sonraki unit’leri, onların etkisiyle de loss’u değiştirir.</p><p><b>Backpropagation</b> bu yolu geriye doğru izler. <b>Chain rule</b> ile yol boyunca derivative’leri çarpar; yol dallanırsa katkıları toplar.</p><p>Slaytın w₅ örneğinde:</p><ol><li>Output error × sigmoid slope × hidden input.</li><li>Gradient ≈ 0.741 × 0.187 × 0.593 = <b>0.082</b>.</li><li>η = 0.5 ile: 0.4 − 0.5 × 0.082 ≈ <b>0.359</b>.</li></ol><p>Backpropagation gradient’i bulur; update kuralı weight’i değiştirir. Böylece model, loss ve optimization tek bir training döngüsünde birleşir.</p><div class=\"callout warn\">Slide 26 ikinci hidden toplamı ilkinden kopyalayarak 0.3775 yazıyor. Mevcut worked calculation’da toplam <b>0.3925</b>’tir; h₂ ≈ 0.597 verir.</div>",
         "check": {
           "q": "Why is it called backpropagation?",
           "o": [
@@ -3148,6 +3183,13 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "How do simple weighted units become a model that learns?"
+    "question": "Basit weighted sum’lardan öğrenen bir network nasıl oluşur?",
+    "reading": true,
+    "summary": [
+      "Weight katkıyı, bias sınırın yerini belirler; activation toplamı çıktıya dönüştürür.",
+      "XOR tek düz sınırla ayrılamaz; nonlinear hidden layer gerekir.",
+      "Forward pass tahmin eder. Backpropagation gradient hesaplar; update ağırlığı değiştirir."
+    ],
+    "examAnswer": "Unit: weighted sum + bias + activation. Backpropagation: chain-rule gradients. Update: w ← w − η∂E/∂w."
   }
 };

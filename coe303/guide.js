@@ -1,13 +1,13 @@
-/* Guided lessons, refactored from the existing course content.
- * Raw slides were unavailable for this revision. Existing source-conflict notes are retained.
- * Correct check first; learn.js shuffles options. */
+/* OS/ML explanations in Turkish, with English exam terms and checks.
+ * Source: existing course lessons; raw slides unavailable for this revision.
+ * Source-conflict notes retained. Correct check first; learn.js shuffles options. */
 window.GUIDE = {
   "1": {
-    "goal": "Explain how the OS shares hardware while keeping control.",
+    "goal": "Bir bilgisayarı birçok program aynı anda nasıl güvenle kullanır?",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "One machine, many programs",
+        "t": "Önce bütün resmi görelim",
         "key": "The <b>operating system</b> controls resources; <b>processes</b> and <b>threads</b> use them, the <b>scheduler</b> shares the CPU among them, and <b>synchronization</b> keeps their shared data safe.",
         "fig": {
           "type": "flow",
@@ -51,7 +51,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>A browser, a compiler and a game all need the same CPU and memory. Who decides which one gets to use them? The <b>operating system</b>.</p><p>This course follows that sharing problem. First learn how the OS controls hardware (1–2). Then follow the running programs and their threads (3–4). Finally decide who runs next (5) and how to keep shared data correct (6).</p><p>For now, focus on the foundation: how does the OS stay in control after it lets a program run?</p>",
+        "html": "<p>Tarayıcı, derleyici ve oyun aynı CPU’yu ve belleği kullanmak istiyor. Hangisi ne zaman çalışacak? Hangi bellek alanını kullanabilecek? Bu paylaşımı <b>operating system (OS)</b> düzenler.</p><p>Dersin altı bölümü aynı sorunun devamı: önce donanımı kontrol etmeyi öğreniyoruz (1–2). Sonra çalışan programları ve içlerindeki thread’leri tanıyoruz (3–4). Son olarak CPU’yu kime vereceğimizi (5) ve ortak veriyi nasıl koruyacağımızı (6) çözüyoruz.</p><p>İlk sorumuz şu: OS bir programı çalıştırdıktan sonra kontrolü nasıl kaybetmez?</p>",
         "check": {
           "q": "Why does sharing one machine require an operating system?",
           "o": [
@@ -63,7 +63,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Why do we need an operating system?",
+        "t": "OS tam olarak ne yapar?",
         "key": "The <b>OS</b> allocates resources and controls their use; the <b>kernel</b> is its core.",
         "fig": {
           "type": "stack",
@@ -92,7 +92,7 @@ window.GUIDE = {
           ],
           "cap": "Users run applications; the OS coordinates their use of hardware."
         },
-        "html": "<p>Think of the four layers in the picture. Users want work done. Applications do that work. Hardware provides the CPU, memory and devices. The OS coordinates access between them.</p><p>It has two roles. As a <b>resource allocator</b>, it shares the hardware. As a <b>control program</b>, it prevents improper use. The <b>kernel</b> is the core that remains running throughout operation.</p><p>So when you see “OS,” think beyond the desktop: think about the code deciding who can use which resource.</p><div class=\"callout warn\">The desktop is a user-space program; it is not the kernel.</div>",
+        "html": "<p>Bir programın çalışması için CPU, bellek ve cihaz gerekir. OS, uygulamaların bu kaynakları kullanmasını düzenleyen katmandır.</p><p>İki görevini ayıralım:</p><ul><li><b>Resource allocator</b>: kaynakları paylaştırır. Kimin ne kadar kullanacağını belirler.</li><li><b>Control program</b>: hatalı veya izinsiz kullanımı önler.</li></ul><p><b>Kernel</b>, OS’nin çalışma boyunca etkin kalan çekirdeğidir. Ekranda gördüğün masaüstü ise kullanıcı alanındaki bir programdır.</p><p>Sınavda “OS nedir?” sorusunu yalnızca arayüzle açıklama. Asıl fikir, donanımı paylaştırmak ve kullanımını kontrol etmektir.</p><div class=\"callout warn\">Masaüstü bir user-space program’dır; <b>kernel</b> değildir.</div>",
         "check": {
           "q": "Which two roles does the lecture give the OS?",
           "o": [
@@ -105,7 +105,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A device finishes. How does the CPU find out?",
+        "t": "Cihaz işi bitirince CPU bunu nasıl öğrenir?",
         "key": "Instead of the CPU asking \"are you done yet?\" again and again (<b>polling</b>), the device <b>taps the CPU on the shoulder</b> when it finishes (an <b>interrupt</b>).",
         "fig": {
           "type": "anim",
@@ -113,7 +113,7 @@ window.GUIDE = {
           "t": "What happens when an interrupt arrives",
           "cap": "The interrupted program never notices. It continues exactly where it stopped."
         },
-        "html": "<p>Suppose the CPU is running a program when an I/O device finishes. The device sends an <b>interrupt</b>: a signal asking the CPU to handle the event.</p><ol><li>Finish the current instruction.</li><li>Save the running program’s position and registers.</li><li>Use the <b>interrupt vector</b> to find the handler.</li><li>Handle the event, restore the saved state and resume.</li></ol><p>Saving state is why the program can continue where it stopped. With <b>polling</b>, the CPU repeatedly checks the device instead. A <b>trap</b> comes from software, such as a service request or division by zero.</p>",
+        "html": "<p>CPU bir programı çalıştırırken cihazın I/O işi bitti. CPU sürekli “bitti mi?” diye kontrol edebilir: buna <b>polling</b> denir. Diğer yol, cihazın CPU’ya bir <b>interrupt</b> göndermesidir.</p><p>Interrupt geldiğinde sıra şöyledir:</p><ol><li>CPU mevcut instruction’ı tamamlar.</li><li>Programın kaldığı yeri ve register’larını kaydeder.</li><li><b>Interrupt vector</b> üzerinden ilgili handler’ı bulur.</li><li>Olayı işler; kayıtlı durumu geri yükleyip programa döner.</li></ol><p>Kaydetme adımı kritik: CPU geri döndüğünde nereden devam edeceğini bilmelidir. Yazılımdan gelen kesmeye, örneğin sıfıra bölme hatasına, <b>trap</b> denir.</p>",
         "lab": {
           "href": "ch1/interrupts.html",
           "todo": [
@@ -134,7 +134,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Let the device transfer a whole block",
+        "t": "DMA: her küçük parçayla CPU uğraşmasın",
         "key": "For big transfers, <b>DMA</b> lets the device copy a whole block straight into memory and interrupt the CPU <b>once per block</b>, not once per word.",
         "fig": {
           "type": "boxes",
@@ -217,7 +217,7 @@ window.GUIDE = {
           ],
           "cap": "Each is one interrupt. With DMA the CPU is free during the whole copy."
         },
-        "html": "<p>An interrupt is useful, but handling one for every word of a large transfer keeps the CPU busy with small interruptions.</p><p><b>DMA</b>, Direct Memory Access, changes who does the copying. The device controller transfers a block directly to memory without the CPU copying each word. It interrupts the CPU when the block is done.</p><p>Follow the two rows in the picture: many interruptions in the lecture’s word-at-a-time model, versus one completion interrupt for a DMA block. The saving is CPU involvement during the transfer.</p>",
+        "html": "<p>Klavye gibi yavaş bir cihaz için küçük aktarımlarla ilgilenmek sorun olmayabilir. Fakat büyük bir disk aktarımında CPU’yu her word için bölmek pahalıdır.</p><p><b>Direct Memory Access (DMA)</b>, bir veri bloğunu device controller’ın doğrudan belleğe aktarmasını sağlar. CPU her word’ü kendisi kopyalamaz; blok tamamlanınca bir interrupt alır.</p><table class=\"t\"><tr><th>Dersin aktarım modeli</th><th>CPU ne zaman bölünür?</th></tr><tr><td>Word başına interrupt</td><td>Her word için</td></tr><tr><td><b>DMA</b></td><td>Blok tamamlandığında</td></tr></table><p>DMA’nın kazancı, CPU’yu aktarımdaki her küçük işe dahil etmemesidir.</p>",
         "check": {
           "q": "A disk sends a 4 KB block using DMA. How many interrupts does the CPU receive?",
           "o": [
@@ -230,7 +230,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Keep useful data close to the CPU",
+        "t": "Neden bütün veriyi en hızlı bellekte tutmuyoruz?",
         "key": "Storage is a trade-off: the <b>faster</b> it is, the <b>smaller and more expensive</b> it is. A <b>cache</b> keeps a copy of the data you need now in faster storage.",
         "fig": {
           "type": "stack",
@@ -271,7 +271,7 @@ window.GUIDE = {
           ],
           "cap": "Registers, cache and RAM lose their contents when the power goes off (<b>volatile</b>). SSD and below keep them."
         },
-        "html": "<p>Why not store everything in the fastest memory? Fast storage is small and expensive. Large storage is slower and cheaper.</p><p>A <b>cache</b> keeps a copy in a faster layer. The storage lab follows one item, A, moving towards the CPU. If A changes, other copies can become outdated: that is the <b>cache coherence</b> problem.</p><p>Read the hierarchy from top to bottom. Registers, cache and RAM are <b>volatile</b>: they lose their contents without power. SSDs and disks keep data without power. Speed and persistence are different properties.</p><div class=\"callout warn\">Cache is on the CPU die, much faster and smaller than RAM; the OS does not manage it directly.</div>",
+        "html": "<p>Çünkü hızlı depolama küçük ve pahalıdır. Büyük kapasiteyi daha düşük maliyetle sunan katmanlar genellikle daha yavaştır.</p><p><b>Cache</b>, gereken verinin bir kopyasını daha hızlı katmanda tutar. Lab’da A verisinin CPU’ya doğru taşınmasını izle. A değiştiğinde eski kopyalar güncelliğini kaybedebilir: <b>cache coherence</b> sorunu budur.</p><p>Hız ile kalıcılığı karıştırma. <b>Registers, cache ve RAM</b> volatile’dır: güç kesilince içerikleri kaybolur. SSD ve disk gibi <b>non-volatile</b> depolama veriyi korur.</p><div class=\"callout warn\">Dersin hierarchy’sinde CPU cache, RAM’den hızlı ve küçüktür; OS tarafından doğrudan yönetilmez.</div>",
         "lab": {
           "href": "ch1/storage.html",
           "todo": [
@@ -292,7 +292,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Give programs limited power, then take control back",
+        "t": "Mode bit yetkiyi, timer süreyi sınırlar",
         "key": "The <b>mode bit</b> restricts privileged operations; the <b>timer</b> returns control to the OS.",
         "fig": {
           "type": "graph",
@@ -328,7 +328,7 @@ window.GUIDE = {
           ],
           "cap": "Privileged instructions (I/O, timer, interrupt control) only work in kernel mode. The <b>timer</b> makes sure the OS gets control back even if a program loops forever."
         },
-        "html": "<p>If a program could disable interrupts or change any memory, sharing would be unsafe. Hardware therefore distinguishes <b>user mode</b> from <b>kernel mode</b>.</p><p>In the lecture’s convention, bit 1 means user mode; bit 0 means kernel mode. Only kernel mode permits privileged operations. A system call, trap or interrupt enters the kernel through a controlled route.</p><p>But what if a user program loops forever? Before running it, the OS sets a <b>timer</b>. The timer interrupts and gives control back. The mode bit limits what a program can do; the timer limits how long it can keep control.</p><div class=\"callout warn\">Software rules alone cannot enforce protection; the mode bit and timer supply hardware support.</div>",
+        "html": "<p>Bir uygulama interrupt’ları kapatabilse veya her bellek alanına yazabilse diğer programları tehlikeye atardı. Bu yüzden donanım iki çalışma modu ayırır.</p><table class=\"t\"><tr><th>Mod</th><th>Dersin bit değeri</th><th>Yetki</th></tr><tr><td><b>User mode</b></td><td>1</td><td>Kısıtlı</td></tr><tr><td><b>Kernel mode</b></td><td>0</td><td>Privileged instruction çalıştırabilir</td></tr></table><p>System call, trap veya interrupt kontrollü biçimde kernel’a giriş sağlar.</p><p>Peki program sonsuz döngüye girerse? OS, CPU’yu vermeden önce <b>timer</b> kurar. Timer interrupt üretince kontrol geri gelir. Böylece mode bit “ne yapabilir?”, timer ise “kontrolü ne kadar tutabilir?” sorusunu çözer.</p><div class=\"callout warn\">Yalnız yazılım kuralları korumayı zorlayamaz. <b>Mode bit</b> ve <b>timer</b> donanım desteği sağlar.</div>",
         "lab": {
           "href": "ch1/dualmode.html",
           "todo": [
@@ -350,7 +350,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "The same sharing problem appears everywhere",
+        "t": "Aynı yönetim fikri diğer kaynaklarda da var",
         "key": "The OS is a manager of <b>five things</b>: processes, memory, storage (files), I/O devices, and protection and security.",
         "fig": {
           "type": "compare",
@@ -404,7 +404,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>The CPU is only one resource. The OS also tracks memory, organizes files and storage, coordinates I/O and controls access.</p><p>Connect each job to a question: which process runs? Which memory is free? Where is a file stored? Which driver handles a device? Who has permission?</p><p>A <b>program</b> is a passive file; a <b>process</b> is a running instance. We will follow processes in Chapter 3. Virtualization extends resource sharing further: a <b>hypervisor</b> lets several virtual machines run their own operating systems.</p><p>Next comes the missing link: how does an application ask the OS to do these jobs?</p><div class=\"callout warn\">Multitasking is time-sliced; on a single-core CPU only one task runs at any instant.</div>",
+        "html": "<p>OS yalnızca CPU’yu yönetmez. Bellekte boş alanı takip eder; dosyaları depolamaya yerleştirir; I/O cihazlarını koordine eder; erişim izinlerini denetler.</p><p><b>Program</b>, diskte duran pasif dosyadır. <b>Process</b>, onun çalışan örneğidir. Üçüncü bölümde bu çalışan örneği izleyeceğiz.</p><p><b>Virtualization</b> aynı paylaşım fikrini başka düzeye taşır: bir <b>hypervisor</b>, tek fiziksel makinede kendi OS’sini çalıştıran birden fazla virtual machine sağlar.</p><p>Artık OS’nin neden gerekli olduğunu biliyoruz. Sıradaki soru: bir uygulama bu hizmetleri nasıl ister?</p><div class=\"callout warn\">Tek core’da aynı anda yalnızca bir task çalışır. Multitasking, zaman dilimleriyle ilerleyebilir.</div>",
         "check": {
           "q": "Which OS responsibility connects this chapter to Chapter 3?",
           "o": [
@@ -416,14 +416,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "How can several programs use one machine safely?"
+    "question": "Bir bilgisayarı birçok program aynı anda nasıl güvenle kullanır?",
+    "reading": true,
+    "summary": [
+      "OS kaynakları paylaştırır ve kullanımı denetler.",
+      "Interrupt, CPU’nun bir olayı işlemesini sağlar; DMA büyük veri aktarımında CPU’nun yükünü azaltır.",
+      "Mode bit yetkiyi sınırlar; timer kontrolün OS’ye geri dönmesini sağlar."
+    ],
+    "examAnswer": "OS: resource allocation + control. Kernel: core of the OS. Protection: mode bit + timer."
   },
   "2": {
-    "goal": "Trace a service request from user code into the kernel and back.",
+    "goal": "User mode’daki bir program kernel’dan nasıl yardım ister?",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "A protected machine still needs to be useful",
+        "t": "Koruma var; peki dosyayı kim okuyacak?",
         "key": "Chapter 1 established <b>protection</b>; Chapter 2 explains how programs request <b>services</b>.",
         "fig": {
           "type": "flow",
@@ -467,7 +474,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Chapter 1 restricted what applications can do directly. A program still needs files and devices, so protection needs a controlled way to request help.</p><p>Use <code>read()</code> as your thread through this chapter: the program asks for data, the kernel handles the request, then execution returns to the program.</p><p>First identify the services. Then follow the request across the user/kernel boundary. Finally look at the different ways to organize the kernel behind that boundary.</p>",
+        "html": "<p>Birinci bölümde uygulamanın her donanım işlemini doğrudan yapamayacağını gördük. Fakat bir dosyayı okumak için bu korumayı tamamen kaldırmamız gerekmiyor.</p><p>Program, OS’den kontrollü bir hizmet isteyebilir. Bu bölüm boyunca <code>read()</code> çağrısını takip edeceğiz: istek uygulamadan çıkacak, kernel işi yapacak, sonuç uygulamaya dönecek.</p><p>Önce istenen hizmeti tanıyalım. Sonra sınırın nasıl geçildiğine ve kernel’ın içeride nasıl düzenlenebileceğine bakalım.</p>",
         "check": {
           "q": "A user-mode program needs to read a file. What should it do?",
           "o": [
@@ -479,7 +486,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A service is something the OS does for you",
+        "t": "OS service: kullanıcının veya sistemin ihtiyaç duyduğu iş",
         "key": "The OS offers <b>services</b>: five help the <b>user</b> (UI, program execution, I/O, files, communication), the others keep the <b>system</b> working (error detection, resource allocation, accounting, protection).",
         "fig": {
           "type": "compare",
@@ -510,7 +517,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Running a program, reading a file and communicating with another process are <b>OS services</b>. A user interface is also a service: it gives you a way to request work.</p><p>The lecture groups interface, execution, I/O, file handling and communication as user services. Resource allocation, accounting, protection and security keep the system operating safely.</p><p>Do not confuse the interface with the whole OS. The shell is a replaceable user program; the kernel provides the protected operations it uses.</p><div class=\"callout warn\"><b>The sources disagree on error detection.</b> Slide 6 marks it as a system service; the midterm guide (exercise 2.2) and the study guide list it with the user services. If an exam question asks, name the grouping you use.</div>",
+        "html": "<p>Program çalıştırmak, dosya okumak ve başka process ile iletişim kurmak birer <b>OS service</b> örneğidir. Arayüz de bu hizmetlerden biridir.</p><p>Ders; arayüz, program execution, I/O, dosya yönetimi ve communication’ı kullanıcıya yönelik hizmetler olarak gruplar. Resource allocation, accounting, protection ve security sistemin işleyişini destekler.</p><p><b>Shell</b> ile kernel aynı şey değildir. Shell, bu hizmetleri kullanan ve değiştirilebilen bir user program’dır. Kernel korunan işlemleri sağlar.</p><div class=\"callout warn\"><b>Kaynaklar error detection konusunda farklı gruplama kullanıyor.</b> Slide 6 bunu system service sayar. Midterm guide exercise 2.2 ve study guide ise user services içinde verir. Sınavda kullandığın gruplamayı belirt.</div>",
         "check": {
           "q": "Is a command shell the kernel?",
           "o": [
@@ -522,7 +529,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Follow read() across the boundary",
+        "t": "read() çağrısını adım adım izleyelim",
         "key": "A <b>system call</b> is how a program asks the kernel to do something it may not do itself. Programs usually call it through an <b>API</b> (like <code>printf</code> → <code>write</code>).",
         "fig": {
           "type": "anim",
@@ -530,7 +537,7 @@ window.GUIDE = {
           "t": "The journey of one system call",
           "cap": "Parameters travel in <b>registers</b>, in a <b>block in memory</b> (address in a register), or on the <b>stack</b>."
         },
-        "html": "<p>Your program begins in user mode. It calls <code>read(fd, buf, n)</code> through a library API.</p><ol><li>The library supplies a system-call number and arguments.</li><li>A trap instruction enters <b>kernel mode</b>: bit 1 → 0.</li><li>The system-call interface uses the number to select the handler.</li><li>The kernel does the work and returns a result.</li><li>Execution returns to <b>user mode</b>: bit 0 → 1.</li></ol><p>The API is the programmer-facing interface; the <b>system call</b> is the controlled kernel entry. Arguments can travel in registers, in a memory block whose address is passed, or on the stack.</p>",
+        "html": "<p>Program <code>read(fd, buf, n)</code> çağırırken <b>user mode</b>’dadır. Kütüphanenin sunduğu <b>API</b> üzerinden isteğini belirtir.</p><ol><li>Kütüphane system-call numarasını ve parametreleri hazırlar.</li><li>Trap instruction kernel’a geçiş yapar: bit 1 → 0.</li><li><b>System-call interface</b>, numarayla ilgili handler’ı bulur.</li><li>Kernel işi yapıp dönüş değerini hazırlar.</li><li>Program user mode’a döner: bit 0 → 1.</li></ol><p>İki mod değişimi var: giriş ve dönüş. Parametreler register’larla, adresi verilen bir memory block ile veya stack üzerinden aktarılabilir.</p><p>API çağrıyı yazdığın arayüzdür; <b>system call</b> kernel’a kontrollü giriş mekanizmasıdır.</p>",
         "lab": {
           "href": "ch2/syscall.html",
           "todo": [
@@ -550,7 +557,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Classify a call by the job it requests",
+        "t": "System call türünü, istediği işe göre ayır",
         "key": "Every system call falls into one of <b>six families</b>. Learn one example of each.",
         "fig": {
           "type": "boxes",
@@ -633,7 +640,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A file-copy program opens an input file, reads it, writes an output file and closes both. Those are <b>file-management</b> requests. Ending the program is <b>process control</b>.</p><p>The six families are:</p><ul><li><b>Process control</b>: fork, exec, exit, wait.</li><li><b>File management</b>: open, read, write, close.</li><li><b>Device management</b>: control a device.</li><li><b>Information maintenance</b>: get time or process information.</li><li><b>Communication</b>: pipes and shared memory.</li><li><b>Protection</b>: change access permissions.</li></ul><p>Ask “what job is requested?” before trying to remember a function name.</p><div class=\"callout warn\">System programs (ls, ps, gcc) are user programs that USE system calls.</div>",
+        "html": "<p>Bir dosya kopyalama programı düşün. Dosya açmak, okumak ve yazmak <b>file management</b>; programı bitirmek <b>process control</b> işidir.</p><table class=\"t\"><tr><th>Tür</th><th>Örnek iş</th></tr><tr><td><b>Process control</b></td><td>fork, exec, exit, wait</td></tr><tr><td><b>File management</b></td><td>open, read, write, close</td></tr><tr><td><b>Device management</b></td><td>Cihazı kontrol etme</td></tr><tr><td><b>Information maintenance</b></td><td>Zaman veya process bilgisi alma</td></tr><tr><td><b>Communication</b></td><td>Pipe veya shared memory</td></tr><tr><td><b>Protection</b></td><td>Erişim iznini değiştirme</td></tr></table><p>Fonksiyon adını ezberlemeden önce “hangi iş isteniyor?” diye sor.</p><div class=\"callout warn\">ls, ps ve gcc gibi <b>system program</b>’lar system call kullanan user program’lardır.</div>",
         "check": {
           "q": "get_process_stats() belongs to which type?",
           "o": [
@@ -646,7 +653,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Separate the tool from the decision",
+        "t": "Mechanism ve policy farkı",
         "key": "<b>Mechanism</b> = <i>how</i> to do something. <b>Policy</b> = <i>what</i> will be done. Keeping them separate means you can change the policy without rewriting the mechanism.",
         "fig": {
           "type": "compare",
@@ -673,7 +680,7 @@ window.GUIDE = {
           ],
           "cap": "Example from the slides: the timer is a mechanism; deciding how long the timer is set for a user is a policy."
         },
-        "html": "<p>A timer can interrupt a running program. That ability is a <b>mechanism</b>: how the OS can take control back.</p><p>Choosing how long a program may run is a <b>policy</b>: what the OS decides to do with that ability.</p><p>Keeping them separate makes change easier. You can choose a different time allowance without rebuilding the timer mechanism. When an exam gives an example, ask whether it describes a capability or a choice.</p>",
+        "html": "<p>Timer’ın çalışan programı kesebilmesi bir <b>mechanism</b>’dir: kontrolü geri almak için elimizdeki teknik araç.</p><p>Programın kaç milisaniye çalışacağına karar vermek ise <b>policy</b>’dir: aracı hangi kuralla kullanacağımız.</p><p>İkisini ayırmanın nedeni esnekliktir. Süre politikasını değiştirdiğinde timer mekanizmasını baştan yazman gerekmez.</p><p>Sınavda örneğe bak: “bunu yapabilme yolu” anlatılıyorsa mechanism; “hangi seçimin yapılacağı” anlatılıyorsa policy.</p>",
         "check": {
           "q": "\"Which process should run next?\" is a…",
           "o": [
@@ -686,7 +693,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Where should the services live?",
+        "t": "Kernel’ın içi nasıl düzenlenebilir?",
         "key": "Kernels are built in different ways. It is a trade-off between <b>speed</b> (everything in one big kernel) and <b>safety and flexibility</b> (small pieces that can fail or change alone).",
         "fig": {
           "type": "compare",
@@ -732,7 +739,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>All these designs provide services, but arrange the implementation differently.</p><ul><li><b>Simple</b>: little separation, as in MS-DOS.</li><li><b>Monolithic</b>: many services inside one kernel, as in original UNIX.</li><li><b>Layered</b>: organize responsibilities in layers.</li><li><b>Microkernel</b>: keep a small kernel; move services into user processes that exchange messages.</li><li><b>Modular</b>: a core with loadable modules, as in Linux.</li><li><b>Hybrid</b>: combine approaches.</li></ul><p>The central trade-off is service isolation versus the overhead of communication. We have now followed a request. Chapter 3 follows the running process that makes it.</p><div class=\"callout warn\">Moving services into user processes improves isolation, but message passing adds overhead.</div>",
+        "html": "<p>Aynı hizmetler farklı yapılarda sunulabilir. Fark, sorumlulukların nerede durduğudur.</p><table class=\"t\"><tr><th>Yapı</th><th>Temel fikir</th></tr><tr><td><b>Simple</b></td><td>Az ayrım; MS-DOS</td></tr><tr><td><b>Monolithic</b></td><td>Birçok hizmet aynı kernel içinde; original UNIX</td></tr><tr><td><b>Layered</b></td><td>Katmanlara ayrılmış sorumluluklar</td></tr><tr><td><b>Microkernel</b></td><td>Küçük kernel; user process’lerde hizmetler; message passing</td></tr><tr><td><b>Modular</b></td><td>Çekirdek ve yüklenebilir modüller; Linux</td></tr><tr><td><b>Hybrid</b></td><td>Yaklaşımların birleşimi</td></tr></table><p>Microkernel’da hizmetleri ayırmak izolasyonu iyileştirir, ama aralarındaki mesajlaşma maliyetlidir. İsteğin yolunu öğrendik; şimdi bu isteği yapan process’in yaşamını izleyeceğiz.</p><div class=\"callout warn\">Hizmetleri user process’lere taşımak izolasyonu artırır; message passing ek maliyet getirir.</div>",
         "lab": {
           "href": "ch2/structures.html",
           "todo": [
@@ -752,14 +759,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "How does a program ask the kernel to do something?"
+    "question": "User mode’daki bir program kernel’dan nasıl yardım ister?",
+    "reading": true,
+    "summary": [
+      "Service yapılan iştir; system call korunan kernel’a giriş yoludur.",
+      "API programcının kullandığı arayüzdür; kernel’a girişle aynı şey değildir.",
+      "Mechanism bir işin nasıl yapılabildiği, policy hangi kararın verildiğidir."
+    ],
+    "examAnswer": "System call: controlled kernel entry. API → system-call interface → kernel service → return to user mode."
   },
   "3": {
-    "goal": "Follow a process through its states, saved context, child creation and communication.",
+    "goal": "OS, bir programı durdurup sonra kaldığı yerden nasıl devam ettirir?",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "Follow the caller after the system call",
+        "t": "I/O bekleyen program CPU’yu tutmalı mı?",
         "key": "A <b>process</b> is the active program whose resources and execution the OS manages.",
         "fig": {
           "type": "flow",
@@ -803,7 +817,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>A program has asked the kernel to read data. While it waits for I/O, should the CPU sit idle? No: another process can run.</p><p>That means the OS must remember where the waiting process stopped, know when it is ready again, and eventually resume it.</p><p>Chapter 2 explained requests. This chapter explains the lifetime of the <b>process</b> making them: its memory, states, saved context, children and communication.</p>",
+        "html": "<p>Program bir dosya okuma isteği yaptı ama I/O henüz bitmedi. CPU boş beklemek yerine başka bir <b>process</b> çalıştırabilir.</p><p>Bunun için OS üç şeyi bilmelidir: ilk process nerede durdu, yeniden ne zaman hazır olacak ve sıra geldiğinde nasıl devam edecek?</p><p>İkinci bölümde isteğin kernel’a girişini öğrendik. Burada isteği yapan process’in belleğini, durumlarını ve kayıtlı bağlamını takip edeceğiz. Ardından process’lerin nasıl child oluşturduğunu ve iletişim kurduğunu göreceğiz.</p>",
         "check": {
           "q": "A process requests I/O that has not finished. Why can another process run?",
           "o": [
@@ -815,7 +829,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A process is more than its program file",
+        "t": "Program dosyası ile process neden farklı?",
         "key": "A <b>program</b> is a passive file on disk. A <b>process</b> is that program <b>running</b>, with its own memory and state.",
         "fig": {
           "type": "stack",
@@ -851,7 +865,7 @@ window.GUIDE = {
           ],
           "cap": "One program (e.g. a browser) can run as several processes at the same time."
         },
-        "html": "<p>A program on disk is passive. A <b>process</b> is that program in execution, with a current instruction, registers and memory.</p><p>Read its memory layout: <b>text</b> holds code; <b>data</b> holds globals; the <b>heap</b> holds dynamically allocated memory; the <b>stack</b> holds function-call information and local variables.</p><p>The file tells us what instructions exist. The process state tells us what is happening now. That difference explains why the OS needs a separate record for each running instance.</p><div class=\"callout warn\">A program is a passive file; a process is active, in memory, with state. One program can be many processes.</div>",
+        "html": "<p>Diske kaydedilmiş kod henüz çalışmıyordur: bu bir <b>program</b>’dır. Çalıştırıldığında mevcut instruction’ı, register’ları ve belleği olan bir <b>process</b> ortaya çıkar.</p><table class=\"t\"><tr><th>Bellek bölümü</th><th>Ne tutar?</th></tr><tr><td><b>Text</b></td><td>Program kodu</td></tr><tr><td><b>Data</b></td><td>Global değişkenler</td></tr><tr><td><b>Heap</b></td><td>Dinamik ayrılan bellek</td></tr><tr><td><b>Stack</b></td><td>Fonksiyon çağrıları ve yerel değişkenler</td></tr></table><p>Program dosyası hangi instruction’ların var olduğunu söyler. Process’in durumu ise şu anda hangisinin yürütüldüğünü ve nerede kaldığını söyler.</p><div class=\"callout warn\">Aynı programdan birden fazla process oluşabilir. Program pasif dosya; process aktif yürütmedir.</div>",
         "check": {
           "q": "A local variable inside a function is stored in the…",
           "o": [
@@ -864,7 +878,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Ready means waiting for the CPU; waiting means waiting for an event",
+        "t": "Ready ile waiting aynı bekleme değil",
         "key": "Every process is in one of <b>five states</b>. Learn the <b>arrows</b> between them: exams ask which transitions are possible.",
         "fig": {
           "type": "anim",
@@ -872,7 +886,7 @@ window.GUIDE = {
           "t": "One process through its life",
           "cap": "There is <b>no</b> arrow waiting → running: a waiting process must go back to the ready queue first."
         },
-        "html": "<p>A process begins <b>new</b>, is admitted to <b>ready</b>, and becomes <b>running</b> when dispatched.</p><p>From running it can finish (<b>terminated</b>), lose the CPU (back to ready), or request I/O (<b>waiting</b>). I/O completion moves it from waiting to ready. It still needs the scheduler to give it the CPU.</p><p>Trace those six arrows in the figure. The key distinction: a ready process could run now; a waiting process cannot continue until its event happens.</p><div class=\"callout warn\"><b>Exam trap:</b> Waiting → Running directly is <b>impossible</b>. When I/O completes, the process goes to <b>Ready</b> and waits for the scheduler.</div><div class=\"callout warn\">It goes Waiting → Ready. Only the scheduler moves Ready → Running.</div>",
+        "html": "<p><b>Ready</b> process çalışabilir durumdadır; yalnızca CPU sırasını bekler. <b>Waiting</b> process ise I/O gibi bir olay bitmeden devam edemez.</p><p>Beş durumu altı geçişle bağlayalım:</p><ul><li><b>New → Ready</b>: sisteme kabul.</li><li><b>Ready → Running</b>: CPU verilmesi.</li><li><b>Running → Ready</b>: CPU’nun geri alınması.</li><li><b>Running → Waiting</b>: olay bekleme.</li><li><b>Waiting → Ready</b>: olayın tamamlanması.</li><li><b>Running → Terminated</b>: bitiş.</li></ul><p>I/O bitince process doğrudan running olmaz. Ready olur; CPU’yu scheduler’dan alması gerekir.</p><div class=\"callout warn\"><b>Sınav tuzağı:</b> Waiting → Running doğrudan geçişi yoktur. I/O bitince <b>Ready</b> olunur; scheduler CPU verince Running’e geçilir.</div>",
         "lab": {
           "href": "ch3/states.html",
           "todo": [
@@ -892,7 +906,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A context switch saves one process and restores another",
+        "t": "Context switch: eskiyi kaydet, yeniyi yükle",
         "key": "The OS keeps a <b>PCB</b> (process control block) for every process. A <b>context switch</b> saves the old process's state into its PCB and loads the new one's.",
         "fig": {
           "type": "anim",
@@ -900,7 +914,7 @@ window.GUIDE = {
           "t": "Context switch from P0 to P1 and back",
           "cap": "While the OS is switching, <b>no</b> process does useful work, so a context switch is pure overhead."
         },
-        "html": "<p>To resume a process, the OS needs its program counter, registers and other management information. It stores these in a <b>Process Control Block (PCB)</b>, alongside its ID, state, scheduling and memory information.</p><p>During a <b>context switch</b>, the OS saves the outgoing process’s context and restores the incoming one. The CPU then continues that process where it stopped.</p><p>Ready and waiting queues help track who can run and who needs an event. Switching is overhead: the CPU spends time managing execution rather than doing either program’s work.</p><div class=\"callout warn\"><b></b> A context switch is <b>pure overhead</b> — no useful work is done during it.</div>",
+        "html": "<p>Bir process’in kaldığı yerden sürmesi için program counter ve register değerleri korunmalıdır. OS bunları <b>Process Control Block (PCB)</b> içinde tutar. PCB ayrıca kimlik, durum, scheduling ve bellek yönetimi bilgileri içerir.</p><p><b>Context switch</b> sırasında:</p><ol><li>Çıkan process’in context’i kaydedilir.</li><li>Giren process’in kayıtlı context’i yüklenir.</li><li>CPU onun kaldığı instruction’dan devam eder.</li></ol><p>Bu süre <b>overhead</b>’dir: CPU o sırada iki programdan birinin asıl işini yapmaz. Ready ve waiting queue’ları kimin çalışabileceğini ve kimin olay beklediğini takip eder.</p><div class=\"callout warn\"><b>Context switch</b> program işi açısından overhead’dir: CPU o sırada uygulamanın asıl işini yapmaz.</div>",
         "check": {
           "q": "During a context switch from P0 to P1 the OS…",
           "o": [
@@ -913,7 +927,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "fork creates; exec replaces; wait collects",
+        "t": "fork, exec, wait ve exit: dört ayrı iş",
         "key": "<code>fork()</code> creates a child; <code>exec()</code> replaces the calling process’s program; <code>wait()</code> collects a child’s exit status.",
         "fig": {
           "type": "anim",
@@ -921,7 +935,7 @@ window.GUIDE = {
           "t": "fork → exec → wait → exit",
           "cap": "<b>Zombie</b> = finished child whose parent has not called wait() yet. <b>Orphan</b> = child whose parent ended without waiting."
         },
-        "html": "<p>These calls do different jobs. Follow them in order:</p><ol><li><code>fork()</code> creates a child. Both continue after the call: the child sees return value 0; the parent sees the child PID. Failure returns −1.</li><li><code>exec()</code> replaces the calling process’s program. It does not create another process.</li><li><code>exit()</code> ends execution.</li><li><code>wait()</code> lets the parent collect a child’s exit status.</li></ol><p>A terminated child whose status has not been collected is a <b>zombie</b>. A child whose parent ends first is an <b>orphan</b>.</p><p>If every process executes n successive successful fork calls, each call doubles the process count: 2ⁿ total, including the original. Three such calls give 8.</p>",
+        "html": "<p>Bu çağrıları aynı şeymiş gibi düşünme:</p><table class=\"t\"><tr><th>Çağrı</th><th>Ne yapar?</th></tr><tr><td><b>fork()</b></td><td>Child process oluşturur. Child’da 0, parent’ta child PID; hatada −1 döner.</td></tr><tr><td><b>exec()</b></td><td>Çağıran process’in programını değiştirir.</td></tr><tr><td><b>exit()</b></td><td>Çalışmayı bitirir.</td></tr><tr><td><b>wait()</b></td><td>Child’ın çıkış durumunu toplar.</td></tr></table><p>Bitmiş ama durumu henüz toplanmamış child <b>zombie</b>; parent’ı önce biten child <b>orphan</b>’dır.</p><p>Her process art arda n başarılı fork çağrısını çalıştırırsa her çağrıda sayı ikiye katlanır: <b>2ⁿ</b>. Üç çağrı sonunda ilk process dahil 8 process vardır.</p>",
         "lab": {
           "href": "ch3/fork.html",
           "todo": [
@@ -941,7 +955,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Processes can share a region or exchange messages",
+        "t": "Process’ler veriyi nasıl paylaşır?",
         "key": "Processes can talk in two ways: write into a <b>shared memory</b> area, or <b>send messages</b> through the kernel.",
         "fig": {
           "type": "compare",
@@ -969,7 +983,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>With <b>shared memory</b>, processes access a common region after setup. With <b>message passing</b>, they exchange data through send and receive operations.</p><p>In the bounded-buffer example, a producer inserts at <code>in</code>; a consumer removes at <code>out</code>. Advancing uses modulo arithmetic so an index wraps around. <code>in == out</code> means empty; <code>(in + 1) % N == out</code> means full. Leaving one slot unused distinguishes the two, so capacity is N − 1.</p><p>Sharing data creates a new problem: coordinating access. Chapter 4 introduces threads sharing within one process; Chapter 6 makes updates safe.</p><div class=\"callout warn\">Capacity is SIZE − 1; reserving a slot distinguishes full from empty. Shared updates such as counter++ can interleave and lose an update.</div><p>A blocking send or receive waits; two blocking partners form a <b>rendezvous</b>. A pipe has a read end, fd[0], and a write end, fd[1].</p>",
+        "html": "<p><b>Shared memory</b> ile ortak bölgeye doğrudan erişirler. <b>Message passing</b> ile send/receive üzerinden veri değişirler.</p><p>Bounded buffer’da producer sıradaki boş yere (<code>in</code>) yazar; consumer sıradaki dolu yerden (<code>out</code>) okur. Modulo, index’i sona gelince başa sarar.</p><ul><li>Boş: <code>in == out</code>.</li><li>Dolu: <code>(in + 1) % N == out</code>.</li></ul><p>Bir slot boş bırakıldığı için kapasite <b>N − 1</b>’dir. Böylece dolu ile boş ayrılır.</p><p>Blocking send/receive bekler; iki blocking taraf <b>rendezvous</b> oluşturur. Pipe’ta fd[0] okur, fd[1] yazar. Ortak veriye erişimi koordine etme sorunu sonraki thread ve synchronization bölümlerine taşınır.</p><div class=\"callout warn\">Bu circular-buffer tasarımında kapasite <b>SIZE − 1</b>’dir. counter++ gibi ortak güncellemeler ayrıca synchronization gerektirebilir.</div>",
         "lab": {
           "href": "ch3/ipc.html",
           "todo": [
@@ -990,14 +1004,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "What does the OS need to remember about a running program?"
+    "question": "OS, bir programı durdurup sonra kaldığı yerden nasıl devam ettirir?",
+    "reading": true,
+    "summary": [
+      "Process, programın çalışan örneğidir; PCB devam etmek için gereken bilgileri tutar.",
+      "Ready CPU bekler; waiting bir olay bekler.",
+      "fork yeni child oluşturur; exec mevcut programı değiştirir."
+    ],
+    "examAnswer": "Process: program in execution. Context switch: save old context + restore new context. Ready ≠ waiting."
   },
   "4": {
-    "goal": "Explain thread sharing, limits on parallel speedup and lost updates.",
+    "goal": "Bir process’in içinde birden fazla iş nasıl ilerler?",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "One process can do several jobs",
+        "t": "Process kaynakları tutar; thread işi yürütür",
         "key": "Chapter 3 managed <b>processes</b>; Chapter 4 studies <b>threads</b> sharing one process.",
         "fig": {
           "type": "flow",
@@ -1041,7 +1062,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>A process owns resources such as code, data and open files. A <b>thread</b> is a path of execution using those resources.</p><p>Instead of creating a whole new process for every activity, a process can have several threads. That can improve responsiveness and make use of several cores.</p><p>But two questions follow: which things do threads share, and how can their work overlap safely? Keep those questions in mind through the examples.</p>",
+        "html": "<p>Bir process’in kodu, verisi ve açık dosyaları vardır. Bu kaynakları kullanan birden fazla yürütme yolu bulunabilir: bunların her biri <b>thread</b>’dir.</p><p>Yeni bir faaliyet için her seferinde ayrı process oluşturmak yerine aynı process içinde thread başlatabiliriz. Böylece kaynak paylaşımı kolaylaşır, uygulama daha responsive olabilir ve birden fazla core kullanılabilir.</p><p>Ama paylaşımın iki yüzü var. Ortak veriye erişmek kolaylaşır; aynı veriyi eşzamanlı değiştirmek de sorun yaratabilir. Önce neyin ortak, neyin özel olduğunu ayıralım.</p>",
         "check": {
           "q": "Why can two threads of one process affect the same global variable?",
           "o": [
@@ -1053,7 +1074,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Share the resources; keep separate execution state",
+        "t": "Thread’ler neleri paylaşır?",
         "key": "A <b>thread</b> is a path of execution <b>inside</b> a process. The threads of one process <b>share</b> code, data and files, but each has its <b>own</b> registers and stack.",
         "fig": {
           "type": "boxes",
@@ -1102,7 +1123,7 @@ window.GUIDE = {
           ],
           "cap": "Threads are cheaper than processes: creating one and switching between them is much faster."
         },
-        "html": "<p>Threads in one process share its code, global data, heap and open files. Each thread has its own program counter, registers and stack.</p><p>Why a separate stack? Each thread can be inside a different function call. Why shared globals? They belong to the process’s common data.</p><p>Sharing makes communication convenient and creating threads cheaper than creating separate processes. It also means a change to a shared variable can affect another thread.</p><div class=\"callout warn\">Processes have separate memory; threads share memory within a process.</div>",
+        "html": "<p>İki thread farklı fonksiyonlarda ilerleyebilir. Bu yüzden her birinin kendi kaldığı yerini ve çağrı bilgisini tutması gerekir.</p><table class=\"t\"><tr><th>Process içindeki thread’ler paylaşır</th><th>Her thread’e özeldir</th></tr><tr><td>Code, global data, heap, open files</td><td>Program counter, registers, stack</td></tr></table><p><b>Stack</b> özeldir çünkü fonksiyon çağrıları farklı olabilir. <b>Global variables</b> ortaktır çünkü process’in data bölümündedir.</p><p>Bu ayrım sınavda sık karışır: thread ayrı yürütme durumuna sahiptir, fakat ayrı bir process gibi bütün kaynakları yalıtılmış değildir.</p><div class=\"callout warn\">Ayrı process’lerin ayrı bellek alanları vardır; aynı process’in thread’leri ortak belleği paylaşır.</div>",
         "check": {
           "q": "Which is private to each thread?",
           "o": [
@@ -1115,7 +1136,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Taking turns differs from running at the same instant",
+        "t": "Concurrency ile parallelism farkı",
         "key": "<b>Concurrency</b> allows progress on several tasks; <b>parallelism</b> executes work simultaneously.",
         "fig": {
           "type": "boxes",
@@ -1234,7 +1255,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>On one core, threads can take turns. Both make progress over time: <b>concurrency</b>. On several cores, threads can execute at the same instant: <b>parallelism</b>.</p><p>There are also two ways to split the work. <b>Data parallelism</b> applies the same operation to separate data subsets. <b>Task parallelism</b> assigns different operations to different threads.</p><p>Ask two separate questions: are the tasks progressing together or executing simultaneously? Are we dividing the data or dividing the jobs?</p><div class=\"callout warn\">Taking turns on one core is concurrency; it does not demonstrate parallel execution.</div><div class=\"callout warn\">Single core = concurrency (time slicing), not parallelism.</div>",
+        "html": "<p>Tek core’da thread’ler sırayla çalışarak zaman içinde ilerleyebilir. Bu <b>concurrency</b>’dir. Birden fazla core’da aynı anda instruction yürütebilmeleri ise <b>parallelism</b>’dir.</p><p>İşi nasıl böldüğümüz de ayrı bir ayrımdır:</p><ul><li><b>Data parallelism</b>: aynı işlemi farklı veri parçalarına uygularız. Dizinin dört çeyreğini ayrı core’larda toplamak gibi.</li><li><b>Task parallelism</b>: farklı görevleri farklı thread’lere veririz.</li></ul><p>Önce “aynı anda mı, sırayla ilerleyerek mi?” diye sor. Sonra “veriyi mi, görevleri mi böldük?” diye sor. Bunlar iki farklı sorudur.</p><div class=\"callout warn\">Tek core’da sırayla ilerlemek <b>concurrency</b>’dir; aynı anda paralel yürütme göstermez.</div>",
         "check": {
           "q": "Four cores each sum a different quarter of an array. Which kind of parallelism is this?",
           "o": [
@@ -1246,7 +1267,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "The serial part puts a ceiling on speedup",
+        "t": "Amdahl’s Law: core eklemek neden sınırsız hızlandırmaz?",
         "key": "<b>Amdahl’s Law</b>: speedup = 1 / (S + (1 − S)/N) in the ideal model.",
         "fig": {
           "type": "anim",
@@ -1254,7 +1275,7 @@ window.GUIDE = {
           "t": "Amdahl: speedup = 1 / (S + (1 − S)/N)",
           "cap": "Move the slider to change the serial part S and watch the limit 1/S move."
         },
-        "html": "<p>Suppose 25% of a job must run serially. Only the other 75% can be divided among cores.</p><ol><li>Let S = 0.25 be the serial fraction and N = 2 the cores.</li><li>New runtime relative to one core: S + (1 − S)/N = 0.25 + 0.75/2 = 0.625.</li><li><b>Speedup</b> = 1/0.625 = 1.6.</li></ol><p>This is <b>Amdahl’s Law</b>. Even infinitely many cores leave the serial 0.25, so the maximum speedup is 1/S = 4. Extra cores cannot divide the serial work.</p><div class=\"callout warn\">Use the serial fraction for S, not the parallel fraction. Extra cores cannot remove serial work.</div><div class=\"callout warn\">Amdahl: the serial part limits speedup; too many threads add switching overhead.</div>",
+        "html": "<p>İşin %25’i sırayla yapılmak zorunda olsun. Core sayısını artırmak bu kısmı bölemez; yalnızca kalan %75’i paylaşabiliriz.</p><ol><li>Seri oran: <b>S = 0.25</b>. Core sayısı: <b>N = 2</b>.</li><li>Yeni göreli süre: S + (1 − S)/N = 0.25 + 0.75/2 = <b>0.625</b>.</li><li>Speedup = eski süre / yeni süre = 1/0.625 = <b>1.6</b>.</li></ol><p>Genel formül: <b>Speedup = 1 / [S + (1 − S)/N]</b>.</p><p>N sonsuza gitse bile seri 0.25 kalır. Bu yüzden ideal üst sınır <b>1/S = 4</b>’tür. Sınavda yüzdeyi önce ondalık orana çevir.</p><div class=\"callout warn\">Formüldeki S, <b>serial fraction</b>’dır; parallel fraction değil. Core eklemek seri işi ortadan kaldırmaz. Fazla thread switching overhead de ekleyebilir.</div>",
         "check": {
           "q": "S = 10%. What is the speedup limit?",
           "o": [
@@ -1273,7 +1294,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "The kernel schedules the threads it can see",
+        "t": "User thread ile kernel thread nasıl eşleşir?",
         "key": "<b>User threads</b> are managed by a library; <b>kernel threads</b> by the OS. A model says how many user threads map onto how many kernel threads.",
         "fig": {
           "type": "compare",
@@ -1311,7 +1332,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A user-level library manages <b>user threads</b>. The OS schedules <b>kernel threads</b>. The mapping between them determines the possibilities:</p><ul><li><b>Many-to-one</b>: many user threads share one kernel thread. They cannot run on several cores simultaneously; a blocking call can block them all.</li><li><b>One-to-one</b>: each user thread maps to a kernel thread. Parallelism is possible, with more kernel overhead.</li><li><b>Many-to-many</b>: many user threads map onto a set of kernel threads.</li></ul><p>Count the kernel threads in the picture before deciding how much parallelism is possible.</p><p>Linux and Windows use the one-to-one model in the course comparison.</p>",
+        "html": "<p>User-space library <b>user thread</b>’leri yönetir. OS’nin core’larda schedule ettiği birimler ise <b>kernel thread</b>’lerdir.</p><table class=\"t\"><tr><th>Model</th><th>Sonuç</th></tr><tr><td><b>Many-to-one</b></td><td>Bir kernel thread paylaşılır. Çok core’da paralellik yok; blocking call hepsini durdurabilir.</td></tr><tr><td><b>One-to-one</b></td><td>Her user thread’e bir kernel thread. Paralellik mümkün; kernel maliyeti artar.</td></tr><tr><td><b>Many-to-many</b></td><td>Birçok user thread, bir kernel thread kümesine eşlenir.</td></tr></table><p>Şekilde önce kernel thread sayısını say. Paralellik olanağını o katman belirler. Dersin karşılaştırmasında Linux ve Windows one-to-one kullanır.</p>",
         "lab": {
           "href": "ch4/models.html",
           "todo": [
@@ -1332,7 +1353,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Create a worker, then wait for its result",
+        "t": "Pthreads: worker bitsin, sonra sonucu kullan",
         "key": "Pthreads is a <b>specification</b> (an API). You create a thread with <code>pthread_create</code>, and wait for it with <code>pthread_join</code>.",
         "fig": {
           "type": "flow",
@@ -1369,7 +1390,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>In the Pthreads example, a worker computes a sum into a shared global variable.</p><ol><li><code>pthread_create()</code> starts the worker running its function.</li><li>The worker calculates the sum and calls <code>pthread_exit()</code>.</li><li>The parent uses <code>pthread_join()</code> to wait before using the result.</li></ol><p>Creating a thread does not mean it has already finished. The join establishes when the parent can safely expect the completed result.</p><pre>pthread_t tid;\npthread_create(&amp;tid, NULL, runner, arg);\npthread_join(tid, NULL);\nprintf(\"%d\", sum);</pre>",
+        "html": "<p>Worker thread ortak <code>sum</code> değişkenini hesaplıyor olsun. <code>pthread_create()</code> ile başlatmak, işin o anda bittiği anlamına gelmez.</p><p>Çağrı sırası şöyledir. Burada <code>runner</code> worker fonksiyonu, <code>arg</code> ona verilen girdidir:</p><pre>pthread_t tid;\npthread_create(&amp;tid, NULL, runner, arg);\npthread_join(tid, NULL);\nprintf(\"%d\", sum);</pre><p><b>pthread_join()</b> worker bitene kadar bekler. Sonuç bu beklemeden sonra okunur. Worker kendi çalışmasını <b>pthread_exit()</b> ile bitirebilir.</p><p>Asıl bağlantı şu: create başlatır; join tamamlanmasını bekler. Aynı iş değiller.</p>",
         "check": {
           "q": "Why call pthread_join before printing the worker’s sum?",
           "o": [
@@ -1381,7 +1402,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Two increments can produce only one increase",
+        "t": "İki kez counter++ neden sonuçta yalnızca 1 ekleyebilir?",
         "key": "When two threads update the same variable <b>at the same time</b>, the result depends on timing. That is a <b>race condition</b>, and updates can get lost.",
         "fig": {
           "type": "anim",
@@ -1389,7 +1410,7 @@ window.GUIDE = {
           "t": "counter++ is really 3 steps: load, add, store",
           "cap": "The first run is the lesson's order. Press <b>Try another interleaving</b> to let the scheduler pick a different order."
         },
-        "html": "<p>Start with counter = 0. Each thread executes <code>counter++</code>, but that is a load, an addition and a store.</p><ol><li>A loads 0.</li><li>B loads 0 before A stores.</li><li>A adds 1 and stores 1.</li><li>B adds 1 to its old copy and stores 1.</li></ol><p>The final value is 1, although two increments should produce 2. This is a <b>race condition</b>: the result depends on the interleaving.</p><p>Threads explain who shares the data. Chapter 5 explains how execution gets interrupted; Chapter 6 protects the update.</p><div class=\"callout warn\">It is 3 instructions (load, add, store). Two threads can lose updates.</div>",
+        "html": "<p><code>counter++</code> tek satırdır ama üç adımdır: oku, artır, yaz.</p><p>Başlangıçta counter = 0 olsun:</p><ol><li>A, 0 okur.</li><li>A yazmadan B de 0 okur.</li><li>A kendi değerini artırıp 1 yazar.</li><li>B eski 0 kopyasını artırıp 1 yazar.</li></ol><p>İki artış beklerken sonuç <b>1</b> olur. İkinci yazma ilk güncellemeyi ezer. Sonucun bu sıraya bağlı olmasına <b>race condition</b> denir.</p><p>Scheduling, thread’in bu adımlar arasında nasıl durabileceğini açıklar. Synchronization ise güncellemenin nasıl korunacağını çözer.</p><div class=\"callout warn\">Tek satırlık counter++, bu modelde üç adımdır: load, add, store. Tek satır olması atomic olduğu anlamına gelmez.</div>",
         "lab": {
           "href": "ch4/race.html",
           "todo": [
@@ -1409,14 +1430,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "What changes when one process has several threads?"
+    "question": "Bir process’in içinde birden fazla iş nasıl ilerler?",
+    "reading": true,
+    "summary": [
+      "Thread’ler aynı process’in kaynaklarını paylaşır; kendi stack ve register’ları vardır.",
+      "Concurrency birlikte ilerleme, parallelism aynı anda çalışmadır.",
+      "Seri kalan bölüm speedup’ı sınırlar; ortak güncellemeler race oluşturabilir."
+    ],
+    "examAnswer": "Threads share code, data, heap and files. Private: PC, registers, stack. Amdahl limit: 1/S."
   },
   "5": {
-    "goal": "Build a Gantt chart and calculate waiting and turnaround times.",
+    "goal": "Hazır process’lerden hangisine CPU verilmeli?",
     "time": "35–45 min",
     "steps": [
       {
-        "t": "The ready queue needs a rule",
+        "t": "Scheduling bir seçim problemidir",
         "key": "Chapters 3 and 4 filled the <b>ready queue</b>; Chapter 5 decides <b>which</b> process or thread runs next and <b>for how long</b>.",
         "fig": {
           "type": "flow",
@@ -1460,7 +1488,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>A ready process can run, but a single core can execute only one at a time. The <b>scheduler</b> chooses which ready process gets the CPU.</p><p>Different rules make different trade-offs. Arrival order is simple. Short jobs can reduce waiting. Taking turns helps interactive work respond.</p><p>For every example, use the same method: identify the rule, draw the CPU timeline, read completion times, then calculate the requested measure. We will build that method one piece at a time.</p>",
+        "html": "<p><b>Ready queue</b> içindeki process’ler çalışmaya hazırdır. Fakat tek core aynı anda yalnızca birini yürütebilir. <b>CPU scheduler</b>, sıradaki process’i seçer.</p><p>Tek bir “en iyi” kural yoktur. Geliş sırası basittir; kısa işleri öne almak beklemeyi azaltabilir; sırayla kısa süreler vermek etkileşimli işlerin yanıtını iyileştirebilir.</p><p>Bu bölümde her hesapta aynı yolu izleyeceğiz: kuralı belirle, <b>Gantt chart</b> çiz, bitiş zamanlarını oku, sonra süreleri hesapla. Formüle başlamadan timeline’ın doğru olması gerekir.</p>",
         "check": {
           "q": "Two processes are ready on one core. What does the scheduler choose?",
           "o": [
@@ -1472,7 +1500,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "When can the scheduler change its choice?",
+        "t": "Scheduler ne zaman karar verir?",
         "key": "A process alternates <b>CPU bursts</b> and <b>I/O bursts</b>. Decisions happen when it <b>blocks</b> (1), is <b>preempted</b> (2), becomes <b>ready</b> after I/O (3) or <b>terminates</b> (4). <b>Nonpreemptive</b> scheduling uses only 1 and 4.",
         "fig": {
           "type": "boxes",
@@ -1558,7 +1586,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A process alternates CPU work (<b>CPU bursts</b>) with I/O waits. Scheduling can happen when it:</p><ol><li>Goes from running to waiting.</li><li>Goes from running to ready.</li><li>Goes from waiting to ready.</li><li>Terminates.</li></ol><p>In 1 and 4, it has given up the CPU. In 2 and 3, the OS can take the CPU away: <b>preemption</b>.</p><p>Choosing and handing over are separate jobs. The scheduler chooses; the <b>dispatcher</b> switches context, returns to user mode and resumes the selected process. That handover takes time: <b>dispatch latency</b>.</p><div class=\"callout warn\">Preemption can stop a process in the middle of updating shared data. Chapter 6 deals with that.</div>",
+        "html": "<p>Bir process CPU’da çalışır (<b>CPU burst</b>), I/O bekler (<b>I/O burst</b>), sonra yeniden çalışır. Scheduling şu durumlarda gündeme gelir:</p><ol><li>Running → Waiting.</li><li>Running → Ready.</li><li>Waiting → Ready.</li><li>Process’in bitmesi.</li></ol><p>1 ve 4’te process CPU’yu bırakmıştır. 2 ve 3’te OS çalışan process’ten CPU’yu alabilir: <b>preemption</b>. Nonpreemptive yaklaşım yalnızca 1 ve 4’te yeniden seçer.</p><p>Scheduler seçer; <b>dispatcher</b> context’i değiştirip seçileni başlatır. Bu devir süresi <b>dispatch latency</b>’dir.</p><div class=\"callout warn\">Preemption ortak veri güncellemesinin ortasında olabilir. Chapter 6 bu erişimi korur.</div>",
         "check": {
           "q": "A nonpreemptive scheduler is running P1 when P2 finishes its I/O and becomes ready. What happens?",
           "o": [
@@ -1570,7 +1598,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Read the timeline before using the formulas",
+        "t": "Waiting, turnaround ve response time farkı",
         "key": "Maximize <b>CPU utilization</b> and <b>throughput</b>; minimize <b>turnaround</b>, <b>waiting</b> and <b>response</b> time. <b>Waiting = turnaround − burst</b>.",
         "fig": {
           "type": "compare",
@@ -1595,7 +1623,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A process arrives at time 2, needs 9 ms of CPU work and finishes at 26. For these single-burst exercises:</p><ol><li><b>Turnaround</b> is all elapsed time: completion − arrival = 26 − 2 = 24.</li><li><b>Waiting</b> removes the CPU work: turnaround − burst = 24 − 9 = 15.</li><li>For an average, calculate each process separately, add, then divide by the process count.</li></ol><p><b>Response time</b> measures the delay until the first response. The other criteria are CPU utilization (keep it busy) and throughput (jobs completed per unit time). A good schedule depends on which measure matters.</p>",
+        "html": "<p>Process zaman 2’de geliyor, 9 ms CPU işi istiyor ve 26’da bitiyor. Bu tek-burst sorusunda:</p><ol><li><b>Turnaround</b>: sistemde geçen tüm süre. 26 − 2 = <b>24</b>.</li><li><b>Waiting</b>: bu süreden CPU’da çalıştığını çıkar. 24 − 9 = <b>15</b>.</li><li>Ortalama istenirse her process’i ayrı hesapla; topla ve process sayısına böl.</li></ol><p><b>Response time</b> ilk yanıta kadar olan gecikmedir; toplam bitiş süresi değildir.</p><p>Beş ölçütü ayır: <b>CPU utilization</b> ve <b>throughput</b> yüksek; turnaround, waiting ve response time düşük olsun isteriz. Bir algoritma hepsinde aynı anda üstün olmak zorunda değildir.</p>",
         "check": {
           "q": "A process arrives at 0, needs 3 ms and completes at 27. What is its waiting time?",
           "o": [
@@ -1607,14 +1635,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "FCFS: take the jobs in arrival order",
+        "t": "FCFS: önce gelen önce çalışır",
         "key": "<b>FCFS</b> is simple and nonpreemptive, but short jobs stuck behind a long one wait a long time: the <b>convoy effect</b>.",
         "fig": {
           "type": "anim",
           "name": "fcfs",
           "t": "FCFS: the same three jobs in two orders"
         },
-        "html": "<p><b>First-come, first-served</b> lets a process run until it finishes or blocks. A shorter job cannot jump ahead.</p><p>In the lecture example, all arrive at 0 in order P1, P2, P3, with bursts 24, 3, 3.</p><ol><li>Draw P1: 0–24, P2: 24–27, P3: 27–30.</li><li>Each wait is its start time minus arrival: 0, 24, 27.</li><li>Average wait = (0 + 24 + 27)/3 = <b>17</b>.</li></ol><p>The short jobs wait behind the long one: the <b>convoy effect</b>. Putting P2 and P3 first would reduce average waiting to 3. Arrival order matters.</p>",
+        "html": "<p><b>First-come, first-served</b> çalışan process’i bitene veya bloklanana kadar bırakır. Kısa iş sırayı atlayamaz.</p><p>Ders örneğinde hepsi 0’da geliyor; sıra P1, P2, P3. Burst’ler 24, 3, 3:</p><ol><li>Timeline: P1 0–24; P2 24–27; P3 27–30.</li><li>Beklemeler: <b>0, 24, 27</b>.</li><li>Ortalama: (0 + 24 + 27)/3 = <b>17</b>.</li></ol><p>Kısa işler uzun işin arkasına takıldı: <b>convoy effect</b>. Aynı işler P2, P3, P1 sırasıyla gelse ortalama bekleme 3 olurdu. FCFS’de geliş sırasının etkisi büyüktür.</p>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1634,14 +1662,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "SJF chooses a short burst; SRTF can interrupt",
+        "t": "SJF ve SRTF: kısa işi seçmek, gerekirse araya almak",
         "key": "<b>SJF</b> gives the <b>minimum average waiting time</b>, but it needs the length of the next CPU burst, which the OS cannot know. <b>SRTF</b> is its preemptive version.",
         "fig": {
           "type": "anim",
           "name": "sjf",
           "t": "SJF and SRTF on the slide examples"
         },
-        "html": "<p><b>SJF</b> picks the shortest next CPU burst among ready processes. With all arrivals at 0 and bursts P1 = 6, P2 = 8, P3 = 7, P4 = 3:</p><ol><li>Order: P4, P1, P3, P2.</li><li>Timeline: 0–3, 3–9, 9–16, 16–24.</li><li>Waits in that order: 0, 3, 9, 16. Average = 28/4 = <b>7</b>.</li></ol><p><b>SRTF</b> adds preemption. At an arrival, compare the new burst with the running process’s <em>remaining</em> time, not its original burst. Switch if the new job is shorter. Real systems must estimate future bursts; long jobs may starve.</p><div class=\"callout warn\">\"SJF is the best algorithm in practice.\" No: it is optimal for average waiting time only on paper, because burst lengths are unknown.</div>",
+        "html": "<p><b>SJF</b>, hazır işler arasından sıradaki CPU burst’ü en kısa olanı seçer. Hepsi 0’da gelsin: P1 = 6, P2 = 8, P3 = 7, P4 = 3.</p><ol><li>Sıra: P4, P1, P3, P2.</li><li>Timeline: 0–3, 3–9, 9–16, 16–24.</li><li>Bu sıradaki beklemeler: 0, 3, 9, 16. Ortalama <b>7</b>.</li></ol><p><b>SRTF</b>, preemptive sürümdür. Yeni iş gelince onun süresini, çalışanın <em>kalan</em> süresiyle karşılaştırır. Daha kısaysa CPU’yu alabilir.</p><p>Sınavda verilen burst’leri biliyoruz. Gerçek OS ise gelecekteki burst’ü ancak tahmin edebilir. Uzun işler sürekli kısa işlere yenilip starvation yaşayabilir.</p><div class=\"callout warn\">SJF’nin waiting-time üstünlüğü, burst’lerin bilindiği teorik model içindir. Gerçekte gelecek burst’ler bilinmez; tahmin edilir.</div>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1660,14 +1688,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Round Robin: run a slice, then rejoin the queue",
+        "t": "Round Robin: bir dilim çalış, bitmediysen sıraya dön",
         "key": "<b>RR</b> runs each process for at most one <b>quantum q</b>, then sends it to the back of the ready queue; q must be much larger than a <b>context switch</b>.",
         "fig": {
           "type": "anim",
           "name": "rr",
           "t": "Round Robin with q = 4"
         },
-        "html": "<p><b>Round Robin</b> gives each process at most one time quantum q per turn. An unfinished process rejoins the back of the ready queue.</p><p>With P1 = 24, P2 = 3, P3 = 3, all arriving at 0 and q = 4:</p><ol><li>P1 runs 0–4, leaving 20.</li><li>P2 finishes at 7; P3 finishes at 10.</li><li>P1 is now alone and finishes at 30.</li><li>Waits: P1 = 30 − 24 = 6; P2 = 7 − 3 = 4; P3 = 10 − 3 = 7.</li></ol><p>Average = 17/3 = <b>5.67</b>; the slide prints 5.3. A huge quantum behaves like FCFS; a tiny one adds context-switch overhead.</p><div class=\"callout warn\">Slide 55's live demo (A 0/8, B 2/4, C 4/2, D 6/6, q = 4) runs D before A at time 10. With the rule used on the other slides and here, A went back to the queue at 4, before D arrived at 6, so A runs 10–14 and D 14–20. On paper, state the rule you apply.</div>",
+        "html": "<p><b>Round Robin (RR)</b> her process’e en fazla <b>quantum q</b> kadar süre verir. Bitmeyen process ready queue’nun sonuna döner.</p><p>P1 = 24, P2 = 3, P3 = 3; hepsi 0’da geliyor; q = 4:</p><ol><li>P1 0–4 çalışır; 20 kalır.</li><li>P2 7’de, P3 10’da biter.</li><li>P1 artık yalnızdır; 30’da biter.</li><li>Beklemeler: 30 − 24 = 6; 7 − 3 = 4; 10 − 3 = 7.</li></ol><p>Ortalama <b>17/3 = 5.67</b>. Slaytta 5.3 yazması aritmetik hatadır.</p><p>q çok büyükse RR, FCFS gibi davranır. Çok küçükse context switch maliyeti büyür.</p><div class=\"callout warn\"><b>Slaytlar queue sırası konusunda farklı.</b> Slide 55 demo’sunda A 0/8, B 2/4, C 4/2, D 6/6 ve q = 4 için D, zaman 10’da A’dan önce çalışır. Diğer slaytlarda ve burada kullanılan kurala göre A zaman 4’te queue’ya dönmüştür; D ise 6’da gelir. Bu kuralla A 10–14, D 14–20 çalışır. Çözümünde kullandığın queue kuralını belirt.</div>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1687,7 +1715,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Priority needs a way to prevent endless waiting",
+        "t": "Priority ve aging: düşük öncelik sonsuza dek beklemesin",
         "key": "<b>Priority</b> scheduling runs the highest priority (the <b>smallest number</b>) first and can <b>starve</b> low priorities; <b>aging</b> cures that. A <b>multilevel feedback queue</b> moves processes between queues.",
         "fig": {
           "type": "stack",
@@ -1712,7 +1740,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p><b>Priority scheduling</b> picks the highest-priority ready process. In the lecture’s example, a smaller priority number means higher priority: the order is P2, P5, P1, P3, P4.</p><p>A low-priority process may keep losing to new arrivals: <b>starvation</b>. <b>Aging</b> gradually raises its priority as it waits. Equal-priority processes can take turns with Round Robin.</p><p>Multiple queues add another choice. In a <b>multilevel queue</b>, a process stays in its assigned queue. In a <b>multilevel feedback queue</b>, it can move between queues based on its behaviour or waiting. “Can it move?” distinguishes the two.</p>",
+        "html": "<p><b>Priority scheduling</b>, en yüksek öncelikli hazır process’i seçer. Ders örneğinde küçük sayı yüksek önceliktir; sıra P2, P5, P1, P3, P4 olur.</p><p>Sürekli yüksek öncelikli iş gelirse düşük öncelikli iş hiç sıra bulamayabilir: <b>starvation</b>. <b>Aging</b>, bekledikçe önceliğini yükseltir. Eşit öncelikli işler RR ile paylaşabilir.</p><table class=\"t\"><tr><th>Yapı</th><th>Process queue değiştirebilir mi?</th></tr><tr><td><b>Multilevel queue</b></td><td>Hayır; atanmış queue’da kalır.</td></tr><tr><td><b>Multilevel feedback queue</b></td><td>Evet; davranış veya beklemeye göre taşınabilir.</td></tr></table><p>İki yapıyı ayıran ana sorulardan biri budur: queue’lar arasında hareket var mı?</p>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1731,7 +1759,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Deadlines and multiple cores add constraints",
+        "t": "Deadline ve çok core yeni kısıtlar getirir",
         "key": "Threads are scheduled in <b>PCS</b> or <b>SCS</b>. Real time means <b>predictable</b>: <b>hard</b> deadlines must be met, <b>soft</b> ones should be. <b>Rate-monotonic</b> priorities are static, <b>EDF</b> priorities are dynamic.",
         "fig": {
           "type": "compare",
@@ -1758,7 +1786,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>The basic question stays “who runs next?”, but the setting adds rules:</p><ul><li><b>Process-contention scope</b>: a library chooses among a process’s user threads. <b>System-contention scope</b>: the kernel chooses among kernel threads.</li><li><b>Rate-monotonic</b> uses fixed priorities based on periods. <b>EDF</b> gives the earliest deadline priority. The lecture gives an approximately 69% sufficient utilization bound for rate-monotonic scheduling and up to 100% for EDF in the ideal task model; these are model assumptions, not universal workload guarantees.</li><li>On several cores, <b>load balancing</b> spreads work; <b>processor affinity</b> tries to keep a thread on a familiar core.</li></ul><p>Return to the map: scheduling decides who executes. Preemption may interrupt an update halfway through. Chapter 6 makes shared-data access safe.</p><p><b>Hard real-time</b> requires deadlines to be met; <b>soft real-time</b> treats them as a goal. Predictability matters, rather than average speed alone.</p>",
+        "html": "<p><b>Process-contention scope</b> içinde library, process’in user thread’leri arasından seçer. <b>System-contention scope</b> içinde kernel, kernel thread’ler arasından seçer.</p><p>Real-time’da amaç yalnızca hızlı ortalama değildir. <b>Hard real-time</b> deadline’ı zorunlu tutar; <b>soft real-time</b> hedefler.</p><p><b>Rate-monotonic</b> period’a göre sabit öncelik; <b>EDF</b> en yakın deadline’a göre değişen öncelik kullanır. Ders ideal task modelinde RM için yaklaşık %69 yeterli utilization sınırını, EDF için %100’e kadar kullanımını karşılaştırır. Bunlar her iş yükü için koşulsuz garanti değildir.</p><p>Çok core’da <b>load balancing</b> işi dağıtır; <b>processor affinity</b> thread’i aynı core’da tutmaya çalışır. Sırada, preemption’ın ortak veriyi bozmaması var.</p>",
         "check": {
           "q": "What distinguishes a hard real-time requirement?",
           "o": [
@@ -1770,14 +1798,21 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "Several processes are ready. Who should run next?"
+    "question": "Hazır process’lerden hangisine CPU verilmeli?",
+    "reading": true,
+    "summary": [
+      "Önce scheduling kuralıyla timeline çiz; sonra completion time’dan hesap yap.",
+      "Turnaround = completion − arrival. Tek CPU burst sorularında waiting = turnaround − burst.",
+      "FCFS sıra, SJF kısa burst, RR quantum, priority öncelik üzerinden karar verir."
+    ],
+    "examAnswer": "Turnaround = completion − arrival. Waiting = turnaround − burst. Aging prevents priority starvation."
   },
   "6": {
-    "goal": "Trace a race and choose a synchronization tool for exclusion or ordering.",
+    "goal": "İki process aynı veriye dokunduğunda sonucu nasıl doğru tutarız?",
     "time": "35–45 min",
     "steps": [
       {
-        "t": "Scheduling alone cannot protect a shared value",
+        "t": "Sorun hesapta değil, adımların birbirine girmesinde",
         "key": "Chapter 5 lets the OS preempt at any time; Chapter 6 gives the <b>tools</b> that keep <b>shared data</b> consistent anyway.",
         "fig": {
           "type": "flow",
@@ -1821,7 +1856,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Chapter 4 showed a lost update. Chapter 5 showed that a thread can lose the CPU between instructions. Together they explain the problem: a thread may resume using an old copy of shared data.</p><p>We need a rule that makes the whole sensitive operation safe. Start by seeing the race, then define what a correct solution must guarantee. After that, compare software, hardware and higher-level tools.</p><p>Keep asking: does this tool prevent simultaneous access, enforce an order, or both?</p>",
+        "html": "<p>Thread örneğinde iki doğru artırma işlemi yanlış sonuç vermişti. Scheduling bölümünde de bir process’in instruction’lar arasında durabileceğini gördük.</p><p>Şimdi bunları birleştir: process eski bir değeri okuduktan sonra durur, başka process veriyi değiştirir, ilki eski kopyasıyla devam eder. Güncelleme kaybolabilir.</p><p><b>Synchronization</b>, bu erişimleri bir kurala bağlar. Önce hangi kodu koruyacağımızı belirleyeceğiz. Sonra software çözümünden atomic instruction’a, mutex’e, semaphore’a ve monitor’a geçeceğiz.</p>",
         "check": {
           "q": "Why can correct arithmetic still produce a wrong shared counter?",
           "o": [
@@ -1833,14 +1868,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Follow both copies of count",
+        "t": "count++ ile count-- birlikte neden 5 bırakmayabilir?",
         "key": "When the result depends on the order in which processes access shared data, the code has a <b>race condition</b>.",
         "fig": {
           "type": "anim",
           "name": "pcrace",
           "t": "Producer and consumer share count = 5"
         },
-        "html": "<p>The producer increments count; the consumer decrements it. Starting at 5, one addition and one subtraction should leave <b>5</b>.</p><ol><li>Both load 5 into separate registers.</li><li>The producer computes 6; the consumer computes 4.</li><li>If the consumer stores last, count becomes 4.</li><li>If the producer stores last, count becomes 6.</li></ol><p>One update overwrites the other. The arithmetic is fine; the overlapping read–modify–write sequences are the problem. Step through the animation and keep track of the shared value separately from each register.</p>",
+        "html": "<p>Producer bir ekliyor, consumer bir çıkarıyor. Başlangıç <b>count = 5</b> ise beklenen sonuç yine 5’tir.</p><ol><li>İkisi de ortak 5’i kendi register’ına okur.</li><li>Producer 6, consumer 4 hesaplar.</li><li>Consumer son yazarsa count = 4 olur.</li><li>Producer son yazarsa count = 6 olur.</li></ol><p>Birinin yazması diğerinin etkisini siler. İşlemler örtüşmeden yapılırsa sonuç 5’tir. Örtüşürse 4 veya 6 olabilir.</p><p>Animasyonda ortak count’u ve iki yerel register’ı ayrı takip et. <b>Race condition</b>’ın kaynağı aynı eski değerden başlayan iki güncellemedir.</p>",
         "lab": {
           "href": "ch6/critical.html",
           "todo": [
@@ -1860,7 +1895,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A correct entry rule needs three promises",
+        "t": "Critical section çözümü hangi üç sözü vermeli?",
         "key": "A solution to the <b>critical-section problem</b> must provide <b>mutual exclusion</b>, <b>progress</b> and <b>bounded waiting</b>.",
         "fig": {
           "type": "flow",
@@ -1892,7 +1927,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>The <b>critical section</b> is the code accessing shared data. Its entry section asks permission; its exit section releases access. The rest is the remainder section.</p><p>A solution must guarantee:</p><ul><li><b>Mutual exclusion</b>: only one participant is inside at a time.</li><li><b>Progress</b>: if it is empty and someone wants in, choosing who enters cannot be delayed forever.</li><li><b>Bounded waiting</b>: after a request, only a limited number of other entries can happen first.</li></ul><p>Exclusion protects the data. Progress and bounded waiting address whether waiting processes get a chance. Do not assume one process runs faster than another.</p>",
+        "html": "<p>Ortak veriye erişen hassas kod <b>critical section</b>’dır. Entry section giriş ister; exit section erişimi bırakır. Diğer kod remainder section’dır.</p><table class=\"t\"><tr><th>Koşul</th><th>Ne garanti eder?</th></tr><tr><td><b>Mutual exclusion</b></td><td>Aynı anda yalnızca bir katılımcı içeride.</td></tr><tr><td><b>Progress</b></td><td>İçerisi boşken girmek isteyenlerin seçimi sonsuza dek ertelenmez.</td></tr><tr><td><b>Bounded waiting</b></td><td>İstekten sonra başkaları sınırsız kez öne geçemez.</td></tr></table><p>İlki veriyi korur. Son ikisi bekleyenlerin ilerleme şansını korur. Process’lerin göreli hızları hakkında varsayım yapamayız.</p>",
         "check": {
           "q": "Process A asked to enter long ago, but B and C keep entering ahead of it, without limit. Which requirement fails?",
           "o": [
@@ -1904,7 +1939,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Peterson: announce interest, then give the other priority",
+        "t": "Peterson: “girmek istiyorum; ikimiz istersek önce sen”",
         "key": "Peterson uses <b>flag[i]</b> (I want to enter) and <b>turn</b> (whose turn it is). It meets all three requirements on paper, but modern CPUs may break it without <b>memory barriers</b>.",
         "fig": {
           "type": "boxes",
@@ -1967,7 +2002,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>For two processes, <code>flag[i] = true</code> means “I want in.” Setting <code>turn = j</code> means “if we both want in, you go first.”</p><p>Pi waits only while <code>flag[j] &amp;&amp; turn == j</code>. If Pj has no interest, Pi enters. If both are interested, the single turn value breaks the tie. On leaving, Pi clears its flag.</p><p>Under the assumed memory ordering, this satisfies mutual exclusion, progress and bounded waiting. Modern processors and compilers may reorder memory operations. <b>Memory barriers</b> enforce the ordering/visibility needed by such reasoning; plain source-code order alone is insufficient.</p>",
+        "html": "<p>İki process için <code>flag[i] = true</code>, “girmek istiyorum” demektir. <code>turn = j</code> ise ikisi de isterse önceliği diğerine verir.</p><p>Pi şu koşulda bekler: <code>flag[j] &amp;&amp; turn == j</code>. Pj istemiyorsa Pi girer. İkisi de istiyorsa tek değer tutan turn beraber girişi önler.</p><p>Bu model, varsayılan bellek sıralamasında üç critical-section koşulunu sağlar. Fakat modern CPU ve compiler işlemleri yeniden sıralayabilir. <b>Memory barrier</b>, bu akıl yürütmenin ihtiyaç duyduğu sıralama ve görünürlüğü destekler. Kaynak kodun sırasını tek başına donanım garantisi sayma.</p>",
         "lab": {
           "href": "ch6/critical.html",
           "todo": [
@@ -1986,7 +2021,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Make checking and claiming the lock one operation",
+        "t": "Kilidi kontrol etmek ve almak tek atomic işlem olmalı",
         "key": "<b>test_and_set</b> and <b>compare_and_swap</b> read and change a word in one <b>atomic</b> step; locks are built on them.",
         "fig": {
           "type": "compare",
@@ -2012,7 +2047,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Checking “is the lock free?” and claiming it separately would create another race. Hardware provides <b>atomic</b> operations: other threads cannot observe a half-completed operation.</p><p><code>test_and_set(&amp;lock)</code> returns the old value and sets true. Old false means this thread acquired it. Old true means keep waiting. Release by setting false.</p><p><code>compare_and_swap()</code> changes a value only when it equals an expected value, and returns the old value. Atomic counter operations use this kind of support.</p><p>A simple spin loop keeps using CPU while it waits. It can provide exclusion without guaranteeing bounded waiting.</p>",
+        "html": "<p>Önce “kilit boş mu?” diye bakıp sonra almak yeterli değildir. Arada başka process de boş görebilir. <b>Atomic</b> instruction, kontrol ile değişikliği bölünmez yapar.</p><p><code>test_and_set(&amp;lock)</code> eski değeri döndürür ve true yazar. Eski değer false ise bu process kilidi almıştır. True ise beklemeye devam eder. Çıkarken false yazar.</p><p><code>compare_and_swap()</code>, değer beklenen değere eşitse yenisini yazar ve eskiyi döndürür.</p><p>Basit spin döngüsü beklerken CPU harcar. Exclusion sağlaması, her bekleyenin sınırlı sürede kazanacağını garanti etmez: <b>bounded waiting</b> ayrıca değerlendirilmelidir.</p>",
         "check": {
           "q": "What does test_and_set(&lock) return?",
           "o": [
@@ -2024,7 +2059,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Put the whole update inside the mutex",
+        "t": "Mutex bütün güncellemeyi çevrelemeli",
         "key": "A <b>mutex lock</b> is the simplest tool: <b>acquire()</b> before the critical section, <b>release()</b> after. If waiting means looping, it is a <b>spinlock</b> (<b>busy waiting</b>).",
         "fig": {
           "type": "compare",
@@ -2051,7 +2086,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A <b>mutex</b> packages lock acquisition and release. Protect the entire read–modify–write operation:</p><pre>pthread_mutex_lock(&amp;mutex);\ncounter++;\npthread_mutex_unlock(&amp;mutex);</pre><p>Another thread must acquire the same mutex before touching that protected data. Locking only the final store would leave the earlier read exposed.</p><p>A mutex has an owner: the thread that locks it must unlock it. Forgetting an unlock can strand waiters. Taking two locks in opposite orders can cause deadlock. The tool works only when every access follows the protocol.</p><p>For a very short wait on a multicore machine, a spinlock may avoid the cost of sleeping and waking. For a long wait, spinning wastes CPU time.</p>",
+        "html": "<p><b>Mutex</b>, kritik bölgeden önce alınır ve sonra bırakılır:</p><pre>pthread_mutex_lock(&amp;mutex);\ncounter++;\npthread_mutex_unlock(&amp;mutex);</pre><p>Yalnızca son yazmayı kilitlemek yetmez; okuma da aynı koruma altında olmalı. Diğer thread’ler aynı veri için aynı protokole uymalıdır.</p><p>Mutex’in <b>owner</b>’ı vardır: alan thread bırakır. Unlock unutulursa bekleyenler takılır. İki lock’u ters sırada almak deadlock oluşturabilir.</p><p>Çok kısa bir kritik bölüm için multicore’da <b>spinlock</b>, uyutma/uyandırma maliyetinden ucuz olabilir. Uzun bekleyişte ise boşuna CPU tüketir. Süreyi, context-switch maliyetiyle karşılaştır.</p>",
         "lab": {
           "href": "ch6/critical.html",
           "todo": [
@@ -2070,14 +2105,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A semaphore can count resources or enforce an order",
+        "t": "Semaphore yalnızca kilit değildir",
         "key": "A <b>semaphore</b> uses atomic <b>wait</b> and <b>signal</b> for resource counting, exclusion or ordering; it has no mutex-style owner.",
         "fig": {
           "type": "anim",
           "name": "semaphore",
           "t": "wait() and signal() with a waiting queue (slide 29)"
         },
-        "html": "<p>A <b>semaphore</b> is a counter with atomic wait and signal operations.</p><p>For exclusion, initialize to 1: wait before entering, signal after leaving. For ordering, initialize <code>synch = 0</code>: P2 waits before S2; P1 executes S1 then signals. S2 cannot happen before S1.</p><p>In the blocking implementation, wait decrements first and blocks if the result is negative. Signal increments and wakes a waiter if needed. A negative value records waiting processes; a positive value records available resources.</p><p>Unlike a mutex, a semaphore has no owner: a different thread may signal. Pthreads names are <code>sem_wait</code> and <code>sem_post</code>.</p><div class=\"callout warn\"><b>Two versions on the slides.</b> Slide 27 defines <code>wait(S)</code> with busy waiting: <code>while (S &lt;= 0) ; S--;</code>, so S never goes below 0. Slide 29 decrements first and blocks if S &lt; 0, so a negative S counts the waiters. Slide 27 also calls a binary semaphore \"the same as a mutex lock\"; slides 31 and 45 add the one difference: ownership.</div>",
+        "html": "<p><b>Semaphore</b>, atomic <b>wait</b> ve <b>signal</b> ile kullanılan sayıdır. İki kullanımını ayıralım:</p><ul><li><b>Exclusion</b>: 1 ile başlat; girmeden wait, çıkarken signal.</li><li><b>Ordering</b>: synch = 0 olsun. P2, S2’den önce wait eder. P1, S1’i yapıp signal eder. Böylece S2, S1’den önce gerçekleşemez.</li></ul><p>Blocking sürümde wait önce azaltır; sonuç negatifse çağıranı bloklar. Signal artırır ve gerekirse bir bekleyeni uyandırır. Pozitif değer boş kaynakları; negatif değerin büyüklüğü bekleyenleri sayar.</p><p>Mutex’ten farklı olarak semaphore’un owner’ı yoktur: başka thread signal verebilir. Pthreads karşılıkları <code>sem_wait</code> ve <code>sem_post</code>’tur.</p><div class=\"callout warn\"><b>Slaytlarda iki semaphore sürümü var.</b> Slide 27, <code>while (S &lt;= 0) ; S--;</code> ile busy waiting kullanır; S negatif olmaz. Slide 29 önce azaltır, S &lt; 0 ise bloklar; negatif değer bekleyenleri sayar. Slide 27 binary semaphore için mutex ile aynı derken, slides 31 ve 45 <b>ownership</b> farkını ekler.</div>",
         "lab": {
           "href": "ch6/semaphore.html",
           "todo": [
@@ -2097,7 +2132,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Waiting for a condition differs from owning a lock",
+        "t": "Bir koşulu beklemek, kilidi elde tutmakla aynı değil",
         "key": "A <b>monitor</b> lets one process inside at a time; a <b>condition variable</b> lets it wait for a condition. Synchronization can still fail through <b>deadlock</b>, <b>starvation</b> or <b>priority inversion</b>.",
         "fig": {
           "type": "compare",
@@ -2130,7 +2165,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A <b>monitor</b> permits one active caller at a time. A condition variable lets that caller sleep until some condition may hold, releasing the monitor while waiting.</p><p>With Pthreads, hold the mutex and use <code>while (!ready) pthread_cond_wait(&amp;cond, &amp;mutex);</code>. On return the mutex is reacquired; check again because waking does not guarantee the condition.</p><p><b>Deadlock</b> means participants wait on one another indefinitely. <b>Starvation</b> means a participant keeps being passed over. <b>Priority inversion</b> means high-priority work waits for a lower-priority lock holder; priority inheritance temporarily boosts that holder.</p><p>The course now connects hardware control, services, execution, scheduling and safe sharing.</p>",
+        "html": "<p><b>Monitor</b> aynı anda bir aktif çağırana izin verir. <b>Condition variable</b>, bir koşulu beklerken monitor erişimini bırakıp uyumayı sağlar.</p><p>Pthreads’de mutex eldeyken <code>while (!ready) pthread_cond_wait(&amp;cond, &amp;mutex);</code> kullanılır. Dönüşte mutex yeniden alınır. Uyanmak koşulun kesin doğru olduğu anlamına gelmediği için tekrar kontrol edilir.</p><table class=\"t\"><tr><th>Problem</th><th>Fikir</th></tr><tr><td><b>Deadlock</b></td><td>Birbirini bekleyenler ilerleyemez.</td></tr><tr><td><b>Starvation</b></td><td>Bir katılımcı sürekli geride bırakılır.</td></tr><tr><td><b>Priority inversion</b></td><td>Yüksek öncelik, düşük öncelikli lock sahibini bekler.</td></tr></table><p><b>Priority inheritance</b> lock sahibinin önceliğini geçici yükseltir. Böylece dersin donanımdan başlayan paylaşım sorusu güvenli erişime bağlanır.</p>",
         "check": {
           "q": "P0 holds S and waits for Q; P1 holds Q and waits for S. What is this, and what fixes it?",
           "o": [
@@ -2142,6 +2177,13 @@ window.GUIDE = {
         }
       }
     ],
-    "question": "How do we stop overlapping work from corrupting shared data?"
+    "question": "İki process aynı veriye dokunduğunda sonucu nasıl doğru tutarız?",
+    "reading": true,
+    "summary": [
+      "Race condition, sonucun erişimlerin sırasına bağlı olmasıdır.",
+      "Critical-section çözümü mutual exclusion, progress ve bounded waiting sağlamalıdır.",
+      "Mutex sahiplik ile exclusion; semaphore kaynak sayma ve sıralama sağlar."
+    ],
+    "examAnswer": "Critical section: mutual exclusion + progress + bounded waiting. Mutex: ownership. Semaphore: atomic wait/signal."
   }
 };

@@ -6,8 +6,10 @@ Guided lessons, interactive simulations, games, quizzes and flashcards built fro
 materials, to understand the material rather than memorize it.
 
 The **guided lessons** (`learn.html?ch=N`) are the main part. Each week is taught from zero, one step at a time.
-Every step has a one-sentence "big idea", a diagram, the explanation, the lab embedded in the page with a task
-checklist, and a quick check. The last step embeds the week's games, quiz, flashcards and understanding test as tabs.
+OS and ML now open as continuous explanations in Turkish with English technical terms, numbered sections,
+comparison tables and worked examples. Each section keeps its diagram, optional lab and English quick check; the
+chapter ends with a recap and short English exam keywords. The “Adım adım çalış” link keeps the section-by-section
+view available. Other courses retain the guided steps with a big idea, diagram, explanation, lab checklist and check. The last step embeds the week's games, quiz, flashcards and understanding test as tabs.
 It ends with an honest **understanding test** (`test.html?ch=N`). It gives no feedback until the end and asks how sure you
 are about each answer. Only answers that are right *and* sure count. "Understood" means at least 80% right and sure,
 with at most 1 confident mistake, and it is confirmed after passing on two different days.
