@@ -1,0 +1,115 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "A shared counter says five items are in the buffer."
+  },
+  {
+   "id": "pc",
+   "text": "The producer adds an item, and runs count plus plus. The consumer takes one, and runs count minus minus."
+  },
+  {
+   "id": "pc2",
+   "text": "One in, one out. Count should still be five.",
+   "pause": 0.4
+  },
+  {
+   "id": "zoom",
+   "text": "But each line is three machine steps: load count into a register, change the register, store it back."
+  },
+  {
+   "id": "t0",
+   "text": "The producer loads five, and adds one. Its register says six."
+  },
+  {
+   "id": "t2",
+   "text": "Then the consumer gets the CPU. It loads count, still five, and subtracts one. Its register says four."
+  },
+  {
+   "id": "t4",
+   "text": "The producer stores six."
+  },
+  {
+   "id": "t5",
+   "text": "The consumer stores four. Count is now four. An item has vanished.",
+   "pause": 0.3
+  },
+  {
+   "id": "swap",
+   "text": "Swap the last two stores, and count ends at six. Only five is right."
+  },
+  {
+   "id": "race",
+   "text": "When the result depends on the order in which processes touch shared data, that is a race condition.",
+   "pause": 0.5
+  },
+  {
+   "id": "cs",
+   "text": "The fix starts with a name. The code that touches shared data is the critical section: a room only one process may be in."
+  },
+  {
+   "id": "sec",
+   "text": "A process asks to enter in its entry section, and leaves through its exit section."
+  },
+  {
+   "id": "r1",
+   "text": "A correct solution needs three things. Mutual exclusion: only one process inside at a time."
+  },
+  {
+   "id": "r2",
+   "text": "Progress: if the room is empty and someone wants in, the choice cannot be put off forever."
+  },
+  {
+   "id": "r3",
+   "text": "Bounded waiting: once you ask, the others can go before you only a limited number of times.",
+   "pause": 0.5
+  },
+  {
+   "id": "pet",
+   "text": "Peterson's solution does it in software, for two processes, with two variables."
+  },
+  {
+   "id": "pet2",
+   "text": "flag of i says: I want to enter. turn says whose turn it is."
+  },
+  {
+   "id": "pet3",
+   "text": "Each process raises its flag, then politely gives the turn away, and waits while the other wants in and has the turn."
+  },
+  {
+   "id": "pet4",
+   "text": "If both try at once, turn can hold only one value. Whoever wrote it last, waits. So only one gets in."
+  },
+  {
+   "id": "pet5",
+   "text": "On modern processors, instructions can be reordered, so Peterson also needs a memory barrier.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "count plus plus is load, change, store."
+  },
+  {
+   "id": "ex2",
+   "text": "From five, the race gives four or six."
+  },
+  {
+   "id": "ex3",
+   "text": "Mutual exclusion, progress, bounded waiting."
+  },
+  {
+   "id": "ex4",
+   "text": "Peterson: flag and turn.",
+   "pause": 0.8
+  }
+ ]
+}

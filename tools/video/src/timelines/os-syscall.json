@@ -1,0 +1,162 @@
+{
+ "fps": 30,
+ "total": 4461,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 200,
+   "file": "vo/os-syscall/hook.wav",
+   "text": "A program wants to print hello on the screen. But it runs in user mode, and the screen belongs to the kernel."
+  },
+  "ask": {
+   "start": 290,
+   "dur": 163,
+   "file": "vo/os-syscall/ask.wav",
+   "text": "So it has to ask. That request is a system call: the program's door into the kernel."
+  },
+  "api": {
+   "start": 475,
+   "dur": 335,
+   "file": "vo/os-syscall/api.wav",
+   "text": "Programs rarely knock on the door themselves. They call an A P I function, like printf in the C library, and the library makes the real system call. Here, write."
+  },
+  "trap": {
+   "start": 823,
+   "dur": 155,
+   "file": "vo/os-syscall/trap.wav",
+   "text": "The library puts the system call number in a register, and runs a trap instruction."
+  },
+  "flip1": {
+   "start": 991,
+   "dur": 111,
+   "file": "vo/os-syscall/flip1.wav",
+   "text": "The mode bit flips from one to zero. We are in kernel mode."
+  },
+  "table": {
+   "start": 1114,
+   "dur": 141,
+   "file": "vo/os-syscall/table.wav",
+   "text": "The kernel uses the number to find the right function in the system call table."
+  },
+  "work": {
+   "start": 1268,
+   "dur": 93,
+   "file": "vo/os-syscall/work.wav",
+   "text": "It does the work, and leaves the result in a register."
+  },
+  "flip2": {
+   "start": 1373,
+   "dur": 125,
+   "file": "vo/os-syscall/flip2.wav",
+   "text": "Then the bit flips back to one, and the program carries on in user mode."
+  },
+  "params": {
+   "start": 1523,
+   "dur": 256,
+   "file": "vo/os-syscall/params.wav",
+   "text": "Parameters travel in one of three ways: in registers, in a block of memory whose address sits in a register, or pushed onto the stack."
+  },
+  "six": {
+   "start": 1807,
+   "dur": 93,
+   "file": "vo/os-syscall/six.wav",
+   "text": "Every system call belongs to one of six families."
+  },
+  "six1": {
+   "start": 1912,
+   "dur": 202,
+   "file": "vo/os-syscall/six1.wav",
+   "text": "Process control, like fork and exit. File management, like open and read. Device management."
+  },
+  "six2": {
+   "start": 2127,
+   "dur": 200,
+   "file": "vo/os-syscall/six2.wav",
+   "text": "Information maintenance, like get time. Communications, like pipe. And protection, like chmod."
+  },
+  "mp": {
+   "start": 2354,
+   "dur": 168,
+   "file": "vo/os-syscall/mp.wav",
+   "text": "One design rule. Mechanism is how something is done. Policy is what will be done."
+  },
+  "mp2": {
+   "start": 2535,
+   "dur": 163,
+   "file": "vo/os-syscall/mp2.wav",
+   "text": "The timer is a mechanism. How long the timer is set for each user is a policy."
+  },
+  "mp3": {
+   "start": 2711,
+   "dur": 138,
+   "file": "vo/os-syscall/mp3.wav",
+   "text": "Keep them apart, and you can change the policy without rewriting the mechanism."
+  },
+  "kern": {
+   "start": 2876,
+   "dur": 61,
+   "file": "vo/os-syscall/kern.wav",
+   "text": "So how do you build the kernel itself?"
+  },
+  "mono": {
+   "start": 2950,
+   "dur": 280,
+   "file": "vo/os-syscall/mono.wav",
+   "text": "A monolithic kernel puts everything into one big block. It is fast. But it is hard to maintain, and one bad driver can bring it all down."
+  },
+  "micro": {
+   "start": 3243,
+   "dur": 257,
+   "file": "vo/os-syscall/micro.wav",
+   "text": "A microkernel keeps only the minimum inside. Drivers and the file system run in user space, and talk by message passing."
+  },
+  "micro2": {
+   "start": 3513,
+   "dur": 159,
+   "file": "vo/os-syscall/micro2.wav",
+   "text": "A crash stays small, so it is reliable and secure. But every message costs time."
+  },
+  "mod": {
+   "start": 3685,
+   "dur": 188,
+   "file": "vo/os-syscall/mod.wav",
+   "text": "Linux takes a middle road: a modular kernel. A core, plus modules loaded when they are needed."
+  },
+  "ex0": {
+   "start": 3903,
+   "dur": 33,
+   "file": "vo/os-syscall/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3949,
+   "dur": 98,
+   "file": "vo/os-syscall/ex1.wav",
+   "text": "A system call is a controlled entry into the kernel."
+  },
+  "ex2": {
+   "start": 4059,
+   "dur": 65,
+   "file": "vo/os-syscall/ex2.wav",
+   "text": "Programs reach it through an A P I."
+  },
+  "ex3": {
+   "start": 4136,
+   "dur": 48,
+   "file": "vo/os-syscall/ex3.wav",
+   "text": "The mode bit flips twice."
+  },
+  "ex4": {
+   "start": 4197,
+   "dur": 77,
+   "file": "vo/os-syscall/ex4.wav",
+   "text": "Mechanism is how, policy is what."
+  },
+  "ex5": {
+   "start": 4287,
+   "dur": 90,
+   "file": "vo/os-syscall/ex5.wav",
+   "text": "Monolithic is fast, microkernel is safe."
+  }
+ }
+}

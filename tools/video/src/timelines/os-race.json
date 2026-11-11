@@ -1,0 +1,156 @@
+{
+ "fps": 30,
+ "total": 4111,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 88,
+   "file": "vo/os-race/hook.wav",
+   "text": "A shared counter says five items are in the buffer."
+  },
+  "pc": {
+   "start": 179,
+   "dur": 218,
+   "file": "vo/os-race/pc.wav",
+   "text": "The producer adds an item, and runs count plus plus. The consumer takes one, and runs count minus minus."
+  },
+  "pc2": {
+   "start": 409,
+   "dur": 85,
+   "file": "vo/os-race/pc2.wav",
+   "text": "One in, one out. Count should still be five."
+  },
+  "zoom": {
+   "start": 519,
+   "dur": 195,
+   "file": "vo/os-race/zoom.wav",
+   "text": "But each line is three machine steps: load count into a register, change the register, store it back."
+  },
+  "t0": {
+   "start": 727,
+   "dur": 127,
+   "file": "vo/os-race/t0.wav",
+   "text": "The producer loads five, and adds one. Its register says six."
+  },
+  "t2": {
+   "start": 867,
+   "dur": 220,
+   "file": "vo/os-race/t2.wav",
+   "text": "Then the consumer gets the CPU. It loads count, still five, and subtracts one. Its register says four."
+  },
+  "t4": {
+   "start": 1099,
+   "dur": 47,
+   "file": "vo/os-race/t4.wav",
+   "text": "The producer stores six."
+  },
+  "t5": {
+   "start": 1159,
+   "dur": 139,
+   "file": "vo/os-race/t5.wav",
+   "text": "The consumer stores four. Count is now four. An item has vanished."
+  },
+  "swap": {
+   "start": 1319,
+   "dur": 141,
+   "file": "vo/os-race/swap.wav",
+   "text": "Swap the last two stores, and count ends at six. Only five is right."
+  },
+  "race": {
+   "start": 1473,
+   "dur": 172,
+   "file": "vo/os-race/race.wav",
+   "text": "When the result depends on the order in which processes touch shared data, that is a race condition."
+  },
+  "cs": {
+   "start": 1673,
+   "dur": 241,
+   "file": "vo/os-race/cs.wav",
+   "text": "The fix starts with a name. The code that touches shared data is the critical section: a room only one process may be in."
+  },
+  "sec": {
+   "start": 1926,
+   "dur": 152,
+   "file": "vo/os-race/sec.wav",
+   "text": "A process asks to enter in its entry section, and leaves through its exit section."
+  },
+  "r1": {
+   "start": 2090,
+   "dur": 192,
+   "file": "vo/os-race/r1.wav",
+   "text": "A correct solution needs three things. Mutual exclusion: only one process inside at a time."
+  },
+  "r2": {
+   "start": 2295,
+   "dur": 162,
+   "file": "vo/os-race/r2.wav",
+   "text": "Progress: if the room is empty and someone wants in, the choice cannot be put off forever."
+  },
+  "r3": {
+   "start": 2470,
+   "dur": 175,
+   "file": "vo/os-race/r3.wav",
+   "text": "Bounded waiting: once you ask, the others can go before you only a limited number of times."
+  },
+  "pet": {
+   "start": 2673,
+   "dur": 153,
+   "file": "vo/os-race/pet.wav",
+   "text": "Peterson's solution does it in software, for two processes, with two variables."
+  },
+  "pet2": {
+   "start": 2838,
+   "dur": 126,
+   "file": "vo/os-race/pet2.wav",
+   "text": "flag of i says: I want to enter. turn says whose turn it is."
+  },
+  "pet3": {
+   "start": 2977,
+   "dur": 226,
+   "file": "vo/os-race/pet3.wav",
+   "text": "Each process raises its flag, then politely gives the turn away, and waits while the other wants in and has the turn."
+  },
+  "pet4": {
+   "start": 3215,
+   "dur": 205,
+   "file": "vo/os-race/pet4.wav",
+   "text": "If both try at once, turn can hold only one value. Whoever wrote it last, waits. So only one gets in."
+  },
+  "pet5": {
+   "start": 3433,
+   "dur": 184,
+   "file": "vo/os-race/pet5.wav",
+   "text": "On modern processors, instructions can be reordered, so Peterson also needs a memory barrier."
+  },
+  "ex0": {
+   "start": 3648,
+   "dur": 33,
+   "file": "vo/os-race/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3693,
+   "dur": 77,
+   "file": "vo/os-race/ex1.wav",
+   "text": "count plus plus is load, change, store."
+  },
+  "ex2": {
+   "start": 3783,
+   "dur": 74,
+   "file": "vo/os-race/ex2.wav",
+   "text": "From five, the race gives four or six."
+  },
+  "ex3": {
+   "start": 3870,
+   "dur": 90,
+   "file": "vo/os-race/ex3.wav",
+   "text": "Mutual exclusion, progress, bounded waiting."
+  },
+  "ex4": {
+   "start": 3972,
+   "dur": 54,
+   "file": "vo/os-race/ex4.wav",
+   "text": "Peterson: flag and turn."
+  }
+ }
+}

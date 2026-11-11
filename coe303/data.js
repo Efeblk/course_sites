@@ -1995,6 +1995,11 @@ Object.assign(window.COURSE, {
     ],
     "plan": [
       [
+        "videos.html",
+        "Watch the 8 explainer episodes (1.25× is fine)",
+        "20 min"
+      ],
+      [
         "ozet.html",
         "Read the Midterm özeti",
         "25–30 min"
@@ -2045,6 +2050,13 @@ Object.assign(window.COURSE, {
       "title": "Midterm guide exercises",
       "meta": "Chapters 1–5 · from the guide you received",
       "desc": "Every exercise from the midterm guide with a Turkish hint and a short English answer."
+    },
+    {
+      "kind": "videos",
+      "href": "videos.html",
+      "title": "Explainer videos",
+      "meta": "8 episodes · 20 min",
+      "desc": "Chapters 1–6 as animated stories: the processes queue, run, wait, get preempted and race for a counter."
     }
   ]
 });

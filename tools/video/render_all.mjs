@@ -10,7 +10,7 @@ fs.mkdirSync(out, { recursive: true });
 const serveUrl = await bundle({ entryPoint: path.resolve('src/index.ts') });
 const comps = (await getCompositions(serveUrl)).filter(c => only.length ? only.includes(c.id) : c.id.startsWith('Swe'));
 for (const c of comps) {
-  const name = c.id.replace(/^Swe/, '').toLowerCase();
+  const name = c.id.replace(/^(Swe|Os)/, '').toLowerCase();
   const t0 = Date.now();
   await renderMedia({ serveUrl, composition: c, codec: 'h264', outputLocation: `${out}/${name}.mp4`, crf: 20, pixelFormat: 'yuv420p', concurrency: Math.max(2, os.cpus().length - 2) });
   // Remotion writes yuvj420p (full range); Firefox/Zen refuse it, so re-encode to plain yuv420p

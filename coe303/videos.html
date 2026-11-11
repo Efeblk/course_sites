@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COE303 — Explainer videos · Course Sites</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .ch { margin: 44px 0 0; }
+    .ch > h2 { margin: 0 0 2px; }
+    .vid { margin: 26px 0 0; }
+    .vid h3 { margin: 0 0 2px; }
+    .vid video { display: block; width: 100%; max-width: 960px; aspect-ratio: 16 / 9; height: auto; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); margin: 10px 0 8px; }
+    .vid p { max-width: 720px; margin: 0; }
+    .speeds { margin: 6px 0 0; }
+  </style>
+</head>
+<body data-root="..">
+  <main>
+    <div class="mono small muted">COE303 — explainer videos</div>
+    <h1 style="font-size:2.6rem;margin-top:4px">Eight short episodes for the midterm</h1>
+    <p class="lead">Chapters 1–6 as eight animated episodes of about two and a half minutes each (about 20 minutes in total), in English like the exam. The same cast runs through the series: the processes are little characters that queue, hop onto the CPU, wait and get preempted. The worked examples are the ones on the slides: 24, 3, 3 for FCFS and Round Robin, count = 5 for the race.</p>
+    <div class="callout small">The video files are rendered on this computer with Remotion (<code>tools/video/</code>, see its README) into <code>materials/COE303/video/</code>. They are committed with the repo, so any checkout of course_sites plays them.</div>
+    <nav class="row toc" id="toc"></nav>
+    <div id="list"></div>
+    <div class="callout" style="margin-top:44px">Then check yourself with the <a href="mock.html">mock midterm</a> and the <a href="drill.html">Gantt chart drill</a>, or read the <a href="ozet.html">Midterm özeti</a>.</div>
+  </main>
+  <script src="data.js"></script>
+  <script>
+    document.body.dataset.course = COURSE.id;
+    document.body.dataset.title = 'Explainer videos';
+    document.body.dataset.activity = 'videos';
+  </script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const { el } = CS;
+    const dir = `../materials/${COURSE.code}/video/`;
+    // file names = tools/video/src/swe/<Name>.tsx lower-cased; narration in tools/video/scripts/swe307.py
+    // file names = tools/video/src/os/<Name>.tsx lower-cased; narration in tools/video/scripts/coe303.py
+    const CH = [
+      { ch: 1, title: 'Chapter 1 · Introduction', vids: [
+        { id: 'manager', t: 'The manager and the doorbell', d: '2:44', p: 'The OS as resource allocator and control program, with the kernel always running. Polling versus an interrupt and the five steps the CPU takes, a trap, DMA (one interrupt per block), the mode bit (1 user, 0 kernel) and the timer that always returns control.' },
+      ] },
+      { ch: 2, title: 'Chapter 2 · Operating-system structures', vids: [
+        { id: 'syscall', t: 'Knocking on the kernel’s door', d: '2:28', p: 'The journey of printf → write: trap, mode bit 1 → 0, the system-call table, back to user mode. Three ways to pass parameters, the six families, mechanism versus policy, and monolithic, microkernel and modular kernels.' },
+      ] },
+      { ch: 3, title: 'Chapter 3 · Processes', vids: [
+        { id: 'process', t: 'The life of a process', d: '2:33', p: 'A passive program becomes an active process with text, data, heap and stack. One process lives through the five states (and is stopped from going waiting → running), then the PCB and context switch, fork returning 0 and the PID, exec, 2³ = 8, and IPC.' },
+      ] },
+      { ch: 4, title: 'Chapter 4 · Threads', vids: [
+        { id: 'threads', t: 'One process, many threads', d: '2:28', p: 'What threads share and what each owns, the four benefits, pthread_create and pthread_join, concurrency versus parallelism, Amdahl with S = 0.25 (1.6 on two cores, never more than 4), the three models, and counter++ losing an update.' },
+      ] },
+      { ch: 5, title: 'Chapter 5 · CPU scheduling', vids: [
+        { id: 'fcfs', t: 'Who gets the CPU? FCFS and SJF', d: '2:14', p: 'Turnaround and waiting time on one time line, FCFS on 24, 3, 3 (average 17, the convoy effect), the same jobs in another order (3), SJF on 6, 8, 7, 3 (average 7), why the next burst is unknown, and nonpreemptive.' },
+        { id: 'rr', t: 'Taking turns: SRTF, Round Robin, priority', d: '2:24', p: 'Preemption, SRTF with arrivals (6.5), Round Robin with q = 4 (17 / 3 ≈ 5.67; the slide prints 5.3), what a huge or tiny quantum does, priority scheduling (8.2), starvation and aging.' },
+      ] },
+      { ch: 6, title: 'Chapter 6 · Synchronization tools', vids: [
+        { id: 'race', t: 'The lost update', d: '2:17', p: 'The producer–consumer counter: count = 5, the order T0–T5 ends at 4 (6 if the stores swap). The critical section with entry and exit sections, its three requirements, and Peterson’s flag and turn.' },
+        { id: 'locks', t: 'Locks and semaphores', d: '2:28', p: 'test_and_set as one atomic step, the mutex lock and the spinlock, a counting semaphore with its waiting queue, ownership, ordering with synch = 0, deadlock with S and Q and its fix, starvation and priority inversion.' },
+      ] },
+    ];
+    const toc = document.getElementById('toc'), list = document.getElementById('list');
+    let n = 0;
+    for (const c of CH) {
+      const sec = el('section', { class: 'ch', id: `ch${c.ch}` }, el('h2', {}, c.title));
+      for (const v of c.vids) {
+        n++;
+        toc.append(el('a', { href: `#${v.id}` }, el('b', {}, String(n).padStart(2, '0')), v.t.split(':')[0]));
+        const base = `${dir}${v.id}`;
+        const msg = el('div', { class: 'callout bad small', style: { display: 'none' } });
+        const src = el('source', { src: `${base}.mp4`, type: 'video/mp4' });
+        const video = el('video', { controls: true, preload: 'none', poster: `${base}.jpg` }, src);
+        src.addEventListener('error', () => {
+          msg.style.display = '';
+          msg.textContent = `Could not load ${new URL(base + '.mp4', location.href).href.replace(/^file:\/\/\//, '')}. Open this page from the course_sites folder that contains materials/${COURSE.code}/video/.`;
+        });
+        sec.append(el('div', { class: 'vid', id: v.id },
+          el('h3', {}, v.t), el('div', { class: 'small muted' }, v.d),
+          video, msg, el('p', {}, v.p),
+          el('div', { class: 'row speeds small' }, el('span', { class: 'muted' }, 'Speed:'),
+            [0.85, 1, 1.25, 1.5].map((r) => el('button', { class: 'chip', onclick: () => { video.playbackRate = r; video.play(); } }, `${r}×`)))));
+      }
+      list.append(sec);
+    }
+    if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  </script>
+</body>
+</html>

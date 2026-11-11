@@ -1,0 +1,113 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "Three processes are ready. There is one CPU. Who goes first?"
+  },
+  {
+   "id": "burst",
+   "text": "Each needs the CPU for one stretch of work, its CPU burst. Here, twenty-four, three, and three milliseconds.",
+   "pause": 0.3
+  },
+  {
+   "id": "tat",
+   "text": "Two numbers judge a schedule. Turnaround time is when you finish, minus when you arrived."
+  },
+  {
+   "id": "wt",
+   "text": "Waiting time is turnaround minus your burst: the time you sat ready, but not running."
+  },
+  {
+   "id": "wtEx",
+   "text": "Arrive at two, need nine, finish at twenty-six. Turnaround, twenty-four. Waiting, fifteen.",
+   "pause": 0.5
+  },
+  {
+   "id": "fcfs",
+   "text": "The simplest rule is first come, first served. P one arrived first, so P one runs."
+  },
+  {
+   "id": "fcfs2",
+   "text": "And runs. And runs. Twenty-four milliseconds. P two and P three only need three each, but they wait."
+  },
+  {
+   "id": "fcfs3",
+   "text": "P two waits twenty-four. P three waits twenty-seven. The average waiting time is seventeen."
+  },
+  {
+   "id": "convoy",
+   "text": "Short jobs stuck behind a long one. That is the convoy effect.",
+   "pause": 0.5
+  },
+  {
+   "id": "swap",
+   "text": "Now the same three arrive in a different order: P two, P three, then P one."
+  },
+  {
+   "id": "swap2",
+   "text": "Waiting times six, zero and three. The average drops to three. Same work, same rule, very different result.",
+   "pause": 0.5
+  },
+  {
+   "id": "sjfQ",
+   "text": "So why not always run the shortest job first?"
+  },
+  {
+   "id": "sjf",
+   "text": "That is S J F, shortest job first. Four processes need six, eight, seven, and three."
+  },
+  {
+   "id": "sjf2",
+   "text": "The shortest goes first: P four, then P one, then P three, then P two."
+  },
+  {
+   "id": "sjf3",
+   "text": "Waiting times three, sixteen, nine and zero. The average is seven, the lowest any order can give.",
+   "pause": 0.4
+  },
+  {
+   "id": "catch",
+   "text": "The catch: the OS cannot see the future. It does not know how long the next burst will be. It can only estimate it."
+  },
+  {
+   "id": "starve",
+   "text": "And a long job can starve, while short ones keep arriving.",
+   "pause": 0.4
+  },
+  {
+   "id": "non",
+   "text": "Both rules are nonpreemptive. Once a process has the CPU, it keeps it until it finishes or blocks.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "Draw the Gantt chart first."
+  },
+  {
+   "id": "ex2",
+   "text": "Turnaround is completion minus arrival."
+  },
+  {
+   "id": "ex3",
+   "text": "Waiting is turnaround minus burst."
+  },
+  {
+   "id": "ex4",
+   "text": "FCFS suffers the convoy effect."
+  },
+  {
+   "id": "ex5",
+   "text": "S J F: minimum average wait, unknown bursts.",
+   "pause": 0.8
+  }
+ ]
+}

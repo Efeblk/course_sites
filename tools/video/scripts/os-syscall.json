@@ -1,0 +1,120 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "A program wants to print hello on the screen. But it runs in user mode, and the screen belongs to the kernel."
+  },
+  {
+   "id": "ask",
+   "text": "So it has to ask. That request is a system call: the program's door into the kernel.",
+   "pause": 0.3
+  },
+  {
+   "id": "api",
+   "text": "Programs rarely knock on the door themselves. They call an A P I function, like printf in the C library, and the library makes the real system call. Here, write."
+  },
+  {
+   "id": "trap",
+   "text": "The library puts the system call number in a register, and runs a trap instruction."
+  },
+  {
+   "id": "flip1",
+   "text": "The mode bit flips from one to zero. We are in kernel mode."
+  },
+  {
+   "id": "table",
+   "text": "The kernel uses the number to find the right function in the system call table."
+  },
+  {
+   "id": "work",
+   "text": "It does the work, and leaves the result in a register."
+  },
+  {
+   "id": "flip2",
+   "text": "Then the bit flips back to one, and the program carries on in user mode.",
+   "pause": 0.4
+  },
+  {
+   "id": "params",
+   "text": "Parameters travel in one of three ways: in registers, in a block of memory whose address sits in a register, or pushed onto the stack.",
+   "pause": 0.5
+  },
+  {
+   "id": "six",
+   "text": "Every system call belongs to one of six families."
+  },
+  {
+   "id": "six1",
+   "text": "Process control, like fork and exit. File management, like open and read. Device management."
+  },
+  {
+   "id": "six2",
+   "text": "Information maintenance, like get time. Communications, like pipe. And protection, like chmod.",
+   "pause": 0.5
+  },
+  {
+   "id": "mp",
+   "text": "One design rule. Mechanism is how something is done. Policy is what will be done."
+  },
+  {
+   "id": "mp2",
+   "text": "The timer is a mechanism. How long the timer is set for each user is a policy."
+  },
+  {
+   "id": "mp3",
+   "text": "Keep them apart, and you can change the policy without rewriting the mechanism.",
+   "pause": 0.5
+  },
+  {
+   "id": "kern",
+   "text": "So how do you build the kernel itself?"
+  },
+  {
+   "id": "mono",
+   "text": "A monolithic kernel puts everything into one big block. It is fast. But it is hard to maintain, and one bad driver can bring it all down."
+  },
+  {
+   "id": "micro",
+   "text": "A microkernel keeps only the minimum inside. Drivers and the file system run in user space, and talk by message passing."
+  },
+  {
+   "id": "micro2",
+   "text": "A crash stays small, so it is reliable and secure. But every message costs time."
+  },
+  {
+   "id": "mod",
+   "text": "Linux takes a middle road: a modular kernel. A core, plus modules loaded when they are needed.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "A system call is a controlled entry into the kernel."
+  },
+  {
+   "id": "ex2",
+   "text": "Programs reach it through an A P I."
+  },
+  {
+   "id": "ex3",
+   "text": "The mode bit flips twice."
+  },
+  {
+   "id": "ex4",
+   "text": "Mechanism is how, policy is what."
+  },
+  {
+   "id": "ex5",
+   "text": "Monolithic is fast, microkernel is safe.",
+   "pause": 0.8
+  }
+ ]
+}

@@ -1,0 +1,168 @@
+{
+ "fps": 30,
+ "total": 4618,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 141,
+   "file": "vo/os-process/hook.wav",
+   "text": "On the disk, a program is just a file. It does nothing. It is passive."
+  },
+  "alive": {
+   "start": 232,
+   "dur": 211,
+   "file": "vo/os-process/alive.wav",
+   "text": "Run it, and it becomes a process: a program in execution. Active, with its own memory and its own state."
+  },
+  "layout": {
+   "start": 455,
+   "dur": 170,
+   "file": "vo/os-process/layout.wav",
+   "text": "Its memory has four parts. Text holds the code. Data holds the global variables."
+  },
+  "layout2": {
+   "start": 637,
+   "dur": 177,
+   "file": "vo/os-process/layout2.wav",
+   "text": "The heap grows up when the program asks for memory. The stack grows down with every function call."
+  },
+  "many": {
+   "start": 827,
+   "dur": 158,
+   "file": "vo/os-process/many.wav",
+   "text": "One program can be several processes at once, like two windows of the same browser."
+  },
+  "life": {
+   "start": 1013,
+   "dur": 74,
+   "file": "vo/os-process/life.wav",
+   "text": "Now follow one process through its life."
+  },
+  "new": {
+   "start": 1099,
+   "dur": 191,
+   "file": "vo/os-process/new.wav",
+   "text": "It is born in the new state. Once admitted, it moves to ready, and waits in line for a CPU."
+  },
+  "run": {
+   "start": 1303,
+   "dur": 90,
+   "file": "vo/os-process/run.wav",
+   "text": "The scheduler dispatches it. Now it is running."
+  },
+  "intr": {
+   "start": 1406,
+   "dur": 86,
+   "file": "vo/os-process/intr.wav",
+   "text": "A timer interrupt stops it. Back to ready."
+  },
+  "io": {
+   "start": 1505,
+   "dur": 205,
+   "file": "vo/os-process/io.wav",
+   "text": "Dispatched again, it asks the disk for data. Now it is waiting. It could not use the CPU anyway."
+  },
+  "trapQ": {
+   "start": 1723,
+   "dur": 133,
+   "file": "vo/os-process/trapQ.wav",
+   "text": "The disk finishes. Does the process jump straight back onto the CPU?"
+  },
+  "trapA": {
+   "start": 1869,
+   "dur": 214,
+   "file": "vo/os-process/trapA.wav",
+   "text": "No. Waiting goes to ready, never straight to running. Only the scheduler moves a process from ready to running."
+  },
+  "exit": {
+   "start": 2096,
+   "dur": 130,
+   "file": "vo/os-process/exit.wav",
+   "text": "At last it calls exit, and terminates. Five states, six arrows."
+  },
+  "pcb": {
+   "start": 2253,
+   "dur": 311,
+   "file": "vo/os-process/pcb.wav",
+   "text": "To pause a process and resume it later, the OS keeps a process control block for it: its state, its I D, its program counter, its registers, and more."
+  },
+  "cs": {
+   "start": 2577,
+   "dur": 195,
+   "file": "vo/os-process/cs.wav",
+   "text": "A context switch saves the running process into its P C B, and loads the next one from its own."
+  },
+  "cs2": {
+   "start": 2785,
+   "dur": 124,
+   "file": "vo/os-process/cs2.wav",
+   "text": "During the switch, no useful work gets done. It is pure overhead."
+  },
+  "fork": {
+   "start": 2936,
+   "dur": 232,
+   "file": "vo/os-process/fork.wav",
+   "text": "How is a new process born? With fork. fork makes a copy of the calling process, and both carry on from the same point."
+  },
+  "ret": {
+   "start": 3181,
+   "dur": 195,
+   "file": "vo/os-process/ret.wav",
+   "text": "The only difference is the return value. The parent gets the child's P I D. The child gets zero."
+  },
+  "exec": {
+   "start": 3388,
+   "dur": 181,
+   "file": "vo/os-process/exec.wav",
+   "text": "Then exec replaces the child's program with a new one, like ls. Same process, new code."
+  },
+  "pow": {
+   "start": 3582,
+   "dur": 182,
+   "file": "vo/os-process/pow.wav",
+   "text": "If every process calls fork three times in a row, you get two to the power three: eight processes."
+  },
+  "ipc": {
+   "start": 3788,
+   "dur": 187,
+   "file": "vo/os-process/ipc.wav",
+   "text": "Processes can also talk: through a shared memory area, or by sending messages through the kernel."
+  },
+  "ex0": {
+   "start": 4005,
+   "dur": 33,
+   "file": "vo/os-process/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 4051,
+   "dur": 86,
+   "file": "vo/os-process/ex1.wav",
+   "text": "A program is passive, a process is active."
+  },
+  "ex2": {
+   "start": 4149,
+   "dur": 63,
+   "file": "vo/os-process/ex2.wav",
+   "text": "Five states, six transitions."
+  },
+  "ex3": {
+   "start": 4225,
+   "dur": 63,
+   "file": "vo/os-process/ex3.wav",
+   "text": "Waiting never goes straight to running."
+  },
+  "ex4": {
+   "start": 4300,
+   "dur": 106,
+   "file": "vo/os-process/ex4.wav",
+   "text": "The P C B saves a process; switching is overhead."
+  },
+  "ex5": {
+   "start": 4419,
+   "dur": 115,
+   "file": "vo/os-process/ex5.wav",
+   "text": "fork returns zero to the child, the P I D to the parent."
+  }
+ }
+}

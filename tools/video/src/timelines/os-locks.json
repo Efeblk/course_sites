@@ -1,0 +1,156 @@
+{
+ "fps": 30,
+ "total": 4447,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 178,
+   "file": "vo/os-locks/hook.wav",
+   "text": "count plus plus broke because load and store were separate steps. What if the hardware did it all in one?"
+  },
+  "tas": {
+   "start": 269,
+   "dur": 210,
+   "file": "vo/os-locks/tas.wav",
+   "text": "test and set does. In one atomic step, it returns the old value of the lock, and sets the lock to true."
+  },
+  "tas2": {
+   "start": 491,
+   "dur": 224,
+   "file": "vo/os-locks/tas2.wav",
+   "text": "A process spins while test and set returns true. When it returns false, the lock was free, and now it is held."
+  },
+  "tas3": {
+   "start": 728,
+   "dur": 87,
+   "file": "vo/os-locks/tas3.wav",
+   "text": "Leaving, the process sets the lock back to false."
+  },
+  "mutex": {
+   "start": 842,
+   "dur": 235,
+   "file": "vo/os-locks/mutex.wav",
+   "text": "Programmers use a friendlier tool built on top: the mutex lock. Acquire before the critical section. Release after."
+  },
+  "mutex2": {
+   "start": 1090,
+   "dur": 174,
+   "file": "vo/os-locks/mutex2.wav",
+   "text": "Five threads, each doing count plus plus inside the lock. The count always ends at five."
+  },
+  "spin": {
+   "start": 1276,
+   "dur": 184,
+   "file": "vo/os-locks/spin.wav",
+   "text": "If waiting means looping, the lock is a spinlock. The waiting thread burns CPU doing nothing."
+  },
+  "sem": {
+   "start": 1488,
+   "dur": 188,
+   "file": "vo/os-locks/sem.wav",
+   "text": "A semaphore is an integer, S, touched only by two atomic operations: wait, and signal."
+  },
+  "sem1": {
+   "start": 1688,
+   "dur": 112,
+   "file": "vo/os-locks/sem1.wav",
+   "text": "Think of S as the number of free resources. Here, three."
+  },
+  "sem2": {
+   "start": 1812,
+   "dur": 144,
+   "file": "vo/os-locks/sem2.wav",
+   "text": "wait takes one. One, two, three processes take one each. S is zero."
+  },
+  "sem3": {
+   "start": 1969,
+   "dur": 232,
+   "file": "vo/os-locks/sem3.wav",
+   "text": "A fourth calls wait. S drops to minus one, and it sleeps in the semaphore's queue. A negative S counts the sleepers."
+  },
+  "sem4": {
+   "start": 2213,
+   "dur": 132,
+   "file": "vo/os-locks/sem4.wav",
+   "text": "When a process calls signal, S goes up by one, and one sleeper wakes."
+  },
+  "bin": {
+   "start": 2358,
+   "dur": 279,
+   "file": "vo/os-locks/bin.wav",
+   "text": "A semaphore that is only zero or one works like a mutex. The difference: a mutex has an owner. Only the thread that locked it may unlock it."
+  },
+  "ord": {
+   "start": 2664,
+   "dur": 178,
+   "file": "vo/os-locks/ord.wav",
+   "text": "Semaphores can also force an order. Start synch at zero. P two calls wait, and sleeps."
+  },
+  "ord2": {
+   "start": 2855,
+   "dur": 212,
+   "file": "vo/os-locks/ord2.wav",
+   "text": "P one runs S one, then signals. Only now can P two run S two. S one always comes first."
+  },
+  "dead": {
+   "start": 3094,
+   "dur": 161,
+   "file": "vo/os-locks/dead.wav",
+   "text": "But locks can trap you. P zero takes S, then Q. P one takes Q, then S."
+  },
+  "dead2": {
+   "start": 3268,
+   "dur": 154,
+   "file": "vo/os-locks/dead2.wav",
+   "text": "Each holds one lock, and waits for the other's. Neither lets go. That is deadlock."
+  },
+  "fix": {
+   "start": 3435,
+   "dur": 93,
+   "file": "vo/os-locks/fix.wav",
+   "text": "The fix: take the locks in the same order everywhere."
+  },
+  "more": {
+   "start": 3553,
+   "dur": 335,
+   "file": "vo/os-locks/more.wav",
+   "text": "Two more failures. Starvation: one process never gets its turn. Priority inversion: a low priority process holds a lock that a high priority one needs."
+  },
+  "ex0": {
+   "start": 3918,
+   "dur": 33,
+   "file": "vo/os-locks/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3964,
+   "dur": 67,
+   "file": "vo/os-locks/ex1.wav",
+   "text": "test and set is one atomic step."
+  },
+  "ex2": {
+   "start": 4043,
+   "dur": 86,
+   "file": "vo/os-locks/ex2.wav",
+   "text": "Mutex: acquire, critical section, release."
+  },
+  "ex3": {
+   "start": 4142,
+   "dur": 69,
+   "file": "vo/os-locks/ex3.wav",
+   "text": "wait decrements, signal increments."
+  },
+  "ex4": {
+   "start": 4224,
+   "dur": 61,
+   "file": "vo/os-locks/ex4.wav",
+   "text": "synch at zero forces an order."
+  },
+  "ex5": {
+   "start": 4297,
+   "dur": 66,
+   "file": "vo/os-locks/ex5.wav",
+   "text": "Opposite lock orders can deadlock."
+  }
+ }
+}

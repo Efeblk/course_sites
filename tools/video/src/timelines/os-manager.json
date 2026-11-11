@@ -1,0 +1,174 @@
+{
+ "fps": 30,
+ "total": 4924,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 189,
+   "file": "vo/os-manager/hook.wav",
+   "text": "One processor. A keyboard, a disk, a screen, and a crowd of programs that all want it, right now."
+  },
+  "who": {
+   "start": 279,
+   "dur": 142,
+   "file": "vo/os-manager/who.wav",
+   "text": "Someone has to decide who gets what. That someone is the operating system."
+  },
+  "alloc": {
+   "start": 434,
+   "dur": 158,
+   "file": "vo/os-manager/alloc.wav",
+   "text": "It is a resource allocator: it shares out the CPU, the memory and the devices."
+  },
+  "control": {
+   "start": 605,
+   "dur": 122,
+   "file": "vo/os-manager/control.wav",
+   "text": "And it is a control program: it stops errors and improper use."
+  },
+  "kernel": {
+   "start": 745,
+   "dur": 154,
+   "file": "vo/os-manager/kernel.wav",
+   "text": "Its core is the kernel, the one program that runs the whole time the computer is on."
+  },
+  "keyQ": {
+   "start": 926,
+   "dur": 111,
+   "file": "vo/os-manager/keyQ.wav",
+   "text": "First puzzle. You press a key. How does the CPU find out?"
+  },
+  "poll": {
+   "start": 1050,
+   "dur": 156,
+   "file": "vo/os-manager/poll.wav",
+   "text": "One way is polling. The CPU keeps asking the keyboard: done yet? Done yet?"
+  },
+  "pollBad": {
+   "start": 1219,
+   "dur": 122,
+   "file": "vo/os-manager/pollBad.wav",
+   "text": "Almost every answer is no, and every question is wasted work."
+  },
+  "irq": {
+   "start": 1362,
+   "dur": 280,
+   "file": "vo/os-manager/irq.wav",
+   "text": "The better way is an interrupt. The CPU gets on with real work. When the device finishes, its controller taps the CPU on the shoulder."
+  },
+  "s1": {
+   "start": 1655,
+   "dur": 182,
+   "file": "vo/os-manager/s1.wav",
+   "text": "The CPU finishes the instruction it is on, and saves the program counter and the registers."
+  },
+  "s2": {
+   "start": 1849,
+   "dur": 163,
+   "file": "vo/os-manager/s2.wav",
+   "text": "It looks up the interrupt vector to find the right handler, and runs that interrupt service routine."
+  },
+  "s3": {
+   "start": 2025,
+   "dur": 125,
+   "file": "vo/os-manager/s3.wav",
+   "text": "Then it puts back what it saved, and carries on exactly where it stopped."
+  },
+  "trap": {
+   "start": 2163,
+   "dur": 236,
+   "file": "vo/os-manager/trap.wav",
+   "text": "A trap is the software version: an interrupt caused by a program, for a request, or an error like division by zero."
+  },
+  "dmaQ": {
+   "start": 2426,
+   "dur": 173,
+   "file": "vo/os-manager/dmaQ.wav",
+   "text": "Now the disk. It sends megabytes. One interrupt for every word would bury the CPU."
+  },
+  "dma": {
+   "start": 2612,
+   "dur": 264,
+   "file": "vo/os-manager/dma.wav",
+   "text": "So it uses D M A, direct memory access. The device controller copies a whole block straight into memory, without the CPU."
+  },
+  "dma2": {
+   "start": 2888,
+   "dur": 153,
+   "file": "vo/os-manager/dma2.wav",
+   "text": "And it interrupts once, when the block is done. One interrupt per block, not per word."
+  },
+  "modeQ": {
+   "start": 3069,
+   "dur": 128,
+   "file": "vo/os-manager/modeQ.wav",
+   "text": "Last puzzle. What stops a program from simply taking over the machine?"
+  },
+  "mode": {
+   "start": 3209,
+   "dur": 168,
+   "file": "vo/os-manager/mode.wav",
+   "text": "The hardware does. One mode bit. One means user mode. Zero means kernel mode."
+  },
+  "priv": {
+   "start": 3390,
+   "dur": 298,
+   "file": "vo/os-manager/priv.wav",
+   "text": "Privileged instructions, like talking to devices or setting the timer, only run in kernel mode. Try one in user mode, and the CPU refuses."
+  },
+  "door": {
+   "start": 3700,
+   "dur": 237,
+   "file": "vo/os-manager/door.wav",
+   "text": "The only way in is a controlled door: a system call, a trap, or an interrupt. On the way out, the bit goes back to one."
+  },
+  "loop": {
+   "start": 3950,
+   "dur": 116,
+   "file": "vo/os-manager/loop.wav",
+   "text": "And a program that just loops forever, never asking for anything?"
+  },
+  "timer": {
+   "start": 4078,
+   "dur": 255,
+   "file": "vo/os-manager/timer.wav",
+   "text": "Before handing over the CPU, the OS sets a hardware timer. When it runs out, it interrupts, and the OS is back in control."
+  },
+  "ex0": {
+   "start": 4364,
+   "dur": 33,
+   "file": "vo/os-manager/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 4409,
+   "dur": 107,
+   "file": "vo/os-manager/ex1.wav",
+   "text": "The OS allocates resources and controls their use."
+  },
+  "ex2": {
+   "start": 4529,
+   "dur": 57,
+   "file": "vo/os-manager/ex2.wav",
+   "text": "An interrupt replaces polling."
+  },
+  "ex3": {
+   "start": 4598,
+   "dur": 70,
+   "file": "vo/os-manager/ex3.wav",
+   "text": "D M A: one interrupt per block."
+  },
+  "ex4": {
+   "start": 4681,
+   "dur": 82,
+   "file": "vo/os-manager/ex4.wav",
+   "text": "Mode bit: one is user, zero is kernel."
+  },
+  "ex5": {
+   "start": 4775,
+   "dur": 65,
+   "file": "vo/os-manager/ex5.wav",
+   "text": "The timer always gives control back."
+  }
+ }
+}

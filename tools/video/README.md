@@ -14,6 +14,7 @@ Narration is a local neural voice ([Kokoro](https://github.com/thewh1teagle/koko
 | `Action` | UNI480 · from prediction to action | `scripts/action.json` |
 | `Trust` | UNI480 · augmented intelligence and trust | `scripts/trust.json` |
 | `Swe*` (16) | SWE307 · chapters 1–7, one idea each (`src/swe/*.tsx`) | `scripts/swe307.py` → `scripts/swe-*.json` |
+| `Os*` (8) | COE303 · chapters 1–6, one episode per chapter, two each for 5 and 6 (`src/os/*.tsx`) | `scripts/coe303.py` → `scripts/os-*.json` |
 
 ## Setup (once)
 
@@ -61,3 +62,28 @@ node render_all.mjs C:/Users/efeba/course_sites/materials/SWE307/video [SweFpa .
 ```
 
 The rendered files go to `materials/SWE307/video/` (committed with the course); `swe307/videos.html` plays them.
+
+## COE303 episodes (`src/os/`)
+
+Eight episodes of about two and a half minutes (about 20 minutes in total) for chapters 1–6, rendered to
+`materials/COE303/video/` and played by `coe303/videos.html`. They raise the motion bar over the SWE307 set:
+
+- **One cast for the whole series.** Processes are small characters (`Proc` in `src/os/kit.tsx`: blink, breathe,
+  look, squash on landing, moods such as focus, worried, sleep, dizzy); the CPU is a chip (`Chip`) that ripples when busy.
+- **Story first.** Each episode opens on a concrete puzzle ("you press a key: how does the CPU know?"), lets the
+  wrong way fail on screen (a shake and a cross), then shows the right way, and ends with the `Exam` checklist card.
+- **Motion helpers:** `hop` / `track` (arc moves with squash), `Cam` (pan and zoom inside a scene), `Fly` (a value
+  flying between cells), `Draw` (self-drawing strokes), `Code` (typed code with a moving highlight), `Episode` (title
+  card, crossfades, corner tag).
+- **Scheduling simulator.** `plan(procs, slices, a0, a1, H, layout, enter, anchors)` turns a schedule (from
+  `coe303/sched.js`) into motion: characters hop between the ready queue, the CPU and the done shelf, the running one's
+  "left" tag drains, the waiting ones' "wait" tags tick, and `Gantt` grows in step. `anchors` pin a simulated time to a
+  frame (two anchors with the same time make a pause), so the schedule waits for the voice.
+
+```sh
+python scripts/coe303.py                                   # narration -> scripts/os-*.json (lead 2.6 s leaves room for the title card)
+.tts/venv/Scripts/python.exe tts.py scripts/os-fcfs.json   # voice + timeline
+python src/os/gen_index.py                                 # register the episodes found in src/os/
+node check.mjs sheet OsFcfs os-fcfs && python sheet.py OsFcfs
+node render_all.mjs ../../materials/COE303/video OsFcfs     # writes fcfs.mp4 + fcfs.jpg
+```

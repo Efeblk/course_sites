@@ -1,0 +1,128 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "One processor. A keyboard, a disk, a screen, and a crowd of programs that all want it, right now."
+  },
+  {
+   "id": "who",
+   "text": "Someone has to decide who gets what. That someone is the operating system."
+  },
+  {
+   "id": "alloc",
+   "text": "It is a resource allocator: it shares out the CPU, the memory and the devices."
+  },
+  {
+   "id": "control",
+   "text": "And it is a control program: it stops errors and improper use.",
+   "pause": 0.2
+  },
+  {
+   "id": "kernel",
+   "text": "Its core is the kernel, the one program that runs the whole time the computer is on.",
+   "pause": 0.5
+  },
+  {
+   "id": "keyQ",
+   "text": "First puzzle. You press a key. How does the CPU find out?"
+  },
+  {
+   "id": "poll",
+   "text": "One way is polling. The CPU keeps asking the keyboard: done yet? Done yet?"
+  },
+  {
+   "id": "pollBad",
+   "text": "Almost every answer is no, and every question is wasted work.",
+   "pause": 0.3
+  },
+  {
+   "id": "irq",
+   "text": "The better way is an interrupt. The CPU gets on with real work. When the device finishes, its controller taps the CPU on the shoulder."
+  },
+  {
+   "id": "s1",
+   "text": "The CPU finishes the instruction it is on, and saves the program counter and the registers."
+  },
+  {
+   "id": "s2",
+   "text": "It looks up the interrupt vector to find the right handler, and runs that interrupt service routine."
+  },
+  {
+   "id": "s3",
+   "text": "Then it puts back what it saved, and carries on exactly where it stopped."
+  },
+  {
+   "id": "trap",
+   "text": "A trap is the software version: an interrupt caused by a program, for a request, or an error like division by zero.",
+   "pause": 0.5
+  },
+  {
+   "id": "dmaQ",
+   "text": "Now the disk. It sends megabytes. One interrupt for every word would bury the CPU."
+  },
+  {
+   "id": "dma",
+   "text": "So it uses D M A, direct memory access. The device controller copies a whole block straight into memory, without the CPU."
+  },
+  {
+   "id": "dma2",
+   "text": "And it interrupts once, when the block is done. One interrupt per block, not per word.",
+   "pause": 0.5
+  },
+  {
+   "id": "modeQ",
+   "text": "Last puzzle. What stops a program from simply taking over the machine?"
+  },
+  {
+   "id": "mode",
+   "text": "The hardware does. One mode bit. One means user mode. Zero means kernel mode."
+  },
+  {
+   "id": "priv",
+   "text": "Privileged instructions, like talking to devices or setting the timer, only run in kernel mode. Try one in user mode, and the CPU refuses."
+  },
+  {
+   "id": "door",
+   "text": "The only way in is a controlled door: a system call, a trap, or an interrupt. On the way out, the bit goes back to one."
+  },
+  {
+   "id": "loop",
+   "text": "And a program that just loops forever, never asking for anything?"
+  },
+  {
+   "id": "timer",
+   "text": "Before handing over the CPU, the OS sets a hardware timer. When it runs out, it interrupts, and the OS is back in control.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "The OS allocates resources and controls their use."
+  },
+  {
+   "id": "ex2",
+   "text": "An interrupt replaces polling."
+  },
+  {
+   "id": "ex3",
+   "text": "D M A: one interrupt per block."
+  },
+  {
+   "id": "ex4",
+   "text": "Mode bit: one is user, zero is kernel."
+  },
+  {
+   "id": "ex5",
+   "text": "The timer always gives control back.",
+   "pause": 0.8
+  }
+ ]
+}

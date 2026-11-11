@@ -1,0 +1,144 @@
+{
+ "fps": 30,
+ "total": 4324,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 177,
+   "file": "vo/os-rr/hook.wav",
+   "text": "What if the OS could take the CPU back in the middle of a burst? That is preemptive scheduling."
+  },
+  "srtf": {
+   "start": 267,
+   "dur": 273,
+   "file": "vo/os-rr/srtf.wav",
+   "text": "S R T F, shortest remaining time first, is the preemptive version of S J F. Now the processes arrive at different times."
+  },
+  "srtf1": {
+   "start": 553,
+   "dur": 158,
+   "file": "vo/os-rr/srtf1.wav",
+   "text": "P one starts at zero, with eight to do. At one, P two arrives, needing four."
+  },
+  "srtf2": {
+   "start": 724,
+   "dur": 155,
+   "file": "vo/os-rr/srtf2.wav",
+   "text": "P one still has seven left. Four is less. So P two takes the CPU."
+  },
+  "srtf3": {
+   "start": 891,
+   "dur": 221,
+   "file": "vo/os-rr/srtf3.wav",
+   "text": "P three and P four arrive, but neither beats what P two has left. Then P four, P one, and P three."
+  },
+  "srtf4": {
+   "start": 1125,
+   "dur": 83,
+   "file": "vo/os-rr/srtf4.wav",
+   "text": "Average waiting time: six point five."
+  },
+  "rr": {
+   "start": 1235,
+   "dur": 298,
+   "file": "vo/os-rr/rr.wav",
+   "text": "Round robin is first come, first served, plus a timer. Each process runs for at most one time quantum, Q. Then it goes to the back of the queue."
+  },
+  "rr1": {
+   "start": 1546,
+   "dur": 202,
+   "file": "vo/os-rr/rr1.wav",
+   "text": "Back to twenty-four, three and three, with a quantum of four. P one runs four, and the timer sends it back."
+  },
+  "rr2": {
+   "start": 1760,
+   "dur": 191,
+   "file": "vo/os-rr/rr2.wav",
+   "text": "P two and P three finish inside their turns. Then P one runs alone, all the way to thirty."
+  },
+  "rr3": {
+   "start": 1964,
+   "dur": 171,
+   "file": "vo/os-rr/rr3.wav",
+   "text": "Waiting times six, four and seven. Seventeen over three is about five point six seven."
+  },
+  "rr4": {
+   "start": 2147,
+   "dur": 182,
+   "file": "vo/os-rr/rr4.wav",
+   "text": "The slide prints five point three. That is an arithmetic slip, so always check your own division."
+  },
+  "q": {
+   "start": 2357,
+   "dur": 195,
+   "file": "vo/os-rr/q.wav",
+   "text": "The quantum decides everything. Make it huge, and round robin turns into first come, first served."
+  },
+  "q2": {
+   "start": 2564,
+   "dur": 220,
+   "file": "vo/os-rr/q2.wav",
+   "text": "Make it tiny, and the CPU spends its time switching. The quantum must be much larger than a context switch."
+  },
+  "pri": {
+   "start": 2812,
+   "dur": 191,
+   "file": "vo/os-rr/pri.wav",
+   "text": "Priority scheduling gives the CPU to the highest priority. The smallest number is the highest."
+  },
+  "pri2": {
+   "start": 3015,
+   "dur": 271,
+   "file": "vo/os-rr/pri2.wav",
+   "text": "Priorities three, one, four, five and two give the order P two, P five, P one, P three, P four. Average wait, eight point two."
+  },
+  "starve": {
+   "start": 3311,
+   "dur": 185,
+   "file": "vo/os-rr/starve.wav",
+   "text": "But a low priority process can wait forever while higher ones keep arriving. That is starvation."
+  },
+  "aging": {
+   "start": 3508,
+   "dur": 202,
+   "file": "vo/os-rr/aging.wav",
+   "text": "The cure is aging. The longer a process waits, the higher its priority grows, until it gets its turn."
+  },
+  "ex0": {
+   "start": 3741,
+   "dur": 33,
+   "file": "vo/os-rr/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3786,
+   "dur": 92,
+   "file": "vo/os-rr/ex1.wav",
+   "text": "S R T F preempts when a shorter job arrives."
+  },
+  "ex2": {
+   "start": 3891,
+   "dur": 96,
+   "file": "vo/os-rr/ex2.wav",
+   "text": "Round robin: one quantum, then the back of the queue."
+  },
+  "ex3": {
+   "start": 3999,
+   "dur": 74,
+   "file": "vo/os-rr/ex3.wav",
+   "text": "A huge quantum becomes FCFS."
+  },
+  "ex4": {
+   "start": 4086,
+   "dur": 79,
+   "file": "vo/os-rr/ex4.wav",
+   "text": "Priority: the smallest number runs first."
+  },
+  "ex5": {
+   "start": 4177,
+   "dur": 62,
+   "file": "vo/os-rr/ex5.wav",
+   "text": "Starvation is cured by aging."
+  }
+ }
+}

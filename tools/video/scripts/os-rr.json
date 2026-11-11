@@ -1,0 +1,107 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "What if the OS could take the CPU back in the middle of a burst? That is preemptive scheduling."
+  },
+  {
+   "id": "srtf",
+   "text": "S R T F, shortest remaining time first, is the preemptive version of S J F. Now the processes arrive at different times."
+  },
+  {
+   "id": "srtf1",
+   "text": "P one starts at zero, with eight to do. At one, P two arrives, needing four."
+  },
+  {
+   "id": "srtf2",
+   "text": "P one still has seven left. Four is less. So P two takes the CPU."
+  },
+  {
+   "id": "srtf3",
+   "text": "P three and P four arrive, but neither beats what P two has left. Then P four, P one, and P three."
+  },
+  {
+   "id": "srtf4",
+   "text": "Average waiting time: six point five.",
+   "pause": 0.5
+  },
+  {
+   "id": "rr",
+   "text": "Round robin is first come, first served, plus a timer. Each process runs for at most one time quantum, Q. Then it goes to the back of the queue."
+  },
+  {
+   "id": "rr1",
+   "text": "Back to twenty-four, three and three, with a quantum of four. P one runs four, and the timer sends it back."
+  },
+  {
+   "id": "rr2",
+   "text": "P two and P three finish inside their turns. Then P one runs alone, all the way to thirty."
+  },
+  {
+   "id": "rr3",
+   "text": "Waiting times six, four and seven. Seventeen over three is about five point six seven."
+  },
+  {
+   "id": "rr4",
+   "text": "The slide prints five point three. That is an arithmetic slip, so always check your own division.",
+   "pause": 0.5
+  },
+  {
+   "id": "q",
+   "text": "The quantum decides everything. Make it huge, and round robin turns into first come, first served."
+  },
+  {
+   "id": "q2",
+   "text": "Make it tiny, and the CPU spends its time switching. The quantum must be much larger than a context switch.",
+   "pause": 0.5
+  },
+  {
+   "id": "pri",
+   "text": "Priority scheduling gives the CPU to the highest priority. The smallest number is the highest."
+  },
+  {
+   "id": "pri2",
+   "text": "Priorities three, one, four, five and two give the order P two, P five, P one, P three, P four. Average wait, eight point two.",
+   "pause": 0.4
+  },
+  {
+   "id": "starve",
+   "text": "But a low priority process can wait forever while higher ones keep arriving. That is starvation."
+  },
+  {
+   "id": "aging",
+   "text": "The cure is aging. The longer a process waits, the higher its priority grows, until it gets its turn.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "S R T F preempts when a shorter job arrives."
+  },
+  {
+   "id": "ex2",
+   "text": "Round robin: one quantum, then the back of the queue."
+  },
+  {
+   "id": "ex3",
+   "text": "A huge quantum becomes FCFS."
+  },
+  {
+   "id": "ex4",
+   "text": "Priority: the smallest number runs first."
+  },
+  {
+   "id": "ex5",
+   "text": "Starvation is cured by aging.",
+   "pause": 0.8
+  }
+ ]
+}

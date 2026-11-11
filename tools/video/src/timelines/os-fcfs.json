@@ -1,0 +1,150 @@
+{
+ "fps": 30,
+ "total": 4027,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 129,
+   "file": "vo/os-fcfs/hook.wav",
+   "text": "Three processes are ready. There is one CPU. Who goes first?"
+  },
+  "burst": {
+   "start": 220,
+   "dur": 230,
+   "file": "vo/os-fcfs/burst.wav",
+   "text": "Each needs the CPU for one stretch of work, its CPU burst. Here, twenty-four, three, and three milliseconds."
+  },
+  "tat": {
+   "start": 472,
+   "dur": 166,
+   "file": "vo/os-fcfs/tat.wav",
+   "text": "Two numbers judge a schedule. Turnaround time is when you finish, minus when you arrived."
+  },
+  "wt": {
+   "start": 651,
+   "dur": 164,
+   "file": "vo/os-fcfs/wt.wav",
+   "text": "Waiting time is turnaround minus your burst: the time you sat ready, but not running."
+  },
+  "wtEx": {
+   "start": 827,
+   "dur": 178,
+   "file": "vo/os-fcfs/wtEx.wav",
+   "text": "Arrive at two, need nine, finish at twenty-six. Turnaround, twenty-four. Waiting, fifteen."
+  },
+  "fcfs": {
+   "start": 1033,
+   "dur": 173,
+   "file": "vo/os-fcfs/fcfs.wav",
+   "text": "The simplest rule is first come, first served. P one arrived first, so P one runs."
+  },
+  "fcfs2": {
+   "start": 1219,
+   "dur": 210,
+   "file": "vo/os-fcfs/fcfs2.wav",
+   "text": "And runs. And runs. Twenty-four milliseconds. P two and P three only need three each, but they wait."
+  },
+  "fcfs3": {
+   "start": 1441,
+   "dur": 186,
+   "file": "vo/os-fcfs/fcfs3.wav",
+   "text": "P two waits twenty-four. P three waits twenty-seven. The average waiting time is seventeen."
+  },
+  "convoy": {
+   "start": 1640,
+   "dur": 123,
+   "file": "vo/os-fcfs/convoy.wav",
+   "text": "Short jobs stuck behind a long one. That is the convoy effect."
+  },
+  "swap": {
+   "start": 1790,
+   "dur": 154,
+   "file": "vo/os-fcfs/swap.wav",
+   "text": "Now the same three arrive in a different order: P two, P three, then P one."
+  },
+  "swap2": {
+   "start": 1957,
+   "dur": 224,
+   "file": "vo/os-fcfs/swap2.wav",
+   "text": "Waiting times six, zero and three. The average drops to three. Same work, same rule, very different result."
+  },
+  "sjfQ": {
+   "start": 2209,
+   "dur": 81,
+   "file": "vo/os-fcfs/sjfQ.wav",
+   "text": "So why not always run the shortest job first?"
+  },
+  "sjf": {
+   "start": 2302,
+   "dur": 175,
+   "file": "vo/os-fcfs/sjf.wav",
+   "text": "That is S J F, shortest job first. Four processes need six, eight, seven, and three."
+  },
+  "sjf2": {
+   "start": 2490,
+   "dur": 144,
+   "file": "vo/os-fcfs/sjf2.wav",
+   "text": "The shortest goes first: P four, then P one, then P three, then P two."
+  },
+  "sjf3": {
+   "start": 2646,
+   "dur": 190,
+   "file": "vo/os-fcfs/sjf3.wav",
+   "text": "Waiting times three, sixteen, nine and zero. The average is seven, the lowest any order can give."
+  },
+  "catch": {
+   "start": 2861,
+   "dur": 218,
+   "file": "vo/os-fcfs/catch.wav",
+   "text": "The catch: the OS cannot see the future. It does not know how long the next burst will be. It can only estimate it."
+  },
+  "starve": {
+   "start": 3092,
+   "dur": 105,
+   "file": "vo/os-fcfs/starve.wav",
+   "text": "And a long job can starve, while short ones keep arriving."
+  },
+  "non": {
+   "start": 3221,
+   "dur": 213,
+   "file": "vo/os-fcfs/non.wav",
+   "text": "Both rules are nonpreemptive. Once a process has the CPU, it keeps it until it finishes or blocks."
+  },
+  "ex0": {
+   "start": 3465,
+   "dur": 33,
+   "file": "vo/os-fcfs/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3510,
+   "dur": 51,
+   "file": "vo/os-fcfs/ex1.wav",
+   "text": "Draw the Gantt chart first."
+  },
+  "ex2": {
+   "start": 3574,
+   "dur": 80,
+   "file": "vo/os-fcfs/ex2.wav",
+   "text": "Turnaround is completion minus arrival."
+  },
+  "ex3": {
+   "start": 3666,
+   "dur": 67,
+   "file": "vo/os-fcfs/ex3.wav",
+   "text": "Waiting is turnaround minus burst."
+  },
+  "ex4": {
+   "start": 3745,
+   "dur": 78,
+   "file": "vo/os-fcfs/ex4.wav",
+   "text": "FCFS suffers the convoy effect."
+  },
+  "ex5": {
+   "start": 3836,
+   "dur": 106,
+   "file": "vo/os-fcfs/ex5.wav",
+   "text": "S J F: minimum average wait, unknown bursts."
+  }
+ }
+}

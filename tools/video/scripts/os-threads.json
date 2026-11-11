@@ -1,0 +1,116 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "A word processor does three things at once. It shows your text, reads your keys, and checks your spelling."
+  },
+  {
+   "id": "one",
+   "text": "It does not need three processes. One process runs three threads."
+  },
+  {
+   "id": "def",
+   "text": "A thread is a path of execution inside a process."
+  },
+  {
+   "id": "share",
+   "text": "The threads share the process's code, its data, its heap, and its open files."
+  },
+  {
+   "id": "own",
+   "text": "But each thread has its own program counter, its own registers, and its own stack."
+  },
+  {
+   "id": "why",
+   "text": "So threads are cheap to create and to switch, they share data for free, and the screen stays responsive while another thread works.",
+   "pause": 0.5
+  },
+  {
+   "id": "pth",
+   "text": "In C, pthread create starts a new thread running a function. pthread join waits for it to finish.",
+   "pause": 0.5
+  },
+  {
+   "id": "concQ",
+   "text": "Concurrency and parallelism sound alike. They are not."
+  },
+  {
+   "id": "conc",
+   "text": "On one core, threads take turns. Each makes progress, but only one runs at any instant. That is concurrency."
+  },
+  {
+   "id": "par",
+   "text": "With two cores, two threads really run at the same moment. That is parallelism.",
+   "pause": 0.5
+  },
+  {
+   "id": "amQ",
+   "text": "So more cores means more speed? Only for the part that can be split."
+  },
+  {
+   "id": "am1",
+   "text": "Say a quarter of the job must run serially. With two cores, the other three quarters are shared. The time drops to zero point six two five. A speedup of one point six."
+  },
+  {
+   "id": "am2",
+   "text": "Add cores forever, and the parallel part shrinks towards nothing. The serial quarter stays. The speedup can never pass one over S. Here, four.",
+   "pause": 0.5
+  },
+  {
+   "id": "kinds",
+   "text": "User threads are managed by a library. Kernel threads are what the OS schedules."
+  },
+  {
+   "id": "m1",
+   "text": "Many to one: all user threads share one kernel thread. If one blocks, they all stop."
+  },
+  {
+   "id": "m2",
+   "text": "One to one: each user thread gets its own kernel thread. Linux and Windows do this."
+  },
+  {
+   "id": "m3",
+   "text": "Many to many: user threads share a sufficient number of kernel threads.",
+   "pause": 0.5
+  },
+  {
+   "id": "race",
+   "text": "Sharing has a price. counter plus plus looks like one step. It is three: load, add, store."
+  },
+  {
+   "id": "race2",
+   "text": "Two threads both load zero. Both add one. Both store one. It should be two."
+  },
+  {
+   "id": "race3",
+   "text": "One update is lost. That is a race condition, and chapter six fixes it.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "Threads share code, data and files."
+  },
+  {
+   "id": "ex2",
+   "text": "Each has its own registers, P C and stack."
+  },
+  {
+   "id": "ex3",
+   "text": "One core is concurrency; many cores is parallelism."
+  },
+  {
+   "id": "ex4",
+   "text": "Amdahl: the serial part limits the speedup.",
+   "pause": 0.8
+  }
+ ]
+}

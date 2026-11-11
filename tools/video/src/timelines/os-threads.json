@@ -1,0 +1,156 @@
+{
+ "fps": 30,
+ "total": 4442,
+ "beats": {
+  "hook": {
+   "start": 78,
+   "dur": 193,
+   "file": "vo/os-threads/hook.wav",
+   "text": "A word processor does three things at once. It shows your text, reads your keys, and checks your spelling."
+  },
+  "one": {
+   "start": 284,
+   "dur": 129,
+   "file": "vo/os-threads/one.wav",
+   "text": "It does not need three processes. One process runs three threads."
+  },
+  "def": {
+   "start": 425,
+   "dur": 102,
+   "file": "vo/os-threads/def.wav",
+   "text": "A thread is a path of execution inside a process."
+  },
+  "share": {
+   "start": 540,
+   "dur": 156,
+   "file": "vo/os-threads/share.wav",
+   "text": "The threads share the process's code, its data, its heap, and its open files."
+  },
+  "own": {
+   "start": 709,
+   "dur": 152,
+   "file": "vo/os-threads/own.wav",
+   "text": "But each thread has its own program counter, its own registers, and its own stack."
+  },
+  "why": {
+   "start": 874,
+   "dur": 234,
+   "file": "vo/os-threads/why.wav",
+   "text": "So threads are cheap to create and to switch, they share data for free, and the screen stays responsive while another thread works."
+  },
+  "pth": {
+   "start": 1135,
+   "dur": 193,
+   "file": "vo/os-threads/pth.wav",
+   "text": "In C, pthread create starts a new thread running a function. pthread join waits for it to finish."
+  },
+  "concQ": {
+   "start": 1355,
+   "dur": 106,
+   "file": "vo/os-threads/concQ.wav",
+   "text": "Concurrency and parallelism sound alike. They are not."
+  },
+  "conc": {
+   "start": 1473,
+   "dur": 227,
+   "file": "vo/os-threads/conc.wav",
+   "text": "On one core, threads take turns. Each makes progress, but only one runs at any instant. That is concurrency."
+  },
+  "par": {
+   "start": 1713,
+   "dur": 152,
+   "file": "vo/os-threads/par.wav",
+   "text": "With two cores, two threads really run at the same moment. That is parallelism."
+  },
+  "amQ": {
+   "start": 1893,
+   "dur": 123,
+   "file": "vo/os-threads/amQ.wav",
+   "text": "So more cores means more speed? Only for the part that can be split."
+  },
+  "am1": {
+   "start": 2028,
+   "dur": 349,
+   "file": "vo/os-threads/am1.wav",
+   "text": "Say a quarter of the job must run serially. With two cores, the other three quarters are shared. The time drops to zero point six two five. A speedup of one point six."
+  },
+  "am2": {
+   "start": 2389,
+   "dur": 279,
+   "file": "vo/os-threads/am2.wav",
+   "text": "Add cores forever, and the parallel part shrinks towards nothing. The serial quarter stays. The speedup can never pass one over S. Here, four."
+  },
+  "kinds": {
+   "start": 2696,
+   "dur": 157,
+   "file": "vo/os-threads/kinds.wav",
+   "text": "User threads are managed by a library. Kernel threads are what the OS schedules."
+  },
+  "m1": {
+   "start": 2866,
+   "dur": 163,
+   "file": "vo/os-threads/m1.wav",
+   "text": "Many to one: all user threads share one kernel thread. If one blocks, they all stop."
+  },
+  "m2": {
+   "start": 3042,
+   "dur": 167,
+   "file": "vo/os-threads/m2.wav",
+   "text": "One to one: each user thread gets its own kernel thread. Linux and Windows do this."
+  },
+  "m3": {
+   "start": 3222,
+   "dur": 129,
+   "file": "vo/os-threads/m3.wav",
+   "text": "Many to many: user threads share a sufficient number of kernel threads."
+  },
+  "race": {
+   "start": 3378,
+   "dur": 193,
+   "file": "vo/os-threads/race.wav",
+   "text": "Sharing has a price. counter plus plus looks like one step. It is three: load, add, store."
+  },
+  "race2": {
+   "start": 3584,
+   "dur": 157,
+   "file": "vo/os-threads/race2.wav",
+   "text": "Two threads both load zero. Both add one. Both store one. It should be two."
+  },
+  "race3": {
+   "start": 3754,
+   "dur": 143,
+   "file": "vo/os-threads/race3.wav",
+   "text": "One update is lost. That is a race condition, and chapter six fixes it."
+  },
+  "ex0": {
+   "start": 3928,
+   "dur": 33,
+   "file": "vo/os-threads/ex0.wav",
+   "text": "For the exam."
+  },
+  "ex1": {
+   "start": 3973,
+   "dur": 70,
+   "file": "vo/os-threads/ex1.wav",
+   "text": "Threads share code, data and files."
+  },
+  "ex2": {
+   "start": 4056,
+   "dur": 86,
+   "file": "vo/os-threads/ex2.wav",
+   "text": "Each has its own registers, P C and stack."
+  },
+  "ex3": {
+   "start": 4155,
+   "dur": 106,
+   "file": "vo/os-threads/ex3.wav",
+   "text": "One core is concurrency; many cores is parallelism."
+  },
+  "ex4": {
+   "start": 4274,
+   "dur": 83,
+   "file": "vo/os-threads/ex4.wav",
+   "text": "Amdahl: the serial part limits the speedup."
+  }
+ }
+}

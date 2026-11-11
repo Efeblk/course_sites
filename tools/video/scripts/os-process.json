@@ -1,0 +1,123 @@
+{
+ "voice": "af_heart",
+ "speed": 0.9,
+ "gap": 0.42,
+ "tail": 1.6,
+ "lead": 2.6,
+ "beats": [
+  {
+   "id": "hook",
+   "text": "On the disk, a program is just a file. It does nothing. It is passive."
+  },
+  {
+   "id": "alive",
+   "text": "Run it, and it becomes a process: a program in execution. Active, with its own memory and its own state."
+  },
+  {
+   "id": "layout",
+   "text": "Its memory has four parts. Text holds the code. Data holds the global variables."
+  },
+  {
+   "id": "layout2",
+   "text": "The heap grows up when the program asks for memory. The stack grows down with every function call."
+  },
+  {
+   "id": "many",
+   "text": "One program can be several processes at once, like two windows of the same browser.",
+   "pause": 0.5
+  },
+  {
+   "id": "life",
+   "text": "Now follow one process through its life."
+  },
+  {
+   "id": "new",
+   "text": "It is born in the new state. Once admitted, it moves to ready, and waits in line for a CPU."
+  },
+  {
+   "id": "run",
+   "text": "The scheduler dispatches it. Now it is running."
+  },
+  {
+   "id": "intr",
+   "text": "A timer interrupt stops it. Back to ready."
+  },
+  {
+   "id": "io",
+   "text": "Dispatched again, it asks the disk for data. Now it is waiting. It could not use the CPU anyway."
+  },
+  {
+   "id": "trapQ",
+   "text": "The disk finishes. Does the process jump straight back onto the CPU?"
+  },
+  {
+   "id": "trapA",
+   "text": "No. Waiting goes to ready, never straight to running. Only the scheduler moves a process from ready to running."
+  },
+  {
+   "id": "exit",
+   "text": "At last it calls exit, and terminates. Five states, six arrows.",
+   "pause": 0.5
+  },
+  {
+   "id": "pcb",
+   "text": "To pause a process and resume it later, the OS keeps a process control block for it: its state, its I D, its program counter, its registers, and more."
+  },
+  {
+   "id": "cs",
+   "text": "A context switch saves the running process into its P C B, and loads the next one from its own."
+  },
+  {
+   "id": "cs2",
+   "text": "During the switch, no useful work gets done. It is pure overhead.",
+   "pause": 0.5
+  },
+  {
+   "id": "fork",
+   "text": "How is a new process born? With fork. fork makes a copy of the calling process, and both carry on from the same point."
+  },
+  {
+   "id": "ret",
+   "text": "The only difference is the return value. The parent gets the child's P I D. The child gets zero."
+  },
+  {
+   "id": "exec",
+   "text": "Then exec replaces the child's program with a new one, like ls. Same process, new code."
+  },
+  {
+   "id": "pow",
+   "text": "If every process calls fork three times in a row, you get two to the power three: eight processes.",
+   "pause": 0.4
+  },
+  {
+   "id": "ipc",
+   "text": "Processes can also talk: through a shared memory area, or by sending messages through the kernel.",
+   "pause": 0.6
+  },
+  {
+   "id": "ex0",
+   "text": "For the exam."
+  },
+  {
+   "id": "ex1",
+   "text": "A program is passive, a process is active."
+  },
+  {
+   "id": "ex2",
+   "text": "Five states, six transitions."
+  },
+  {
+   "id": "ex3",
+   "text": "Waiting never goes straight to running."
+  },
+  {
+   "id": "ex4",
+   "text": "The P C B saves a process; switching is overhead."
+  },
+  {
+   "id": "ex5",
+   "text": "fork returns zero to the child, the P I D to the parent.",
+   "pause": 0.8
+  }
+ ]
+}
