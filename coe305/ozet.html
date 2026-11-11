@@ -8,6 +8,8 @@
   <style>
     .part { margin: 40px 0 0; padding-top: 14px; border-top: 2px solid var(--text); }
     .part > h2 { margin: 0 0 4px; }
+    .part { scroll-margin-top: 80px; }
+    .part details summary { cursor: pointer; padding: 12px 0; min-height: 44px; }
     .src { font: .76rem var(--mono); color: var(--muted); }
     .ans-lines { border-left: 3px solid var(--accent); padding: 4px 14px; margin: 12px 0; }
     .ans-lines p { margin: 4px 0; }
@@ -24,21 +26,22 @@
   <div class="mono small muted">COE305 · Asst. Prof. Muhammed Davud · Weeks 1–6</div>
   <h1>Midterm özeti</h1>
   <nav class="row"><a href="index.html">Course</a><a href="mock.html">Mock midterm</a><a href="past.html">Geçmiş finaller</a><a href="learn.html?ch=6">Week 6 dersi</a></nav>
-  <p class="lead">Hoca vize için konuları tek tek saydı ve şunu söyledi: <b>formül yazmayacaksınız; kavramı ve mantığını anlayın, neden kullandığımızı da söyleyebilin.</b> Bu sayfa yalnızca o listeyi işler. Açıklamalar Türkçe, sınavda yazacağın kısa cevaplar İngilizce.</p>
+  <p class="lead">Paylaştığın sınav notlarına göre hedef: <b>kavramı anlamak, farkları açıklamak ve neden kullandığımızı söylemek.</b> Notta formül yazılmayacağı belirtiliyor. Bu özet, notlarındaki 10 başlığı kısa Türkçe açıklamalar ve İngilizce cevap anahtarlarıyla toplar.</p><p class="small muted">Kaynak: paylaştığın üç sınav notu ve mevcut ders içeriği. Notlar konu listesini veriyor; soru sayısı veya puan dağılımı belirtilmiyor.</p>
   <div class="scroll"><table class="t">
-    <tr><th>Hocanın listesi</th><th>Slayt</th></tr>
+    <tr><th>Notlarındaki konular</th><th>Slayt</th></tr>
     <tr><td><a href="#t1">1. Learning types (supervised…)</a></td><td>Week 1</td></tr>
     <tr><td><a href="#t2">2. Parametric or nonparametric</a></td><td>Week 4, s2</td></tr>
-    <tr><td><a href="#t3">3. Feature selection and extraction</a></td><td>Week 3</td></tr>
-    <tr><td><a href="#t4">4. What PCA means</a></td><td>Week 3</td></tr>
-    <tr><td><a href="#t5">5. What entropy is ("fifty-fifty is the worst")</a></td><td>Week 5</td></tr>
-    <tr><td><a href="#t6">6. Bias and bias shifting</a></td><td>Week 6</td></tr>
-    <tr><td><a href="#t7">7. Transpose</a></td><td>Week 3, 6</td></tr>
-    <tr><td><a href="#t8">8. Activation functions: sigmoid, softmax, why and when</a></td><td>Week 6</td></tr>
-    <tr><td><a href="#t9">9. Learning rate</a></td><td>Week 6</td></tr>
+    <tr><td><a href="#clustering">3. Hard vs soft clustering</a></td><td>Week 4</td></tr>
+    <tr><td><a href="#t3">4. Feature selection and extraction</a></td><td>Week 3</td></tr>
+    <tr><td><a href="#t4">5. What PCA means</a></td><td>Week 3</td></tr>
+    <tr><td><a href="#t5">6. What entropy is ("fifty-fifty is the worst")</a></td><td>Week 5</td></tr>
+    <tr><td><a href="#t6">7. Bias: ax + b ve bias shifting</a></td><td>Week 6</td></tr>
+    <tr><td><a href="#t7">8. Transpose</a></td><td>Week 3, 6</td></tr>
+    <tr><td><a href="#t8">9. Activation functions: sigmoid, softmax, why and when</a></td><td>Week 6</td></tr>
+    <tr><td><a href="#t9">10. Learning rate / learning factor</a></td><td>Week 6</td></tr>
     <tr><td><a href="#self">Kendini yokla</a></td><td></td></tr>
   </table></div>
-  <p class="small muted">Slaytların geri kalanı (overfitting, cross-validation, k-means, pruning, backpropagation hesabı) ders sayfalarında var; bu listede olmadığı için burada yok.</p>
+  <p class="small muted">Bu sayfada öncelik kavramlar ve karşılaştırmalar. Ayrıntılı k-means, entropy veya backpropagation hesapları için ders sayfalarını kullan; burada formül ezberlemek gerekmiyor.</p>
 
   <section class="part" id="t1">
     <h2>1. Learning types</h2>
@@ -66,15 +69,31 @@
       <tr><td>Ne öğrenilir?</td><td>sabit sayıda parametre</td><td>yapının kendisi</td></tr>
       <tr><td>Dersten örnek</td><td><b>linear regression</b> y = wx + w₀ (sadece w, w₀ öğrenilir); <b>perceptron</b> ağırlıkları</td><td><b>decision tree</b>: hangi soru, kaç seviye, veriden gelir</td></tr>
     </table></div>
-    <p class="small muted">Slayt sadece tanımı veriyor; örnekler bu tanımın dersteki modellere uygulanması.</p>
+    <p><b>Sınav tuzağı:</b> Nonparametric, “hiç parametresi yok” demek değildir. Ayrım, mapping function / model biçiminin önceden belirlenmesiyle ilgilidir. Supervised–unsupervised ayrımı ise label olup olmamasına bakar.</p><p class="small muted">Slayt tanımı verir; örnekler bu tanımın mevcut ders modellerine uygulanmasıdır.</p>
     <div class="ans-lines"><div class="lab">Sorulursa</div>
       <p>Parametric: predefined mapping function / assumptions; learn its parameters (e.g. y = wx + w₀).</p>
       <p>Nonparametric: no predefined function; structure learned from data (e.g. decision tree).</p></div>
   </section>
 
+  <section class="part" id="clustering">
+    <h2>3. Hard vs soft clustering</h2>
+    <p>İkisinde de örnekleri grupluyoruz. Fark, bir noktanın gruba nasıl ait olduğudur. <b>Hard clustering</b> kesin seçim yapar. <b>Soft clustering</b> üyeliği olasılıklarla gösterir.</p>
+    <div class="scroll"><table class="t">
+      <tr><th></th><th>Hard clustering</th><th>Soft clustering</th></tr>
+      <tr><td>Bir nokta</td><td>Tek cluster’a atanır.</td><td>Her cluster için membership probability alır.</td></tr>
+      <tr><td>İki gruplu örnek</td><td>A veya B: üyelik 1 / 0.</td><td>A için 0.7, B için 0.3 olabilir.</td></tr>
+      <tr><td>Ders örneği</td><td><b>k-means</b>: en yakın merkez.</td><td><b>EM / Gaussian mixture</b>: soft memberships.</td></tr>
+    </table></div>
+    <p>Ortada duran bir nokta için hard yöntem bir tarafı seçer. Soft yöntem iki gruba farklı olasılıklarla katkı vermesine izin verir. <b>Soft</b>, veriye doğru class label’ı verildiği anlamına gelmez; buradaki clustering hâlâ <b>unsupervised</b>’dır.</p>
+    <div class="ans-lines"><div class="lab">Short English answer</div>
+      <p lang="en">Hard: one cluster per instance. Soft: probabilistic memberships across clusters.</p>
+      <p lang="en">k-means: hard assignments. EM: soft memberships.</p></div>
+    <p class="small"><a href="learn.html?ch=4&amp;step=4">Week 4: EM açıklaması</a></p>
+  </section>
+
   <section class="part" id="t3">
-    <h2>3. Feature selection vs feature extraction</h2>
-    <p>İkisi de boyutu düşürür: d özellikten <b>k &lt; d</b> özelliğe. Amaç, yararlı bilgiyi koruyup gerisini atmak. Neden? Daha az hesap ve bellek, verinin toplanma maliyeti düşer, küçük veride daha sağlam model, 2–3 boyutta çizip bakabilme. "Daha çok özellik değil, daha çok yararlı bilgi iyidir."</p>
+    <h2>4. Feature selection vs feature extraction</h2>
+    <p>İkisi de boyutu düşürür: d özellikten <b>k &lt; d</b> özelliğe. Amaç, yararlı bilgiyi koruyup gerisini atmak. Daha az hesap, bellek ve ölçüm maliyeti sağlayabilir; çizip yorumlamayı kolaylaştırabilir. Ancak yararlı bilgi de kaybolabileceği için daha az feature her zaman daha iyi tahmin demek değildir.</p>
     <div class="scroll"><table class="t">
       <tr><th></th><th>Feature selection</th><th>Feature extraction</th></tr>
       <tr><td>Ne yapar</td><td>orijinal özelliklerden <b>seçer</b></td><td>yeni özellikler <b>üretir</b> (x → z)</td></tr>
@@ -90,8 +109,8 @@
   </section>
 
   <section class="part" id="t4">
-    <h2>4. PCA ne demek?</h2>
-    <p><b>Principal Component Analysis</b> veriyi daha az boyutla anlatmaya çalışır. "Bilgiyi korumak" PCA'da şu demek: <b>verinin en çok yayıldığı (variance en büyük) yön</b> en çok bilgiyi taşır. PCA'nın tek sorusu: veri hangi yönde en çok değişiyor?</p>
+    <h2>5. PCA ne demek?</h2>
+    <p><b>Principal Component Analysis</b> veriyi daha az boyutla anlatmaya çalışır. "Bilgiyi korumak" PCA'da şu ölçütle ifade edilir: <b>projection variance</b> mümkün olduğunca büyük kalsın. Bu ölçüt, class ayrımının da en iyi olacağını garanti etmez. PCA'nın tek sorusu: veri hangi yönde en çok değişiyor?</p>
     <ol>
       <li>Veriyi ortala (mean çıkar, merkez orijine gelsin).</li>
       <li>Bir yön w seç; her noktayı o yöne izdüşür: <b>z = wᵀx</b> (her nokta tek bir sayı olur).</li>
@@ -107,13 +126,13 @@
   </section>
 
   <section class="part" id="t5">
-    <h2>5. Entropy: "fifty-fifty is the worst"</h2>
+    <h2>6. Entropy: "fifty-fifty is the worst"</h2>
     <p>Karar ağacında bir düğüme gelen örnekler ne kadar karışık? <b>Entropy</b> bu karışıklığın (<b>impurity</b>) ölçüsü.</p>
     <div class="scroll"><table class="t">
       <tr><th>Düğüm (2 sınıf)</th><th>Entropy</th><th>Anlamı</th></tr>
-      <tr><td>4 yes, 0 no</td><td><b>0</b></td><td><b>pure</b>: en iyi, burada yaprak olur</td></tr>
+      <tr><td>4 yes, 0 no</td><td><b>0</b></td><td><b>pure</b>: label belirsizliği yok; yaprak olabilir</td></tr>
       <tr><td>9 yes, 5 no</td><td>0.940</td><td>karışık</td></tr>
-      <tr><td>3 yes, 3 no</td><td><b>1</b></td><td><b>fifty-fifty</b>: en kötü, hiçbir şey bilmiyoruz</td></tr>
+      <tr><td>3 yes, 3 no</td><td><b>1</b></td><td><b>fifty-fifty</b>: iki class için en yüksek impurity</td></tr>
     </table></div>
     <p>Slayttaki eğri p = 0.5'te tepe yapar, p = 0 ve p = 1'de sıfıra iner. Ağaç nasıl kullanır: her özellik için bölünmeden sonraki çocukların entropy'sini, büyüklüklerine göre ağırlıklı topla; <b>en düşük</b> olanı seç. Play Tennis: Outlook 0.694 &lt; Humidity 0.788 &lt; Wind 0.892 &lt; Temp 0.911 &lt; 0.940, ilk soru <b>Outlook</b>. Overcast dalı 4 yes / 0 no: pure, yaprak.</p>
     <div class="ans-lines"><div class="lab">Sorulursa</div>
@@ -123,9 +142,10 @@
   </section>
 
   <section class="part" id="t6">
-    <h2>6. Neden bias? Bias shifting ne?</h2>
+    <h2>7. ax + b içindeki b: neden bias gerekiyor?</h2>
+    <p><b>ax + b</b> gösterimindeki <b>b</b>, burada <b>bias</b>’tır. Slaytlardaki adı <b>w₀</b>. a yönü/eğimi, b doğrunun konumunu belirler. Bu konudaki bias, doğruyu kaydıran sabit terimdir.</p>
     <p>Perceptron toplar: y = w₁x₁ + w₂x₂ + <b>w₀</b>. <b>w₀ = bias</b>, değeri hep 1 olan ekstra girdinin (<b>x₀ = 1</b>, bias unit) ağırlığı.</p>
-    <p>Bias olmasa ne olur? Regression'da y = wx doğrusu <b>hep orijinden (0, 0) geçmek zorunda</b>. Classification'da sınır çizgisi w₁x₁ + w₂x₂ = 0 da öyle. Veri orada değilse model ayıramaz.</p>
+    <p>Bias olmasa ne olur? Regression'da y = wx doğrusu <b>hep orijinden (0, 0) geçmek zorunda</b>. Classification'da sınır çizgisi w₁x₁ + w₂x₂ = 0 da öyle. Bu, modelin seçebileceği sınırları kısıtlar; gereken sınır orijinden geçmiyorsa temsil edilemez.</p>
     <p><b>Bias shifting</b>: ağırlıklar çizginin <b>yönünü</b> belirler, bias çizgiyi <b>kaydırır</b> (döndürmeden). Slayt örneği: w₁ = w₂ = +1 sabit.</p>
     <div class="scroll"><table class="t">
       <tr><th>w₀</th><th>Çizgi</th><th>Sonuç</th></tr>
@@ -133,13 +153,13 @@
       <tr><td>−0.5</td><td>x₁ + x₂ = 0.5</td><td>(0, 0) hariç hepsi üstte: <b>OR</b></td></tr>
     </table></div>
     <div class="ans-lines"><div class="lab">Sorulursa</div>
-      <p>Bias w₀ = weight on input x₀ = 1.</p>
+      <p>b in ax + b = bias w₀; weight on fixed input x₀ = 1.</p>
       <p>Without bias the line / decision boundary must pass through the origin.</p>
       <p>Bias shifts the boundary without rotating it; weights set the direction (AND vs OR: same weights, w₀ = −1.5 vs −0.5).</p></div>
   </section>
 
   <section class="part" id="t7">
-    <h2>7. Transpose</h2>
+    <h2>8. Transpose</h2>
     <p>Hocanın cümlesi: <b>transpose = columns into rows</b> (sütunları satıra çevirmek). Slaytlarda vektörler <b>sütun</b>dur; yer kazanmak için satır gibi yazılıp sonuna ᵀ konur: x = [x₁, x₂, x₃, x₄, x₅]ᵀ (5 özellikli öğrenci, d = 5).</p>
     <p>Neden lazım? İki sütunu çarpmak için birini yatırırız. <b>wᵀ</b> bir satır, <b>x</b> bir sütun; satır × sütun = eşleşen elemanları çarp, topla = <b>tek bir sayı</b>. Örnek (AND, x = (1, 1)): wᵀx = (−1.5)(1) + (1)(1) + (1)(1) = 0.5. Aynı çarpım PCA'da da var: z = wᵀx.</p>
     <div class="ans-lines"><div class="lab">Sorulursa</div>
@@ -148,18 +168,19 @@
   </section>
 
   <section class="part" id="t8">
-    <h2>8. Activation functions</h2>
+    <h2>9. Activation functions</h2>
     <p>wᵀx herhangi bir sayı olabilir. <b>Activation function</b> bu toplamı nörünün çıktısına çevirir. Slayttaki yaygın olanlar:</p>
     <div class="scroll"><table class="t">
       <tr><th>Fonksiyon</th><th>Aralık</th><th>Ne için</th></tr>
-      <tr><td><b>Sigmoid</b> 1/(1 + e⁻ᵃ)</td><td>(0, 1)</td><td><b>binary classification</b>: tek çıktı = sınıf 1 olasılığı</td></tr>
+      <tr><td><b>Sigmoid</b></td><td>(0, 1)</td><td><b>binary classification</b>: tek çıktı = sınıf 1 olasılığı</td></tr>
       <tr><td><b>Softmax</b></td><td>(0, 1), toplam 1</td><td><b>multiclass</b> (K &gt; 2): her sınıfa bir olasılık, en büyüğü seçilir</td></tr>
       <tr><td><b>tanh</b></td><td>(−1, 1)</td><td>sigmoid benzeri, eksiye de iner</td></tr>
-      <tr><td><b>ReLU</b> max(0, a)</td><td>0 ve üstü</td><td>negatif toplamı 0 yapar</td></tr>
+      <tr><td><b>ReLU</b></td><td>0 ve üstü</td><td>negatif toplamı 0 yapar</td></tr>
       <tr><td>Linear (activation yok)</td><td>her sayı</td><td><b>regression</b> çıktısı</td></tr>
     </table></div>
     <p><b>Neden sigmoid?</b> İki sınıfta tek bir olasılık lazım; sigmoid her sayıyı 0 ile 1 arasına sıkıştırır. sigmoid(0) = 0.5, yani "y &gt; 0.5 ise sınıf 1" = "wᵀx &gt; 0".</p>
-    <p><b>Neden softmax?</b> Çok sınıfta her sınıfa bir olasılık lazım ve toplamları 1 olmalı. Softmax skorların üssünü alıp toplama böler: skorlar 2, 1, 0 → 0.67, 0.24, 0.09. Sınıflar yarışır; birinin skoru artınca diğerlerinin olasılığı düşer.</p>
+    <p><b>Neden softmax?</b> Çok sınıfta her sınıfa bir olasılık lazım ve toplamları 1 olmalı. Softmax skorların üssünü alıp toplama böler: skorlar 2, 1, 0 → yaklaşık 0.665, 0.245, 0.090. Sınıflar yarışır; birinin skoru artınca diğerlerinin olasılığı düşer.</p>
+    <p><b>Notta “multiclass inputs” yazıyor:</b> Softmax seçiminin nedeni input feature sayısı değil, tahmin edilecek <b>output class</b> sayısıdır. Her class için bir çıktı olasılığı verir.</p>
     <p><b>Neden gizli katmanda activation?</b> XOR tek doğruyla ayrılamaz; iki gizli nöron iki doğru çizer, çıktı onları birleştirir. Activation olmasa her nöron düz bir toplam olur, toplamların toplamı yine tek bir doğru olur ve XOR yine çözülemez.</p>
     <p><b>Eğitimden önce mi, eğitimde mi?</b> Eğitimde (ve tahminde). Activation ağın parçası, veriye önceden uygulanan bir işlem değil: her <b>forward pass</b> onu uygular, <b>backpropagation</b> türevini kullanır.</p>
     <div class="ans-lines"><div class="lab">Sorulursa</div>
@@ -171,15 +192,19 @@
   </section>
 
   <section class="part" id="t9">
-    <h2>9. Learning rate</h2>
-    <p>Eğitim, hatayı azaltmak için ağırlığı eğimin tersine küçük adımlarla değiştirir: <b>w ← w − η · ∂E/∂w</b>. <b>η (learning rate)</b> adımın büyüklüğü.</p>
-    <p>Slayt örneği: w = 0.8, eğim ∂E/∂w = 1.05, η = 0.1 → yeni w = 0.8 − 0.105 = <b>0.695</b>. Eğim pozitif, yani w küçülünce hata düşer.</p>
+    <h2>10. Learning rate / learning factor</h2>
+    <p>Notundaki <b>learning factor</b>, bu derste <b>learning rate η</b> olarak anlattığımız adım büyüklüğüdür. Training sırasında weight’in her güncellemede ne kadar değişeceğini ölçekler.</p>
+    <p>Hatanın azaldığı yönde ilerlemek isteriz. Ancak yön doğru olsa bile adım çok büyükse iyi bölgenin ötesine atlayabiliriz. Çok küçükse doğru yere ulaşmak uzun sürer.</p>
     <div class="scroll"><table class="t">
-      <tr><th>η</th><th>Ne olur (aynı örnek, ders animasyonu)</th></tr>
-      <tr><td>çok küçük (0.1)</td><td>hata her adımda düşer ama <b>yavaş</b>; çok adım gerekir</td></tr>
-      <tr><td>orta (0.4)</td><td>birkaç adımda en iyi w ≈ 0.33'e varır</td></tr>
-      <tr><td>çok büyük (1.0)</td><td>minimumun üstünden <b>atlar</b>, her adım daha uzağa düşer, hata <b>büyür</b></td></tr>
+      <tr><th>Learning rate</th><th>Beklenen etki</th></tr>
+      <tr><td>Çok küçük</td><td><b>Slow convergence</b>: çok sayıda küçük adım.</td></tr>
+      <tr><td>Uygun</td><td>Hatayı azaltan, işe yarayan adımlar.</td></tr>
+      <tr><td>Çok büyük</td><td><b>Overshoot</b>: minimumu aşabilir; error büyüyebilir.</td></tr>
     </table></div>
+    <p>“Küçük” veya “büyük” için her problemde geçerli tek sayı yoktur. Burada önemli olan sayı ezberlemek değil, adım büyüklüğünün etkisini açıklayabilmektir.</p>
+    <details><summary>İstersen: dersteki sayısal örnek</summary>
+      <p>w = 0.8, slope = 1.05 ve η = 0.1. Güncelleme 0.105 azaltır; yeni w = <b>0.695</b>. Formül, adım boyunun weight değişimine nasıl yansıdığını gösterir: w ← w − η · ∂E/∂w.</p>
+    </details>
     <div class="ans-lines"><div class="lab">Sorulursa</div>
       <p>Learning rate η = step size of each weight update (gradient descent).</p>
       <p>Too small: slow convergence. Too large: overshoots the minimum, error can grow.</p></div>
@@ -196,6 +221,8 @@
       <tr><td>Etiket yok, müşterileri gruplamak istiyoruz.</td><td class="ans">Unsupervised; clustering.</td></tr>
       <tr><td>Parametric'in tanımı?</td><td class="ans">Learning with a predefined mapping function / assumptions.</td></tr>
       <tr><td>Decision tree parametric mi?</td><td class="ans">By the definition: nonparametric; structure comes from the data.</td></tr>
+      <tr><td>Bir nokta tek cluster’a atanıyor. Hard mı soft mu?</td><td class="ans">Hard clustering; one cluster per instance.</td></tr>
+      <tr><td>Bir noktanın A üyeliği 0.7, B üyeliği 0.3.</td><td class="ans">Soft clustering; probabilistic memberships.</td></tr>
       <tr><td>GPA, Attendance, Study Hours'u tutmak: selection mı extraction mı?</td><td class="ans">Selection; original features kept.</td></tr>
       <tr><td>PCA hangisi?</td><td class="ans">Extraction; new features z.</td></tr>
       <tr><td>PCA'da "information" ne?</td><td class="ans">Variance.</td></tr>
@@ -203,12 +230,15 @@
       <tr><td>Hangi düğüm en kötü: 4/0, 3/3, 9/5?</td><td class="ans">3/3; 50/50, entropy 1.</td></tr>
       <tr><td>Pure düğümün entropy'si?</td><td class="ans">0.</td></tr>
       <tr><td>Ağaç en yüksek mi en düşük mü entropy'yi seçer?</td><td class="ans">Lowest weighted child entropy.</td></tr>
+      <tr><td>ax + b içindeki b nedir?</td><td class="ans">Bias; shifts the line / decision boundary.</td></tr>
       <tr><td>Bias olmazsa çizgi?</td><td class="ans">Must pass through the origin.</td></tr>
       <tr><td>AND ile OR arasındaki tek fark?</td><td class="ans">Bias: −1.5 vs −0.5.</td></tr>
       <tr><td>wᵀx ne tür bir şey?</td><td class="ans">One number; row × column, weighted sum.</td></tr>
       <tr><td>İki sınıf için çıktı activation'ı?</td><td class="ans">Sigmoid.</td></tr>
+      <tr><td>Softmax seçerken input sayısına mı, output class sayısına mı bakarız?</td><td class="ans">Output classes; one probability per class.</td></tr>
       <tr><td>On sınıf için?</td><td class="ans">Softmax; outputs sum to 1.</td></tr>
       <tr><td>Activation eğitimden önce mi uygulanır?</td><td class="ans">No; in every forward pass, training and prediction.</td></tr>
+      <tr><td>Learning factor / learning rate neyi belirler?</td><td class="ans">Step size of each weight update.</td></tr>
       <tr><td>η çok büyükse?</td><td class="ans">Overshoots; error can grow.</td></tr>
     </table></div>
     <p><a href="mock.html">Şimdi mock midterm'i aç</a>: 20 seçmeli soru, 8 "explain why" sorusu.</p>

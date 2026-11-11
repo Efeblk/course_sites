@@ -1922,7 +1922,7 @@ window.COURSE = window.COE305 = {
 Object.assign(window.COURSE, {
   "exam": {
     "title": "Midterm",
-    "scope": "Weeks 1–6 · the lecturer's topic list",
+    "scope": "Weeks 1–6 · 10 topics in the supplied midterm notes",
     "length": "Concepts and why, no formulas",
     "plan": [
       [
@@ -1937,12 +1937,12 @@ Object.assign(window.COURSE, {
       ],
       [
         "learn.html?ch=4&step=1",
-        "Week 4, step 2: parametric vs nonparametric",
+        "Week 4: parametric methods and hard vs soft clustering",
         "10 min"
       ],
       [
         "ozet.html",
-        "Midterm özeti: the lecturer's nine topics, then hide the answers",
+        "Midterm özeti: 10 topics from your notes, including hard vs soft clustering",
         "30 min"
       ],
       [
@@ -1969,8 +1969,8 @@ Object.assign(window.COURSE, {
       "kind": "summary",
       "href": "ozet.html",
       "title": "Midterm özeti",
-      "meta": "Türkçe · lecturer's topic list",
-      "desc": "One section per topic the lecturer named, each with a short English answer, and a hide-answers recall table."
+      "meta": "Türkçe · 10 topics from your notes",
+      "desc": "Your midterm notes in 10 compact sections: comparisons, why each concept is used, short English answers and hideable recall questions."
     },
     {
       "kind": "mock",
