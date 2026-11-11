@@ -3,6 +3,7 @@
  *
  * GUIDE[n] = {
  *   goal: 'what you can do at the end', time: '≈ 60 min',
+ *   question: 'the problem this chapter answers',                        // optional: explanation-first layout
  *   videos: [['what it explains', 'YouTube search words'], ...],
  *   steps: [{
  *     t: 'step title',
@@ -30,6 +31,9 @@
     return;
   }
 
+  const conversational = Boolean(g.question);
+  if (conversational) main.classList.add('lesson-explained');
+
   const KEY = `guide:${C.id}:${n}`;
   const done = new Set(progress.get(KEY) || []);
   const saveDone = () => progress.set(KEY, [...done]);
@@ -39,7 +43,7 @@
 
   const steps = [...g.steps, { t: 'Practice & test yourself', practice: true }];
   const askStep = CS.param('step'); // the understanding test links straight to a step to re-learn
-  let cur = Math.min(Number(askStep ?? progress.get(KEY + ':at')) || 0, steps.length - 1);
+  let cur = Math.max(0, Math.min(Number(askStep ?? progress.get(KEY + ':at')) || 0, steps.length - 1));
 
   /* ---- embedded pages (labs, games, quiz…) tell us their height; see common.js ---- */
   window.addEventListener('message', (e) => {
@@ -68,11 +72,12 @@
     el('header', { class: 'lesson-hero' },
       el('div', { class: 'kicker' }, `${C.code} — ${U} ${n} — guided lesson`),
       el('h1', {}, ch.title),
+      conversational ? el('p', { class: 'lesson-question' }, g.question) : null,
       el('p', { class: 'goal' }, el('b', {}, 'By the end you can: '), g.goal),
       el('div', { class: 'row hero-meta' },
         el('span', { class: 'pill' }, `${steps.length} steps`),
         g.time ? el('span', { class: 'pill' }, 'about ' + g.time.replace('≈', '').trim()) : null,
-        el('span', { class: 'pill' }, 'read, look, try, check')),
+        el('span', { class: 'pill' }, conversational ? 'explanation, example, quick check' : 'read, look, try, check')),
       el('div', { class: 'hero-progress' }, el('div', { class: 'progressbar' }, barFill), barText),
       g.videos && g.videos.length ? el('details', { class: 'videos' },
         el('summary', {}, `Prefer a video first? ${g.videos.length} YouTube searches`),
@@ -80,7 +85,11 @@
           el('a', { class: 'video-card', href: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q), target: '_blank', rel: 'noopener' },
             el('span', { class: 'play' }, '▶'), el('span', {}, el('b', {}, label), el('span', { class: 'muted small' }, `YouTube: "${q}"`))))),
         el('p', { class: 'small muted' }, 'These links open a YouTube search, so you need internet. Choose a short video from the results. The rest of the site works offline.')) : null),
-    el('div', { class: 'lesson-grid' }, el('aside', {}, el('div', { class: 'aside-h' }, 'Steps'), nav), stage));
+    conversational ? el('details', { class: 'lesson-course-route' },
+      el('summary', {}, `${U} ${n} of ${C.chapters.length} · See the course path`),
+      el('nav', { 'aria-label': 'Course chapters' }, C.chapters.map(c =>
+        el('a', { href: `learn.html?ch=${c.n}`, 'aria-current': c.n === n ? 'page' : null }, `${c.n}. ${c.title}`)))) : null,
+    el('div', { class: 'lesson-grid' }, el('aside', {}, conversational ? el('details', { class: 'lesson-step-picker', open: window.matchMedia('(min-width: 701px)').matches }, el('summary', {}, 'Lesson steps'), nav) : [el('div', { class: 'aside-h' }, 'Steps'), nav]), stage));
 
   function go(i) {
     cur = Math.max(0, Math.min(steps.length - 1, i));
@@ -91,8 +100,13 @@
   function finish(i) { done.add(i); saveDone(); }
 
   function drawNav() {
-    fill(nav, steps.map((s, i) => el('li', { class: [i === cur ? 'on' : '', done.has(i) ? 'done' : ''].join(' '), onclick: () => go(i) },
-      el('span', { class: 'dot' }, done.has(i) ? '✓' : String(i + 1)), el('span', {}, s.t))));
+    fill(nav, steps.map((s, i) => {
+      const attrs = { class: [i === cur ? 'on' : '', done.has(i) ? 'done' : ''].join(' ') };
+      const content = [el('span', { class: 'dot' }, done.has(i) ? '✓' : String(i + 1)), el('span', {}, s.t)];
+      return conversational
+        ? el('li', attrs, el('button', { type: 'button', 'aria-current': i === cur ? 'step' : null, onclick: () => go(i) }, content))
+        : el('li', { ...attrs, onclick: () => go(i) }, content);
+    }));
     const d = [...done].filter((i) => i < steps.length).length;
     barFill.style.width = `${(100 * d) / steps.length}%`;
     barText.textContent = d >= steps.length ? 'All steps done' : `${d} of ${steps.length} steps done`;
@@ -100,7 +114,7 @@
 
   function checkBox(c, i) {
     const opts = shuffle(c.o.map((text, k) => ({ text, right: k === 0 })));
-    const fb = el('div');
+    const fb = el('div', { 'aria-live': 'polite' });
     const box = el('section', { class: 'check' }, el('div', { class: 'sec-h' }, 'Check', el('b', {}, 'Did that make sense?')), el('div', { class: 'quiz-q' }, c.q));
     const btns = opts.map((o) => el('button', { class: 'opt', onclick: () => {
       btns.forEach((b, k) => { b.disabled = true; if (opts[k].right) b.classList.add('right'); });
@@ -117,7 +131,7 @@
   function labBox(l) {
     const a = labOf(l.href);
     const title = a ? a.title : l.href;
-    return el('section', { class: 'try' },
+    const content = el('section', { class: 'try' },
       el('div', { class: 'sec-h' }, 'Try it yourself', el('b', {}, title)),
       a ? el('p', { class: 'small muted', style: { margin: '2px 0 8px' } }, a.desc) : null,
       el('ol', { class: 'todo' }, l.todo.map((t) => {
@@ -127,6 +141,16 @@
       })),
       el('p', { class: 'small muted' }, 'The lab runs right here. Tick each task when you have done it.'),
       embed(l.href, title));
+    if (!conversational) return content;
+    // Delay loading the lab until the learner chooses to try it.
+    const detail = el('details', { class: 'lesson-lab' }, el('summary', {}, `Try it: ${title}`));
+    const frame = content.querySelector('iframe');
+    frame.removeAttribute('src');
+    detail.addEventListener('toggle', () => {
+      if (detail.open && !frame.hasAttribute('src')) frame.src = l.href;
+    });
+    detail.append(content);
+    return detail;
   }
 
   /* ---- the final step: everything to practise, embedded, as tabs ---- */
@@ -165,10 +189,10 @@
       fill(panel, el('p', { class: 'muted' }, tabs[k][1]), tabs[k][2]());
     };
     tabs.forEach(([label], k) => bar.append(el('button', { onclick: () => open(k) }, label)));
-    setTimeout(() => open(0));
+    setTimeout(() => open(conversational ? 1 : 0));
     return [
       el('div', { class: 'bigidea plain' }, el('div', { class: 'sec-h' }, 'You have seen every idea of this ' + U.toLowerCase()),
-        el('div', {}, 'Now make it stick. Work through the tabs from left to right: games (10 min), quiz (15 min), flashcards (5 min), exam traps. Come back tomorrow for the understanding test.')),
+        el('div', {}, conversational ? 'Start with the quiz to find what needs another explanation. Use flashcards for recall and games for a short drill. Take the understanding test tomorrow.' : 'Now make it stick. Work through the tabs from left to right: games (10 min), quiz (15 min), flashcards (5 min), exam traps. Come back tomorrow for the understanding test.')),
       bar, panel,
       el('div', { class: 'callout ok' }, next
         ? ['When the quiz goes well, continue with ', el('a', { href: `learn.html?ch=${next.n}` }, `${U} ${next.n}: ${next.title} →`)]
@@ -186,9 +210,11 @@
       el('div', { class: 'step-kicker' }, `Step ${cur + 1} of ${steps.length}`),
       el('h2', { class: 'step-title' }, s.t),
       s.practice ? practice() : [
-        s.key ? el('div', { class: 'bigidea' }, el('div', { class: 'sec-h' }, 'The big idea'), el('div', { html: s.key })) : null,
+        conversational ? el('div', { class: 'teach', html: s.html }) : null,
+        !conversational && s.key ? el('div', { class: 'bigidea' }, el('div', { class: 'sec-h' }, 'The big idea'), el('div', { html: s.key })) : null,
         s.fig ? CS.figure(s.fig) : null,
-        el('div', { class: 'teach', html: s.html }),
+        conversational && s.key ? el('div', { class: 'bigidea' }, el('div', { class: 'sec-h' }, 'Keep this idea'), el('div', { html: s.key })) : null,
+        !conversational ? el('div', { class: 'teach', html: s.html }) : null,
         s.lab ? labBox(s.lab) : null,
         s.check ? checkBox(s.check, cur) : null,
       ],

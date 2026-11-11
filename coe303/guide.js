@@ -1,12 +1,13 @@
-/* Source: COE303 lecture slides, chapters 1–6 and the producer–consumer deck (materials/COE303, not committed).
- * Correct check first; learn.js shuffles options and appends practice. */
+/* Guided lessons, refactored from the existing course content.
+ * Raw slides were unavailable for this revision. Existing source-conflict notes are retained.
+ * Correct check first; learn.js shuffles options. */
 window.GUIDE = {
   "1": {
-    "goal": "Explain what an OS is and does, how the CPU and devices talk (interrupts, DMA), the storage hierarchy and caching, why dual mode and the timer are needed for protection, and the OS's management jobs.",
+    "goal": "Explain how the OS shares hardware while keeping control.",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "Follow the course from hardware to safe sharing",
+        "t": "One machine, many programs",
         "key": "The <b>operating system</b> controls resources; <b>processes</b> and <b>threads</b> use them, the <b>scheduler</b> shares the CPU among them, and <b>synchronization</b> keeps their shared data safe.",
         "fig": {
           "type": "flow",
@@ -50,19 +51,19 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Start with the machine: CPU, memory and devices. Chapter 1 explains how the OS controls them. Chapter 2 follows a program asking the kernel for a service. Chapter 3 turns a program into a running process and follows its state and communication. Chapter 4 looks inside a process: several threads share its resources. Chapter 5 decides which of them gets the CPU, and for how long. Chapter 6 keeps the data they share consistent.</p><p>Keep one question in mind: who uses the resource, and how does the OS keep control?</p>",
+        "html": "<p>A browser, a compiler and a game all need the same CPU and memory. Who decides which one gets to use them? The <b>operating system</b>.</p><p>This course follows that sharing problem. First learn how the OS controls hardware (1–2). Then follow the running programs and their threads (3–4). Finally decide who runs next (5) and how to keep shared data correct (6).</p><p>For now, focus on the foundation: how does the OS stay in control after it lets a program run?</p>",
         "check": {
-          "q": "Which order connects the six chapters?",
+          "q": "Why does sharing one machine require an operating system?",
           "o": [
-            "Hardware, services, processes, threads, scheduling, synchronization",
-            "Threads first, then hardware, with no link between the chapters",
-            "Compilation, then linking, then databases and networks"
+            "Programs need coordinated access to limited resources",
+            "Every program owns a separate physical CPU",
+            "Applications never need memory"
           ],
-          "why": "The course moves from the resources being managed, to the units of execution that use them, to sharing the CPU and the data between them."
+          "why": "The OS allocates shared hardware and controls its use."
         }
       },
       {
-        "t": "What an operating system is",
+        "t": "Why do we need an operating system?",
         "key": "The <b>OS</b> allocates resources and controls their use; the <b>kernel</b> is its core.",
         "fig": {
           "type": "stack",
@@ -91,7 +92,7 @@ window.GUIDE = {
           ],
           "cap": "Users run applications; the OS coordinates their use of hardware."
         },
-        "html": "<p>A computer system contains hardware, an operating system, application programs and users. Hardware provides CPU, memory and I/O. Applications use those resources to do work for users.</p><p>The OS is the intermediary. As a <b>resource allocator</b>, it decides how resources are shared. As a <b>control program</b>, it prevents errors and improper use. The <b>kernel</b> is the core program running throughout operation.</p><div class=\"callout warn\">The desktop is a user-space program; it is not the kernel.</div><div class=\"callout warn\">The desktop is a user-space program; the kernel is the core of the OS.</div>",
+        "html": "<p>Think of the four layers in the picture. Users want work done. Applications do that work. Hardware provides the CPU, memory and devices. The OS coordinates access between them.</p><p>It has two roles. As a <b>resource allocator</b>, it shares the hardware. As a <b>control program</b>, it prevents improper use. The <b>kernel</b> is the core that remains running throughout operation.</p><p>So when you see “OS,” think beyond the desktop: think about the code deciding who can use which resource.</p><div class=\"callout warn\">The desktop is a user-space program; it is not the kernel.</div>",
         "check": {
           "q": "Which two roles does the lecture give the OS?",
           "o": [
@@ -104,7 +105,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "How devices get the CPU's attention: interrupts",
+        "t": "A device finishes. How does the CPU find out?",
         "key": "Instead of the CPU asking \"are you done yet?\" again and again (<b>polling</b>), the device <b>taps the CPU on the shoulder</b> when it finishes (an <b>interrupt</b>).",
         "fig": {
           "type": "anim",
@@ -112,7 +113,7 @@ window.GUIDE = {
           "t": "What happens when an interrupt arrives",
           "cap": "The interrupted program never notices. It continues exactly where it stopped."
         },
-        "html": "<p>A device controller signals an <b>interrupt</b> when work finishes. Polling instead makes the CPU repeatedly check the device.</p><ol><li>Finish the current instruction.</li><li>Save the program counter and registers.</li><li>Use the <b>interrupt vector</b> to locate the handler.</li><li>Run the interrupt service routine.</li><li>Restore state and resume.</li></ol><p>A software-generated interrupt is a <b>trap</b>, caused by a request or an error such as division by zero.</p>",
+        "html": "<p>Suppose the CPU is running a program when an I/O device finishes. The device sends an <b>interrupt</b>: a signal asking the CPU to handle the event.</p><ol><li>Finish the current instruction.</li><li>Save the running program’s position and registers.</li><li>Use the <b>interrupt vector</b> to find the handler.</li><li>Handle the event, restore the saved state and resume.</li></ol><p>Saving state is why the program can continue where it stopped. With <b>polling</b>, the CPU repeatedly checks the device instead. A <b>trap</b> comes from software, such as a service request or division by zero.</p>",
         "lab": {
           "href": "ch1/interrupts.html",
           "todo": [
@@ -133,7 +134,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "I/O and DMA",
+        "t": "Let the device transfer a whole block",
         "key": "For big transfers, <b>DMA</b> lets the device copy a whole block straight into memory and interrupt the CPU <b>once per block</b>, not once per word.",
         "fig": {
           "type": "boxes",
@@ -216,7 +217,7 @@ window.GUIDE = {
           ],
           "cap": "Each is one interrupt. With DMA the CPU is free during the whole copy."
         },
-        "html": "\n<p>With <b>interrupt-driven I/O</b>, the device interrupts the CPU for <b>every word</b> (a few bytes) — fine for a keyboard, terrible for a disk transferring megabytes.</p>\n<p><b>DMA (Direct Memory Access)</b>: the device controller copies a whole <b>block</b> of data directly into memory <b>without the CPU</b>, and interrupts <b>once per block</b>.</p>\n<table class=\"t\">\n  <tr><th></th><th>Interrupt-driven I/O</th><th>DMA</th></tr>\n  <tr><td>Interrupts</td><td>One per word</td><td><b>One per block</b></td></tr>\n  <tr><td>Best for</td><td>Slow devices (keyboard, mouse)</td><td>Fast, bulk devices (disk, network)</td></tr>\n</table>",
+        "html": "<p>An interrupt is useful, but handling one for every word of a large transfer keeps the CPU busy with small interruptions.</p><p><b>DMA</b>, Direct Memory Access, changes who does the copying. The device controller transfers a block directly to memory without the CPU copying each word. It interrupts the CPU when the block is done.</p><p>Follow the two rows in the picture: many interruptions in the lecture’s word-at-a-time model, versus one completion interrupt for a DMA block. The saving is CPU involvement during the transfer.</p>",
         "check": {
           "q": "A disk sends a 4 KB block using DMA. How many interrupts does the CPU receive?",
           "o": [
@@ -229,7 +230,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "The storage hierarchy and caching",
+        "t": "Keep useful data close to the CPU",
         "key": "Storage is a trade-off: the <b>faster</b> it is, the <b>smaller and more expensive</b> it is. A <b>cache</b> keeps a copy of the data you need now in faster storage.",
         "fig": {
           "type": "stack",
@@ -270,7 +271,7 @@ window.GUIDE = {
           ],
           "cap": "Registers, cache and RAM lose their contents when the power goes off (<b>volatile</b>). SSD and below keep them."
         },
-        "html": "\n<p>Storage is a trade-off: <b>fast = small and expensive</b>, <b>large = slow and cheap</b>.</p>\n<p style=\"text-align:center\"><b>registers → cache → main memory (RAM) → SSD → hard disk → optical / tape</b><br><span class=\"muted small\">faster, smaller, volatile ⟵ ⟶ slower, larger, non-volatile</span></p>\n<ul>\n  <li><b>Volatile</b> = loses its content without power (registers, cache, RAM).</li>\n  <li><b>Caching</b>: copy data temporarily into a faster layer. When the CPU needs A, it checks registers, then cache, then RAM, then disk; A <b>migrates upward</b> on demand.</li>\n  <li>Problem: several copies of A can exist; after a change, the others are outdated (<b>cache coherence</b>, important on multicore).</li>\n</ul>\n<div class=\"callout warn\">Cache is on the CPU die, much faster and smaller than RAM; the OS does not manage it directly.</div>",
+        "html": "<p>Why not store everything in the fastest memory? Fast storage is small and expensive. Large storage is slower and cheaper.</p><p>A <b>cache</b> keeps a copy in a faster layer. The storage lab follows one item, A, moving towards the CPU. If A changes, other copies can become outdated: that is the <b>cache coherence</b> problem.</p><p>Read the hierarchy from top to bottom. Registers, cache and RAM are <b>volatile</b>: they lose their contents without power. SSDs and disks keep data without power. Speed and persistence are different properties.</p><div class=\"callout warn\">Cache is on the CPU die, much faster and smaller than RAM; the OS does not manage it directly.</div>",
         "lab": {
           "href": "ch1/storage.html",
           "todo": [
@@ -291,8 +292,8 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A mode bit protects operations; a timer returns control",
-        "key": "A <b>mode bit</b> separates <b>user mode</b> (limited) from <b>kernel mode</b> (everything allowed). The only way into kernel mode is through a trap, interrupt or system call.",
+        "t": "Give programs limited power, then take control back",
+        "key": "The <b>mode bit</b> restricts privileged operations; the <b>timer</b> returns control to the OS.",
         "fig": {
           "type": "graph",
           "w": 640,
@@ -327,7 +328,7 @@ window.GUIDE = {
           ],
           "cap": "Privileged instructions (I/O, timer, interrupt control) only work in kernel mode. The <b>timer</b> makes sure the OS gets control back even if a program loops forever."
         },
-        "html": "<p><b>User mode</b> has bit 1 and restricted privileges. <b>Kernel mode</b> has bit 0 and can execute privileged instructions such as controlling I/O, interrupts and the timer.</p><p>A system call, trap or interrupt enters the kernel through a controlled route. Returning restores user mode.</p><p>The OS sets a hardware <b>timer</b> before handing over the CPU. The timer interrupts even if the program loops without making system calls.</p><div class=\"callout warn\">Software rules alone cannot enforce protection; the mode bit and timer supply hardware support.</div>",
+        "html": "<p>If a program could disable interrupts or change any memory, sharing would be unsafe. Hardware therefore distinguishes <b>user mode</b> from <b>kernel mode</b>.</p><p>In the lecture’s convention, bit 1 means user mode; bit 0 means kernel mode. Only kernel mode permits privileged operations. A system call, trap or interrupt enters the kernel through a controlled route.</p><p>But what if a user program loops forever? Before running it, the OS sets a <b>timer</b>. The timer interrupts and gives control back. The mode bit limits what a program can do; the timer limits how long it can keep control.</p><div class=\"callout warn\">Software rules alone cannot enforce protection; the mode bit and timer supply hardware support.</div>",
         "lab": {
           "href": "ch1/dualmode.html",
           "todo": [
@@ -349,7 +350,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "What the OS manages",
+        "t": "The same sharing problem appears everywhere",
         "key": "The OS is a manager of <b>five things</b>: processes, memory, storage (files), I/O devices, and protection and security.",
         "fig": {
           "type": "compare",
@@ -403,7 +404,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "\n<table class=\"t\">\n  <tr><th>Area</th><th>OS responsibilities</th></tr>\n  <tr><td><b>Process management</b></td><td>Create/delete processes, suspend/resume, synchronisation, communication, deadlock handling</td></tr>\n  <tr><td><b>Memory management</b></td><td>Track who uses which part of memory, decide what to move in/out, allocate and free space</td></tr>\n  <tr><td><b>File-system management</b></td><td>Create/delete files and directories, map files to storage, backup</td></tr>\n  <tr><td><b>Mass-storage management</b></td><td>Free-space management, storage allocation, disk scheduling</td></tr>\n  <tr><td><b>I/O subsystem</b></td><td>Buffering, caching, spooling, device drivers</td></tr>\n  <tr><td><b>Protection &amp; security</b></td><td>Control access to resources; defend against attacks</td></tr>\n</table>\n<p><b>A program is passive</b> (a file on disk); <b>a process is active</b> (a program in execution, chapter 3).</p>\n<h3>Virtualisation</h3>\n<p>Software (a <b>hypervisor / VMM</b>) lets one physical computer run several operating systems as <b>virtual machines</b>, each believing it has its own hardware.</p><p>On the course map, these management jobs lead to services in Chapter 2 and processes in Chapter 3.</p><div class=\"callout warn\">Multitasking is time-sliced; on a single-core CPU only one task runs at any instant.</div>",
+        "html": "<p>The CPU is only one resource. The OS also tracks memory, organizes files and storage, coordinates I/O and controls access.</p><p>Connect each job to a question: which process runs? Which memory is free? Where is a file stored? Which driver handles a device? Who has permission?</p><p>A <b>program</b> is a passive file; a <b>process</b> is a running instance. We will follow processes in Chapter 3. Virtualization extends resource sharing further: a <b>hypervisor</b> lets several virtual machines run their own operating systems.</p><p>Next comes the missing link: how does an application ask the OS to do these jobs?</p><div class=\"callout warn\">Multitasking is time-sliced; on a single-core CPU only one task runs at any instant.</div>",
         "check": {
           "q": "Which OS responsibility connects this chapter to Chapter 3?",
           "o": [
@@ -414,14 +415,15 @@ window.GUIDE = {
           "why": "Chapter 3 follows the processes the OS creates, schedules and manages."
         }
       }
-    ]
+    ],
+    "question": "How can several programs use one machine safely?"
   },
   "2": {
-    "goal": "List the OS services, explain what a system call is and follow one step by step (mode bit flips twice), name the three ways to pass parameters and the six types of system calls, separate mechanism from policy, and compare kernel structures.",
+    "goal": "Trace a service request from user code into the kernel and back.",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "A program needs a controlled route to OS services",
+        "t": "A protected machine still needs to be useful",
         "key": "Chapter 1 established <b>protection</b>; Chapter 2 explains how programs request <b>services</b>.",
         "fig": {
           "type": "flow",
@@ -465,19 +467,19 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>The mode bit keeps an application from performing privileged operations directly. It still needs to read files, use devices and communicate. This chapter answers how it asks for those services, and how the kernel can be organized to provide them. Next, Chapter 3 follows the process making those requests.</p>",
+        "html": "<p>Chapter 1 restricted what applications can do directly. A program still needs files and devices, so protection needs a controlled way to request help.</p><p>Use <code>read()</code> as your thread through this chapter: the program asks for data, the kernel handles the request, then execution returns to the program.</p><p>First identify the services. Then follow the request across the user/kernel boundary. Finally look at the different ways to organize the kernel behind that boundary.</p>",
         "check": {
-          "q": "Why does protection lead to a need for system calls?",
+          "q": "A user-mode program needs to read a file. What should it do?",
           "o": [
-            "Programs need controlled access to services",
-            "Every program should disable protection",
-            "The shell must become hardware"
+            "Request a kernel service through a system call",
+            "Execute any privileged instruction directly",
+            "Disable the mode bit"
           ],
-          "why": "A system call gives a restricted program a controlled kernel entry."
+          "why": "A controlled kernel entry makes protected services available to applications."
         }
       },
       {
-        "t": "OS services",
+        "t": "A service is something the OS does for you",
         "key": "The OS offers <b>services</b>: five help the <b>user</b> (UI, program execution, I/O, files, communication), the others keep the <b>system</b> working (error detection, resource allocation, accounting, protection).",
         "fig": {
           "type": "compare",
@@ -508,7 +510,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "\n<p>The OS offers services. Slide 6 lists ten categories: the first five benefit the <b>user</b>, the rest benefit the <b>system</b>.</p>\n<ul>\n  <li><b>User</b>: user interface (CLI, GUI, touch screen), program execution, I/O operations, file-system manipulation, communications (shared memory or message passing).</li>\n  <li><b>System</b>: error detection, resource allocation, logging/accounting, protection &amp; security.</li>\n</ul>\n<div class=\"callout warn\"><b>The sources disagree on error detection.</b> Slide 6 marks it as a system service; the midterm guide (exercise 2.2) and the study guide list it with the user services. If an exam question asks, name the grouping you use.</div><div class=\"callout\">The UI is just one of the services: the shell is a user program, not the kernel, and you can replace it.</div>",
+        "html": "<p>Running a program, reading a file and communicating with another process are <b>OS services</b>. A user interface is also a service: it gives you a way to request work.</p><p>The lecture groups interface, execution, I/O, file handling and communication as user services. Resource allocation, accounting, protection and security keep the system operating safely.</p><p>Do not confuse the interface with the whole OS. The shell is a replaceable user program; the kernel provides the protected operations it uses.</p><div class=\"callout warn\"><b>The sources disagree on error detection.</b> Slide 6 marks it as a system service; the midterm guide (exercise 2.2) and the study guide list it with the user services. If an exam question asks, name the grouping you use.</div>",
         "check": {
           "q": "Is a command shell the kernel?",
           "o": [
@@ -520,7 +522,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "System calls: the door into the kernel",
+        "t": "Follow read() across the boundary",
         "key": "A <b>system call</b> is how a program asks the kernel to do something it may not do itself. Programs usually call it through an <b>API</b> (like <code>printf</code> → <code>write</code>).",
         "fig": {
           "type": "anim",
@@ -528,7 +530,7 @@ window.GUIDE = {
           "t": "The journey of one system call",
           "cap": "Parameters travel in <b>registers</b>, in a <b>block in memory</b> (address in a register), or on the <b>stack</b>."
         },
-        "html": "\n<p>A <b>system call</b> is a <b>controlled entry point</b> into the kernel. Programs usually don't call it directly; they use an <b>API</b> (e.g. POSIX <code>read()</code> in the C library), which calls the real system call.</p>\n<h3>Journey of <code>read()</code></h3>\n<ol>\n  <li>Your program calls <code>read(fd, buf, n)</code> — user mode.</li>\n  <li>The C library (libc) puts the <b>system-call number</b> and parameters in registers and executes the <code>syscall</code> / trap instruction.</li>\n  <li>The CPU switches to <b>kernel mode</b> (mode bit 1 → 0) — <b>first flip</b>.</li>\n  <li>The <b>system-call interface</b> uses the number to find the function in the <b>system-call table</b>.</li>\n  <li>The kernel does the work and puts the return value in a register.</li>\n  <li>Return to <b>user mode</b> (0 → 1) — <b>second flip</b>.</li>\n</ol>\n<h3>Three ways to pass parameters</h3>\n<ol>\n  <li>In <b>registers</b> (fastest; Linux x86-64).</li>\n  <li>In a <b>block in memory</b>, with the block's address in a register.</li>\n  <li>Pushed onto the <b>stack</b>.</li>\n</ol>",
+        "html": "<p>Your program begins in user mode. It calls <code>read(fd, buf, n)</code> through a library API.</p><ol><li>The library supplies a system-call number and arguments.</li><li>A trap instruction enters <b>kernel mode</b>: bit 1 → 0.</li><li>The system-call interface uses the number to select the handler.</li><li>The kernel does the work and returns a result.</li><li>Execution returns to <b>user mode</b>: bit 0 → 1.</li></ol><p>The API is the programmer-facing interface; the <b>system call</b> is the controlled kernel entry. Arguments can travel in registers, in a memory block whose address is passed, or on the stack.</p>",
         "lab": {
           "href": "ch2/syscall.html",
           "todo": [
@@ -548,7 +550,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Six types of system calls",
+        "t": "Classify a call by the job it requests",
         "key": "Every system call falls into one of <b>six families</b>. Learn one example of each.",
         "fig": {
           "type": "boxes",
@@ -631,7 +633,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "\n<table class=\"t\">\n  <tr><th>Type</th><th>Examples (Unix)</th><th>Windows</th></tr>\n  <tr><td><b>Process control</b></td><td>fork(), exec(), exit(), wait()</td><td>CreateProcess()</td></tr>\n  <tr><td><b>File management</b></td><td>open(), read(), write(), close()</td><td>CreateFile(), ReadFile()</td></tr>\n  <tr><td><b>Device management</b></td><td>ioctl(), read(), write()</td><td>SetConsoleMode()</td></tr>\n  <tr><td><b>Information maintenance</b></td><td>get_time(), set_time(), get_process_stats()</td><td>GetCurrentProcessID()</td></tr>\n  <tr><td><b>Communications</b></td><td>pipe(), shm_open(), mmap()</td><td>CreatePipe()</td></tr>\n  <tr><td><b>Protection</b></td><td>chmod(), umask(), chown()</td><td>SetFileSecurity()</td></tr>\n</table>\n<p>A file-copy program uses several families: open and read the input, create and write the output, close files, then exit.</p><div class=\"callout warn\">System programs (ls, ps, gcc) are user programs that USE system calls.</div>",
+        "html": "<p>A file-copy program opens an input file, reads it, writes an output file and closes both. Those are <b>file-management</b> requests. Ending the program is <b>process control</b>.</p><p>The six families are:</p><ul><li><b>Process control</b>: fork, exec, exit, wait.</li><li><b>File management</b>: open, read, write, close.</li><li><b>Device management</b>: control a device.</li><li><b>Information maintenance</b>: get time or process information.</li><li><b>Communication</b>: pipes and shared memory.</li><li><b>Protection</b>: change access permissions.</li></ul><p>Ask “what job is requested?” before trying to remember a function name.</p><div class=\"callout warn\">System programs (ls, ps, gcc) are user programs that USE system calls.</div>",
         "check": {
           "q": "get_process_stats() belongs to which type?",
           "o": [
@@ -644,7 +646,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Design: mechanism vs policy",
+        "t": "Separate the tool from the decision",
         "key": "<b>Mechanism</b> = <i>how</i> to do something. <b>Policy</b> = <i>what</i> will be done. Keeping them separate means you can change the policy without rewriting the mechanism.",
         "fig": {
           "type": "compare",
@@ -671,7 +673,7 @@ window.GUIDE = {
           ],
           "cap": "Example from the slides: the timer is a mechanism; deciding how long the timer is set for a user is a policy."
         },
-        "html": "\n<ul>\n  <li><b>Mechanism</b> = <b>how</b> to do something. (The timer is a mechanism to guarantee CPU protection.)</li>\n  <li><b>Policy</b> = <b>what</b> will be done / decided. (How long the timer is set for each user.)</li>\n</ul>\n<p>Separating them gives <b>flexibility</b>: you can change the policy later without rewriting the mechanism.</p>\n",
+        "html": "<p>A timer can interrupt a running program. That ability is a <b>mechanism</b>: how the OS can take control back.</p><p>Choosing how long a program may run is a <b>policy</b>: what the OS decides to do with that ability.</p><p>Keeping them separate makes change easier. You can choose a different time allowance without rebuilding the timer mechanism. When an exam gives an example, ask whether it describes a capability or a choice.</p>",
         "check": {
           "q": "\"Which process should run next?\" is a…",
           "o": [
@@ -684,7 +686,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Kernel structures",
+        "t": "Where should the services live?",
         "key": "Kernels are built in different ways. It is a trade-off between <b>speed</b> (everything in one big kernel) and <b>safety and flexibility</b> (small pieces that can fail or change alone).",
         "fig": {
           "type": "compare",
@@ -730,7 +732,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "\n<table class=\"t\">\n  <tr><th>Structure</th><th>Idea</th><th>Example</th><th>+ / −</th></tr>\n  <tr><td><b>Simple</b></td><td>No clean separation; apps can reach hardware</td><td>MS-DOS</td><td>Fast, but one bug crashes everything</td></tr>\n  <tr><td><b>Monolithic</b></td><td>Everything in one big kernel</td><td>Original UNIX</td><td>Fast, hard to maintain</td></tr>\n  <tr><td><b>Layered</b></td><td>Layer 0 = hardware … layer N = UI; each uses only the one below</td><td>THE (1968)</td><td>Easy to debug, slow (crossing layers)</td></tr>\n  <tr><td><b>Microkernel</b></td><td>Minimal kernel; drivers, file system in <b>user space</b>; communicate by <b>message passing</b></td><td>Mach, seL4</td><td>Reliable and secure, slower (IPC overhead)</td></tr>\n  <tr><td><b>Modular</b></td><td>Core kernel + loadable modules</td><td>Linux, Solaris</td><td>Flexible and fast</td></tr>\n  <tr><td><b>Hybrid</b></td><td>A mix</td><td>macOS, Windows, Android</td><td>Practical compromise</td></tr>\n</table><p>These structures provide the services that a running process will request in Chapter 3.</p><div class=\"callout warn\">Moving services into user processes improves isolation, but message passing adds overhead.</div>",
+        "html": "<p>All these designs provide services, but arrange the implementation differently.</p><ul><li><b>Simple</b>: little separation, as in MS-DOS.</li><li><b>Monolithic</b>: many services inside one kernel, as in original UNIX.</li><li><b>Layered</b>: organize responsibilities in layers.</li><li><b>Microkernel</b>: keep a small kernel; move services into user processes that exchange messages.</li><li><b>Modular</b>: a core with loadable modules, as in Linux.</li><li><b>Hybrid</b>: combine approaches.</li></ul><p>The central trade-off is service isolation versus the overhead of communication. We have now followed a request. Chapter 3 follows the running process that makes it.</p><div class=\"callout warn\">Moving services into user processes improves isolation, but message passing adds overhead.</div>",
         "lab": {
           "href": "ch2/structures.html",
           "todo": [
@@ -749,14 +751,15 @@ window.GUIDE = {
           "why": "Microkernel: minimal kernel, services in user space, IPC by messages."
         }
       }
-    ]
+    ],
+    "question": "How does a program ask the kernel to do something?"
   },
   "3": {
-    "goal": "Explain what a process is (memory layout), its five states and six transitions, the PCB and context switch, how fork/exec/wait/exit work (including zombies and orphans), and the two IPC models with the bounded buffer.",
+    "goal": "Follow a process through its states, saved context, child creation and communication.",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "OS services now have a running caller",
+        "t": "Follow the caller after the system call",
         "key": "A <b>process</b> is the active program whose resources and execution the OS manages.",
         "fig": {
           "type": "flow",
@@ -800,19 +803,19 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Chapter 2 showed how a program enters the kernel. Now follow that caller over time: it becomes ready, runs, waits for I/O and eventually finishes. Its PCB preserves the information needed to resume it. Processes can create children and exchange data. Chapter 4 then divides execution inside one process into threads.</p>",
+        "html": "<p>A program has asked the kernel to read data. While it waits for I/O, should the CPU sit idle? No: another process can run.</p><p>That means the OS must remember where the waiting process stopped, know when it is ready again, and eventually resume it.</p><p>Chapter 2 explained requests. This chapter explains the lifetime of the <b>process</b> making them: its memory, states, saved context, children and communication.</p>",
         "check": {
-          "q": "What changes when a passive program starts executing?",
+          "q": "A process requests I/O that has not finished. Why can another process run?",
           "o": [
-            "It becomes a process with execution state",
-            "It becomes the operating system",
-            "Its file disappears from storage"
+            "The waiting process cannot continue yet, so the CPU can serve another ready process",
+            "The waiting process has terminated",
+            "I/O completion automatically runs the waiting process"
           ],
-          "why": "A process is an active program, with state such as its PC and registers."
+          "why": "Waiting is different from ready. The OS saves context and uses the CPU for other ready work."
         }
       },
       {
-        "t": "What a process is",
+        "t": "A process is more than its program file",
         "key": "A <b>program</b> is a passive file on disk. A <b>process</b> is that program <b>running</b>, with its own memory and state.",
         "fig": {
           "type": "stack",
@@ -848,7 +851,7 @@ window.GUIDE = {
           ],
           "cap": "One program (e.g. a browser) can run as several processes at the same time."
         },
-        "html": "\n<p>A <b>program</b> is a passive file on disk. A <b>process</b> is a <b>program in execution</b> — active, with its own state.</p>\n<h3>Memory layout of a process</h3>\n<table class=\"t\">\n  <tr><th>Section</th><th>Contains</th></tr>\n  <tr><td><b>Text</b></td><td>The program code</td></tr>\n  <tr><td><b>Data</b></td><td>Global variables</td></tr>\n  <tr><td><b>Heap</b></td><td>Memory allocated at run time (malloc) — grows up</td></tr>\n  <tr><td><b>Stack</b></td><td>Function parameters, return addresses, local variables — grows down</td></tr>\n</table>\n<p>Plus the <b>program counter</b> and <b>registers</b>. One program can be several processes (two browser windows).</p><div class=\"callout warn\">A program is a passive file; a process is active, in memory, with state. One program can be many processes.</div>",
+        "html": "<p>A program on disk is passive. A <b>process</b> is that program in execution, with a current instruction, registers and memory.</p><p>Read its memory layout: <b>text</b> holds code; <b>data</b> holds globals; the <b>heap</b> holds dynamically allocated memory; the <b>stack</b> holds function-call information and local variables.</p><p>The file tells us what instructions exist. The process state tells us what is happening now. That difference explains why the OS needs a separate record for each running instance.</p><div class=\"callout warn\">A program is a passive file; a process is active, in memory, with state. One program can be many processes.</div>",
         "check": {
           "q": "A local variable inside a function is stored in the…",
           "o": [
@@ -861,7 +864,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Five states, six transitions",
+        "t": "Ready means waiting for the CPU; waiting means waiting for an event",
         "key": "Every process is in one of <b>five states</b>. Learn the <b>arrows</b> between them: exams ask which transitions are possible.",
         "fig": {
           "type": "anim",
@@ -869,7 +872,7 @@ window.GUIDE = {
           "t": "One process through its life",
           "cap": "There is <b>no</b> arrow waiting → running: a waiting process must go back to the ready queue first."
         },
-        "html": "\n<table class=\"t\">\n  <tr><th>State</th><th>Meaning</th></tr>\n  <tr><td><b>New</b></td><td>Being created</td></tr>\n  <tr><td><b>Ready</b></td><td>Waiting for a CPU</td></tr>\n  <tr><td><b>Running</b></td><td>Executing on a CPU</td></tr>\n  <tr><td><b>Waiting</b></td><td>Waiting for an event (I/O to finish)</td></tr>\n  <tr><td><b>Terminated</b></td><td>Finished</td></tr>\n</table>\n<table class=\"t\">\n  <tr><th>Transition</th><th>Cause</th></tr>\n  <tr><td>New → Ready</td><td><b>admitted</b></td></tr>\n  <tr><td>Ready → Running</td><td><b>scheduler dispatch</b></td></tr>\n  <tr><td>Running → Ready</td><td><b>interrupt</b> (e.g. the time slice ran out)</td></tr>\n  <tr><td>Running → Waiting</td><td><b>I/O or event wait</b></td></tr>\n  <tr><td>Waiting → Ready</td><td><b>I/O or event completion</b></td></tr>\n  <tr><td>Running → Terminated</td><td><b>exit</b></td></tr>\n</table>\n<div class=\"callout warn\"><b>Exam trap:</b> Waiting → Running directly is <b>impossible</b>. When I/O completes, the process goes to <b>Ready</b> and waits for the scheduler.</div><div class=\"callout warn\">It goes Waiting → Ready. Only the scheduler moves Ready → Running.</div>",
+        "html": "<p>A process begins <b>new</b>, is admitted to <b>ready</b>, and becomes <b>running</b> when dispatched.</p><p>From running it can finish (<b>terminated</b>), lose the CPU (back to ready), or request I/O (<b>waiting</b>). I/O completion moves it from waiting to ready. It still needs the scheduler to give it the CPU.</p><p>Trace those six arrows in the figure. The key distinction: a ready process could run now; a waiting process cannot continue until its event happens.</p><div class=\"callout warn\"><b>Exam trap:</b> Waiting → Running directly is <b>impossible</b>. When I/O completes, the process goes to <b>Ready</b> and waits for the scheduler.</div><div class=\"callout warn\">It goes Waiting → Ready. Only the scheduler moves Ready → Running.</div>",
         "lab": {
           "href": "ch3/states.html",
           "todo": [
@@ -889,7 +892,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "PCB, scheduling queues and context switch",
+        "t": "A context switch saves one process and restores another",
         "key": "The OS keeps a <b>PCB</b> (process control block) for every process. A <b>context switch</b> saves the old process's state into its PCB and loads the new one's.",
         "fig": {
           "type": "anim",
@@ -897,7 +900,7 @@ window.GUIDE = {
           "t": "Context switch from P0 to P1 and back",
           "cap": "While the OS is switching, <b>no</b> process does useful work, so a context switch is pure overhead."
         },
-        "html": "\n<p>The OS keeps everything about a process in its <b>PCB (Process Control Block)</b> — Linux: <code>task_struct</code>:</p>\n<ul>\n  <li>process state, process ID, <b>program counter</b>, <b>CPU registers</b>,</li>\n  <li>scheduling info (priority), memory-management info, accounting info, I/O status (open files).</li>\n</ul>\n<p>PCBs sit in <b>queues</b>: the <b>ready queue</b> and <b>wait queues</b> (one per device/event).</p>\n<h3>Context switch</h3>\n<p>When the CPU switches from P0 to P1, the OS <b>saves P0's state into PCB0</b> and <b>loads P1's state from PCB1</b>.</p>\n<div class=\"callout warn\"><b></b> A context switch is <b>pure overhead</b> — no useful work is done during it.</div>",
+        "html": "<p>To resume a process, the OS needs its program counter, registers and other management information. It stores these in a <b>Process Control Block (PCB)</b>, alongside its ID, state, scheduling and memory information.</p><p>During a <b>context switch</b>, the OS saves the outgoing process’s context and restores the incoming one. The CPU then continues that process where it stopped.</p><p>Ready and waiting queues help track who can run and who needs an event. Switching is overhead: the CPU spends time managing execution rather than doing either program’s work.</p><div class=\"callout warn\"><b></b> A context switch is <b>pure overhead</b> — no useful work is done during it.</div>",
         "check": {
           "q": "During a context switch from P0 to P1 the OS…",
           "o": [
@@ -910,15 +913,15 @@ window.GUIDE = {
         }
       },
       {
-        "t": "fork creates a child; exec replaces its program",
-        "key": "<code>fork()</code> makes a <b>copy</b> of the process. It returns <b>0 in the child</b> and the <b>child's PID in the parent</b>. <code>exec()</code> then replaces the copy with a new program.",
+        "t": "fork creates; exec replaces; wait collects",
+        "key": "<code>fork()</code> creates a child; <code>exec()</code> replaces the calling process’s program; <code>wait()</code> collects a child’s exit status.",
         "fig": {
           "type": "anim",
           "name": "fork",
           "t": "fork → exec → wait → exit",
           "cap": "<b>Zombie</b> = finished child whose parent has not called wait() yet. <b>Orphan</b> = child whose parent ended without waiting."
         },
-        "html": "<p><b>fork()</b> creates a child that continues at the same point: return 0 in the child, the child PID in the parent, or −1 on failure. <b>exec()</b> replaces the process program. <b>wait()</b> collects a child’s exit status; <b>exit()</b> ends execution.</p><p>If every process executes each of n successive successful fork calls, the total is <b>2ⁿ</b>: three calls produce eight processes including the original.</p><p>A <b>zombie</b> has exited but has not been reaped. An <b>orphan</b> has lost its parent.</p><div class=\"callout warn\">fork returns different values in parent and child. exec replaces a program rather than creating another process.</div><div class=\"callout warn\">Parent gets the child's PID (>0), child gets 0, failure gives <0.</div>",
+        "html": "<p>These calls do different jobs. Follow them in order:</p><ol><li><code>fork()</code> creates a child. Both continue after the call: the child sees return value 0; the parent sees the child PID. Failure returns −1.</li><li><code>exec()</code> replaces the calling process’s program. It does not create another process.</li><li><code>exit()</code> ends execution.</li><li><code>wait()</code> lets the parent collect a child’s exit status.</li></ol><p>A terminated child whose status has not been collected is a <b>zombie</b>. A child whose parent ends first is an <b>orphan</b>.</p><p>If every process executes n successive successful fork calls, each call doubles the process count: 2ⁿ total, including the original. Three such calls give 8.</p>",
         "lab": {
           "href": "ch3/fork.html",
           "todo": [
@@ -938,7 +941,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Interprocess communication (IPC)",
+        "t": "Processes can share a region or exchange messages",
         "key": "Processes can talk in two ways: write into a <b>shared memory</b> area, or <b>send messages</b> through the kernel.",
         "fig": {
           "type": "compare",
@@ -966,7 +969,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p><b>Shared memory</b> lets processes directly read and write a common region after setup. They must synchronize access. <b>Message passing</b> exchanges data using send/receive through the kernel.</p><p>In the circular bounded buffer, <b>in</b> is the next free slot and <b>out</b> the next occupied slot. Empty means in == out; full means (in + 1) % SIZE == out.</p><div class=\"callout warn\">Capacity is SIZE − 1; reserving a slot distinguishes full from empty. Shared updates such as counter++ can interleave and lose an update.</div><p>Blocking send/receive waits; two blocking partners form a rendezvous. Pipes provide read and write ends: fd[0] reads and fd[1] writes.</p><p>Chapter 4 moves execution paths inside one process while keeping the shared-data problem.</p>",
+        "html": "<p>With <b>shared memory</b>, processes access a common region after setup. With <b>message passing</b>, they exchange data through send and receive operations.</p><p>In the bounded-buffer example, a producer inserts at <code>in</code>; a consumer removes at <code>out</code>. Advancing uses modulo arithmetic so an index wraps around. <code>in == out</code> means empty; <code>(in + 1) % N == out</code> means full. Leaving one slot unused distinguishes the two, so capacity is N − 1.</p><p>Sharing data creates a new problem: coordinating access. Chapter 4 introduces threads sharing within one process; Chapter 6 makes updates safe.</p><div class=\"callout warn\">Capacity is SIZE − 1; reserving a slot distinguishes full from empty. Shared updates such as counter++ can interleave and lose an update.</div><p>A blocking send or receive waits; two blocking partners form a <b>rendezvous</b>. A pipe has a read end, fd[0], and a write end, fd[1].</p>",
         "lab": {
           "href": "ch3/ipc.html",
           "todo": [
@@ -986,14 +989,15 @@ window.GUIDE = {
           "why": "Full when (in+1) % SIZE == out, so one slot stays empty: SIZE − 1."
         }
       }
-    ]
+    ],
+    "question": "What does the OS need to remember about a running program?"
   },
   "4": {
-    "goal": "Explain threads vs processes and their benefits, concurrency vs parallelism, compute Amdahl's Law, compare the multithreading models, write the basic Pthreads calls, and explain race conditions and threading issues.",
+    "goal": "Explain thread sharing, limits on parallel speedup and lost updates.",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "One process can contain several paths of execution",
+        "t": "One process can do several jobs",
         "key": "Chapter 3 managed <b>processes</b>; Chapter 4 studies <b>threads</b> sharing one process.",
         "fig": {
           "type": "flow",
@@ -1037,19 +1041,19 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>A process supplies code, data and open files. Threads let different paths of execution use those resources. This chapter asks what they share, when work can run in parallel, and why extra cores cannot remove serial work. Shared data also creates timing problems: the final step follows a lost update.</p>",
+        "html": "<p>A process owns resources such as code, data and open files. A <b>thread</b> is a path of execution using those resources.</p><p>Instead of creating a whole new process for every activity, a process can have several threads. That can improve responsiveness and make use of several cores.</p><p>But two questions follow: which things do threads share, and how can their work overlap safely? Keep those questions in mind through the examples.</p>",
         "check": {
-          "q": "Why study threads after processes?",
+          "q": "Why can two threads of one process affect the same global variable?",
           "o": [
-            "Threads execute inside a process and share its resources",
-            "A thread replaces all OS services",
-            "Threads are stored only on disk"
+            "They share the process data",
+            "They always have the same stack",
+            "Each has an isolated copy of all process resources"
           ],
-          "why": "The process owns shared resources; each thread has its own execution state."
+          "why": "Threads share data and heap, while keeping separate stacks, registers and program counters."
         }
       },
       {
-        "t": "Threads vs processes",
+        "t": "Share the resources; keep separate execution state",
         "key": "A <b>thread</b> is a path of execution <b>inside</b> a process. The threads of one process <b>share</b> code, data and files, but each has its <b>own</b> registers and stack.",
         "fig": {
           "type": "boxes",
@@ -1098,7 +1102,7 @@ window.GUIDE = {
           ],
           "cap": "Threads are cheaper than processes: creating one and switching between them is much faster."
         },
-        "html": "\n<p>A <b>thread</b> is a basic unit of CPU use inside a process. A process can have several threads that run its code at the same time.</p>\n<table class=\"t\">\n  <tr><th>Shared by all threads of a process</th><th>Private to each thread</th></tr>\n  <tr><td>Code (text), data (globals), <b>heap</b>, open files</td><td>Thread ID, <b>program counter</b>, <b>registers</b>, <b>stack</b></td></tr>\n</table>\n<p>Example: a word processor — one thread shows the text, one reads keystrokes, one checks spelling.</p>\n<h3>Four benefits</h3>\n<ol>\n  <li><b>Responsiveness</b> — the UI keeps working while another thread does slow work.</li>\n  <li><b>Resource sharing</b> — threads share memory automatically.</li>\n  <li><b>Economy</b> — creating a thread and switching between threads is much cheaper than for processes.</li>\n  <li><b>Scalability</b> — threads can run in parallel on multicore CPUs.</li>\n</ol><div class=\"callout warn\">Processes have separate memory; threads share memory within a process.</div>",
+        "html": "<p>Threads in one process share its code, global data, heap and open files. Each thread has its own program counter, registers and stack.</p><p>Why a separate stack? Each thread can be inside a different function call. Why shared globals? They belong to the process’s common data.</p><p>Sharing makes communication convenient and creating threads cheaper than creating separate processes. It also means a change to a shared variable can affect another thread.</p><div class=\"callout warn\">Processes have separate memory; threads share memory within a process.</div>",
         "check": {
           "q": "Which is private to each thread?",
           "o": [
@@ -1111,7 +1115,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Concurrency makes progress; parallelism runs simultaneously",
+        "t": "Taking turns differs from running at the same instant",
         "key": "<b>Concurrency</b> allows progress on several tasks; <b>parallelism</b> executes work simultaneously.",
         "fig": {
           "type": "boxes",
@@ -1230,7 +1234,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>On one core, tasks can take turns: each progresses, but only one executes at an instant. Multiple cores allow simultaneous execution.</p><p><b>Data parallelism</b> applies the same operation to different data subsets, such as splitting an array sum. <b>Task parallelism</b> performs different operations, such as rendering and decoding.</p><div class=\"callout warn\">Taking turns on one core is concurrency; it does not demonstrate parallel execution.</div><div class=\"callout warn\">Single core = concurrency (time slicing), not parallelism.</div>",
+        "html": "<p>On one core, threads can take turns. Both make progress over time: <b>concurrency</b>. On several cores, threads can execute at the same instant: <b>parallelism</b>.</p><p>There are also two ways to split the work. <b>Data parallelism</b> applies the same operation to separate data subsets. <b>Task parallelism</b> assigns different operations to different threads.</p><p>Ask two separate questions: are the tasks progressing together or executing simultaneously? Are we dividing the data or dividing the jobs?</p><div class=\"callout warn\">Taking turns on one core is concurrency; it does not demonstrate parallel execution.</div><div class=\"callout warn\">Single core = concurrency (time slicing), not parallelism.</div>",
         "check": {
           "q": "Four cores each sum a different quarter of an array. Which kind of parallelism is this?",
           "o": [
@@ -1242,7 +1246,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "The serial fraction limits speedup",
+        "t": "The serial part puts a ceiling on speedup",
         "key": "<b>Amdahl’s Law</b>: speedup = 1 / (S + (1 − S)/N) in the ideal model.",
         "fig": {
           "type": "anim",
@@ -1250,7 +1254,7 @@ window.GUIDE = {
           "t": "Amdahl: speedup = 1 / (S + (1 − S)/N)",
           "cap": "Move the slider to change the serial part S and watch the limit 1/S move."
         },
-        "html": "<p>S is the fraction that must run serially; N is the number of cores. The parallel fraction, 1 − S, is divided across the cores.</p><p>With S = 0.25 and N = 2, normalized runtime is 0.25 + 0.75/2 = 0.625. Speedup is 1/0.625 = <b>1.6</b>.</p><p>As N grows, the parallel term approaches zero. The speedup limit is <b>1/S</b>: 4 for this example.</p><div class=\"callout warn\">Use the serial fraction for S, not the parallel fraction. Extra cores cannot remove serial work.</div><div class=\"callout warn\">Amdahl: the serial part limits speedup; too many threads add switching overhead.</div>",
+        "html": "<p>Suppose 25% of a job must run serially. Only the other 75% can be divided among cores.</p><ol><li>Let S = 0.25 be the serial fraction and N = 2 the cores.</li><li>New runtime relative to one core: S + (1 − S)/N = 0.25 + 0.75/2 = 0.625.</li><li><b>Speedup</b> = 1/0.625 = 1.6.</li></ol><p>This is <b>Amdahl’s Law</b>. Even infinitely many cores leave the serial 0.25, so the maximum speedup is 1/S = 4. Extra cores cannot divide the serial work.</p><div class=\"callout warn\">Use the serial fraction for S, not the parallel fraction. Extra cores cannot remove serial work.</div><div class=\"callout warn\">Amdahl: the serial part limits speedup; too many threads add switching overhead.</div>",
         "check": {
           "q": "S = 10%. What is the speedup limit?",
           "o": [
@@ -1269,7 +1273,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "User threads, kernel threads and the three models",
+        "t": "The kernel schedules the threads it can see",
         "key": "<b>User threads</b> are managed by a library; <b>kernel threads</b> by the OS. A model says how many user threads map onto how many kernel threads.",
         "fig": {
           "type": "compare",
@@ -1307,7 +1311,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "\n<p><b>User threads</b> are managed by a library in user space. <b>Kernel threads</b> are what the OS actually schedules on cores. A model maps one to the other:</p>\n<table class=\"t\">\n  <tr><th>Model</th><th>Mapping</th><th>Problem / benefit</th><th>Used by</th></tr>\n  <tr><td><b>Many-to-one</b></td><td>Many user → 1 kernel thread</td><td>One blocking call blocks <b>all</b>; no parallelism</td><td>Solaris Green Threads (old)</td></tr>\n  <tr><td><b>One-to-one</b></td><td>Each user thread → its own kernel thread</td><td>True parallelism; one blocked thread doesn't stop others; more overhead</td><td><b>Linux, Windows</b></td></tr>\n  <tr><td><b>Many-to-many</b></td><td>Many user threads → a sufficient number of kernel threads</td><td>Flexible, but complex to implement</td><td>Rare in practice</td></tr>\n</table>\n<p>Implicit threading (the system makes threads for you): <b>thread pools</b>, fork-join, OpenMP, Grand Central Dispatch.</p>",
+        "html": "<p>A user-level library manages <b>user threads</b>. The OS schedules <b>kernel threads</b>. The mapping between them determines the possibilities:</p><ul><li><b>Many-to-one</b>: many user threads share one kernel thread. They cannot run on several cores simultaneously; a blocking call can block them all.</li><li><b>One-to-one</b>: each user thread maps to a kernel thread. Parallelism is possible, with more kernel overhead.</li><li><b>Many-to-many</b>: many user threads map onto a set of kernel threads.</li></ul><p>Count the kernel threads in the picture before deciding how much parallelism is possible.</p><p>Linux and Windows use the one-to-one model in the course comparison.</p>",
         "lab": {
           "href": "ch4/models.html",
           "todo": [
@@ -1328,7 +1332,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Pthreads in C",
+        "t": "Create a worker, then wait for its result",
         "key": "Pthreads is a <b>specification</b> (an API). You create a thread with <code>pthread_create</code>, and wait for it with <code>pthread_join</code>.",
         "fig": {
           "type": "flow",
@@ -1365,7 +1369,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "\n<pre>#include &lt;pthread.h&gt;\nint sum;                              /* shared by the threads */\nvoid *runner(void *param) {           /* the thread's function */\n    int upper = atoi(param);\n    for (int i = 1; i &lt;= upper; i++) sum += i;\n    pthread_exit(0);\n}\nint main(int argc, char *argv[]) {\n    pthread_t tid;  pthread_attr_t attr;\n    pthread_attr_init(&amp;attr);                     /* default attributes */\n    pthread_create(&amp;tid, &amp;attr, runner, argv[1]); /* start the thread  */\n    pthread_join(tid, NULL);                      /* wait for it       */\n    printf(\"sum = %d\\n\", sum);\n}</pre>\n<p>Compile with <code>gcc prog.c -pthread</code>.</p>\n<ul>\n  <li><b>pthread_create</b> — start a thread running a function.</li>\n  <li><b>pthread_join</b> — wait for it to finish (like wait() for processes).</li>\n  <li><b>pthread_exit</b> — end the thread.</li>\n</ul>",
+        "html": "<p>In the Pthreads example, a worker computes a sum into a shared global variable.</p><ol><li><code>pthread_create()</code> starts the worker running its function.</li><li>The worker calculates the sum and calls <code>pthread_exit()</code>.</li><li>The parent uses <code>pthread_join()</code> to wait before using the result.</li></ol><p>Creating a thread does not mean it has already finished. The join establishes when the parent can safely expect the completed result.</p><pre>pthread_t tid;\npthread_create(&amp;tid, NULL, runner, arg);\npthread_join(tid, NULL);\nprintf(\"%d\", sum);</pre>",
         "check": {
           "q": "Why call pthread_join before printing the worker’s sum?",
           "o": [
@@ -1377,7 +1381,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Interleaving updates can lose a result",
+        "t": "Two increments can produce only one increase",
         "key": "When two threads update the same variable <b>at the same time</b>, the result depends on timing. That is a <b>race condition</b>, and updates can get lost.",
         "fig": {
           "type": "anim",
@@ -1385,7 +1389,7 @@ window.GUIDE = {
           "t": "counter++ is really 3 steps: load, add, store",
           "cap": "The first run is the lesson's order. Press <b>Try another interleaving</b> to let the scheduler pick a different order."
         },
-        "html": "\n<p><code>counter++</code> looks like one step, but it is <b>three</b> machine instructions: <b>load</b> counter into a register, <b>add</b> 1, <b>store</b> it back.</p>\n<p>Two threads, counter = 0:</p>\n<ol>\n  <li>A loads 0</li><li>B loads 0</li><li>A adds → 1, stores 1</li><li>B adds → 1, stores 1</li>\n</ol>\n<p>Result <b>1</b> instead of 2 — an update was <b>lost</b>. That is a <b>race condition</b>: the result depends on the timing. (Fixed with synchronisation — chapter 6.)</p>\n<p>On the map: Chapter 5 explains why a thread can be stopped between those steps (preemptive scheduling), and Chapter 6 gives the tools that prevent the lost update.</p><div class=\"callout warn\">It is 3 instructions (load, add, store). Two threads can lose updates.</div>",
+        "html": "<p>Start with counter = 0. Each thread executes <code>counter++</code>, but that is a load, an addition and a store.</p><ol><li>A loads 0.</li><li>B loads 0 before A stores.</li><li>A adds 1 and stores 1.</li><li>B adds 1 to its old copy and stores 1.</li></ol><p>The final value is 1, although two increments should produce 2. This is a <b>race condition</b>: the result depends on the interleaving.</p><p>Threads explain who shares the data. Chapter 5 explains how execution gets interrupted; Chapter 6 protects the update.</p><div class=\"callout warn\">It is 3 instructions (load, add, store). Two threads can lose updates.</div>",
         "lab": {
           "href": "ch4/race.html",
           "todo": [
@@ -1404,14 +1408,15 @@ window.GUIDE = {
           "why": "It is not atomic: both may load the old value before either stores."
         }
       }
-    ]
+    ],
+    "question": "What changes when one process has several threads?"
   },
   "5": {
-    "goal": "Say when the scheduler decides and what preemption means, use the five criteria, draw Gantt charts and compute waiting and turnaround times for FCFS, SJF, SRTF, RR and Priority, and explain starvation, aging, multilevel queues, thread scope and real-time scheduling.",
+    "goal": "Build a Gantt chart and calculate waiting and turnaround times.",
     "time": "35–45 min",
     "steps": [
       {
-        "t": "The scheduler picks which ready process gets the CPU",
+        "t": "The ready queue needs a rule",
         "key": "Chapters 3 and 4 filled the <b>ready queue</b>; Chapter 5 decides <b>which</b> process or thread runs next and <b>for how long</b>.",
         "fig": {
           "type": "flow",
@@ -1455,19 +1460,19 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Chapter 3 put processes in a ready queue and Chapter 4 added threads. One CPU core runs only one of them at a time, so the OS has to choose. That choice is <b>CPU scheduling</b>; the slides call the CPU the most-shared resource in the system.</p><p>This chapter answers three questions: when does the OS choose, how do we judge a choice, and which rules (algorithms) does it use? The exam work here is drawing a <b>Gantt chart</b> and computing waiting times; the slides call this the most-tested chapter.</p>",
+        "html": "<p>A ready process can run, but a single core can execute only one at a time. The <b>scheduler</b> chooses which ready process gets the CPU.</p><p>Different rules make different trade-offs. Arrival order is simple. Short jobs can reduce waiting. Taking turns helps interactive work respond.</p><p>For every example, use the same method: identify the rule, draw the CPU timeline, read completion times, then calculate the requested measure. We will build that method one piece at a time.</p>",
         "check": {
-          "q": "What does the CPU scheduler choose?",
+          "q": "Two processes are ready on one core. What does the scheduler choose?",
           "o": [
-            "Which ready process or thread runs next on a core",
-            "Which program is installed on the disk",
-            "Which device may raise an interrupt"
+            "Which one gets the CPU next",
+            "Which one has finished its I/O in the future",
+            "Which program source file to compile"
           ],
-          "why": "It selects from the ready queue and allocates a CPU core to that process."
+          "why": "Ready processes can run, but one core executes only one at an instant."
         }
       },
       {
-        "t": "The scheduler decides at four moments; preemption adds two of them",
+        "t": "When can the scheduler change its choice?",
         "key": "A process alternates <b>CPU bursts</b> and <b>I/O bursts</b>. Decisions happen when it <b>blocks</b> (1), is <b>preempted</b> (2), becomes <b>ready</b> after I/O (3) or <b>terminates</b> (4). <b>Nonpreemptive</b> scheduling uses only 1 and 4.",
         "fig": {
           "type": "boxes",
@@ -1553,7 +1558,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A process runs for a while (a <b>CPU burst</b>), waits for I/O (an <b>I/O burst</b>), then runs again. Most CPU bursts are short. An <b>I/O-bound</b> process has many short bursts; a <b>CPU-bound</b> one has a few long bursts.</p><p>In cases 1 and 4 the CPU is free, so a new process must be picked. In cases 2 and 3 the OS <i>may</i> take the CPU from the running process: that is <b>preemptive</b> scheduling, used by Windows, macOS, Linux and UNIX.</p><p>The <b>dispatcher</b> then hands over the CPU: switch context, switch to user mode, jump to the right place in the program. The time this takes is the <b>dispatch latency</b>.</p><div class=\"callout warn\">Preemption can stop a process in the middle of updating shared data. Chapter 6 deals with that.</div>",
+        "html": "<p>A process alternates CPU work (<b>CPU bursts</b>) with I/O waits. Scheduling can happen when it:</p><ol><li>Goes from running to waiting.</li><li>Goes from running to ready.</li><li>Goes from waiting to ready.</li><li>Terminates.</li></ol><p>In 1 and 4, it has given up the CPU. In 2 and 3, the OS can take the CPU away: <b>preemption</b>.</p><p>Choosing and handing over are separate jobs. The scheduler chooses; the <b>dispatcher</b> switches context, returns to user mode and resumes the selected process. That handover takes time: <b>dispatch latency</b>.</p><div class=\"callout warn\">Preemption can stop a process in the middle of updating shared data. Chapter 6 deals with that.</div>",
         "check": {
           "q": "A nonpreemptive scheduler is running P1 when P2 finishes its I/O and becomes ready. What happens?",
           "o": [
@@ -1565,7 +1570,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Five criteria judge a schedule; two formulas do the arithmetic",
+        "t": "Read the timeline before using the formulas",
         "key": "Maximize <b>CPU utilization</b> and <b>throughput</b>; minimize <b>turnaround</b>, <b>waiting</b> and <b>response</b> time. <b>Waiting = turnaround − burst</b>.",
         "fig": {
           "type": "compare",
@@ -1590,7 +1595,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Every Gantt-chart question uses two formulas:</p><ul><li><b>Turnaround time</b> = completion time − arrival time.</li><li><b>Waiting time</b> = turnaround time − burst time: the time spent ready but not running.</li></ul><p>Example: a process arrives at 2, needs 9 ms and finishes at 26. Turnaround = 26 − 2 = 24; waiting = 24 − 9 = 15. The <b>average waiting time</b> is the sum of all waiting times divided by the number of processes.</p><p><b>Response time</b> counts only until the <i>first</i> response, which matters for interactive systems. No algorithm wins on all five criteria, which is why several exist.</p>",
+        "html": "<p>A process arrives at time 2, needs 9 ms of CPU work and finishes at 26. For these single-burst exercises:</p><ol><li><b>Turnaround</b> is all elapsed time: completion − arrival = 26 − 2 = 24.</li><li><b>Waiting</b> removes the CPU work: turnaround − burst = 24 − 9 = 15.</li><li>For an average, calculate each process separately, add, then divide by the process count.</li></ol><p><b>Response time</b> measures the delay until the first response. The other criteria are CPU utilization (keep it busy) and throughput (jobs completed per unit time). A good schedule depends on which measure matters.</p>",
         "check": {
           "q": "A process arrives at 0, needs 3 ms and completes at 27. What is its waiting time?",
           "o": [
@@ -1602,14 +1607,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "FCFS runs processes in arrival order",
+        "t": "FCFS: take the jobs in arrival order",
         "key": "<b>FCFS</b> is simple and nonpreemptive, but short jobs stuck behind a long one wait a long time: the <b>convoy effect</b>.",
         "fig": {
           "type": "anim",
           "name": "fcfs",
           "t": "FCFS: the same three jobs in two orders"
         },
-        "html": "<p><b>First-come, first-served</b>: the process that arrives first gets the CPU and keeps it until it finishes or blocks.</p><p>Slide 16: P1 = 24, P2 = 3, P3 = 3, arriving in that order. Gantt chart: P1 0–24, P2 24–27, P3 27–30. Waiting times 0, 24 and 27, so the average is <b>17</b>.</p><p>Slide 17: the same processes in the order P2, P3, P1. Waiting times 6, 0 and 3, average <b>3</b>. FCFS depends heavily on arrival order, and it cannot know which job is short.</p><p>The convoy effect also hurts I/O devices: while a long CPU-bound job runs, the I/O-bound jobs sit in the ready queue and their devices stay idle.</p>",
+        "html": "<p><b>First-come, first-served</b> lets a process run until it finishes or blocks. A shorter job cannot jump ahead.</p><p>In the lecture example, all arrive at 0 in order P1, P2, P3, with bursts 24, 3, 3.</p><ol><li>Draw P1: 0–24, P2: 24–27, P3: 27–30.</li><li>Each wait is its start time minus arrival: 0, 24, 27.</li><li>Average wait = (0 + 24 + 27)/3 = <b>17</b>.</li></ol><p>The short jobs wait behind the long one: the <b>convoy effect</b>. Putting P2 and P3 first would reduce average waiting to 3. Arrival order matters.</p>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1629,14 +1634,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "SJF runs the shortest next burst; SRTF can preempt",
+        "t": "SJF chooses a short burst; SRTF can interrupt",
         "key": "<b>SJF</b> gives the <b>minimum average waiting time</b>, but it needs the length of the next CPU burst, which the OS cannot know. <b>SRTF</b> is its preemptive version.",
         "fig": {
           "type": "anim",
           "name": "sjf",
           "t": "SJF and SRTF on the slide examples"
         },
-        "html": "<p><b>Shortest-job-first</b> picks the process whose next CPU burst is shortest. Slide 18: P1 = 6, P2 = 8, P3 = 7, P4 = 3. Order P4, P1, P3, P2; waiting 3, 16, 9 and 0; average <b>7</b>.</p><p><b>SRTF</b> (shortest remaining time first): when a new process arrives needing less than the running process has left, it takes the CPU. Slide 19 gives an average of <b>6.5</b>.</p><p>The catch is that the next burst lies in the future. Real systems can only estimate it, so SJF is a benchmark rather than something the OS can run exactly. Long jobs can also starve while short ones keep arriving.</p><div class=\"callout warn\">\"SJF is the best algorithm in practice.\" No: it is optimal for average waiting time only on paper, because burst lengths are unknown.</div>",
+        "html": "<p><b>SJF</b> picks the shortest next CPU burst among ready processes. With all arrivals at 0 and bursts P1 = 6, P2 = 8, P3 = 7, P4 = 3:</p><ol><li>Order: P4, P1, P3, P2.</li><li>Timeline: 0–3, 3–9, 9–16, 16–24.</li><li>Waits in that order: 0, 3, 9, 16. Average = 28/4 = <b>7</b>.</li></ol><p><b>SRTF</b> adds preemption. At an arrival, compare the new burst with the running process’s <em>remaining</em> time, not its original burst. Switch if the new job is shorter. Real systems must estimate future bursts; long jobs may starve.</p><div class=\"callout warn\">\"SJF is the best algorithm in practice.\" No: it is optimal for average waiting time only on paper, because burst lengths are unknown.</div>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1655,14 +1660,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Round Robin gives every process a time quantum",
+        "t": "Round Robin: run a slice, then rejoin the queue",
         "key": "<b>RR</b> runs each process for at most one <b>quantum q</b>, then sends it to the back of the ready queue; q must be much larger than a <b>context switch</b>.",
         "fig": {
           "type": "anim",
           "name": "rr",
           "t": "Round Robin with q = 4"
         },
-        "html": "<p>Round Robin is FCFS plus a timer. With n processes, each gets 1/n of the CPU in pieces of at most q, so no process waits more than <b>(n − 1)q</b> for its next turn. That gives the best <b>response time</b>.</p><p>Slide 20, q = 4: P1 0–4, P2 4–7, P3 7–10, then P1 alone until 30. Waiting 6, 4 and 7; average 17 / 3 = <b>5.67</b>. The slide prints 5.3, which is an arithmetic slip; its q = 6 result of 7 is correct.</p><p>The quantum sets the behaviour. A very large q turns RR into FCFS; a very small q wastes the CPU on context switches. The slides give 10–100 ms as typical.</p><div class=\"callout warn\">Slide 55's live demo (A 0/8, B 2/4, C 4/2, D 6/6, q = 4) runs D before A at time 10. With the rule used on the other slides and here, A went back to the queue at 4, before D arrived at 6, so A runs 10–14 and D 14–20. On paper, state the rule you apply.</div>",
+        "html": "<p><b>Round Robin</b> gives each process at most one time quantum q per turn. An unfinished process rejoins the back of the ready queue.</p><p>With P1 = 24, P2 = 3, P3 = 3, all arriving at 0 and q = 4:</p><ol><li>P1 runs 0–4, leaving 20.</li><li>P2 finishes at 7; P3 finishes at 10.</li><li>P1 is now alone and finishes at 30.</li><li>Waits: P1 = 30 − 24 = 6; P2 = 7 − 3 = 4; P3 = 10 − 3 = 7.</li></ol><p>Average = 17/3 = <b>5.67</b>; the slide prints 5.3. A huge quantum behaves like FCFS; a tiny one adds context-switch overhead.</p><div class=\"callout warn\">Slide 55's live demo (A 0/8, B 2/4, C 4/2, D 6/6, q = 4) runs D before A at time 10. With the rule used on the other slides and here, A went back to the queue at 4, before D arrived at 6, so A runs 10–14 and D 14–20. On paper, state the rule you apply.</div>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1682,7 +1687,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Priority scheduling starves low priorities unless they age",
+        "t": "Priority needs a way to prevent endless waiting",
         "key": "<b>Priority</b> scheduling runs the highest priority (the <b>smallest number</b>) first and can <b>starve</b> low priorities; <b>aging</b> cures that. A <b>multilevel feedback queue</b> moves processes between queues.",
         "fig": {
           "type": "stack",
@@ -1707,7 +1712,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Slide 23: bursts 10, 1, 2, 1, 5 with priorities 3, 1, 4, 5, 2. Order P2, P5, P1, P3, P4; waiting 6, 0, 16, 18 and 1; average <b>8.2</b>.</p><p>A low-priority process may never run while higher ones keep arriving: <b>starvation</b>. <b>Aging</b> raises a process's priority the longer it waits. Processes with equal priority can share the CPU round robin (slide 24).</p><p>A <b>multilevel queue</b> keeps separate queues (system processes FCFS, interactive RR, batch SJF), and processes never change queue. In a <b>multilevel feedback queue</b> they move: a process that uses too much CPU drops a level, one that waits too long moves up, so short jobs finish near the top.</p>",
+        "html": "<p><b>Priority scheduling</b> picks the highest-priority ready process. In the lecture’s example, a smaller priority number means higher priority: the order is P2, P5, P1, P3, P4.</p><p>A low-priority process may keep losing to new arrivals: <b>starvation</b>. <b>Aging</b> gradually raises its priority as it waits. Equal-priority processes can take turns with Round Robin.</p><p>Multiple queues add another choice. In a <b>multilevel queue</b>, a process stays in its assigned queue. In a <b>multilevel feedback queue</b>, it can move between queues based on its behaviour or waiting. “Can it move?” distinguishes the two.</p>",
         "lab": {
           "href": "ch5/gantt.html",
           "todo": [
@@ -1726,7 +1731,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Threads, real-time tasks and real kernels add their own rules",
+        "t": "Deadlines and multiple cores add constraints",
         "key": "Threads are scheduled in <b>PCS</b> or <b>SCS</b>. Real time means <b>predictable</b>: <b>hard</b> deadlines must be met, <b>soft</b> ones should be. <b>Rate-monotonic</b> priorities are static, <b>EDF</b> priorities are dynamic.",
         "fig": {
           "type": "compare",
@@ -1753,25 +1758,26 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>In <b>process-contention scope</b> the thread library decides which user thread runs, a competition inside one process. In <b>system-contention scope</b> the kernel decides among all threads. In C: <code>pthread_attr_setscope(&amp;attr, PTHREAD_SCOPE_SYSTEM)</code> and <code>pthread_attr_setschedpolicy(&amp;attr, SCHED_RR)</code>.</p><p>Rate-monotonic can fail above about 69% CPU use; EDF can schedule up to 100% but needs the deadlines in advance. On several cores the OS also balances load and keeps a thread on one core (<b>processor affinity</b>). Linux has used <b>EEVDF</b> since kernel 6.6 (2023), after CFS; Windows uses 32 priority levels.</p><p>On the map: preemption can stop a thread halfway through updating shared data. Chapter 6 makes that safe.</p>",
+        "html": "<p>The basic question stays “who runs next?”, but the setting adds rules:</p><ul><li><b>Process-contention scope</b>: a library chooses among a process’s user threads. <b>System-contention scope</b>: the kernel chooses among kernel threads.</li><li><b>Rate-monotonic</b> uses fixed priorities based on periods. <b>EDF</b> gives the earliest deadline priority. The lecture gives an approximately 69% sufficient utilization bound for rate-monotonic scheduling and up to 100% for EDF in the ideal task model; these are model assumptions, not universal workload guarantees.</li><li>On several cores, <b>load balancing</b> spreads work; <b>processor affinity</b> tries to keep a thread on a familiar core.</li></ul><p>Return to the map: scheduling decides who executes. Preemption may interrupt an update halfway through. Chapter 6 makes shared-data access safe.</p><p><b>Hard real-time</b> requires deadlines to be met; <b>soft real-time</b> treats them as a goal. Predictability matters, rather than average speed alone.</p>",
         "check": {
-          "q": "Which statement about real-time scheduling is correct?",
+          "q": "What distinguishes a hard real-time requirement?",
           "o": [
-            "Real time means predictable: deadlines are guaranteed",
-            "Real time means the fastest average speed",
-            "EDF gives each task a fixed priority by period"
+            "Its deadline must be met",
+            "It must have the fastest average execution time",
+            "Every process must receive the same time quantum"
           ],
-          "why": "A hard real-time scheduler may be slower on average but guarantees deadlines; EDF priorities change as deadlines approach."
+          "why": "Hard real-time concerns meeting required deadlines, not just running fast on average."
         }
       }
-    ]
+    ],
+    "question": "Several processes are ready. Who should run next?"
   },
   "6": {
-    "goal": "Show how count++ and count-- race, state the three critical-section requirements, explain Peterson's solution and why it needs memory barriers, use test_and_set, compare_and_swap, mutex locks, semaphores and condition variables, and recognise deadlock, starvation and priority inversion.",
+    "goal": "Trace a race and choose a synchronization tool for exclusion or ordering.",
     "time": "35–45 min",
     "steps": [
       {
-        "t": "Preemption can stop a process halfway through an update",
+        "t": "Scheduling alone cannot protect a shared value",
         "key": "Chapter 5 lets the OS preempt at any time; Chapter 6 gives the <b>tools</b> that keep <b>shared data</b> consistent anyway.",
         "fig": {
           "type": "flow",
@@ -1815,26 +1821,26 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Chapter 4 showed two threads losing an update to a shared counter. Chapter 5 explained how: a preemptive scheduler may stop a process between any two instructions. This chapter is the fix.</p><p>The tools go from low level to high level: a software solution (<b>Peterson</b>), hardware instructions (<b>test_and_set</b>, <b>compare_and_swap</b>), then <b>mutex locks</b>, <b>semaphores</b> and <b>monitors</b>. Then come the failures that remain: <b>deadlock</b>, <b>starvation</b> and <b>priority inversion</b>. The midterm is handwritten, and the slides advise practising Pthread code on paper.</p>",
+        "html": "<p>Chapter 4 showed a lost update. Chapter 5 showed that a thread can lose the CPU between instructions. Together they explain the problem: a thread may resume using an old copy of shared data.</p><p>We need a rule that makes the whole sensitive operation safe. Start by seeing the race, then define what a correct solution must guarantee. After that, compare software, hardware and higher-level tools.</p><p>Keep asking: does this tool prevent simultaneous access, enforce an order, or both?</p>",
         "check": {
-          "q": "Why does preemptive scheduling create a need for synchronization?",
+          "q": "Why can correct arithmetic still produce a wrong shared counter?",
           "o": [
-            "A process can be stopped halfway through updating shared data",
-            "Preemption deletes shared variables",
-            "Preemption only happens on one-core machines"
+            "Overlapping updates can overwrite each other",
+            "A single CPU makes every multi-instruction update atomic",
+            "A scheduler always runs every update to completion"
           ],
-          "why": "An interrupted read-modify-write lets another process read or overwrite a half-finished update."
+          "why": "An update can be interrupted between its load and store."
         }
       },
       {
-        "t": "count++ and count-- can interleave and corrupt count",
+        "t": "Follow both copies of count",
         "key": "When the result depends on the order in which processes access shared data, the code has a <b>race condition</b>.",
         "fig": {
           "type": "anim",
           "name": "pcrace",
           "t": "Producer and consumer share count = 5"
         },
-        "html": "<p>In the producer–consumer deck, the producer adds an item and runs <code>count++</code>; the consumer removes one and runs <code>count--</code>. Each is three machine steps: load into a register, change the register, store it back.</p><p>Starting from count = 5, the order T0–T5 in the figure ends with <b>4</b>. If the two stores swap, the result is <b>6</b>. Only 5 is correct.</p><p>The slides give two more races: two people withdraw $100 from a shared $1000 account and both write $900; two <code>fork()</code> calls read the same <code>next_available_pid</code>, so two children get the same PID.</p>",
+        "html": "<p>The producer increments count; the consumer decrements it. Starting at 5, one addition and one subtraction should leave <b>5</b>.</p><ol><li>Both load 5 into separate registers.</li><li>The producer computes 6; the consumer computes 4.</li><li>If the consumer stores last, count becomes 4.</li><li>If the producer stores last, count becomes 6.</li></ol><p>One update overwrites the other. The arithmetic is fine; the overlapping read–modify–write sequences are the problem. Step through the animation and keep track of the shared value separately from each register.</p>",
         "lab": {
           "href": "ch6/critical.html",
           "todo": [
@@ -1854,7 +1860,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A critical section admits one process at a time",
+        "t": "A correct entry rule needs three promises",
         "key": "A solution to the <b>critical-section problem</b> must provide <b>mutual exclusion</b>, <b>progress</b> and <b>bounded waiting</b>.",
         "fig": {
           "type": "flow",
@@ -1886,7 +1892,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>The code that touches shared data is the <b>critical section</b>. A process asks to enter in its <b>entry section</b> and leaves through its <b>exit section</b>; the rest is the <b>remainder section</b>. A correct protocol needs three things:</p><ol><li><b>Mutual exclusion</b>: while one process is in its critical section, no other is in its own.</li><li><b>Progress</b>: if nobody is inside and some want in, the choice of who enters cannot be postponed forever.</li><li><b>Bounded waiting</b>: after a process asks, the others can enter only a limited number of times before it does.</li></ol><p>Nothing may be assumed about the relative speed of the processes.</p>",
+        "html": "<p>The <b>critical section</b> is the code accessing shared data. Its entry section asks permission; its exit section releases access. The rest is the remainder section.</p><p>A solution must guarantee:</p><ul><li><b>Mutual exclusion</b>: only one participant is inside at a time.</li><li><b>Progress</b>: if it is empty and someone wants in, choosing who enters cannot be delayed forever.</li><li><b>Bounded waiting</b>: after a request, only a limited number of other entries can happen first.</li></ul><p>Exclusion protects the data. Progress and bounded waiting address whether waiting processes get a chance. Do not assume one process runs faster than another.</p>",
         "check": {
           "q": "Process A asked to enter long ago, but B and C keep entering ahead of it, without limit. Which requirement fails?",
           "o": [
@@ -1898,7 +1904,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Peterson's solution: I want in, but you go first",
+        "t": "Peterson: announce interest, then give the other priority",
         "key": "Peterson uses <b>flag[i]</b> (I want to enter) and <b>turn</b> (whose turn it is). It meets all three requirements on paper, but modern CPUs may break it without <b>memory barriers</b>.",
         "fig": {
           "type": "boxes",
@@ -1961,7 +1967,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>This is a software solution for two processes, Pi and Pj. Both may set their flag at almost the same time, but <code>turn</code> holds one value: whoever wrote it <i>last</i> has given the turn away, and waits. So both cannot be inside: <b>mutual exclusion</b>. If Pj does not want in, Pi enters at once: <b>progress</b>. After Pi asks, Pj can enter at most once more: <b>bounded waiting</b>.</p><p>The proof assumes that loads and stores happen in program order. To run faster, processors and compilers may <b>reorder</b> instructions that do not depend on each other. A <b>memory barrier</b> forces every earlier memory change to become visible to the other processors before any later one.</p>",
+        "html": "<p>For two processes, <code>flag[i] = true</code> means “I want in.” Setting <code>turn = j</code> means “if we both want in, you go first.”</p><p>Pi waits only while <code>flag[j] &amp;&amp; turn == j</code>. If Pj has no interest, Pi enters. If both are interested, the single turn value breaks the tie. On leaving, Pi clears its flag.</p><p>Under the assumed memory ordering, this satisfies mutual exclusion, progress and bounded waiting. Modern processors and compilers may reorder memory operations. <b>Memory barriers</b> enforce the ordering/visibility needed by such reasoning; plain source-code order alone is insufficient.</p>",
         "lab": {
           "href": "ch6/critical.html",
           "todo": [
@@ -1980,7 +1986,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Hardware makes test-and-modify one atomic step",
+        "t": "Make checking and claiming the lock one operation",
         "key": "<b>test_and_set</b> and <b>compare_and_swap</b> read and change a word in one <b>atomic</b> step; locks are built on them.",
         "fig": {
           "type": "compare",
@@ -2006,7 +2012,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>count++ broke because load and store are separate steps. Hardware offers instructions that cannot be interrupted halfway.</p><p><code>test_and_set(&amp;lock)</code> returns the old value and sets the word to true. A process spins in <code>while (test_and_set(&amp;lock)) ;</code> until the old value was false: the lock was free and is now its own. Leaving, it sets <code>lock = false</code>. This gives mutual exclusion and progress, but <b>not bounded waiting</b>: an unlucky process can lose every race.</p><p><code>compare_and_swap(&amp;value, expected, new_value)</code> writes the new value only if the current value equals the expected one, and returns the old value. C11 builds <b>atomic variables</b> on it: <code>atomic_fetch_add(&amp;counter, 1)</code> is a safe counter++.</p>",
+        "html": "<p>Checking “is the lock free?” and claiming it separately would create another race. Hardware provides <b>atomic</b> operations: other threads cannot observe a half-completed operation.</p><p><code>test_and_set(&amp;lock)</code> returns the old value and sets true. Old false means this thread acquired it. Old true means keep waiting. Release by setting false.</p><p><code>compare_and_swap()</code> changes a value only when it equals an expected value, and returns the old value. Atomic counter operations use this kind of support.</p><p>A simple spin loop keeps using CPU while it waits. It can provide exclusion without guaranteeing bounded waiting.</p>",
         "check": {
           "q": "What does test_and_set(&lock) return?",
           "o": [
@@ -2018,7 +2024,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "A mutex lock wraps the critical section in acquire and release",
+        "t": "Put the whole update inside the mutex",
         "key": "A <b>mutex lock</b> is the simplest tool: <b>acquire()</b> before the critical section, <b>release()</b> after. If waiting means looping, it is a <b>spinlock</b> (<b>busy waiting</b>).",
         "fig": {
           "type": "compare",
@@ -2045,7 +2051,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Application programmers rarely use the hardware instructions directly, so the OS offers a mutex: a Boolean saying whether the lock is free. Both operations must be atomic, usually through compare_and_swap. In Pthreads:</p><pre>pthread_mutex_lock(&amp;mutex);\ncounter++;   /* critical section */\npthread_mutex_unlock(&amp;mutex);</pre><p>With five threads the counter always ends at 5. The slides list three common mistakes: two threads locking two mutexes in <b>opposite orders</b> (deadlock), <b>forgetting to unlock</b> on an early return, and one thread <b>locking the same mutex twice</b> (self-deadlock). Linux uses an <b>adaptive mutex</b>: spin briefly, then sleep.</p>",
+        "html": "<p>A <b>mutex</b> packages lock acquisition and release. Protect the entire read–modify–write operation:</p><pre>pthread_mutex_lock(&amp;mutex);\ncounter++;\npthread_mutex_unlock(&amp;mutex);</pre><p>Another thread must acquire the same mutex before touching that protected data. Locking only the final store would leave the earlier read exposed.</p><p>A mutex has an owner: the thread that locks it must unlock it. Forgetting an unlock can strand waiters. Taking two locks in opposite orders can cause deadlock. The tool works only when every access follows the protocol.</p><p>For a very short wait on a multicore machine, a spinlock may avoid the cost of sleeping and waking. For a long wait, spinning wastes CPU time.</p>",
         "lab": {
           "href": "ch6/critical.html",
           "todo": [
@@ -2054,24 +2060,24 @@ window.GUIDE = {
           ]
         },
         "check": {
-          "q": "A critical section takes 5 μs and a context switch about 1–10 μs. Which lock fits better?",
+          "q": "Why might a spinlock suit a very short critical section on a multicore machine?",
           "o": [
-            "A spinlock: waiting briefly costs less than sleeping",
-            "A sleeping mutex: spinning is always wrong",
-            "No lock: 5 μs is too short for a race"
+            "The brief spin may cost less than sleeping and waking",
+            "Spinning guarantees bounded waiting",
+            "Short code cannot have a race"
           ],
-          "why": "The slides: spin when the critical section is shorter than a context switch, sleep when it is much longer."
+          "why": "Compare the expected wait with the sleep/context-switch overhead. Long waits waste CPU when spinning."
         }
       },
       {
-        "t": "A semaphore counts: wait takes one, signal gives one back",
-        "key": "A <b>semaphore</b> S is an integer used only through atomic <b>wait()</b> (P) and <b>signal()</b> (V). <b>Counting</b> semaphores count resources; <b>binary</b> ones (0 or 1) work like a mutex.",
+        "t": "A semaphore can count resources or enforce an order",
+        "key": "A <b>semaphore</b> uses atomic <b>wait</b> and <b>signal</b> for resource counting, exclusion or ordering; it has no mutex-style owner.",
         "fig": {
           "type": "anim",
           "name": "semaphore",
           "t": "wait() and signal() with a waiting queue (slide 29)"
         },
-        "html": "<p><code>wait(S)</code> decrements S and blocks the caller if S becomes negative. <code>signal(S)</code> increments S and wakes one waiting process. Without busy waiting, each semaphore has a <b>waiting queue</b>: a positive value is the number of free resources, a negative value the number of waiting processes.</p><p>Two uses: <b>mutual exclusion</b> with <code>mutex = 1</code> around the critical section, and <b>ordering</b> with <code>synch = 0</code>. P1 runs S1 and then <code>signal(synch)</code>; P2 runs <code>wait(synch)</code> and then S2, so S1 always comes first. A mutex can only do the first.</p><p>Pthreads: <code>sem_init(&amp;sem, 0, 1)</code>, <code>sem_wait</code>, <code>sem_post</code>. A mutex has an <b>owner</b> (only the locker unlocks it); any thread may post a semaphore.</p><div class=\"callout warn\"><b>Two versions on the slides.</b> Slide 27 defines <code>wait(S)</code> with busy waiting: <code>while (S &lt;= 0) ; S--;</code>, so S never goes below 0. Slide 29 decrements first and blocks if S &lt; 0, so a negative S counts the waiters. Slide 27 also calls a binary semaphore \"the same as a mutex lock\"; slides 31 and 45 add the one difference: ownership.</div>",
+        "html": "<p>A <b>semaphore</b> is a counter with atomic wait and signal operations.</p><p>For exclusion, initialize to 1: wait before entering, signal after leaving. For ordering, initialize <code>synch = 0</code>: P2 waits before S2; P1 executes S1 then signals. S2 cannot happen before S1.</p><p>In the blocking implementation, wait decrements first and blocks if the result is negative. Signal increments and wakes a waiter if needed. A negative value records waiting processes; a positive value records available resources.</p><p>Unlike a mutex, a semaphore has no owner: a different thread may signal. Pthreads names are <code>sem_wait</code> and <code>sem_post</code>.</p><div class=\"callout warn\"><b>Two versions on the slides.</b> Slide 27 defines <code>wait(S)</code> with busy waiting: <code>while (S &lt;= 0) ; S--;</code>, so S never goes below 0. Slide 29 decrements first and blocks if S &lt; 0, so a negative S counts the waiters. Slide 27 also calls a binary semaphore \"the same as a mutex lock\"; slides 31 and 45 add the one difference: ownership.</div>",
         "lab": {
           "href": "ch6/semaphore.html",
           "todo": [
@@ -2091,7 +2097,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Monitors and condition variables, and how waiting can still fail",
+        "t": "Waiting for a condition differs from owning a lock",
         "key": "A <b>monitor</b> lets one process inside at a time; a <b>condition variable</b> lets it wait for a condition. Synchronization can still fail through <b>deadlock</b>, <b>starvation</b> or <b>priority inversion</b>.",
         "fig": {
           "type": "compare",
@@ -2124,7 +2130,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>A <b>monitor</b> is an abstract data type whose procedures run one at a time; the compiler adds the mutual exclusion. A <b>condition variable</b> x inside it has <code>x.wait()</code> (sleep and release the monitor) and <code>x.signal()</code> (wake one waiter). In Pthreads: lock the mutex, then <code>while (!ready) pthread_cond_wait(&amp;cond, &amp;mutex);</code>. Use <b>while</b>, not if: a thread can wake without a signal (a spurious wakeup).</p><p>In <b>priority inheritance</b> the low-priority lock holder temporarily gets the high priority, so a medium-priority process cannot preempt it. Priority inversion is what made Mars Pathfinder reboot in 1997.</p><p>The map is complete: hardware, services, processes, threads, scheduling, and now safe sharing.</p>",
+        "html": "<p>A <b>monitor</b> permits one active caller at a time. A condition variable lets that caller sleep until some condition may hold, releasing the monitor while waiting.</p><p>With Pthreads, hold the mutex and use <code>while (!ready) pthread_cond_wait(&amp;cond, &amp;mutex);</code>. On return the mutex is reacquired; check again because waking does not guarantee the condition.</p><p><b>Deadlock</b> means participants wait on one another indefinitely. <b>Starvation</b> means a participant keeps being passed over. <b>Priority inversion</b> means high-priority work waits for a lower-priority lock holder; priority inheritance temporarily boosts that holder.</p><p>The course now connects hardware control, services, execution, scheduling and safe sharing.</p>",
         "check": {
           "q": "P0 holds S and waits for Q; P1 holds Q and waits for S. What is this, and what fixes it?",
           "o": [
@@ -2135,6 +2141,7 @@ window.GUIDE = {
           "why": "A circular wait on two semaphores is a deadlock; one global lock order prevents it."
         }
       }
-    ]
+    ],
+    "question": "How do we stop overlapping work from corrupting shared data?"
   }
 };
