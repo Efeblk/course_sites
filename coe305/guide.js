@@ -295,7 +295,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Supervised, unsupervised ve reinforcement",
+        "t": "Supervised mı unsupervised mı? Cevap label’ına bak",
         "key": "The available <b>feedback</b> determines the learning problem.",
         "fig": {
           "type": "compare",
@@ -332,7 +332,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p>Ayrımı uygulamanın adına göre değil, training’de verilen bilgiye göre yap.</p><table class=\"t\"><tr><th>Tür</th><th>Ne verilir?</th><th>Ne öğrenilir?</th></tr><tr><td><b>Supervised</b></td><td>Input + desired output</td><td>Input’tan cevap tahmini</td></tr><tr><td><b>Unsupervised</b></td><td>Yalnızca input</td><td>Örneğin benzer gruplar</td></tr><tr><td><b>Reinforcement</b></td><td>Action sonrası reward</td><td>Action seçen policy</td></tr></table><p>Customer segmentation ve colour quantisation, labelsız gruplama örnekleridir. Reinforcement’ta reward gecikebilir.</p><p>Şimdi supervised duruma geçiyoruz: örneklerde doğru görünen bir kural, yeni bir örnekte de doğru olacak mı?</p><div class=\"callout warn\">Cluster veri içinden bulunur; class adı training target olarak verilmez.</div>",
+        "html": "<p>İki işte de aynı input’lar bulunabilir. Ayrımı, training sırasında doğru cevabın verilip verilmemesi yapar.</p><table class=\"t\"><tr><th>Tür</th><th>Training’de ne var?</th><th>Ders örneği</th></tr><tr><td><b>Supervised</b></td><td>Input + desired output / label</td><td>Credit scoring; used-car price</td></tr><tr><td><b>Unsupervised</b></td><td>Yalnız input</td><td>Customer segmentation; colour quantisation</td></tr><tr><td><b>Reinforcement</b></td><td>Action sonrası, gecikebilen reward</td><td>Labirentte policy öğrenme</td></tr></table><p><b>Classification</b> ve <b>regression</b>, supervised işlerin çıktı türleridir. <b>Clustering</b> ise label verilmeden grup bulur; bulunan cluster’ı hazır bir class label sanma.</p><p>Week 2, supervised durumda yeni örneklere güvenilir tahmin yapmayı inceleyecek.</p>",
         "check": {
           "q": "A maze robot receives a reward at the exit. Which kind of feedback is this?",
           "o": [
@@ -351,7 +351,8 @@ window.GUIDE = {
       "Supervised öğrenmede hedef cevap vardır; unsupervised öğrenmede yalnızca girdiler vardır.",
       "Association’da koşul, hangi örnekleri paydaya aldığını belirler."
     ],
-    "examAnswer": "Supervised: labelled examples. Unsupervised: inputs without labels. Reinforcement: actions and rewards."
+    "examAnswer": "Supervised: labelled examples. Unsupervised: inputs without labels. Reinforcement: actions and rewards.",
+    "opening": "Vize notlarındaki odak: supervised, unsupervised ve diğer learning types. Ayrımı training sırasında verilen bilgiye göre yap."
   },
   "2": {
     "goal": "Training örneklerini doğru bilmek neden yeterli değil?",
@@ -1159,7 +1160,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "PCA: noktaların yayılımını bir eksene taşıyalım",
+        "t": "PCA ne yapar? En fazla yayılımı koruyan yönü arar",
         "key": "<b>PC1</b> maximizes projection variance for a unit direction w.",
         "fig": {
           "type": "anim",
@@ -1167,15 +1168,15 @@ window.GUIDE = {
           "t": "Height and weight of students (centred)",
           "cap": "Press <b>New data</b> for a different cloud: PCA always finds the long axis."
         },
-        "html": "<p>Height–weight noktalarını bir doğruya yansıtıyoruz. Yanlış yön seçersek birbirinden farklı noktalar üst üste düşebilir. <b>PCA</b>, projection’da en fazla yayılımı koruyan yönü arar.</p><ol><li>Ortalamayı çıkar: veriyi <b>center</b> et.</li><li>Birim uzunlukta bir yön w seç.</li><li>Her centered noktayı z = wᵀx ile bu yöne yansıt.</li><li>Var(z)’yi en büyük yapan yönü seç: <b>PC1</b>.</li></ol><p><b>PC2</b>, PC1’e diktir ve sonraki en büyük variance’ı korur. Lab’da yönü döndürüp noktaların projection’da nasıl sıkışıp açıldığını izle.</p><p>PCA’nın sorusu “sınıflar nerede ayrılıyor?” değildir. Label kullanmadan girdilerin yayılımına bakar.</p><div class=\"callout warn\"><b>Variance</b> ile <b>class separation</b> aynı şey değildir. PCA label’ları kullanmaz.</div>",
+        "html": "<p><b>Principal Component Analysis (PCA)</b>, örnekleri daha az koordinatla anlatan bir <b>feature extraction</b> yöntemidir. Orijinal sütunlardan birkaçını seçmek yerine yeni eksenler oluşturur.</p><p>Height–weight bulutunu bir doğruya yansıttığını düşün. Bir yönde noktalar üst üste sıkışabilir; başka yönde aralarındaki yayılım daha çok korunabilir. PCA bu ikinci tür yönü arar.</p><ol><li>Ortalamayı çıkar: veriyi <b>center</b> et.</li><li>Projection variance’ını en büyük yapan birim yönü seç: <b>PC1</b>.</li><li><b>PC2</b>, PC1’e diktir; sonraki en büyük variance’ı korur.</li></ol><p>Lab’da yönü döndürerek projection’ın değişimini izle.</p><div class=\"callout warn\"><b>PCA label kullanmaz.</b> Maximum variance, maximum class separation demek değildir. LDA ise bilinen class’ları kullanır.</div><details class=\"course-detail\"><summary>İstersen: projection’ın matematiksel gösterimi</summary><p>Centered x noktasını birim w yönüne yansıt: <b>z = wᵀx</b>. Her nokta bir koordinat alır. PC1 için Var(z)’yi en büyük yapan yön seçilir. İki bileşenle iris örneğinde variance’ın %97.77’si korunur; bu accuracy değildir.</p></details>",
         "check": {
-          "q": "Slide 12 reports PC1 + PC2 = 97.77% for the iris data. What does the number describe?",
+          "q": "What does PCA try to preserve when it reduces dimensions?",
           "o": [
-            "The share of the variance kept",
-            "Classification accuracy",
-            "The share of the labels kept"
+            "As much data variance as possible",
+            "As many class labels as possible",
+            "As many original columns as possible"
           ],
-          "why": "Explained variance measures spread kept by the components, not prediction accuracy."
+          "why": "PCA constructs new projection axes to retain variance. It uses inputs without class labels; it does not select original columns."
         },
         "lab": {
           "href": "w3/pca.html",
@@ -1231,14 +1232,15 @@ window.GUIDE = {
       "PCA label kullanmadan projection variance’ını korumaya çalışır.",
       "Korunan variance yüzdesi, classification accuracy yüzdesi değildir."
     ],
-    "examAnswer": "Feature selection: retain original features. Feature extraction: construct new features. PCA: maximum projection variance; no class labels."
+    "examAnswer": "Feature selection: retain original features. Feature extraction: construct new features. PCA: maximum projection variance; no class labels.",
+    "opening": "Vize notlarındaki odak: feature selection ile extraction farkı ve PCA’nın ne yaptığı. Önce hangi bilginin korunduğunu açıkla."
   },
   "4": {
     "goal": "Cevap label’ları yoksa benzer grupları nasıl buluruz?",
     "time": "30–40 min",
     "steps": [
       {
-        "t": "Burada öğretmen cevapları vermiyor",
+        "t": "Supervised ve unsupervised: cluster, hazır class değildir",
         "key": "<b>Clustering</b> is unsupervised: it groups similar instances without any desired output.",
         "fig": {
           "type": "flow",
@@ -1264,7 +1266,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Supervised learning’de input ve doğru cevap vardı. <b>Clustering</b>’de yalnızca input’lar var; benzer örnekleri bir araya getirmeye çalışıyoruz.</p><p>Week 3 feature’ları, yani sütunları değiştirdi. Burada örnekleri, yani satırları grupluyoruz. Bulduğumuz cluster, verilmiş bir class label değildir.</p><p>Önce her noktayı tek merkeze atayacağız. Sonra birden fazla gruba kısmi üyeliğe izin vereceğiz. Son olarak grupları adım adım birleştirip bir hiyerarşi oluşturacağız.</p>",
+        "html": "<p>Supervised learning’de training input’larının doğru cevapları vardır. <b>Clustering</b>’de ise yalnızca input’lar bulunur; benzer örnekleri gruplarız.</p><table class=\"t\"><tr><th></th><th>Supervised</th><th>Unsupervised clustering</th></tr><tr><td>Training label</td><td>Var</td><td>Yok</td></tr><tr><td>Amaç</td><td>Verilen hedefi tahmin etmek</td><td>Veri içindeki grupları bulmak</td></tr></table><p>Week 3 sütunları düzenledi. Burada satırları grupluyoruz. Bir cluster’ın bulunması, o grubun class adının önceden öğretildiği anlamına gelmez.</p><p>Bu bölümde üç ayrımı ayrı tut: <b>parametric</b> model biçimini, <b>supervised</b> label bilgisini, <b>hard/soft</b> ise grup üyeliğini anlatır.</p>",
         "check": {
           "q": "Clustering has no class labels. What does it try to find?",
           "o": [
@@ -1276,7 +1278,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Parametric neyi önceden belirler?",
+        "t": "Parametric ile nonparametric: modelin biçimi önceden belli mi?",
         "key": "<b>Parametric</b>: learning with a <b>predefined mapping function</b> and assumptions. <b>Nonparametric</b>: learning without one.",
         "fig": {
           "type": "compare",
@@ -1304,7 +1306,7 @@ window.GUIDE = {
             }
           ]
         },
-        "html": "<p><b>Parametric</b> yöntemde modelin biçimi için bir varsayım seçilir ve parametreleri öğrenilir. Örneğin y = w₁x + w₀ yazmak, ağırlıkları bilmeden önce düz çizgi biçimine karar vermektir.</p><p>Ders <b>nonparametric</b> yaklaşımı, böyle önceden belirlenmiş mapping function olmaması üzerinden karşılaştırır.</p><p>Bu ayrım modelin varsayımları hakkındadır. Supervised / unsupervised ise training’de label bulunup bulunmaması hakkındadır. Bu iki ayrımı birbirinin yerine kullanma.</p>",
+        "html": "<p><b>Parametric</b> yaklaşımda mapping function / model biçimi önceden seçilir. Öğrenme onun parametrelerini bulur. y = wx + w₀ seçmek, w ve w₀’ı öğrenmeden önce düz çizgi biçimine karar vermektir.</p><table class=\"t\"><tr><th></th><th>Parametric</th><th>Nonparametric</th></tr><tr><td>Dersin ayrımı</td><td>Predefined mapping function / assumptions</td><td>Böyle önceden belirlenmiş biçim yok</td></tr><tr><td>Örnek</td><td>Linear regression: w ve w₀ öğrenilir</td><td>Decision tree: yapı veriden öğrenilir</td></tr></table><p>Bu örnekler dersin tanımının mevcut modellere uygulanmasıdır.</p><div class=\"callout warn\"><b>Nonparametric</b>, “hiç parametresi yok” demek değildir. Supervised–unsupervised ayrımı da değildir: o ayrım label bilgisine bakar.</div>",
         "check": {
           "q": "By slide 2's definition, which model is parametric?",
           "o": [
@@ -1324,15 +1326,15 @@ window.GUIDE = {
           "t": "k-means in two dimensions",
           "cap": "Change k or press <b>New data</b>: a bad start can end in a worse clustering."
         },
-        "html": "<p>k başlangıç merkezi seçilir. Her turda:</p><ol><li><b>Assignment</b>: noktayı en yakın merkeze ver.</li><li><b>Update</b>: her merkezi, kendisine verilen noktaların ortalamasına taşı.</li></ol><p>Noktalar 1, 2, 9, 10, 11; başlangıç merkezleri 1 ve 2 olsun. İlk atamada 1 yalnız kalır; diğerleri ikinci merkezdedir. İkinci merkez (2 + 9 + 10 + 11)/4 = <b>8</b> olur.</p><p>Yeniden atayınca 1 ve 2 aynı gruba; 9, 10, 11 diğer gruba gider. Merkezler <b>1.5</b> ve <b>10</b> olur.</p><p>Merkezler değiştiği için üyelik; üyelik değiştiği için merkez değişir. Kararlı hale gelene kadar sürdürürüz.</p><div class=\"callout warn\">Başlangıç merkezleri sonucu etkiler. Convergence, global en iyi çözümün bulunduğunu garanti etmez.</div>",
+        "html": "<p><b>k-means hard clustering</b> yapar: her nokta yalnızca bir cluster’a atanır. k başlangıç merkezi seçilir. Her turda:</p><ol><li><b>Assignment</b>: noktayı en yakın merkeze ver.</li><li><b>Update</b>: her merkezi, kendisine verilen noktaların ortalamasına taşı.</li></ol><p>Noktalar 1, 2, 9, 10, 11; başlangıç merkezleri 1 ve 2 olsun. İlk atamada 1 yalnız kalır; diğerleri ikinci merkezdedir. İkinci merkez (2 + 9 + 10 + 11)/4 = <b>8</b> olur.</p><p>Yeniden atayınca 1 ve 2 aynı gruba; 9, 10, 11 diğer gruba gider. Merkezler <b>1.5</b> ve <b>10</b> olur.</p><p>Merkezler değiştiği için üyelik; üyelik değiştiği için merkez değişir. Kararlı hale gelene kadar sürdürürüz.</p><div class=\"callout warn\">Başlangıç merkezleri sonucu etkiler. Convergence, global en iyi çözümün bulunduğunu garanti etmez.</div>",
         "check": {
-          "q": "What is the center of {9, 10, 11}?",
+          "q": "What makes k-means hard clustering?",
           "o": [
-            "10",
-            "9",
-            "11"
+            "Each point is assigned to one cluster",
+            "Each point gets probabilities for all clusters",
+            "Each point comes with a target class label"
           ],
-          "why": "The update uses the arithmetic mean."
+          "why": "Hard clustering makes one cluster assignment per instance. Probabilistic memberships are soft clustering; supplied target labels describe supervision."
         },
         "lab": {
           "href": "w4/kmeans.html",
@@ -1383,7 +1385,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "EM: bir nokta iki gruba kısmen ait olabilir",
+        "t": "Hard vs soft clustering: tek seçim mi, olasılıklı üyelik mi?",
         "key": "The <b>E-step</b> computes memberships; the <b>M-step</b> refits the components.",
         "fig": {
           "type": "flow",
@@ -1414,15 +1416,15 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>k-means’in kararı kesindir: nokta yalnızca bir gruptadır. Gaussian mixture’da ise “%70 A, %30 B” gibi <b>soft membership</b> mümkündür.</p><ol><li><b>E-step</b>: mevcut component parametreleriyle üyelik olasılıklarını hesapla.</li><li><b>M-step</b>: olasılıkları ağırlık olarak kullanıp parametreleri güncelle.</li><li>Tekrar et.</li></ol><p>Bu döngü <b>Expectation–Maximization (EM)</b>’dir. Arada duran nokta tamamen bir gruba yazılmak yerine ikisine de farklı ağırlıklarla katkı verir.</p><p>Lab’da merkezlerin arasındaki bir noktaya bak: üyelik sayıları belirsizliği görünür hale getirir.</p>",
+        "html": "<p>k-means bir nokta için tek cluster seçer: <b>hard assignment</b>. EM ile Gaussian mixture ise olasılıklı <b>soft membership</b> hesaplar.</p><table class=\"t\"><tr><th></th><th>Hard</th><th>Soft</th></tr><tr><td>Bir nokta</td><td>A veya B; üyelik 1 / 0</td><td>A için 0.7, B için 0.3 olabilir</td></tr><tr><td>Ders örneği</td><td>k-means</td><td>EM / Gaussian mixture</td></tr></table><p>Arada duran nokta, soft yöntemde iki gruba farklı ağırlıklarla katkı verebilir. EM bunu tekrarlar:</p><ol><li><b>E-step</b>: mevcut parametrelerden üyelik olasılıklarını bul.</li><li><b>M-step</b>: bu olasılıkları ağırlık olarak kullanıp parametreleri güncelle.</li></ol><p>Lab’da merkezler arasındaki bir noktanın üyeliklerini izle.</p><div class=\"callout warn\">Soft clustering’de olasılık bulunması, training class label’ı verildiği anlamına gelmez. Buradaki clustering hâlâ <b>unsupervised</b>’dır.</div>",
         "check": {
-          "q": "Which step updates Gaussian parameters?",
+          "q": "A point has memberships 0.7 in A and 0.3 in B. What does this represent?",
           "o": [
-            "M-step",
-            "E-step",
-            "Dendrogram cut"
+            "Soft clustering with probabilistic memberships",
+            "Hard clustering with one fixed assignment",
+            "Supervised learning with two target labels"
           ],
-          "why": "The M-step refits parameters using E-step probabilities."
+          "why": "Soft clustering gives probabilities across clusters. In EM the E-step computes memberships and the M-step uses them to refit parameters."
         },
         "lab": {
           "href": "w4/em.html",
@@ -1681,11 +1683,12 @@ window.GUIDE = {
     "question": "Cevap label’ları yoksa benzer grupları nasıl buluruz?",
     "reading": true,
     "summary": [
-      "k-means, nearest-center assignment ile mean update’i tekrarlar.",
-      "EM hard assignment yerine soft membership kullanır.",
-      "Dendrogram birleşme sırasını gösterir; linkage gruplar arası mesafeyi tanımlar."
+      "Parametric model biçimine, supervised–unsupervised label bilgisine bakar; iki ayrımı karıştırma.",
+      "Hard clustering tek cluster seçer; soft clustering olasılıklı üyelik verir. k-means hard, EM soft örneğidir.",
+      "k-means assignment / mean update, EM E-step / M-step döngüsünü tekrarlar; dendrogram birleşmeleri kaydeder."
     ],
-    "examAnswer": "k-means: assign → update means → repeat. EM: E-step memberships; M-step parameter updates. Clustering uses no target labels."
+    "examAnswer": "Parametric: predefined model form. Supervised: target labels. Hard: one cluster. Soft: probabilistic memberships.",
+    "opening": "Vize notlarındaki odak: parametric–nonparametric, supervised–unsupervised ve hard–soft clustering. Bunlar üç ayrı karşılaştırmadır."
   },
   "5": {
     "goal": "Decision tree hangi soruyu önce soracağını nasıl öğrenir?",
@@ -1837,7 +1840,7 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Entropy: cevaplar ne kadar karışık?",
+        "t": "Entropy: neden fifty-fifty en karışık durum?",
         "key": "<b>Entropy</b> measures class mixture: I = −Σ pᵢ log₂ pᵢ.",
         "fig": {
           "type": "plot",
@@ -1934,7 +1937,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Node’daki herkes Yes ise label belirsizliği yoktur: <b>entropy = 0</b>. İki sınıf %50/%50 ise karışıklık en yüksektir: <b>1 bit</b>.</p><p>Play Tennis’de 9 Yes, 5 No var:</p><ol><li>Payları bul: p(Yes) = 9/14; p(No) = 5/14.</li><li>Her sınıf için −p log₂ p hesapla.</li><li>Topla: −(9/14)log₂(9/14) − (5/14)log₂(5/14) ≈ <b>0.940</b>.</li></ol><p>Genel gösterim <b>I = −Σ pᵢ log₂ pᵢ</b>’dir. Bu değer split’ten <em>önceki</em> karışıklığı anlatır. Sıradaki adım, bir sorunun ne kadarını giderdiğini hesaplamak.</p>",
+        "html": "<p><b>Entropy</b>, bir node içindeki class karışıklığını, yani <b>impurity</b>’yi ölçer. Bütün örnekler aynı cevapsa node <b>pure</b>’dur: class belirsizliği yoktur.</p><table class=\"t\"><tr><th>İki class’lı node</th><th>Entropy</th><th>Yorum</th></tr><tr><td>4 Yes, 0 No</td><td><b>0</b></td><td>Pure</td></tr><tr><td>9 Yes, 5 No</td><td>Yaklaşık 0.940</td><td>Karışık</td></tr><tr><td>3 Yes, 3 No</td><td><b>1 bit</b></td><td>En yüksek impurity</td></tr></table><p>Fifty-fifty’de bir class diğerinden daha baskın değildir. Bu nedenle iki class için uncertainty en yüksektir. İyi bir split, child’ları daha saf hale getirir.</p><div class=\"callout warn\">“En kötü” ifadesi burada node’un <b>purity</b>’si içindir. Entropy = 1 üst sınırı bu örnekteki <b>iki class</b> içindir.</div><details class=\"course-detail\"><summary>İstersen: 9 Yes / 5 No hesabı</summary><p>Play Tennis’de 9 Yes, 5 No var:</p><ol><li>Payları bul: p(Yes) = 9/14; p(No) = 5/14.</li><li>Her sınıf için −p log₂ p hesapla.</li><li>Topla: −(9/14)log₂(9/14) − (5/14)log₂(5/14) ≈ <b>0.940</b>.</li></ol><p>Genel formül: <b>I = −Σ pᵢ log₂ pᵢ</b>. Vize notlarında öncelik, bu değerin neyi anlattığını açıklayabilmendir.</p></details>",
         "check": {
           "q": "What is the entropy of four Yes and zero No?",
           "o": [
@@ -1946,14 +1949,14 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Information gain: sorudan sonra ne kadar belirsizlik kaldı?",
+        "t": "Information gain: hangi soru karışıklığı daha çok azaltır?",
         "key": "Minimize <b>weighted child entropy</b>, equivalently maximize <b>information gain</b>.",
         "fig": {
           "type": "anim",
           "name": "id3",
           "t": "ID3 grows the Play Tennis tree"
         },
-        "html": "<p>Outlook ile ayırınca Sunny’de 5, Overcast’te 4, Rain’de 5 örnek var. Entropy’leri 0.971, 0 ve 0.971.</p><ol><li>Her child’ı büyüklüğüyle ağırlıklandır: 5/14, 4/14, 5/14.</li><li>Kalan entropy: (5/14)0.971 + (4/14)0 + (5/14)0.971 ≈ <b>0.694</b>.</li><li><b>Gain</b> = önce − sonra = 0.940 − 0.694 ≈ <b>0.246</b>.</li></ol><p><b>ID3</b> en büyük gain’i seçer. Bütün child entropy’lerini düz ortalamak yanlış olur; küçük bir child’a büyük child kadar ağırlık vermiş olursun. Kesirlerin nedeni budur.</p><div class=\"callout warn\">Child boyutları farklıysa entropy’lerini eşit ağırlıkla ortalama. Her child’ın örnek sayısı önemlidir.</div>",
+        "html": "<p>İyi bir split’ten sonra child node’lar daha saf olur. <b>Information gain</b>, split öncesi entropy ile split sonrası <b>weighted child entropy</b> arasındaki azalmadır.</p><p>Child’ları eşit değil, örnek sayısına göre ağırlıklandırırız. Büyük bir child daha çok örneği temsil eder.</p><p>Play Tennis’de Outlook split’i, 0.940 entropy’yi yaklaşık 0.694’e indirir: gain yaklaşık <b>0.246</b>. Overcast kolunda 4 Yes, 0 No vardır; bu kol pure olduğu için leaf olabilir.</p><p><b>ID3</b> en yüksek gain’i, aynı parent için en düşük weighted child entropy’yi seçer.</p><div class=\"callout warn\">Child’ların büyüklüğü farklıysa entropy’lerini eşit ağırlıkla ortalamak yanlış olur.</div><details class=\"course-detail\"><summary>İstersen: Outlook split’inin hesabı</summary><p>Outlook ile ayırınca Sunny’de 5, Overcast’te 4, Rain’de 5 örnek var. Entropy’leri 0.971, 0 ve 0.971.</p><ol><li>Her child’ı büyüklüğüyle ağırlıklandır: 5/14, 4/14, 5/14.</li><li>Kalan entropy: (5/14)0.971 + (4/14)0 + (5/14)0.971 ≈ <b>0.694</b>.</li><li><b>Gain</b> = önce − sonra = 0.940 − 0.694 ≈ <b>0.246</b>.</li></ol></details>",
         "check": {
           "q": "Which child becomes a leaf immediately?",
           "o": [
@@ -2148,7 +2151,8 @@ window.GUIDE = {
       "Information gain = parent entropy − weighted child entropy.",
       "Regression leaf ortalama hedefi verir; pruning aşırı büyümeyi sınırlar."
     ],
-    "examAnswer": "ID3: maximize information gain. Gain = parent entropy − weighted child entropy. Regression leaf: mean target."
+    "examAnswer": "ID3: maximize information gain. Gain = parent entropy − weighted child entropy. Regression leaf: mean target.",
+    "opening": "Vize notlarındaki odak: entropy ve iki class için fifty-fifty durumunun neden en yüksek impurity olduğu."
   },
   "6": {
     "goal": "Basit weighted sum’lardan öğrenen bir network nasıl oluşur?",
@@ -2200,7 +2204,7 @@ window.GUIDE = {
           "name": "wtx",
           "t": "Transpose, then multiply and add"
         },
-        "html": "<p>Unit’in girdileri x₁ … x_d; her bağlantının bir weight’i vardır. Önce her girdiyi kendi weight’iyle çarpar, sonra toplarız:</p><p class=\"lesson-equation\">a = w₁x₁ + … + w_dx_d + w₀</p><p><b>w₀</b>, bias’tır. Slaytlar x₀ = 1 sabit girdisini ekleyerek bunu <b>wᵀx</b> içine alır.</p><p>Üstteki <b>ᵀ (transpose)</b>, sütunu satıra çevirir. Satır × sütun sonucu tek sayıdır: karşılıklı çarpımların toplamı.</p><p>Linear regression çıktısında y = a olabilir. Classification’da ise activation bu toplamı dönüştürür. Toplamı hesaplamakla çıktı kuralını seçmek iki ayrı adımdır.</p>",
+        "html": "<p>Unit’in girdileri x₁ … x_d; her bağlantının bir weight’i vardır. Önce her girdiyi kendi weight’iyle çarpar, sonra toplarız:</p><p class=\"lesson-equation\">a = w₁x₁ + … + w_dx_d + w₀</p><p><b>w₀</b>, bias’tır. Slaytlar x₀ = 1 sabit girdisini ekleyerek bunu <b>wᵀx</b> içine alır.</p><p><b>Transpose</b> satır ve sütunları yer değiştirir. Buradaki sütun vektör, <b>ᵀ</b> ile satır vektöre dönüşür. Satır × sütun sonucu tek sayıdır: karşılıklı çarpımların toplamı.</p><p>Linear regression çıktısında y = a olabilir. Classification’da ise activation bu toplamı dönüştürür. Toplamı hesaplamakla çıktı kuralını seçmek iki ayrı adımdır.</p>",
         "check": {
           "q": "w and x each have 3 entries. What kind of thing is wᵀx?",
           "o": [
@@ -2212,8 +2216,8 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Bias neden gerekli? AND ve OR üzerinden görelim",
-        "key": "Without the <b>bias w₀</b> the boundary must pass through (0, 0). Changing w₀ <b>shifts</b> the line: AND and OR differ <b>only</b> in the bias.",
+        "t": "ax + b içindeki b: bias sınırı neden kaydırır?",
+        "key": "Notundaki <b>b</b>, slaytlardaki <b>bias w₀</b>’dır. Weight’ler yönü, bias sınırın konumunu belirler.",
         "fig": {
           "type": "plot",
           "t": "Same weights w₁ = w₂ = +1, two biases",
@@ -2286,7 +2290,7 @@ window.GUIDE = {
           ],
           "cap": "Solid purple: w₀ = −1.5, only (1, 1) is above it (AND). Dashed orange: w₀ = −0.5, everything but (0, 0) is above it (OR). Moving w₀ slides the line without turning it."
         },
-        "html": "<p>w₁ = w₂ = 1 olsun. Unit, x₁ + x₂ + w₀ &gt; 0 ise 1 versin. Karar sınırı toplamın 0 olduğu doğrudur.</p><table class=\"t\"><tr><th>Bias</th><th>Sınır</th><th>Hangi girişler 1?</th></tr><tr><td><b>−1.5</b></td><td>x₁ + x₂ = 1.5</td><td>Yalnız (1,1): AND</td></tr><tr><td><b>−0.5</b></td><td>x₁ + x₂ = 0.5</td><td>(0,0) dışındakiler: OR</td></tr></table><p>Weight’leri değiştirmedik. Yalnız bias değişince sınır kaydı. Weight yönü, <b>bias konumu</b> belirler. Bias 0 ise sınır orijinden geçmek zorundadır. Regression’daki y = wx + w₀ için de w₀ doğruyu yukarı/aşağı taşır.</p>",
+        "html": "<p>Notundaki tek girdili <b>y = ax + b</b> gösteriminde a = w, <b>b = w₀ = bias</b>. Bias sabit terimdir; doğruyu kaydırır. Bias 0 olursa doğru orijinden geçmek zorundadır.</p><p>w₁ = w₂ = 1 olsun. Unit, x₁ + x₂ + w₀ &gt; 0 ise 1 versin. Karar sınırı toplamın 0 olduğu doğrudur.</p><table class=\"t\"><tr><th>Bias</th><th>Sınır</th><th>Hangi girişler 1?</th></tr><tr><td><b>−1.5</b></td><td>x₁ + x₂ = 1.5</td><td>Yalnız (1,1): AND</td></tr><tr><td><b>−0.5</b></td><td>x₁ + x₂ = 0.5</td><td>(0,0) dışındakiler: OR</td></tr></table><p>Weight’leri değiştirmedik. Yalnız bias değişince sınır kaydı. Weight yönü, <b>bias konumu</b> belirler. Bias 0 ise sınır orijinden geçmek zorundadır. Regression’daki y = wx + w₀ için de w₀ doğruyu yukarı/aşağı taşır.</p>",
         "lab": {
           "href": "w6/perceptron.html",
           "todo": [
@@ -2915,19 +2919,19 @@ window.GUIDE = {
           ],
           "cap": "Blue: sigmoid, between 0 and 1. Dashed orange: tanh, between −1 and 1. Green: ReLU, 0 for negative sums, then a straight line. Softmax is not one curve: it works on all K outputs at once (next step)."
         },
-        "html": "<p>Weighted sum herhangi bir sayı olabilir. <b>Activation function</b>, onu ihtiyaca uygun çıktıya dönüştürür.</p><table class=\"t\"><tr><th>Activation</th><th>Çıktı fikri</th></tr><tr><td><b>Sigmoid</b></td><td>(0,1); binary classification olasılığı</td></tr><tr><td><b>tanh</b></td><td>(−1,1)</td></tr><tr><td><b>ReLU</b></td><td>max(0,a)</td></tr><tr><td><b>Linear</b></td><td>Regression’da doğrudan toplam</td></tr></table><p>Sigmoid(0) = 0.5’tir. Toplam pozitifse sigmoid çıktısı 0.5’in üstündedir; bu yüzden iki class için olasılık olarak yorumlanır.</p><p>Activation preprocessing değildir. Modelin içinde her forward pass’te, hem training hem prediction sırasında uygulanır. Grafikte yatay eksen toplamı, dikey eksen çıktıyı gösterir.</p>",
+        "html": "<p>Weighted sum herhangi bir sayı olabilir. <b>Activation function</b>, onu ihtiyaca uygun çıktıya dönüştürür.</p><table class=\"t\"><tr><th>Activation</th><th>Çıktı fikri</th></tr><tr><td><b>Sigmoid</b></td><td>(0,1); binary classification olasılığı</td></tr><tr><td><b>tanh</b></td><td>(−1,1)</td></tr><tr><td><b>ReLU</b></td><td>max(0,a)</td></tr><tr><td><b>Linear</b></td><td>Regression’da doğrudan toplam</td></tr></table><p>Sigmoid(0) = 0.5’tir. Toplam pozitifse sigmoid çıktısı 0.5’in üstündedir; bu yüzden iki class için olasılık olarak yorumlanır.</p><p><b>Ne zaman kullanılır?</b> Activation preprocessing değildir. Ağın içinde her <b>forward pass</b>’te, hem <b>training</b> hem <b>prediction</b> sırasında uygulanır. Training’de backpropagation, ilgili activation’ın türevini de kullanır. Grafikte yatay eksen toplamı, dikey eksen çıktıyı gösterir.</p>",
         "check": {
-          "q": "A spam filter has one output: spam or not spam. Which output activation fits?",
+          "q": "When are activation functions applied?",
           "o": [
-            "Sigmoid",
-            "Softmax over many classes",
-            "Linear, no activation"
+            "In forward passes during training and prediction",
+            "Only to inputs before training has started",
+            "Only to outputs after training has finished"
           ],
-          "why": "Two classes: one sigmoid output in (0, 1), read as P(spam). Linear outputs are for regression."
+          "why": "Activations are part of the network. They transform weighted sums in every forward pass, and backpropagation uses their derivatives during training."
         }
       },
       {
-        "t": "Softmax: K skor, toplamı 1 olan K olasılık",
+        "t": "Softmax: input sayısı değil, output class sayısı önemli",
         "key": "For <b>K &gt; 2 classes</b> use <b>softmax</b>: every output is in (0, 1), the outputs <b>sum to 1</b>, and the network chooses the class with the <b>largest</b>.",
         "fig": {
           "type": "bars",
@@ -2955,15 +2959,15 @@ window.GUIDE = {
           ],
           "cap": "0.665 + 0.245 + 0.090 = 1. Choose C₁, the largest probability."
         },
-        "html": "<p>Birden fazla class için her class’ın skoru olsun. <b>Softmax</b> bunları ortak bir probability distribution’a dönüştürür.</p><ol><li>Skorlar 2, 1, 0. Üstelini al: e² ≈ 7.39; e¹ ≈ 2.72; e⁰ = 1.</li><li>Toplam = <b>11.11</b>.</li><li>Her birini toplama böl: yaklaşık <b>0.665, 0.245, 0.090</b>.</li><li>En büyük olasılığı seç: class 1.</li></ol><p>Bütün class’lar aynı paydayı kullanır; olasılıklar toplamı 1’dir. Bağımsız sigmoid’lerden farkı bu rekabettir. Grafikte görülen bar’lar ham skor değil, dönüştürülmüş olasılıklardır.</p>",
+        "html": "<p><b>Binary classification</b> için bir sigmoid çıktısı class 1 olasılığını verebilir. Ders, <b>multiclass classification</b> için her class’a bir skor üretip bunlara <b>softmax</b> uygular.</p><p>Üç class için sonuç 0.665, 0.245, 0.090 olsun. Toplam <b>1</b>’dir; en yüksek olasılık ilk class’tadır. Network onu seçer.</p><p>Softmax, her skorun üstelini aynı toplama böler. Böylece çıktılar tek probability distribution oluşturur. Birbirinden bağımsız sigmoid’lerde bu ortak toplam şartı yoktur.</p><div class=\"callout warn\">Notundaki “multiclass inputs” ifadesinde asıl ayrım <b>output class</b> sayısıdır. Çok input feature bulunması tek başına softmax gerektirmez.</div><details class=\"course-detail\"><summary>İstersen: 2, 1, 0 skorlarından olasılıklara</summary><ol><li>Skorlar 2, 1, 0. Üstelini al: e² ≈ 7.39; e¹ ≈ 2.72; e⁰ = 1.</li><li>Toplam = <b>11.11</b>.</li><li>Her birini toplama böl: yaklaşık <b>0.665, 0.245, 0.090</b>.</li><li>En büyük olasılığı seç: class 1.</li></ol></details>",
         "check": {
-          "q": "Softmax outputs for four classes are 0.1, 0.5, 0.3 and one more. What is the fourth?",
+          "q": "What determines how many output probabilities a multiclass softmax produces?",
           "o": [
-            "0.1",
-            "0.5",
-            "It cannot be known"
+            "The number of target output classes",
+            "The number of input feature columns",
+            "The number of training data examples"
           ],
-          "why": "Softmax outputs always sum to 1: 1 − 0.9 = 0.1."
+          "why": "The lecture uses one softmax output per class. Feature count describes the input; class count describes the prediction task."
         }
       },
       {
@@ -3059,26 +3063,26 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Learning rate: hatayı azaltmak için ne kadar ilerleyelim?",
+        "t": "Learning factor / learning rate: adım büyüklüğü neden önemli?",
         "key": "Training moves each weight against the slope of the error: <b>w ← w − η·∂E/∂w</b>. The <b>learning rate η</b> is the step size.",
         "fig": {
           "type": "anim",
           "name": "descent",
           "t": "Gradient descent on slide 17's example"
         },
-        "html": "<p>Ders örneği: x = 1.5, hedef r = 0.5, weight w = 0.8.</p><ol><li>Prediction: y = xw = <b>1.2</b>.</li><li>Loss: E = ½(r − y)² = ½(−0.7)² = <b>0.245</b>.</li><li>Slope: ∂E/∂w = x(y − r) = <b>1.05</b>.</li><li>η = 0.1 ile yeni w = 0.8 − 0.1 × 1.05 = <b>0.695</b>.</li></ol><p class=\"lesson-equation\">w ← w − η · ∂E/∂w</p><p>Slope pozitif olduğu için yerel olarak w’yi azaltmak error’ı düşürür. <b>Learning rate η</b> adımın boyudur. Çok küçükse yavaş ilerleriz; çok büyükse minimumu aşıp hatayı büyütebiliriz.</p><div class=\"callout warn\"><b>Slaytlarda işaret ve loss değeri çelişkisi var.</b> Slides 8–10, Δw = −η(r − y)x yazar. Çalışılmış örnekte gereken Δw = +η(r − y)x = −0.105’tir; böylece w, 0.8’den 0.695’e iner. Loss; slide 17’de 0.249, slide 19’da 0.245, slide 20’de 0.49 yazılmıştır. Buradaki ½ × 0.7² tanımıyla doğru değer <b>0.245</b>’tir.</div>",
+        "html": "<p>Notundaki <b>learning factor</b>, burada <b>learning rate η</b> olarak geçen adım büyüklüğüdür. Training’de weight güncellemesinin ne kadar büyük olacağını ölçekler.</p><p>Hatanın azaldığı yönü bulmak yeterli değildir; o yönde ne kadar ilerlediğimiz de önemlidir.</p><table class=\"t\"><tr><th>η</th><th>Ne olabilir?</th></tr><tr><td>Çok küçük</td><td><b>Slow convergence</b>: birçok küçük adım</td></tr><tr><td>Uygun</td><td>Hatayı azaltan ilerleme</td></tr><tr><td>Çok büyük</td><td><b>Overshoot</b>: minimumu aşıp error’ı büyütme</td></tr></table><p>Animasyonda aynı başlangıç için slider’ı değiştir; adımların nasıl değiştiğini izle. Küçük/büyük için her probleme uyan tek bir sayı ezberleme.</p><details class=\"course-detail\"><summary>İstersen: weight update hesabı ve slayttaki çelişkiler</summary><p>Ders örneği: x = 1.5, hedef r = 0.5, weight w = 0.8.</p><ol><li>Prediction: y = xw = <b>1.2</b>.</li><li>Loss: E = ½(r − y)² = ½(−0.7)² = <b>0.245</b>.</li><li>Slope: ∂E/∂w = x(y − r) = <b>1.05</b>.</li><li>η = 0.1 ile yeni w = 0.8 − 0.1 × 1.05 = <b>0.695</b>.</li></ol><p class=\"lesson-equation\">w ← w − η · ∂E/∂w</p><div class=\"callout warn\"><b>Slaytlarda işaret ve loss değeri çelişkisi var.</b> Slides 8–10, Δw = −η(r − y)x yazar. Çalışılmış örnekte gereken Δw = +η(r − y)x = −0.105’tir; böylece w, 0.8’den 0.695’e iner. Loss; slide 17’de 0.249, slide 19’da 0.245, slide 20’de 0.49 yazılmıştır. Buradaki ½ × 0.7² tanımıyla doğru değer <b>0.245</b>’tir.</div></details>",
         "check": {
-          "q": "In the animation η = 1.0 makes E grow. Why?",
+          "q": "Why can an excessively large learning rate increase the error?",
           "o": [
-            "Each step jumps past the minimum, further every time",
-            "The slope becomes zero",
-            "The bias is missing"
+            "Updates can overshoot the error minimum",
+            "Updates stop using any error information",
+            "Updates convert the bias into class labels"
           ],
-          "why": "The step is too big: w lands on the other side of the bowl, higher up than before."
+          "why": "The learning rate scales the update. A step that is too large can jump beyond a useful region; a very small step can converge slowly."
         }
       },
       {
-        "t": "Backpropagation: hatada hangi weight’in ne etkisi var?",
+        "t": "Backpropagation: hangi weight hatayı nasıl etkiledi?",
         "key": "<b>Backpropagation</b> uses the <b>chain rule</b>: multiply the derivatives along the path from E back to a weight, then take a gradient step with η.",
         "fig": {
           "type": "graph",
@@ -3171,7 +3175,7 @@ window.GUIDE = {
           ],
           "cap": "Targets r₁ = 0.01, r₂ = 0.99. Forward pass left to right; the error travels back right to left."
         },
-        "html": "<p>Forward pass, hidden çıktıları ve prediction’ı hesaplar. Hidden weight’i değiştirmek ise sonraki unit’leri, onların etkisiyle de loss’u değiştirir.</p><p><b>Backpropagation</b> bu yolu geriye doğru izler. <b>Chain rule</b> ile yol boyunca derivative’leri çarpar; yol dallanırsa katkıları toplar.</p><p>Slaytın w₅ örneğinde:</p><ol><li>Output error × sigmoid slope × hidden input.</li><li>Gradient ≈ 0.741 × 0.187 × 0.593 = <b>0.082</b>.</li><li>η = 0.5 ile: 0.4 − 0.5 × 0.082 ≈ <b>0.359</b>.</li></ol><p>Backpropagation gradient’i bulur; update kuralı weight’i değiştirir. Böylece model, loss ve optimization tek bir training döngüsünde birleşir.</p><div class=\"callout warn\">Slide 26 ikinci hidden toplamı ilkinden kopyalayarak 0.3775 yazıyor. Mevcut worked calculation’da toplam <b>0.3925</b>’tir; h₂ ≈ 0.597 verir.</div>",
+        "html": "<p><b>Forward pass</b> mevcut weight’lerle hidden çıktıları ve prediction’ı hesaplar. Loss, prediction ile hedef arasındaki hatayı ölçer.</p><p>Hidden weight’i değiştirmek sonraki unit’leri, onlar da loss’u etkiler. <b>Backpropagation</b> bu etki zincirini output’tan geriye doğru izleyerek gradient’leri bulur.</p><p><b>Chain rule</b>, bir yol boyunca derivative’leri çarpar; dallanan yolların katkıları toplanır. Ardından learning rate, gradient’le yapılacak update’in büyüklüğünü belirler.</p><p>Bu yüzden prediction ile öğrenme farklıdır: forward pass cevap üretir; gradient hesabı ve update ağırlıkları iyileştirmeye çalışır. Model, loss ve optimization böyle birleşir.</p><details class=\"course-detail\"><summary>İstersen: slayttaki w₅ update hesabı</summary><p>Slaytın w₅ örneğinde:</p><ol><li>Output error × sigmoid slope × hidden input.</li><li>Gradient ≈ 0.741 × 0.187 × 0.593 = <b>0.082</b>.</li><li>η = 0.5 ile: 0.4 − 0.5 × 0.082 ≈ <b>0.359</b>.</li></ol><div class=\"callout warn\">Slide 26 ikinci hidden toplamı ilkinden kopyalayarak 0.3775 yazıyor. Mevcut worked calculation’da toplam <b>0.3925</b>’tir; h₂ ≈ 0.597 verir.</div></details>",
         "check": {
           "q": "Why is it called backpropagation?",
           "o": [
@@ -3186,10 +3190,11 @@ window.GUIDE = {
     "question": "Basit weighted sum’lardan öğrenen bir network nasıl oluşur?",
     "reading": true,
     "summary": [
-      "Weight katkıyı, bias sınırın yerini belirler; activation toplamı çıktıya dönüştürür.",
-      "XOR tek düz sınırla ayrılamaz; nonlinear hidden layer gerekir.",
-      "Forward pass tahmin eder. Backpropagation gradient hesaplar; update ağırlığı değiştirir."
+      "ax + b içindeki b, bias w₀’dır; sınırı kaydırır. Transpose, wᵀx’i row × column toplamına dönüştürür.",
+      "Sigmoid binary output; softmax multiclass output olasılıkları içindir. Activation, training ve prediction sırasında uygulanır.",
+      "Learning factor / learning rate update adımını ölçekler. Çok küçükse yavaş, çok büyükse overshoot olabilir."
     ],
-    "examAnswer": "Unit: weighted sum + bias + activation. Backpropagation: chain-rule gradients. Update: w ← w − η∂E/∂w."
+    "examAnswer": "Bias b = w₀: boundary shift. Transpose: row ↔ column. Sigmoid: binary. Softmax: class probabilities sum to 1. Learning rate: update step size.",
+    "opening": "Vize notlarındaki odak: bias, transpose, activation functions ve learning rate. Notta formül yazılmayacağı belirtiliyor; kavramı ve neden kullanıldığını açıklamaya öncelik ver."
   }
 };
