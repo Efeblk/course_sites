@@ -1947,8 +1947,8 @@ Object.assign(window.COURSE, {
       ],
       [
         "past.html",
-        "Old midterm papers: the questions tagged \"Bu yıl\" first",
-        "25 min"
+        "Old final papers: see how the lecturer asks, solve the questions tagged \"Vize konusu\"",
+        "15 min"
       ],
       [
         "mock.html",
@@ -1961,9 +1961,9 @@ Object.assign(window.COURSE, {
     {
       "kind": "past",
       "href": "past.html",
-      "title": "Geçmiş vizeler",
-      "meta": "2 old papers · 26 questions",
-      "desc": "Every question from two older midterms with a Turkish hint and a short English answer; the ones on this year's slides are tagged."
+      "title": "Geçmiş finaller",
+      "meta": "2 old finals · 26 questions",
+      "desc": "How the lecturer asks: every question from two older finals with a Turkish hint and a short English answer; the midterm-topic ones are tagged."
     },
     {
       "kind": "summary",

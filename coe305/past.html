@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Geçmiş vizeler · COE305</title>
+  <title>Geçmiş finaller · COE305</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <style>
     .exam { margin: 48px 0 0; padding-top: 18px; border-top: 2px solid var(--text); }
@@ -28,31 +28,30 @@
     @media (max-width: 600px) { td, th { padding: 6px !important; } }
   </style>
 </head>
-<body data-root=".." data-course="coe305" data-title="Geçmiş vizeler" data-activity="coe305-past">
+<body data-root=".." data-course="coe305" data-title="Geçmiş finaller" data-activity="coe305-past">
   <main>
-    <div class="mono small muted">COE305 · eski vize kâğıtları (fotoğraf)</div>
-    <h1>Geçmiş vizeler</h1>
+    <div class="mono small muted">COE305 · eski final kâğıtları (fotoğraf)</div>
+    <h1>Geçmiş finaller</h1>
     <nav class="row"><a href="index.html">Course</a><a href="ozet.html">Midterm özeti</a><a href="mock.html">Mock midterm</a><a href="videos.html">Videolar</a></nav>
-    <p class="lead">İki eski vize kâğıdının fotoğrafları geldi. Her soruda önce nasıl düşüneceğin (Türkçe), sonra kâğıda yazılacak kısa İngilizce cevap var. Cevabı açmadan önce kendin çöz.</p>
+    <p class="lead">İki eski <b>final</b> kâğıdının fotoğrafları. Final bütün dönemi kapsıyor, sen şimdi vizeye hazırlanıyorsun; bu sayfanın vize için asıl faydası <b>hocanın nasıl soru sorduğunu</b> göstermesi. Her soruda önce nasıl düşüneceğin (Türkçe), sonra kâğıda yazılacak kısa İngilizce cevap var.</p>
 
-    <h2>Önce şunu bil</h2>
-    <p>Bu kâğıtlar <b>bu yılın slaytlarından daha geniş</b>: SVM, Random Forest, Naive Bayes, Tomek link, one-hot encoding, Python/pandas fonksiyonları soruyorlar. Bunların hiçbiri Week 1–6 slaytlarında ve hocanın vize listesinde yok. Yani büyük ihtimalle başka bir dönemin (belki başka bir hocanın) kâğıtları.</p>
-    <p>Bu yüzden her sorunun yanında bir etiket var:</p>
+    <h2>Vize için nasıl kullanılır</h2>
+    <p>Finalde vizeden sonraki konular da var: SVM ve kernel'ler (Week 10), Random Forest, Naive Bayes, dengesiz veri (oversampling, Tomek link), one-hot encoding, pandas fonksiyonları. Bunlar Week 1–6 slaytlarında ve hocanın vize listesinde yok. Her sorunun yanında bir etiket var:</p>
     <ul>
-      <li><b>Bu yıl: Week N</b>: konu bu yılın slaytlarında veya hocanın listesinde. <b>Önce bunları çöz.</b></li>
-      <li><span class="muted">Slaytlarda yok</span>: cevap yine burada, ama genel ML bilgisinden; vize için öncelik düşük.</li>
+      <li><b>Vize konusu: Week N</b>: konu Week 1–6 slaytlarında veya hocanın vize listesinde. <b>Bunları şimdi çöz.</b></li>
+      <li><span class="muted">Vizede yok</span>: final için; şimdilik atlayabilirsin. Cevaplar duruyor, final hazırlığında işine yarar.</li>
     </ul>
 
-    <h3>Kâğıtlar ne söylüyor</h3>
+    <h3>Hoca nasıl soruyor</h3>
     <div class="scroll"><table class="t">
       <tr><th>Soru tipi</th><th>Puan</th><th>Örnek</th></tr>
       <tr><td><b>Çoktan seçmeli</b>, çoğu küçük bir hesap</td><td>3–10</td><td>saf düğümün entropy'si, 5-fold ortalaması, MSE, sensitivity</td></tr>
       <tr><td><b>Kısa hesap</b>, adımları göstererek</td><td>5–7</td><td>8 pozitif 4 negatif düğümün entropy'si; confusion matrix'ten accuracy, recall</td></tr>
       <tr><td><b>Açıkla / karşılaştır</b>, bazen çizimle</td><td>5–10</td><td>overfit ve underfit nedenleri; ML türleri diyagramı</td></tr>
     </table></div>
-    <div class="callout">Bu yılın hocası "formül yazmayacağız, kavramı ve mantığını anlayın" dedi. Eski kâğıtlarda yine de küçük hesaplar var. <b>Entropy</b> hocanın listesinde: 8'e 4 bölünmüş bir düğümü hesaplayabiliyorsan konuyu anlamışsın demektir.</div>
+    <div class="callout">Hoca vize için "formül yazmayacağız, kavramı ve mantığını anlayın" dedi. Finallerde yine de küçük hesaplar var. <b>Entropy</b> hocanın listesinde: 8'e 4 bölünmüş bir düğümü hesaplayabiliyorsan konuyu anlamışsın demektir.</div>
 
-    <h3>Bu yılın konusuna denk gelenler (önce bunlar)</h3>
+    <h3>Vize konusuna denk gelenler (şimdi bunlar)</h3>
     <div class="scroll"><table class="t">
       <tr><th>Soru</th><th>Hocanın listesi</th></tr>
       <tr><td><a href="#a1-1">A1.I</a>, <a href="#a1-4">A1.IV</a> entropy hesabı</td><td>5. What is entropy</td></tr>
@@ -64,12 +63,12 @@
 
     <!-- ========================================================= PAPER A -->
     <section class="exam" id="paperA">
-      <h2>Kâğıt A</h2>
+      <h2>Final kâğıdı A</h2>
       <p class="small muted">Beş soru, her biri üç çoktan seçmeli (3 puan) ve bir iki açık uçlu kısımdan oluşuyor. Question 4'ün fotoğrafı yok. Question 3'ün fotoğrafı bulanık; metni okunabildiği kadarıyla yazıldı.</p>
 
       <h3 style="margin-top:28px">Question 1: Decision trees ve sınıflandırıcılar</h3>
 
-      <div class="q" id="a1-1"><h3>A1.I Saf düğümün entropy'si</h3><div class="pts">3 puan · <b>Bu yıl: Week 5</b></div>
+      <div class="q" id="a1-1"><h3>A1.I Saf düğümün entropy'si</h3><div class="pts">3 puan · <b>Vize konusu: Week 5</b></div>
         <div class="stem">In a specific node of the decision tree, there are 20 instances of Class A but no instances of other classes. Calculate the entropy of the target variable at this node.
           <ol type="a"><li>1.0</li><li>2.0</li><li>0.918</li><li>0.0</li></ol></div>
         <p class="how">Hepsi aynı sınıfsa düğüm <b>pure</b> (saf). Hesap yapmana gerek yok: saf düğümde belirsizlik yok, entropy sıfır. 1.0 ise tam tersi uç: iki sınıf yarı yarıya ("fifty-fifty is the worst").</p>
@@ -80,7 +79,7 @@
         </ul></div>
       </div>
 
-      <div class="q" id="a1-2"><h3>A1.II Ağacın derinliğini sınırlayan parametre</h3><div class="pts">3 puan · <b>Bu yıl: Week 5 (pruning)</b></div>
+      <div class="q" id="a1-2"><h3>A1.II Ağacın derinliğini sınırlayan parametre</h3><div class="pts">3 puan · <b>Vize konusu: Week 5 (pruning)</b></div>
         <div class="stem">You are building a decision tree classifier for a binary classification problem, and you want to prevent the tree from growing too deep to avoid overfitting. Which parameter from scikit-learn can you adjust to control the depth of the decision tree?
           <ol type="a"><li>min_samples_split</li><li>max_depth</li><li>criterion</li><li>n_estimators</li></ol></div>
         <p class="how">Soru "depth" kelimesini veriyor. Slayttaki karşılığı <b>prepruning (early stopping)</b>: ağacı büyürken erken durdurmak. Diğerlerini ele: criterion = gini/entropy seçimi, n_estimators = ormandaki ağaç sayısı.</p>
@@ -92,7 +91,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a1-3"><h3>A1.III Basit, olasılıksal bir sınıflandırıcı</h3><div class="pts">3 puan · Slaytlarda yok</div>
+      <div class="q out" id="a1-3"><h3>A1.III Basit, olasılıksal bir sınıflandırıcı</h3><div class="pts">3 puan · Vizede yok</div>
         <div class="stem">You have a dataset with 1000 instances and 20 features. The target variable is binary. You decide to use a simple, probabilistic model for classification. Which algorithm is suitable?
           <ol type="a"><li>k-Nearest Neighbors (k-NN)</li><li>Random Forest</li><li>Gaussian Naive Bayes</li><li>Support Vector Machines (SVM)</li></ol></div>
         <p class="how">Anahtar kelime <b>probabilistic</b>: seçeneklerden yalnızca biri doğrudan olasılık hesaplar (Bayes kuralıyla).</p>
@@ -103,7 +102,7 @@
         </ul></div>
       </div>
 
-      <div class="q" id="a1-4"><h3>A1.IV 8 pozitif, 4 negatif: entropy</h3><div class="pts">7 puan · <b>Bu yıl: Week 5</b></div>
+      <div class="q" id="a1-4"><h3>A1.IV 8 pozitif, 4 negatif: entropy</h3><div class="pts">7 puan · <b>Vize konusu: Week 5</b></div>
         <div class="stem">You are building a decision tree for a binary classification problem. The dataset at a node contains the following class distribution: 8 positive samples, 4 negative samples. Calculate the entropy of this node. Show your work.</div>
         <p class="how">Üç adım: (1) oranları bul, (2) her oran için p · log₂(p), (3) topla ve eksiyle çarp. Kontrol: sonuç 0 ile 1 arasında olmalı; düğüm yarı yarıya değil, saf da değil, yani 1'e yakın ama 1'den küçük.</p>
         <button class="chip" data-show>Cevabı göster</button>
@@ -118,7 +117,7 @@
 
       <h3 style="margin-top:36px">Question 2: Ensembles, değerlendirme, SVM</h3>
 
-      <div class="q out" id="a2-1"><h3>A2.I Bagging: toplam örnek sayısı</h3><div class="pts">3 puan · Slaytlarda yok (hesap basit)</div>
+      <div class="q out" id="a2-1"><h3>A2.I Bagging: toplam örnek sayısı</h3><div class="pts">3 puan · Vizede yok (hesap basit)</div>
         <div class="stem">You decide to create a Bagging ensemble with 50 base models. Each base model is trained independently on a bootstrap sample. What is the total number of instances used across all base models if each bootstrap sample contains 700 instances on average?
           <ol type="a"><li>35,000</li><li>7,500</li><li>25,000</li><li>50,000</li></ol></div>
         <p class="how">Konuyu bilmesen de çözülür: 50 model × modele düşen 700 örnek.</p>
@@ -129,7 +128,7 @@
         </ul></div>
       </div>
 
-      <div class="q" id="a2-2"><h3>A2.II 5-fold cross-validation: son accuracy</h3><div class="pts">3 puan · <b>Bu yıl: Week 2 (cross-validation)</b></div>
+      <div class="q" id="a2-2"><h3>A2.II 5-fold cross-validation: son accuracy</h3><div class="pts">3 puan · <b>Vize konusu: Week 2 (cross-validation)</b></div>
         <div class="stem">In a 5-fold cross-validation technique fold 1 to fold 5 have received an accuracy of 0.975, 0.882, 0.915, 0.955, 0.900 respectively. What will be the final accuracy the model would achieve?
           <ol type="a"><li>0.928</li><li>0.932</li><li>0.925</li><li>0.938</li></ol></div>
         <p class="how">Slayttaki tanım cevabı veriyor: cross-validation = veriyi tekrar tekrar bölüp <b>performansın ortalamasını</b> almak. Beşini topla, beşe böl.</p>
@@ -140,7 +139,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a2-3"><h3>A2.III Confusion matrix'i okumak</h3><div class="pts">3 puan · Slaytlarda yok (projede var)</div>
+      <div class="q out" id="a2-3"><h3>A2.III Confusion matrix'i okumak</h3><div class="pts">3 puan · Vizede yok (projede var)</div>
         <div class="stem">A dataset with 200 observations; the task is to predict the number of people holding more than 500 dollars in their account using SVM. How will you interpret the matrix?
           <div class="scroll"><table class="t cm" style="max-width:420px">
             <tr><th>N = 200</th><th>Prediction = No</th><th>Prediction = Yes</th></tr>
@@ -156,7 +155,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a2-4"><h3>A2.IV Random Forest'ı SVM ve KNN'den ayıran ne</h3><div class="pts">5 puan · Slaytlarda yok</div>
+      <div class="q out" id="a2-4"><h3>A2.IV Random Forest'ı SVM ve KNN'den ayıran ne</h3><div class="pts">5 puan · Vizede yok</div>
         <div class="stem">Discuss how Random Forest algorithm stands unique when compared with SVM, KNN algorithms.</div>
         <p class="how">Ana fikir: Random Forest <b>tek model değil, birçok karar ağacının oylaması</b>. SVM tek bir sınır çizer, KNN hiç model kurmaz, komşulara bakar.</p>
         <button class="chip" data-show>Cevabı göster</button>
@@ -168,7 +167,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a2-5"><h3>A2.V SVM: kernel, soft margin, hard margin</h3><div class="pts">6 puan · Slaytlarda yok (Week 10, Kernel Machines: final konusu)</div>
+      <div class="q out" id="a2-5"><h3>A2.V SVM: kernel, soft margin, hard margin</h3><div class="pts">6 puan · Vizede yok (Week 10, Kernel Machines)</div>
         <div class="stem">Write about kernels, soft margin, hard margin in Support Vector Machine.</div>
         <button class="chip" data-show>Cevabı göster</button>
         <div class="model" hidden><ul>
@@ -181,7 +180,7 @@
 
       <h3 style="margin-top:36px">Question 3: Python ve regression <span class="small muted">(fotoğraf bulanık)</span></h3>
 
-      <div class="q out" id="a3-1"><h3>A3.I Veri analizi için Python kütüphanesi</h3><div class="pts">3 puan · Slaytlarda yok</div>
+      <div class="q out" id="a3-1"><h3>A3.I Veri analizi için Python kütüphanesi</h3><div class="pts">3 puan · Vizede yok</div>
         <div class="stem">In the context of your data analytics project, which Python library would you choose to assist in performing data analysis, providing functionalities such as data manipulation, cleaning, and exploration?
           <ol type="a"><li>NumPy</li><li>Pandas</li><li>Matplotlib</li><li>Seaborn</li></ol></div>
         <button class="chip" data-show>Cevabı göster</button>
@@ -190,7 +189,7 @@
         </ul></div>
       </div>
 
-      <div class="q" id="a3-2"><h3>A3.II Bu veri için hangi algoritma</h3><div class="pts">3 puan · <b>Bu yıl: Week 1–2 (regression)</b></div>
+      <div class="q" id="a3-2"><h3>A3.II Bu veri için hangi algoritma</h3><div class="pts">3 puan · <b>Vize konusu: Week 1–2 (regression)</b></div>
         <div class="stem">Consider the following dataset. As a data scientist which algorithm will you choose to handle it?
           <div class="scroll"><table class="t" style="max-width:520px">
             <tr><th>Name</th><th>Age</th><th>Monthly Salary ($)</th><th>Amount spent for Annual Trip ($)</th></tr>
@@ -207,7 +206,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a3-3"><h3>A3.III Modeli eğiten metot</h3><div class="pts">3 puan · Slaytlarda yok</div>
+      <div class="q out" id="a3-3"><h3>A3.III Modeli eğiten metot</h3><div class="pts">3 puan · Vizede yok</div>
         <div class="stem">You are building a machine learning model to predict house prices. Which method will you use to train the Linear Regression model?
           <ol type="a"><li>train()</li><li>fit()</li><li>predict()</li><li>transform()</li></ol></div>
         <button class="chip" data-show>Cevabı göster</button>
@@ -216,7 +215,7 @@
         </ul></div>
       </div>
 
-      <div class="q" id="a3-4"><h3>A3.IV ML türleri diyagramı</h3><div class="pts">6 puan · <b>Bu yıl: Week 1 (hocanın 4. maddesi)</b></div>
+      <div class="q" id="a3-4"><h3>A3.IV ML türleri diyagramı</h3><div class="pts">6 puan · <b>Vize konusu: Week 1 (hocanın 4. maddesi)</b></div>
         <div class="stem">Draw a classification diagram for Machine Learning, categorizing it into its main types, and list the tasks for each type.</div>
         <p class="how">Ağaç gibi çiz: kökte "Machine Learning", altında <b>üç dal</b>. Her dalın altına görevlerini yaz ve tek satırla "ne fark eder"i ekle: etiket var mı, ödül mü var.</p>
         <button class="chip" data-show>Cevabı ve çizimi göster</button>
@@ -257,7 +256,7 @@
         </div>
       </div>
 
-      <div class="q out" id="a3-5"><h3>A3.V Linear regression: homoscedasticity ve residual normality</h3><div class="pts">5 puan · Slaytlarda yok</div>
+      <div class="q out" id="a3-5"><h3>A3.V Linear regression: homoscedasticity ve residual normality</h3><div class="pts">5 puan · Vizede yok</div>
         <div class="stem">In the context of Linear Regression, explain the assumptions of homoscedasticity and normality of residuals, and why they are important.</div>
         <p class="how">Önce <b>residual</b>'ı tanımla (gerçek − tahmin). Sonra iki varsayımı birer cümleyle, nasıl kontrol edildiğini ve bozulursa ne olduğunu yaz.</p>
         <button class="chip" data-show>Cevabı göster</button>
@@ -271,7 +270,7 @@
 
       <h3 style="margin-top:36px">Question 5: Ölçüler ve veri hazırlama</h3>
 
-      <div class="q out" id="a5-1"><h3>A5.I Sensitivity</h3><div class="pts">3 puan · Slaytlarda yok (projede recall)</div>
+      <div class="q out" id="a5-1"><h3>A5.I Sensitivity</h3><div class="pts">3 puan · Vizede yok (projede recall)</div>
         <div class="stem">Calculate the sensitivity if the number of true positives is 50 and the number of false negatives is 20.
           <ol type="a"><li>0.71</li><li>0.46</li><li>0.72</li><li>0.47</li></ol></div>
         <p class="how"><b>Sensitivity = recall</b>: gerçekten pozitif olanların kaçını yakaladık? Gerçek pozitifler = TP + FN.</p>
@@ -281,7 +280,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a5-2"><h3>A5.II İki değişkenin ilişkisi</h3><div class="pts">3 puan · Slaytlarda yok</div>
+      <div class="q out" id="a5-2"><h3>A5.II İki değişkenin ilişkisi</h3><div class="pts">3 puan · Vizede yok</div>
         <div class="stem">If you perform an exploratory data analysis on a dataset, what option will you choose to understand the relationship between two variables?
           <ol type="a"><li>Box plot</li><li>Scatterplot</li><li>Histogram</li><li>Swarm plot</li></ol></div>
         <button class="chip" data-show>Cevabı göster</button>
@@ -290,7 +289,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a5-3"><h3>A5.III RMSE = 0 ise R² kaç</h3><div class="pts">3 puan · Slaytlarda yok</div>
+      <div class="q out" id="a5-3"><h3>A5.III RMSE = 0 ise R² kaç</h3><div class="pts">3 puan · Vizede yok</div>
         <div class="stem">If RMSE = 0, what does it indicate about the model, and what would the corresponding R² (coefficient of determination) value be?
           <ol type="a"><li>The model is overfitting the data, and R² is negative.</li><li>The model has perfect predictions with no errors, and R² = 1.</li><li>The model is underfitting the data, and R² = 0.</li><li>The model has infinite variance, and R² is undefined.</li></ol></div>
         <button class="chip" data-show>Cevabı göster</button>
@@ -299,7 +298,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a5-4"><h3>A5.IV Tomek link</h3><div class="pts">5 puan · Slaytlarda yok</div>
+      <div class="q out" id="a5-4"><h3>A5.IV Tomek link</h3><div class="pts">5 puan · Vizede yok</div>
         <div class="stem">What is the purpose of Tomek link? How does it work?</div>
         <p class="how">Amaç (dengesiz veriyi temizlemek) + mekanizma (farklı sınıftan, birbirinin en yakın komşusu olan çift) + sonuç (sınır netleşir).</p>
         <button class="chip" data-show>Cevabı göster</button>
@@ -310,7 +309,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="a5-5"><h3>A5.V One-hot encoding ve dummy variable trap</h3><div class="pts">6 puan · Slaytlarda yok</div>
+      <div class="q out" id="a5-5"><h3>A5.V One-hot encoding ve dummy variable trap</h3><div class="pts">6 puan · Vizede yok</div>
         <div class="stem">In a dataset with 5 categorical variables (A, B, C, D, E), all of which are non-numeric, demonstrate how one-hot encoding can be applied to convert these variables into numerical format. Explain the concept of the dummy variable trap and how to address it.</div>
         <p class="how">Bir değişkenle küçük bir örnek göster, sonra "A–E'nin her birine aynısı" de. Trap: sütunların toplamı hep 1, yani biri diğerlerinden bulunabilir.</p>
         <button class="chip" data-show>Cevabı göster</button>
@@ -335,12 +334,12 @@
 
     <!-- ========================================================= PAPER B -->
     <section class="exam" id="paperB">
-      <h2>Kâğıt B</h2>
+      <h2>Final kâğıdı B</h2>
       <p class="small muted">Daha az ama daha büyük puanlı sorular (5–15 puan). Question 1'in fotoğrafı yok.</p>
 
       <h3 style="margin-top:28px">Question 2</h3>
 
-      <div class="q out" id="b2-a"><h3>B2.A Mean squared error</h3><div class="pts">10 puan · Slaytlarda MSE adıyla yok (Week 2'de "error" var)</div>
+      <div class="q out" id="b2-a"><h3>B2.A Mean squared error</h3><div class="pts">10 puan · Vizede yok (MSE adıyla; Week 2'de "error" var)</div>
         <div class="stem">An organization builds a Linear Regression model to predict sales based on advertising expenditure. The table shows actual and predicted sales for 5 test samples. Choose the correct mean squared error.
           <div class="scroll"><table class="t" style="max-width:380px">
             <tr><th>Actual</th><td>10</td><td>15</td><td>20</td><td>25</td><td>30</td></tr>
@@ -356,7 +355,7 @@
         </ol></div>
       </div>
 
-      <div class="q" id="b2-b"><h3>B2.B Lazy learners</h3><div class="pts">5 puan · <b>Bu yıl: Week 4 (parametric vs nonparametric)</b></div>
+      <div class="q" id="b2-b"><h3>B2.B Lazy learners</h3><div class="pts">5 puan · <b>Vize konusu: Week 4 (parametric vs nonparametric)</b></div>
         <div class="stem">Which of the following statements about lazy learners is correct?<br>
           A. They build the model during training. · B. They generalize immediately after receiving data. · C. They delay generalization until a query is made. · D. They are parametric models.</div>
         <p class="how">"Lazy" = tembel: eğitimde iş yapmaz, veriyi saklar; bir soru (query) gelince komşulara bakar. A ve B tam tersini (eager learner) anlatıyor. D: hocanın 1. maddesi! Önceden belirlenmiş bir fonksiyonu yok → <b>nonparametric</b>.</p>
@@ -367,7 +366,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="b2-c"><h3>B2.C Spam: confusion matrix, accuracy, recall</h3><div class="pts">15 puan (3 × 5) · Slaytlarda yok (projede var)</div>
+      <div class="q out" id="b2-c"><h3>B2.C Spam: confusion matrix, accuracy, recall</h3><div class="pts">15 puan (3 × 5) · Vizede yok (projede var)</div>
         <div class="stem">A classification model was tested on 120 samples: 70 emails were correctly predicted as Spam; 10 spam emails were incorrectly predicted as Not Spam; 15 normal emails were incorrectly predicted as Spam; 25 normal emails were correctly predicted as Not Spam.<br>
           i. Draw the confusion matrix with clear labels. ii. Calculate the Accuracy. iii. Calculate Recall (Sensitivity).</div>
         <p class="how">Önce dördüne isim ver: pozitif sınıf = <b>Spam</b>. Doğru yakalanan spam = TP, kaçırılan spam = FN, yanlışlıkla spam denen normal mail = FP, doğru normal = TN. Kontrol: dördü toplanınca 120.</p>
@@ -388,7 +387,7 @@
 
       <h3 style="margin-top:36px">Question 3</h3>
 
-      <div class="q out" id="b3-a"><h3>B3.A Oversampling ve undersampling</h3><div class="pts">10 puan · Slaytlarda yok</div>
+      <div class="q out" id="b3-a"><h3>B3.A Oversampling ve undersampling</h3><div class="pts">10 puan · Vizede yok</div>
         <div class="stem">Compare oversampling and undersampling in balancing the datasets. Illustrate your answer with a clear labeled diagram.</div>
         <p class="how">Önce sorunu söyle (bir sınıf çok az), sonra iki çözüm: azı <b>çoğalt</b> ya da çoğu <b>azalt</b>. Her birinin bir artısı, bir eksisi. Çizim: üç çubuk grafiği, öncesi ve iki sonrası.</p>
         <button class="chip" data-show>Cevabı ve çizimi göster</button>
@@ -429,7 +428,7 @@
         </div>
       </div>
 
-      <div class="q" id="b3-b"><h3>B3.B Overfit ve underfit: nedenleri, örnekleri</h3><div class="pts">10 puan · <b>Bu yıl: Week 2, Week 5 (pruning)</b></div>
+      <div class="q" id="b3-b"><h3>B3.B Overfit ve underfit: nedenleri, örnekleri</h3><div class="pts">10 puan · <b>Vize konusu: Week 2, Week 5 (pruning)</b></div>
         <div class="stem">Explain what causes a machine learning model to overfit and underfit with suitable examples.</div>
         <p class="how">Slayttaki iki tanımla başla: model (H) gerçek fonksiyondan <b>daha karmaşık</b> → overfit, <b>daha basit</b> → underfit. Sonra her birine neden, örnek, belirti, çare. Örnek olarak ağaç iyi: budanmamış derin ağaç = overfit.</p>
         <button class="chip" data-show>Cevabı göster</button>
@@ -442,7 +441,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="b3-c"><h3>B3.C Eksik değerleri bulan pandas fonksiyonu</h3><div class="pts">5 puan · Slaytlarda yok</div>
+      <div class="q out" id="b3-c"><h3>B3.C Eksik değerleri bulan pandas fonksiyonu</h3><div class="pts">5 puan · Vizede yok</div>
         <div class="stem">To check if there are any missing values in the dataset, which Pandas function should you use?<br>A. dataset.hasnull() · B. dataset.isnull().sum() · C. dataset.empty() · D. dataset.isnan()</div>
         <button class="chip" data-show>Cevabı göster</button>
         <div class="model" hidden><ul>
@@ -451,7 +450,7 @@
         </ul></div>
       </div>
 
-      <div class="q out" id="b3-d"><h3>B3.D KNN'den önce neden StandardScaler</h3><div class="pts">5 puan · Slaytlarda yok (projede "scaling")</div>
+      <div class="q out" id="b3-d"><h3>B3.D KNN'den önce neden StandardScaler</h3><div class="pts">5 puan · Vizede yok (projede "scaling")</div>
         <div class="stem">Why is StandardScaler used before fitting the KNN model?<br>A. To improve the interpretability of coefficients · B. To ensure that all features contribute equally to distance calculations · C. To remove duplicate rows from the dataset · D. To reduce dimensionality</div>
         <p class="how">KNN <b>uzaklık</b> ölçer. Maaş binlerle, yaş onlarla ölçülürse uzaklığı neredeyse yalnız maaş belirler. K-Means'te de aynı sorun var (Week 4).</p>
         <button class="chip" data-show>Cevabı göster</button>
@@ -462,7 +461,7 @@
       </div>
     </section>
 
-    <p class="src" style="margin-top:40px">Kaynak: öğrencinin paylaştığı iki eski vize kâğıdının fotoğrafları (yerelde materials/COE305/exams/). "Bu yıl" etiketli cevaplar Week 1–6 slaytlarından; "Slaytlarda yok" etiketliler genel ML bilgisinden.</p>
+    <p class="src" style="margin-top:40px">Kaynak: öğrencinin paylaştığı iki eski final kâğıdının fotoğrafları (yerelde materials/COE305/exams/). "Vize konusu" etiketli cevaplar Week 1–6 slaytlarından; "Vizede yok" etiketliler genel ML bilgisinden.</p>
   </main>
   <script src="data.js"></script>
   <script src="../assets/js/common.js"></script>
