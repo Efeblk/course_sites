@@ -1353,52 +1353,55 @@ window.GUIDE = {
         }
       },
       {
-        "t": "Pthreads: worker bitsin, sonra sonucu kullan",
+        "t": "Thread kodunu izle: create → worker → join → sonuç",
         "key": "Pthreads is a <b>specification</b> (an API). You create a thread with <code>pthread_create</code>, and wait for it with <code>pthread_join</code>.",
         "fig": {
           "type": "flow",
+          "down": true,
+          "t": "Sonucu güvenle okumak için gereken sıra",
           "items": [
             [
               "",
-              "pthread_attr_init",
-              "default attributes",
-              "c5"
-            ],
-            [
-              "",
               "pthread_create",
-              "start runner()",
+              "starts runner",
               "c0"
             ],
             [
               "",
-              "runner() works",
-              "e.g. sums 1..N",
+              "runner",
+              "sum becomes 15",
               "c1"
             ],
             [
               "",
               "pthread_exit",
-              "thread ends",
+              "worker ends",
               "c2"
             ],
             [
               "",
-              "pthread_join",
-              "main waits, then prints",
-              "c3"
+              "pthread_join returns",
+              "main can use the result",
+              "c0"
+            ],
+            [
+              "",
+              "printf",
+              "prints 15",
+              "c0"
             ]
-          ]
-        },
-        "html": "<p>Worker thread ortak <code>sum</code> değişkenini hesaplıyor olsun. <code>pthread_create()</code> ile başlatmak, işin o anda bittiği anlamına gelmez.</p><p>Çağrı sırası şöyledir. Burada <code>runner</code> worker fonksiyonu, <code>arg</code> ona verilen girdidir:</p><pre>pthread_t tid;\npthread_create(&amp;tid, NULL, runner, arg);\npthread_join(tid, NULL);\nprintf(\"%d\", sum);</pre><p><b>pthread_join()</b> worker bitene kadar bekler. Sonuç bu beklemeden sonra okunur. Worker kendi çalışmasını <b>pthread_exit()</b> ile bitirebilir.</p><p>Asıl bağlantı şu: create başlatır; join tamamlanmasını bekler. Aynı iş değiller.</p>",
-        "check": {
-          "q": "Why call pthread_join before printing the worker’s sum?",
-          "o": [
-            "To wait for the worker to finish",
-            "To create a second worker",
-            "To clear the shared variable"
           ],
-          "why": "Joining ensures the worker has finished computing the sum before it is read."
+          "cap": "Main, worker bitmeden join çağırıp bekleyebilir. Şekilde join’in <b>dönüşü</b>, worker’ın bitişinden sonra gösterilir."
+        },
+        "html": "<p>Worker, 1’den verilen sınıra kadar sayıları ortak <b>sum</b> değişkeninde topluyor. Aşağıda bütün Pthread çağrılarının başarılı olduğunu varsay.</p><pre>#include &lt;pthread.h&gt;\n#include &lt;stdio.h&gt;\n#include &lt;stdlib.h&gt;\n\nint sum = 0;\nvoid *runner(void *arg) {\n    int upper = atoi(arg);\n    for (int i = 1; i &lt;= upper; i++) {\n        sum += i;\n    }\n    pthread_exit(NULL);\n}\nint main(void) {\n    pthread_t tid;\n    char limit[] = &quot;5&quot;;\n    pthread_create(&amp;tid, NULL,\n                   runner, limit);\n    pthread_join(tid, NULL);\n    printf(&quot;%d\\n&quot;, sum);\n    return 0;\n}</pre><ol><li><b>pthread_create</b>, yeni worker’ı <code>runner</code> fonksiyonunda başlatır; <code>limit</code> onun girdisidir.</li><li>Worker “5” girdisini sayıya çevirir: sum = 1 + 2 + 3 + 4 + 5 = <b>15</b>.</li><li><b>pthread_exit</b> worker’ı bitirir. <b>pthread_join</b>, main’in worker tamamlanana kadar beklemesini sağlar.</li><li>Join döndükten sonra print, <b>15</b> yazar.</li></ol><p>Global sum thread’ler arasında ortaktır; her thread’in kendi stack, register ve program counter’ı vardır.</p><div class=\"callout warn\">Create, worker’ın bittiğini garanti etmez. Join’i kaldırıp sonucu erken okumak için sabit bir çıktı ezberleme: worker’ın tamamlanması garanti değildir.</div><p class=\"small\">Derleme: <code>cc -pthread example.c -o example</code>. Bu, dersin sum/runner örneğinden uyarlanmış bir çalışma programıdır.</p>",
+        "check": {
+          "q": "All calls succeed. After pthread_join(tid, NULL), what does the shown program print?",
+          "o": [
+            "15",
+            "0",
+            "5"
+          ],
+          "why": "The worker sums 1 through 5 into shared sum. Join waits for that worker to finish before main prints the result."
         }
       },
       {
@@ -1433,11 +1436,12 @@ window.GUIDE = {
     "question": "Bir process’in içinde birden fazla iş nasıl ilerler?",
     "reading": true,
     "summary": [
-      "Thread’ler aynı process’in kaynaklarını paylaşır; kendi stack ve register’ları vardır.",
+      "Thread’ler ortak global data ve heap’i paylaşır; PC, registers ve stack her thread’e özeldir.",
       "Concurrency birlikte ilerleme, parallelism aynı anda çalışmadır.",
       "Seri kalan bölüm speedup’ı sınırlar; ortak güncellemeler race oluşturabilir."
     ],
-    "examAnswer": "Threads share code, data, heap and files. Private: PC, registers, stack. Amdahl limit: 1/S."
+    "examAnswer": "pthread_create: start worker. pthread_join: wait for worker completion. pthread_exit: end calling thread. Shared sum; private stack.",
+    "opening": "Yeni çalışma ipucu: thread kodu sorulabileceğini duydun; bu henüz doğrulanmış bir duyuru değil. Pthreads örneğinde create, join, paylaşılan sum ve çıktıyı izlemeye öncelik ver."
   },
   "5": {
     "goal": "Hazır process’lerden hangisine CPU verilmeli?",
@@ -2184,6 +2188,7 @@ window.GUIDE = {
       "Critical-section çözümü mutual exclusion, progress ve bounded waiting sağlamalıdır.",
       "Mutex sahiplik ile exclusion; semaphore kaynak sayma ve sıralama sağlar."
     ],
-    "examAnswer": "Critical section: mutual exclusion + progress + bounded waiting. Mutex: ownership. Semaphore: atomic wait/signal."
+    "examAnswer": "Critical section: mutual exclusion + progress + bounded waiting. Mutex: ownership. Semaphore: atomic wait/signal.",
+    "opening": "Thread-code ipucu doğrulanmış değil. Chapter 4’te create/join akışını izledikten sonra burada counter++ işlemini mutex ile korumayı ve semaphore ile olay sıralamayı çalış."
   }
 };

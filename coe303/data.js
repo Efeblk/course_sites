@@ -1995,9 +1995,9 @@ Object.assign(window.COURSE, {
     ],
     "plan": [
       [
-        "videos.html",
-        "Watch the 8 explainer episodes (1.25× is fine)",
-        "20 min"
+        "learn.html?ch=4&step=5",
+        "Extra thread-code practice: create, join, output (unconfirmed tip)",
+        "15 min"
       ],
       [
         "ozet.html",
@@ -2018,6 +2018,11 @@ Object.assign(window.COURSE, {
         "exercises.html",
         "Answer the midterm guide exercises",
         ""
+      ],
+      [
+        "videos.html",
+        "Optional: watch the 8 explainer episodes",
+        "20 min"
       ]
     ],
     "done": false
@@ -2035,7 +2040,7 @@ Object.assign(window.COURSE, {
       "href": "mock.html",
       "title": "Mock midterm",
       "meta": "2 papers · 10 short + 2 long each",
-      "desc": "Short scenarios, process tables and synchronization code in the old-paper style; immediate feedback and worked Gantt models. Chapters 1–6 only."
+      "desc": "Thread-code tracing, process tables, mutex protection and worked Gantt models. Extra thread focus is an unconfirmed study tip; Chapters 1–6 only."
     },
     {
       "kind": "drill",

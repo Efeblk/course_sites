@@ -111,14 +111,16 @@ const papers = [
         "hint": "İpucu: istek hangi sınırı geçiyor? Sonra üç parameter-passing yolunu adlandır."
       },
       {
-        "ch": 5,
-        "q": "P1 is running when P2 completes I/O and becomes ready. Compare what can happen under nonpreemptive and preemptive scheduling.",
+        "ch": 4,
+        "q": "Fill blanks A and B with the Pthreads function names. All calls succeed and sum starts at 0. What is printed, and why is B needed?",
+        "code": "/* sum is global; runner sums 1..5 and then exits. */\npthread_t tid;\nchar limit[] = \"5\";\n____(&tid, NULL,\n     runner, limit);             /* A */\n____(tid, NULL);                  /* B */\nprintf(\"%d\\n\", sum);",
+        "hint": "İpucu: başlat → bitmesini bekle → ortak sonucu oku.",
         "model": [
-          "Nonpreemptive: P1 keeps the CPU until it blocks or terminates.",
-          "Preemptive: the scheduling policy may choose P2 and take the CPU from P1.",
-          "P2 becoming ready does not guarantee that P2 immediately runs."
+          "A: pthread_create. B: pthread_join.",
+          "Output: 15 (1 + 2 + 3 + 4 + 5).",
+          "Join waits for runner to finish before main reads shared sum. Create alone does not guarantee completion."
         ],
-        "hint": "İpucu: ready olmak ile CPU’yu almak aynı şey mi?"
+        "modelCode": "pthread_create(&tid, NULL,\n               runner, limit);\npthread_join(tid, NULL);\nprintf(\"%d\\n\", sum);"
       }
     ],
     "long": [
@@ -244,16 +246,17 @@ const papers = [
         "why": "The tasks make progress by taking turns; they do not execute simultaneously."
       },
       {
-        "ch": 5,
-        "q": "Round Robin with a very large time quantum behaves like…",
+        "ch": 4,
+        "q": "Starting with only main, how many new worker threads do the two successful pthread_create calls below create in total?",
+        "code": "/* worker ignores its argument and exits. */\nvoid *worker(void *arg) {\n    pthread_exit(NULL);\n}\n/* The following runs in main: */\npthread_t tid[2];\nfor (int i = 0; i < 2; i++)\n    pthread_create(&tid[i], NULL,\n                   worker, NULL);\nfor (int i = 0; i < 2; i++)\n    pthread_join(tid[i], NULL);",
         "o": [
-          "SJF",
-          "FCFS",
-          "Priority",
-          "SRTF"
+          "1 worker",
+          "2 workers",
+          "3 workers",
+          "4 workers"
         ],
         "a": 1,
-        "why": "If every burst fits in one quantum, nobody is preempted: FCFS (slide 20)."
+        "why": "Main executes create twice; each successful call starts one worker at worker(). Join waits and creates no thread. Unlike fork, create does not make every thread repeat the caller’s loop."
       },
       {
         "ch": 6,
