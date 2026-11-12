@@ -1,0 +1,69 @@
+#ml-case { --case-a: var(--accent); --case-b: var(--kernel); color: var(--text); font-family: var(--sans); max-width: 1000px; margin: 0 auto; line-height: 1.65; }
+#ml-case * { box-sizing: border-box; }
+#ml-case [hidden] { display: none !important; }
+#ml-case h1 { font-size: clamp(1.65rem, 4vw, 2.4rem); margin: 8px 0 12px; line-height: 1.2; }
+#ml-case h2 { font-size: clamp(1.25rem, 3vw, 1.65rem); margin: 0 0 14px; max-width: 36ch; text-wrap: balance; line-height: 1.4; }
+#ml-case h3 { font-size: 1.05rem; margin: 18px 0 8px; }
+#ml-case p { margin: 10px 0; }
+#ml-case button, #ml-case input { font: inherit; }
+#ml-case button { min-height: 44px; cursor: pointer; padding: 8px 12px; background: var(--panel); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius); }
+#ml-case .case-next.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+#ml-case button:disabled { cursor: default; opacity: .5; }
+#ml-case :is(button, input, summary, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+#ml-case .case-kicker, #ml-case .case-caption { color: var(--muted); font-size: .85rem; }
+#ml-case .case-top { display: flex; justify-content: space-between; align-items: start; gap: 14px; }
+#ml-case .case-top > div { min-width: 0; }
+#ml-case .case-path { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; margin: 18px 0; list-style: none; }
+#ml-case .case-path button { padding: 7px 10px; background: transparent; border: 0; border-bottom: 2px solid var(--line); color: var(--muted); border-radius: 0; }
+#ml-case .case-path button[aria-current] { border-color: var(--accent); color: var(--text); font-weight: 600; }
+#ml-case .case-stage { border-top: 1px solid var(--line); padding-top: 22px; }
+#ml-case .case-formula { font-family: var(--mono); padding: 12px 16px; background: var(--panel); overflow-wrap: anywhere; }
+#ml-case .case-split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+#ml-case .case-choice { display: grid; gap: 10px; margin: 16px 0; }
+#ml-case .case-choice button { text-align: left; padding: 12px 14px; white-space: normal; border: 1px solid var(--line-2); background: var(--panel); color: var(--text); }
+#ml-case .case-choice button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 3px 0 var(--accent); }
+#ml-case .case-numberline { margin: 18px 0; }
+#ml-case .case-numberline svg { display: block; width: 100%; height: 210px; }
+#ml-case .case-numberline text { font-family: var(--sans); fill: var(--text); font-size: 12px; }
+#ml-case .case-assignments { display: grid; gap: 8px; }
+#ml-case .case-assign-row { display: grid; grid-template-columns: minmax(110px, 1fr) auto auto; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+#ml-case .case-assign-row button { min-width: 74px; background: var(--panel); color: var(--text); border: 1px solid var(--line-2); padding: 8px; }
+#ml-case .case-assign-row button[aria-pressed="true"] { color: var(--text); box-shadow: inset 0 -3px var(--c); border-color: var(--c); }
+#ml-case .case-assign-row b { font-family: var(--mono); }
+#ml-case .case-symbols { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 8px; }
+#ml-case .case-symbols button { background: transparent; padding: 7px 12px; border: 1px solid var(--line); font-family: var(--mono); color: var(--text); }
+#ml-case .case-symbol-detail { border-left: 3px solid var(--accent); padding: 8px 14px; margin: 12px 0; background: var(--panel); }
+#ml-case .case-fields { display: flex; flex-wrap: wrap; gap: 16px; margin: 18px 0; }
+#ml-case .case-fields label { display: grid; gap: 5px; flex: 1 1 140px; }
+#ml-case input[type="text"] { width: 100%; min-height: 44px; padding: 9px 12px; background: var(--panel); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius); }
+#ml-case .case-feedback { border-left: 3px solid var(--accent); padding: 12px 16px; margin: 18px 0; background: var(--panel); }
+#ml-case .case-feedback[data-status="wrong"] { border-color: var(--bad); }
+#ml-case .case-feedback[data-status="right"] { border-color: var(--ok); }
+#ml-case .case-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 22px; border-top: 1px solid var(--line); padding-top: 18px; }
+#ml-case .case-controls .case-next { margin-left: auto; }
+#ml-case .case-note { border-left: 3px solid var(--warn); padding-left: 14px; }
+#ml-case .case-table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+#ml-case .case-table :is(td, th) { padding: 9px 8px; text-align: left; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+#ml-case .case-table th { font-size: .88rem; color: var(--muted); font-weight: 500; }
+#ml-case .case-member { margin: 20px 0; }
+#ml-case .case-member-bar { display: flex; height: 40px; margin: 8px 0; background: var(--panel); }
+#ml-case .case-member-bar > span { display: flex; align-items: center; justify-content: center; min-width: 0; overflow: hidden; background: var(--c); color: var(--bg); font-size: .9rem; font-weight: 600; }
+#ml-case input[type="range"] { width: 100%; min-height: 44px; accent-color: var(--case-a); }
+#ml-case .case-error-bars { display: grid; gap: 10px; }
+#ml-case .case-error-row { display: grid; grid-template-columns: 90px 1fr 45px; gap: 12px; align-items: center; }
+#ml-case .case-error-track { background: var(--panel); height: 18px; }
+#ml-case .case-error-track > span { display: block; height: 100%; background: var(--accent); }
+#ml-case .case-sources { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 12px; font-size: .85rem; color: var(--muted); }
+#ml-case .case-sources summary { min-height: 44px; cursor: pointer; }
+#ml-case .case-check-button { padding: 10px 18px; }
+@media (max-width: 560px) {
+  #ml-case .case-split { grid-template-columns: minmax(0, 1fr); }
+  #ml-case .case-top { flex-direction: column; gap: 4px; }
+  #ml-case .case-path { gap: 3px; }
+  #ml-case .case-path button { font-size: .85rem; padding: 7px 9px; }
+  #ml-case .case-assign-row { grid-template-columns: minmax(90px, 1fr) auto auto; }
+  #ml-case .case-assign-row button { min-width: 68px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  #ml-case .case-member-bar > span { transition: width .2s ease; }
+}

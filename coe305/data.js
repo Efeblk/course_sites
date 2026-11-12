@@ -1959,6 +1959,13 @@ Object.assign(window.COURSE, {
   },
   "resources": [
     {
+      "kind": "scenarios",
+      "href": "case.html",
+      "title": "Week 4: etkileşimli case study",
+      "meta": "Türkçe · 5 nokta · yaklaşık 15 dakika",
+      "desc": "X, xᵗ, mᵢ ve bᵢᵗ: veriyi ata, merkezleri güncelle, hatayı bul; hard/soft membership ve encoding ile bağla."
+    },
+    {
       "kind": "past",
       "href": "past.html",
       "title": "Eski sınav soruları",
