@@ -51,7 +51,7 @@ window.GUIDE = {
             ]
           ]
         },
-        "html": "<p>Credit scoring’de bir müşterinin riskini tahmin etmek istiyoruz. Her olası durum için kural yazmak yerine örneklerden işe yarayan bir kural öğrenebiliriz. Bu kural bir <b>model</b>’dir.</p><p>Altı haftayı tek akış olarak düşün: Week 1 işi seçer. Week 2 kuralı öğrenir ve yeni örneklerde dener. Week 3 girdileri düzenler. Week 4 labelsız gruplar bulur. Week 5 ve 6 iki model kurar: <b>decision tree</b> ve <b>neural network</b>.</p><p>Başlangıç sorusu “hangi algoritma?” değil, “örnekler bize nasıl bir geri bildirim veriyor?” olsun.</p>",
+        "html": "<p>Credit scoring’de bir müşterinin riskini tahmin etmek istiyoruz. Her olası durum için kural yazmak yerine örneklerden işe yarayan bir kural öğrenebiliriz. Bu kural bir <b>model</b>’dir.</p><p>Altı haftayı tek akış olarak düşün: Week 1 işi seçer. Week 2 kuralı öğrenir ve yeni örneklerde dener. Week 3 girdileri düzenler. Week 4 labelsız gruplar bulur. Week 5 ve 6 iki model kurar: <b>decision tree</b> ve <b>neural network</b>.</p><p>Başlangıç sorusu “hangi algoritma?” değil, “örnekler bize nasıl bir geri bildirim veriyor?” olsun.</p><p><a href=\"course-case.html\"><b>Birlikte yap: Veriden modele</b></a> — aynı öğrenci tablosuyla altı haftayı birbirine bağlayan etkileşimli case study.</p>",
         "check": {
           "q": "A credit-scoring training example includes the correct risk class. What feedback is available?",
           "o": [

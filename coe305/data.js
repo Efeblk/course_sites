@@ -1926,6 +1926,11 @@ Object.assign(window.COURSE, {
     "length": "Concepts and why, no formulas",
     "plan": [
       [
+        "course-case.html",
+        "Connect Weeks 1–6 in one interactive case study",
+        "40 min"
+      ],
+      [
         "videos.html",
         "Watch the 6 explainer episodes (1.25× is fine)",
         "15 min"
@@ -1958,6 +1963,13 @@ Object.assign(window.COURSE, {
     ]
   },
   "resources": [
+    {
+      "kind": "scenarios",
+      "href": "course-case.html",
+      "title": "ML: bütün dersi bağlayan case study",
+      "meta": "Weeks 1–6 · Türkçe · 35–45 dakika",
+      "desc": "Aynı öğrenci verisiyle X’i oku, feature seç, PCA eksenini döndür, cluster ve tree kur; bias ile learning rate’i değiştir."
+    },
     {
       "kind": "scenarios",
       "href": "case.html",
